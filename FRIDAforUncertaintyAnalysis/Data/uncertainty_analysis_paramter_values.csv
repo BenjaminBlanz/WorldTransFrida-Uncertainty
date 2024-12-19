@@ -1,0 +1,503 @@
+"Animal Products Demand.average daily demand per capita in 1980",357.71484375
+"Animal Products Demand.initial share of demand from consumption domain",0.25869140625
+"Animal Products Demand.sensitivity of demand to consumption",0.123046875
+"Animal Products Demand.sensitivity of demand to relative scarcity",0.740234375
+"Animal Products Demand.sensitivity of personal norm to climate risk",-1.49083984375
+"Animal Products Demand.sensitivity of personal norm to consumption risk",-1.9294921875
+"Animal Products Demand.sensitivity of personal norm to social value",0.7494140625
+"Animal Products Demand.time horizon for long term perception",84.21875
+"Animal Products Demand.time horizon for short term perception",7.494140625
+"Animal Products Demand.time to adjust consumption pattern",6.291015625
+"Animal Products Demand.time to adjust value perception",2.353515625
+"Animal Products Demand.time to observe consequences",27.9296875
+"Animal Products Demand.time to perceive average consumption",4.7890625
+"Animal Products Demand.time to perceive change in accessibility",3.8203125
+"Climate Risk Perception.additional time horizon of reference climate extremes exposure",48.49609375
+"Climate Risk Perception.additional time horizon of reference temperature anomaly",55.87890625
+"Climate Risk Perception.sensitivity to climate extremes exposure",0.166015625
+"Climate Risk Perception.sensitivity to climate information",0.369140625
+"Climate Risk Perception.time to perceive climate extremes exposure",6.853515625
+"Climate Risk Perception.time to perceive temperature anomaly",5.025390625
+"Climate Risk Perception.time to report climate information",7.134765625
+"Emissions.baseline Food and Land use CH4 emissions",43.3984375
+"Emissions.baseline Food and Land Use N2O emissions",3019.53125
+"Emissions.baseline HFC134a eq per person",0.0117578125
+"Emissions.baseline N2O per person",0.000187890625
+"Emissions.baseline non fossil CH4 per person",0.03310546875
+"Emissions.desulphurisation rate of energy related emissions[Gas]",-0.0107421875
+"Emissions.desulphurisation rate of energy related emissions[Oil]",-0.0822265625
+"Emissions.desulphurisation rate of energy related emissions[Coal]",-0.0892578125
+"Emissions.effective CDD logistic speed",6.81640625
+"Emissions.Initial Fossil Energy CH4 Intensity[Gas]",35.849609375
+"Emissions.Initial Fossil Energy CH4 Intensity[Oil]",14.052734375
+"Emissions.Initial Fossil Energy CH4 Intensity[Coal]",5.966796875
+"Emissions.Initial Fossil Energy N2O Intensity[Gas]",128.22265625
+"Emissions.Initial Fossil Energy N2O Intensity[Oil]",332.12890625
+"Emissions.Initial Fossil Energy N2O Intensity[Coal]",416.50390625
+"Emissions.Initial Fossil Energy Sulfur Intensity[Gas]",46.044921875
+"Emissions.Initial Fossil Energy Sulfur Intensity[Oil]",12.646484375
+"Emissions.Initial Fossil Energy Sulfur Intensity[Coal]",7.724609375
+"Emissions.MtCH4 emission per PCal animal products 1980",0.0978515625
+"Emissions.MtN2O emission per PCal animal products 1980",0.00583984375
+"Emissions.rate of change in energy related CH4 emissions[Gas]",-0.080078125
+"Emissions.rate of change in energy related CH4 emissions[Oil]",-0.012890625
+"Emissions.rate of change in energy related CH4 emissions[Coal]",-0.139453125
+"Emissions.rate of change in energy related N2O emissions[Gas]",-0.04111328125
+"Emissions.rate of change in energy related N2O emissions[Oil]",-0.00908203125
+"Emissions.rate of change in energy related N2O emissions[Coal]",-0.00107421875
+"Emissions.rate of decline in MtCH4 emission per PCal animal products",0.00467578125
+"Emissions.rate of decline in MtN2O emission per PCal animal products",0.0039453125
+"Emissions.rate of decline in tN2O emission per tN fertilizer",0.0059765625
+"Emissions.sensitivity of HFC134a eq per person to relative CDD",5.095703125
+"Emissions.sensitivity of Other N2O per person to GDP per capita",-0.49609375
+"Emissions.tN2O emission per tN fertilizer 1980",0.0845703125
+"Sea Level.energy input to SLR conversion factor max",0.11912109375
+"Sea Level.energy input to SLR conversion factor min",0.10751953125
+"Sea Level.initial SLR from AntIS",-0.001455078125
+"Sea Level.initial SLR from GrIS",-0.00263671875
+"Sea Level.initial SLR from LWS",-0.068359375
+"Sea Level.initial SLR from MG",-0.0039296875
+"Sea Level.initial thermosteric SLR",-0.00505859375
+"Sea Level.Initial water storage from water impoundment",5283203125000
+"Sea Level.MICI AntIS critical Tant max",-15.712890625
+"Sea Level.MICI AntIS critical Tant min",-14.974609375
+"Sea Level.MICI AntIS disintegration max",-15.619921875
+"Sea Level.MICI AntIS disintegration min",-15.444921875
+"Sea Level.scale factor Antarctic ice sheet",0.376953125
+"Sea Level.scale factor Greenland ice sheet",0.455078125
+"Sea Level.scale factor mountain glaciers",0.408203125
+"Sea Level.scale factor thermosteric SLR",0.603515625
+"Sea Level.Water catchment per GW of hydropower",2779296875
+"Demographics.1 to 20 mortality alpha",0.873046875
+"Demographics.1 to 20 mortality gamma",-0.521484375
+"Demographics.20 to 40 mortality alpha",2.876953125
+"Demographics.20 to 40 mortality gamma",-0.416015625
+"Demographics.40 to 60 mortality alpha",1.353515625
+"Demographics.40 to 60 mortality gamma",-1.623046875
+"Demographics.60 to 65 mortality alpha",2.138671875
+"Demographics.60 to 65 mortality gamma",-0.498046875
+"Demographics.65 to 75 mortality alpha",2.126953125
+"Demographics.65 to 75 mortality gamma",-1.716796875
+"Demographics.averaging time",17.994140625
+"Demographics.Cold mortality sensitivity to T",-0.01953337890625
+"Demographics.Cold mortality sensitivity to T2",0.00197060546875
+"Demographics.effect of GDP on female population literacy percentage constant",0.009765625
+"Demographics.effect of GDP on female population literacy percentage scale factor",1.103515625
+"Demographics.Hot mortality sensitivity to T",0.036298125
+"Demographics.Hot mortality sensitivity to T2",0.000234720703125
+"Demographics.infant mortality alpha",0.13671875
+"Demographics.infant mortality gamma",-0.978515625
+"Demographics.initial fertility",1.03515625
+"Demographics.Over 75 mortality alpha",0.873046875
+"Demographics.Over 75 mortality gamma",-1.658203125
+"Demographics.sensitivity of fertility to inverse GDP per person",-0.62890625
+"Demographics.sensitivity of fertility to literacy",-0.00361328125
+"Demographics.time to change fertility",20.05859375
+"Circular Flow.consumption habits adjustment time",1.63671875
+"Circular Flow.desired savings as multiple of profits",12.23046875
+"Circular Flow.desired savings as multiple of wages",1.7421875
+"Circular Flow.fraction of income to consumption",0.669140625
+"Circular Flow.fraction of owner income to consumption",0.843359375
+"Circular Flow.initial firms checking accounts",5035.15625
+"Circular Flow.initial owner savings",58417.96875
+"Circular Flow.initial worker savings",27441.40625
+"Circular Flow.minimum fraction of income to consumption",0.255859375
+"Circular Flow.profit tax rate",0.21015625
+"Circular Flow.time to consider desired savings",5.552734375
+"Circular Flow.time to pay out profits",4.8203125
+"Circular Flow.time to reach savings goal",1.2265625
+"Circular Flow.wage tax rate",0.235546875
+"Employment.average development completion time",4.95703125
+"Employment.fraction of productivity gains translating to firing",0.3427734375
+"Employment.hiring to investment ratio",0.67001953125
+"Employment.initial unemployment rate",0.08373046875
+"Employment.Initial Wage Rate",5171.875
+"Employment.labour force participation fixed",65.368359375
+"Employment.max change in fractional wage growth",0.8876953125
+"Employment.max firing percentage",0.05775390625
+"Employment.negotiation effectiveness",1.494140625
+"Employment.productivity yield of exploratory investment",1.5215470632336
+"Employment.productivity yield of non bank innovation",0.062109375
+"Employment.rent to investment ratio",0.283984375
+"Employment.sensitivity of firing to profit discrepancy",0.45068359375
+"Employment.sensitivity of hiring to unemployment rate",1.4544921875
+"Employment.share of employment in agriculture intercept",-95.703125
+"Employment.share of employment in agriculture slope",-45.517578125
+"Employment.share of employment in industry intercept",-45.703125
+"Employment.share of employment in industry slope",1.42578125
+"Employment.share of employment in services intercept",4.296875
+"Employment.share of employment in services slope",3.33984375
+"Employment.Temperature effect on high exposure productivity",-20.865234375
+"Employment.Temperature effect on low exposure productivity",-4.310546875
+"Employment.Temperature squared effect on high exposure productivity",-0.3330078125
+"Employment.Temperature squared effect on low exposure productivity",-1.3560546875
+"Employment.threshold unemployment rate",0.12056640625
+"Employment.time for defaults to affect firing",1.353515625
+"Employment.time for productivity to affect firing",4.6171875
+"Employment.time seeking employees",2.69921875
+"Employment.time to fire from missed profits",1.193359375
+"Employment.Urgency with which wage growth is demanded",2.30078125
+"Employment.wage adjustment negotiation time",1.41796875
+"Finance.average time private refinances debt",2.98046875
+"Finance.bank expectation formation time",4.56640625
+"Finance.desired asset to liability ratio",1.016484375
+"Finance.elasticity of bankruptcy rate on risk premium",4.2822265625
+"Finance.elasticity of desired bank growth rate to changes in lending standards",2.775390625
+"Finance.exploratory premium",3.48046875
+"Finance.exponential effect of interest on defaults",9.505859375
+"Finance.initial bad loans",234.609375
+"Finance.initial bank investment",4457.03125
+"Finance.initial bank investment growth rate",0.0986328125
+"Finance.initial good loans",7818.359375
+"Finance.initial risk premium",0.042578125
+"Finance.Initial safe assets",76640.625
+"Finance.loan maturation time",29.208984375
+"Finance.max change in bank investment as fraction of normal",0.4181640625
+"Finance.max change in failure rate",0.031484375
+"Finance.max change in lending standards",0.115234375
+"Finance.max risk premium increase rate",0.1387890625
+"Finance.normal failure rate",0.013515625
+"Finance.reference formation time",79.765625
+"Finance.renegotiation time",1.3076171875
+"Finance.reporting delay",0.143798828125
+"Finance.scale of exploratory loan failure",7.505859375
+"Finance.sensitivity of bank exploration to profit decline",0.505859375
+"Finance.sensitivity of bank profit payment to net asset growth",1.095703125
+"Finance.sensitivity of defaults to changes in risky interest",12.9720703125
+"Finance.sensitivity of effect of sta on failure rate[1]",0.590234375
+"Finance.sensitivity of exploratory loan failure to GDP growth",0.505859375
+"Finance.sensitivity of failure rate to investment to gdp ratio",0.0711328125
+"Finance.sensitivity of investment and GDP difference",1.02734375
+"Finance.strength of effect of recent GDP growth on lending standards",-0.74447265625
+"Finance.time for safe loans that will fail to actually fail",28.787109375
+"Finance.time to change lending standards",1.142578125
+"Finance.time to measure changes in risky interest",1.12265625
+"GDP.initial real GDP growth rate",0.03369140625
+"Government.average time government refinances debt",6.005859375
+"Government.averaging time to adjust tax based on income",1.77734375
+"Government.central bank adjustment time",1.0595703125
+"Government.central bank interest rate reactivity",1.07421875
+"Government.curvature effect of debt to GDP ratio on government spending",10.09765625
+"Government.effect end effect of debt to GDP ratio on government spending",1.6328125
+"Government.effect start effect of debt to GDP ratio on government spending",1.8
+"Government.GDP perception time",2.23828125
+"Government.inflation weight",1.398046875
+"Government.initial government debt",24462.890625
+"Government.initial safe interest",0.166015625
+"Government.maximum effect of debt to GDP ratio on government spending",1.4853515625
+"Government.normal investment share of public expenditure",0.13486328125
+"Government.normal public consumption to transfers ratio",0.99658203125
+"Government.sensitivity of banks gov debt risk perception",0.1224609375
+"Government.sensitivity of STA on public consumption",0.022265625
+"Government.solvency support adjustment time",1.431640625
+"Government.time to pay subsidies",1.05859375
+"Government.unemployment weight",0.348828125
+"Inflation.Agriculture share of GDP intercept",92.3828125
+"Inflation.agriculture share of GDP slope",0.505859375
+"Inflation.agriculture share of GDP starting point determinant",17.7734375
+"Inflation.deflation adjustment time",8.421875
+"Inflation.inflation adjustment time",0.693359375
+"Inflation.initial inflation index",0.537890625
+"Inflation.initial inflation rate",0.0935546875
+"Inflation.weight of cropland inflation contribution",0.777955078125
+"Inflation.weight of fertilizer used per unit of crop production",0.988787109375
+"Inflation.weight of grazing land inflation contribution",1.832115234375
+"Inflation.weight of irrigation water used per unit of crop production inflation contribution",1.059064453125
+"Inflation.weight of marginal energy cost inflation",0.59689453125
+"Innovation.initial firms innovation orientation",0.414453125
+"Innovation.normal time to decrease innovation orientation",18.388671875
+"Innovation.sensitivity of firms innovation orientation to cash deceleration",4.6484375
+"Innovation.sensitivity of innovation decrease to cash growth",13.5546875
+"Sea level rise Impacts and Adaptation.Sensitivity of expected SLR to CO2 emissions",3.697265625e-06
+"Sea level rise Impacts and Adaptation.Sensitivity of expected SLR to T anomaly",0.085478515625
+"Coastal Assets.asset flood damage elasticity",1.015234375
+"Coastal Assets.asset flood damage sensitivity",0.1384765625
+"Coastal Assets.Effective flood height at which only half the investment would be made",0.7001953125
+"Coastal Assets.Fraction of storm damages that is not rebuild",0.08544921875
+"Coastal Assets.Initial fraction of assets that are on the coast",0.1285546875
+"Coastal Assets.initial growth rate of coastal assets",0.08662890625
+"Coastal population.Fatality rate in flood events",0.001056640625
+"Coastal population.people flood damage elasticity",1.173828125
+"Coastal population.people flood damage sensitivity",0.12109375
+"Sea level rise adaptation.Average value of land in coastal zones in 1980",0.00476953125
+"Sea level rise adaptation.flood protection cost index baseline",0.38583984375
+"Sea level rise adaptation.flood protection cost index sensitivity to GDPpc",0.034216796875
+"Sea level rise adaptation.Fraction of dike construction cost for maintenance annually",0.03314453125
+"Sea level rise adaptation.Maximum fraction of coastal GDP spent for flood protection annually",0.09953125
+"Sea level rise adaptation.reference opportunity cost rate",0.0363671875
+"Sea level rise adaptation.reference protection cost",0.00578515625
+"Sea level rise adaptation.Time to increase flood protection height",18.1640625
+"Sea level rise costs and impacts.Not depreciated fraction of assets at time of retreat",0.198046875
+"energy demand.effect of GDP on per person use of energy alpha",0.385087890625
+"energy demand.effect of GDP on per person use of energy beta",1.55078125
+"energy demand.normal per person use of energy",6.697265625
+"energy investments.historical cost adjustment[Coal fuel extraction, 1]",707.031250646484
+"energy investments.historical cost adjustment[Coal fuel extraction, 2]",1042.96875047852
+"energy investments.historical cost adjustment[Coal fuel extraction, 3]",332.031250833984
+"energy investments.historical cost adjustment[Coal fuel extraction, 4]",230.468750884766
+"energy investments.historical cost adjustment[Coal fuel extraction, 5]",449.218750775391
+"energy investments.historical cost adjustment[Coal fuel extraction, 6]",1566.4062502168
+"energy investments.historical cost adjustment[Coal fuel extraction, 7]",1488.28125025586
+"energy investments.historical cost adjustment[Coal fuel extraction, 8]",1300.78125034961
+"energy investments.historical cost adjustment[Coal fuel extraction, 9]",253.906250873047
+"energy investments.historical cost adjustment[Coal energy conversion, 1]",574.218750712891
+"energy investments.historical cost adjustment[Coal energy conversion, 2]",550.781250724609
+"energy investments.historical cost adjustment[Coal energy conversion, 3]",1285.15625035742
+"energy investments.historical cost adjustment[Coal energy conversion, 4]",917.968750541016
+"energy investments.historical cost adjustment[Coal energy conversion, 5]",1355.46875032227
+"energy investments.historical cost adjustment[Coal energy conversion, 6]",636.718750681641
+"energy investments.historical cost adjustment[Coal energy conversion, 7]",925.781250537109
+"energy investments.historical cost adjustment[Coal energy conversion, 8]",808.593750595703
+"energy investments.historical cost adjustment[Coal energy conversion, 9]",785.156250607422
+"energy investments.historical cost adjustment[Oil fuel extraction, 1]",1183.5937504082
+"energy investments.historical cost adjustment[Oil fuel extraction, 2]",316.406250841797
+"energy investments.historical cost adjustment[Oil fuel extraction, 3]",1746.09375012695
+"energy investments.historical cost adjustment[Oil fuel extraction, 4]",1003.90625049805
+"energy investments.historical cost adjustment[Oil fuel extraction, 5]",1902.34375004883
+"energy investments.historical cost adjustment[Oil fuel extraction, 6]",105.468750947266
+"energy investments.historical cost adjustment[Oil fuel extraction, 7]",285.156250857422
+"energy investments.historical cost adjustment[Oil fuel extraction, 8]",1558.5937502207
+"energy investments.historical cost adjustment[Oil fuel extraction, 9]",761.718750619141
+"energy investments.historical cost adjustment[Oil energy conversion, 1]",847.656250576172
+"energy investments.historical cost adjustment[Oil energy conversion, 2]",1261.71875036914
+"energy investments.historical cost adjustment[Oil energy conversion, 3]",1386.71875030664
+"energy investments.historical cost adjustment[Oil energy conversion, 4]",89.8437509550781
+"energy investments.historical cost adjustment[Oil energy conversion, 5]",1582.03125020898
+"energy investments.historical cost adjustment[Oil energy conversion, 6]",1597.65625020117
+"energy investments.historical cost adjustment[Oil energy conversion, 7]",730.468750634766
+"energy investments.historical cost adjustment[Oil energy conversion, 8]",97.6562509511719
+"energy investments.historical cost adjustment[Oil energy conversion, 9]",1347.65625032617
+"energy investments.historical cost adjustment[Gas fuel extraction, 1]",1433.5937502832
+"energy investments.historical cost adjustment[Gas fuel extraction, 2]",441.406250779297
+"energy investments.historical cost adjustment[Gas fuel extraction, 3]",1269.53125036523
+"energy investments.historical cost adjustment[Gas fuel extraction, 4]",347.656250826172
+"energy investments.historical cost adjustment[Gas fuel extraction, 5]",1558.5937502207
+"energy investments.historical cost adjustment[Gas fuel extraction, 6]",1855.46875007227
+"energy investments.historical cost adjustment[Gas fuel extraction, 7]",1574.21875021289
+"energy investments.historical cost adjustment[Gas fuel extraction, 8]",910.156250544922
+"energy investments.historical cost adjustment[Gas fuel extraction, 9]",1308.5937503457
+"energy investments.historical cost adjustment[Gas energy conversion, 1]",949.218750525391
+"energy investments.historical cost adjustment[Gas energy conversion, 2]",535.156250732422
+"energy investments.historical cost adjustment[Gas energy conversion, 3]",332.031250833984
+"energy investments.historical cost adjustment[Gas energy conversion, 4]",628.906250685547
+"energy investments.historical cost adjustment[Gas energy conversion, 5]",1128.90625043555
+"energy investments.historical cost adjustment[Gas energy conversion, 6]",1746.09375012695
+"energy investments.historical cost adjustment[Gas energy conversion, 7]",332.031250833984
+"energy investments.historical cost adjustment[Gas energy conversion, 8]",558.593750720703
+"energy investments.historical cost adjustment[Gas energy conversion, 9]",847.656250576172
+"energy investments.historical cost adjustment[Solar and Wind, 1]",1269.53125036523
+"energy investments.historical cost adjustment[Solar and Wind, 2]",785.156250607422
+"energy investments.historical cost adjustment[Solar and Wind, 3]",582.031250708984
+"energy investments.historical cost adjustment[Solar and Wind, 4]",1855.46875007227
+"energy investments.historical cost adjustment[Solar and Wind, 5]",1605.46875019727
+"energy investments.historical cost adjustment[Solar and Wind, 6]",1925.78125003711
+"energy investments.historical cost adjustment[Solar and Wind, 7]",1933.5937500332
+"energy investments.historical cost adjustment[Solar and Wind, 8]",1214.84375039258
+"energy investments.historical cost adjustment[Solar and Wind, 9]",503.906250748047
+"energy investments.historical cost adjustment[Hydropower, 1]",527.343750736328
+"energy investments.historical cost adjustment[Hydropower, 2]",589.843750705078
+"energy investments.historical cost adjustment[Hydropower, 3]",1082.03125045898
+"energy investments.historical cost adjustment[Hydropower, 4]",1777.34375011133
+"energy investments.historical cost adjustment[Hydropower, 5]",1472.65625026367
+"energy investments.historical cost adjustment[Hydropower, 6]",11.7187509941406
+"energy investments.historical cost adjustment[Hydropower, 7]",699.218750650391
+"energy investments.historical cost adjustment[Hydropower, 8]",58.5937509707031
+"energy investments.historical cost adjustment[Hydropower, 9]",1238.28125038086
+"energy investments.historical cost adjustment[Other, 1]",1441.4062502793
+"energy investments.historical cost adjustment[Other, 2]",285.156250857422
+"energy investments.historical cost adjustment[Other, 3]",1980.46875000977
+"energy investments.historical cost adjustment[Other, 4]",1941.4062500293
+"energy investments.historical cost adjustment[Other, 5]",128.906250935547
+"energy investments.historical cost adjustment[Other, 6]",925.781250537109
+"energy investments.historical cost adjustment[Other, 7]",996.093750501953
+"energy investments.historical cost adjustment[Other, 8]",441.406250779297
+"energy investments.historical cost adjustment[Other, 9]",1371.09375031445
+"energy investments.historical cost adjustment[Nuclear, 1]",441.406250779297
+"energy investments.historical cost adjustment[Nuclear, 2]",1152.34375042383
+"energy investments.historical cost adjustment[Nuclear, 3]",1925.78125003711
+"energy investments.historical cost adjustment[Nuclear, 4]",339.843750830078
+"energy investments.historical cost adjustment[Nuclear, 5]",597.656250701172
+"energy investments.historical cost adjustment[Nuclear, 6]",1792.96875010352
+"energy investments.historical cost adjustment[Nuclear, 7]",128.906250935547
+"energy investments.historical cost adjustment[Nuclear, 8]",785.156250607422
+"energy investments.historical cost adjustment[Nuclear, 9]",1003.90625049805
+"energy investments.historical cost adjustment[Bio, 1]",1425.78125028711
+"energy investments.historical cost adjustment[Bio, 2]",472.656250763672
+"energy investments.historical cost adjustment[Bio, 3]",1160.15625041992
+"energy investments.historical cost adjustment[Bio, 4]",1457.03125027148
+"energy investments.historical cost adjustment[Bio, 5]",1574.21875021289
+"energy investments.historical cost adjustment[Bio, 6]",886.718750556641
+"energy investments.historical cost adjustment[Bio, 7]",800.781250599609
+"energy investments.historical cost adjustment[Bio, 8]",1957.03125002148
+"energy investments.historical cost adjustment[Bio, 9]",1808.5937500957
+"fossil energy coal.carbon intensity in btu",0.0133203125
+"fossil energy coal.initial fossil energy capital",4560634765625
+"fossil energy coal.initial fossil extraction knowledge",123.49609375
+"fossil energy coal.initial fossil fuel extraction capital",24121611328125
+"fossil energy coal.productivity per extractionknowledge",0.0016462890625
+"fossil energy coal.TFP in 1980",0.349140625
+"fossil energy coal.TFP Max",0.1837890625
+"fossil energy coal.TFP Max Ramp Year",2085.546875
+"fossil energy coal.TFP Ramp Speed",0.001953125
+"fossil energy coal.TFP Slope Start",1989.19921875
+"fossil energy gas.carbon intensity in btu",0.0286328125
+"fossil energy gas.initial fossil energy capital",1123822265625
+"fossil energy gas.initial fossil extraction knowledge",146.19140625
+"fossil energy gas.initial fossil fuel extraction capital",7325072265625
+"fossil energy gas.productivity per extractionknowledge",0.0023939453125
+"fossil energy gas.TFP in 1980",0.134765625
+"fossil energy gas.TFP Max",0.2529296875
+"fossil energy gas.TFP Max Ramp Year",2159.765625
+"fossil energy gas.TFP Ramp Speed",0.720703125
+"fossil energy gas.TFP Slope Start",1988.49609375
+"fossil energy oil.carbon intensity in btu",0.0134765625
+"fossil energy oil.initial fossil energy capital",3994341796875
+"fossil energy oil.initial fossil extraction knowledge",113.65234375
+"fossil energy oil.initial fossil fuel extraction capital",4981369140625
+"fossil energy oil.productivity per extractionknowledge",0.0022240234375
+"fossil energy oil.TFP in 1980",0.194921875
+"fossil energy oil.TFP Max",0.2154296875
+"fossil energy oil.TFP Max Ramp Year",2001.953125
+"fossil energy oil.TFP Ramp Speed",0.978515625
+"fossil energy oil.TFP Slope Start",1994.47265625
+"nuclear energy.Ceiling of Nuclear Installation Costs",5966.796875
+"nuclear energy.Floor of Nuclear Installation Costs",2007.8125
+"nuclear energy.Intercept Nuclear Installation Costs",-31835.9375
+"nuclear energy.Slope of Nuclear Installation Costs",-917.96875
+"bio fuel energy.bio fuel primary energy content",3.7158203125e-05
+"bio fuel energy.Floor Costs",623423828.125
+"bio fuel energy.Initial Installation Costs",98243945312.5
+"bio fuel energy.Learning Rate",0.01228515625
+"bio fuel energy.stepping on toes parameter",0.13515625
+"hydropower energy.Slope of Hydropwer Instllation Costs wrt. Capacity",3.69771484375e-05
+"hydropower energy.Base Hydropower Installation Costs",4795.33203125
+"other energy.Floor of Other Installation Costs",9941.9921875
+"other energy.Initial Other Installation Costs",3784.1796875
+"other energy.Learning Rate",0.05798828125
+"other energy.stepping on toes parameter",0.49921875
+"wind and solar energy.Initial Renewable Energy Installation Costs",31904.1015625
+"wind and solar energy.Renewable Energy Floor Costs",181.302734375
+"wind and solar energy.Renewable Energy Learning Rate",0.35693359375
+"wind and solar energy.stepping on toes parameter in renewable energy sector",0.10546875
+"Animal Products.Animal Products Yield in 1980",0.95234375
+"Animal Products.aquatic animal product share 1980",0.06045703125
+"Animal Products.average animal product growth efficiency",0.07234375
+"Animal Products.averaging time",3.95703125
+"Animal Products.desired animal products reserve capacity",0.0392578125
+"Animal Products.elasticity of aquatic animal product share to GDP per person",0.740234375
+"Animal Products.normal rate of change in grazing land yield",0.04708984375
+"Animal Products.sensitivity of rate of change in animal products balance to growth rate in yield",-56.4453125
+"Crop.crop prod linear CO2 effect",0.0470949390625
+"Crop.crop prod linear temp effect",31.32830234375
+"Crop.crop prod squared temp effect",-1.11167484375
+"Crop.desired crop reserve capacity",0.0134765625
+"Crop.fertilizer use crop yield parameter",0.00957935546875
+"Crop.harvest index for energy crops",0.90146484375
+"Crop.harvest index for feed crops",0.5158203125
+"Crop.initial crop yield",5.998046875
+"Crop.irrigation crop yield parameter",6.6005859375
+"Crop.normal harvest index for food crops",0.41982421875
+"Crop.rel change in crop productivity intercept",-234.811609375
+"Crop.sensitivity of effect of crop residue production on field fraction",0.13037109375
+"Crop.sensitivity of effect of crop yield on harvest index",0.06337890625
+"Crop.soil carbon crop yield parameter",0.101171879941406
+"Crop.tolerance of the cap on harvest index and residue on field fraction",0.04806640625
+"Crop.UNIT GtC per PCal crop",0.000247516751953125
+"Food Demand.crops used for non energy other per person",0.908203125
+"Food Demand.crops used for seed or lost per person 1980",0.486328125
+"Food Demand.direct food demand per person per day 1980",2736.328125
+"Food Demand.elasticity of crops used for non energy other to GDP per person",1.45703125
+"Food Demand.elasticity of crops used for seed or lost to GDP per person",1.69140625
+"Food Demand.elasticity of food demand to GDP per person",0.25978515625
+"Food Demand.initial crop demand for feed offset",0.91640625
+"Food Demand.time to change demand for feed",6.783203125
+"Food Demand.time to change dietary habits",6.962890625
+"Forest.CO2 tree net primary production parameter",0.0007021484375
+"Forest.forest aboveground biomass 1980",655.56640625
+"Forest.STA maximum aboveground biomass per area parameter",0.26298828125
+"Forest.STA squared maximum aboveground biomass per area parameter",-0.0637109375
+"Forest.STA squared tree net primary production parameter",-0.018671875
+"Forest.STA tree net primary production parameter",0.017265625
+"Forest.tree net primary production in 1980",0.008095703125
+"Forest.Young mature forest biomass ratio",0.68203125
+"Freshwater.average deep groundwater infiltration time",27.3828125
+"Freshwater.base fraction of cropland irrigated",0.1013671875
+"Freshwater.elasticity of non agricultural water withdrawal per capita to GDP per person",0.49138671875
+"Freshwater.initial available water supply",108222656250000
+"Freshwater.initial fraction of unsustainable water withdrawal",0.1810546875
+"Freshwater.non agricultural water withdrawal 1980",268066406.25
+"Freshwater.rate of change in irrigation efficiency",0.00853515625
+"Freshwater.rate of change in technological water discovery",-0.0019921875
+"Freshwater.sensitivity of effect of available water supply on land irrigated",1.458984375
+"Freshwater.sensitivity of fraction of cropland irrigated indicated to GDP per person",0.06220703125
+"Freshwater.sensitivity of pressure to expand water supply to available water supply",-2.689453125
+"Freshwater.sensitivity of surface temperature anomaly on water used per Mtcrop",0.03796875
+"Freshwater.technological water discovery 1980",50605468750
+"Freshwater.water withdrawal per MHa irrigated 1980",73896484375
+"Grass.CO2 grass net primary production parameter",0.0009462890625
+"Grass.grass net primary production in 1980",0.0035302734375
+"Grass.GtC per PCal of grazing multiplier",0.29296875
+"Grass.STA grass net primary production parameter",0.081484375
+"Grass.STA squared grass net primary production",-0.023984375
+"Land Nutrients.elasticity of effect of animal products on manure fertilizer use",0.14677734375
+"Land Nutrients.maximum desired growth in fertilizer use",0.02509765625
+"Land Nutrients.sensitivity demand to relative use",-0.192998046875
+"Land Nutrients.sensitivity of fertilizer use to crop balance with reserves",-4.621484375
+"Land Nutrients.time to change fertilizer use",2.216796875
+"Land Use.cropland expansion time",4.708984375
+"Land Use.elasticity of effect of animal products yield on fraction of grassland degrading",1.230078125
+"Land Use.elasticity of effect of crop yield on fraction cropland degrading",0.653515625
+"Land Use.forest recovery time",55.6640625
+"Land Use.fraction cropland degrading 1980",8.80859375e-05
+"Land Use.fraction of depleting cropland to grassland",0.456640625
+"Land Use.fraction of grassland degrading 1980",8.53515625e-05
+"Land Use.fraction of grassland for grazing",0.610546875
+"Land Use.fraction of new cropland from forests",0.360546875
+"Land Use.normal average cutting time",991.2109375
+"Land Use.normal average time cropland in use",657.2265625
+"Land Use.percent of forest recovering in 1980",0.14876953125
+"Land Use.sensitivity of crop land use time to cropland size",6.15234375
+"Land Use.sensitivity of cutting time to forest size",4.169921875
+"Land Use.sensitivity of effect of animal products balance on grassland expansion rate",-0.564453125
+"Land Use.sensitivity of effect of crop balance on crop land expansion rate",-0.400390625
+"Land Use.time to close grassland gap",4.109375
+"cropland soil carbon.cropland soil carbon 1980",82.05078125
+"degraded land soil carbon.degraded land productivity reduction factor",0.02107421875
+"forest soil carbon.forest soil carbon initialisation",416.11328125
+"forest soil carbon.Young forest soil carbon reduction factor",0.7392578125
+"grassland soil carbon.grassland soil carbon 1980",416.66015625
+"soil carbon decay.cropland litter input share slow soil carbon",0.01771484375
+"soil carbon decay.cropland slow soil carbon historic share",0.3751953125
+"soil carbon decay.e0",307.87109375
+"soil carbon decay.grassland litter input share slow soil carbon",0.01326171875
+"soil carbon decay.grassland slow soil carbon historic share",0.3240234375
+"soil carbon decay.mature forest litter input share slow soil carbon",0.01732421875
+"soil carbon decay.mature forest slow soil carbon historic share",0.3263671875
+"soil carbon decay.natural decay rate fast soil carbon",0.03150390625
+"soil carbon decay.natural decay rate litter carbon",0.699609375
+"soil carbon decay.natural decay rate slow soil carbon",0.00118046875
+"soil carbon decay.temp response",51.6796875
+"soil carbon decay.young forest litter input share slow soil carbon",0.024501953125
+"soil carbon decay.young forest slow soil carbon historic share",0.3599609375
+"Terrestrial carbon balance.Global peatland carbon uptake rate",0.187890625
+"Concrete.BASE AVERAGE LIFETIME OF BUILDINGS",96.728515625
+"Concrete.BASE AVERAGE LIFETIME OF INFRASTRUCTURE",108.251953125
+"Concrete.CLIMATE IMPACT ON CONCRETE LIFETIME",0.1005859375
+"Concrete.CO2 INTENSITY OF INFRASTRUCTURE CONCRETE",0.14655859375
+"Concrete.CO2 INTENSITY OF RS BUILDINGS CONCRETE",0.097892578125
+"Concrete.CONCRETE PER m2 UFA",0.93526953125
+"Concrete.GAP ADJUSTMENT TIME FOR BUILDINGS",9.6103515625
+"Concrete.GAP ADJUSTMENT TIME FOR INFRASTRUCTURE",8.6083984375
+"Concrete.INFRA ALPHA",-29951.171875
+"Concrete.INFRA BETA",-14.501953125
+"Concrete.INFRA GAMMA",5.867171875
+"Concrete.INIT CONCRETE IN NEW BUILDINGS",9759.765625
+"Concrete.INIT CONCRETE IN NEW INFRASTRUCTURE",3373.046875
+"Concrete.INIT CONCRETE IN OLD BUILDINGS",55742.1875
+"Concrete.INIT CONCRETE IN OLD INFRASTRUCTURE",7917.96875
+"Concrete.INTERCEPT",274621.7265625
+"Concrete.NORMAL CONCRETE DETERIORATION RATE",0.029810546875
+"Concrete.TIME TO ADJUST DESIRED FLOOR AREA",12.9921875
+"Concrete.TIME TO ADJUST DESIRED INFRASTRUCTURE AREA",3.232421875
+"Concrete.UFA alpha",15.8671875
+"Concrete.UFA intercept",-104.19921875
