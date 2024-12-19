@@ -48,7 +48,7 @@ cat('Generate sobol sequence...')
 # sobolSequence.points generates points on the unit interval for each var
 # transformed, so vars are in rows samples in cols, makes the next steps easier
 samplePoints <- sobolSequence.points(nrow(sampleParms),31,numSample)
-if(sum(duplicated(samplePoints))<numSample){
+if(sum(duplicated(samplePoints))>0){
 	stop('Not enough unique sample points. Check the sobol generation\n')
 }
 samplePoints <- t(samplePoints)
