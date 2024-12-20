@@ -23,6 +23,7 @@ chunkSizePerWorker <- 100
 restretchSamplePoints <- T
 
 plotWhileRunning <- T
+whatToPlot <- 'GDP.Real.GDP.in.2021c..1.'
 
 location.frida <- './FRIDAforUncertaintyAnalysis'
 location.stella<- './Stella_Simulator_Linux'
@@ -148,15 +149,20 @@ for(i in 1:(length(workUnitBoundaries)-1)){
 		if(plotWhileRunning){
 			# readline(prompt="Press [enter] to continue")
 			for(l in 1:length(runDat)){
-				lines(runDat[[l]]$Year,runDat[[l]]$GDP.Real.GDP.in.2021c..1.,col=alpha(i,0.25))
+				lines(runDat[[l]]$Year,runDat[[l]][[whatToPlot]],col=alpha(i,0.25))
 			}
 		}
 		rm(runDat)
 	}
 }
-cat(sprintf('\r    runs completed average chunk time %f, over all run time %f %s\n',
-						mean(chunkTimes,na.rm=T),sum(chunkTimes,na.rm=T),rep(' ',20)))
+cat(sprintf('\r    runs completed average chunk time %f, over all run time %f                                       \n',
+						mean(chunkTimes,na.rm=T),sum(chunkTimes,na.rm=T)))
 cat('done')
+
+### save figure ####
+if(plotWhileRunning){
+	dev.print(pdf,file.path(location.output,paste0(gsub('_$','',gsub('_+','_',gsub('[.]','_',whatToPlot))),'.pdf')))
+}
 
 ### cluster cleanup ####
 cat('cluster cleanup...')
