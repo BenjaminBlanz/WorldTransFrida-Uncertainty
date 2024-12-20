@@ -121,6 +121,11 @@ if(plotWhileRunning){
 	axis(1,at=seq(1980,2130,10))
 }
 workUnitBoundaries <- seq(1,numSample,chunkSizePerWorker*length(cl))
+# in case the chunkSize is not a perfect divisor of the numSample, add numSample as the 
+# final boundary
+if(workUnitBoundaries[length(workUnitBoundaries)]!=numSample){
+	workUnitBoundaries <- c(workUnitBoundaries,numSample)
+}
 # add one to the last work unit boundary, as during running we always deduct one from the next boundary
 workUnitBoundaries[length(workUnitBoundaries)] <- numSample+1
 cat(sprintf('  Run of %i runs split up into %i work units.\n',numSample,length(workUnitBoundaries)-1))
