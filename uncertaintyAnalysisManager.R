@@ -60,6 +60,7 @@ if(!restretchSamplePoints){
 	# plot(samplePointsStretched[1,],samplePointsStretched[2,])
 	# abline(v=sampleParms$Value[1],h=sampleParms$Value[2],col='red')
 	samplePoints <- samplePointsStretched
+	rm(samplePointsStretched)
 } else {
 	# stretch the sample points to be left and right of the mean centre value of the 
 	# description file
@@ -76,6 +77,7 @@ if(!restretchSamplePoints){
 	# plot(samplePointsReStretched[1,],samplePointsReStretched[2,])
 	# abline(v=sampleParms$Value[1],h=sampleParms$Value[2],col='red')
 	samplePoints <- samplePointsReStretched
+	rm(samplePointsHigh,samplePointsLow,samplePointsReStretched,lowIdc,highIdc)
 }
 cat('done\n')
 
