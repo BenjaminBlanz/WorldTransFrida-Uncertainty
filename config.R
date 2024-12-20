@@ -12,7 +12,7 @@ chunkSizePerWorker <- 100
 restretchSamplePoints <- T
 
 plotWhileRunning <- T
-whatToPlot <- 'GDP.Real.GDP.in.2021c..1.'
+whatToPlot <- 'GDP_Real_GDP_in_2021c'
 
 location.frida <- './FRIDAforUncertaintyAnalysis'
 location.stella<- './Stella_Simulator_Linux'

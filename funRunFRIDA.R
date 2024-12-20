@@ -18,7 +18,9 @@ runFridaParmsByIndex <- function(i){
 	system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
 							 file.path(location.frida,'FRIDA.stmx')),
 				 ignore.stdout = T,ignore.stderr = T,wait = T)
-	return(read.csv(file.path(location.frida,'Data',name.fridaOutputFile)))
+	retDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
+	colnames(retDat) <- cleanNames(colnames(retDat))
+	return(retDat)
 }
 
 # fun runFridaDefaultParms ####
@@ -30,6 +32,16 @@ runFridaDefaultParms <- function(){
 	system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
 							 file.path(location.frida,'FRIDA.stmx')),
 				 ignore.stdout = T,ignore.stderr = T,wait = T)
-	return(read.csv(file.path(location.frida,'Data',name.fridaOutputFile)))
+	retDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
+	colnames(retDat) <- cleanNames(colnames(retDat))
+	return(retDat)
 }
 
+# fun cleanNames ####
+# takes a vector of e.g. column names and brings them into 
+# a comparable standard format
+# also drops the trailing 1 of the run id which we do not use
+# as we only have single run setups of frida
+cleanNames <- function(colNames){
+	gsub('time','year',gsub('_$','',gsub('_1','',gsub('_+','_',gsub('[.]','_',tolower(colNames))))))
+}

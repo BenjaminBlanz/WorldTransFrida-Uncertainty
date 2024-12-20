@@ -142,7 +142,7 @@ cat('done')
 if(plotWhileRunning){
 	dev.print(pdf,
 						file.path(location.output,
-											paste0(gsub('_$','',gsub('_+','_',gsub('[.]','_',whatToPlot))),'.pdf')))
+											paste0(whatToPlot,'.pdf')))
 }
 
 ### cluster cleanup ####
