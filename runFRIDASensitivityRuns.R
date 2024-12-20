@@ -9,11 +9,12 @@ require(SobolSequence)
 require(tictoc)
 require(parallel)
 require(scales)
+source('funRunFRIDA.R')
 
 # config ####
 cat('Config...')
-numWorkers <- 10
-numSample <- 5e3
+numWorkers <- 2
+numSample <- 4e2
 
 # How large the chunks of work are, smaller means more frequent pauses to write out
 # itermediate results (and update the diagnostic output).
@@ -90,21 +91,7 @@ if(!restretchSamplePoints){
 cat('done\n')
 
 # run FRIDA with the samples ####
-## fun write frida input ####
-writeFRIDAInput <- function(variables,values){
-	parmValues <- data.frame(Variable=variables,Value=values)
-	write.table(parmValues,file = file.path(location.frida,'Data',name.fridaInputFile),
-							row.names = F,col.names = F,sep=',')
-}
 ## cluster ####
-### fun runFridaPar ####
-runFridaPar <- function(i){
-	writeFRIDAInput(sampleParms$Variable,samplePoints[,i])
-	system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
-							 file.path(location.frida,'FRIDA.stmx')),
-				 ignore.stdout = T,ignore.stderr = T,wait = T)
-	return(read.csv(file.path(location.frida,'Data',name.fridaOutputFile)))
-}
 ### cluster setup ####
 cat('cluster setup...')
 baseWD <- getwd()
@@ -151,12 +138,12 @@ for(i in 1:(length(workUnitBoundaries)-1)){
 		cat(sprintf('\r   Running unit %i: samples %i to %i',
 								i, workUnitBoundaries[i],workUnitBoundaries[i+1]-1))
 		if(length(chunkTimes>1)){
-			cat(sprintf(', average duration per unit so far %f, expect completion in %f',
-									mean(chunkTimes,na.rm=T),mean(chunkTimes,na.rm=T)*(length(workUnitBoundaries)-1-i)))
+			cat(sprintf(', average duration per unit so far %i sec, expect completion in %i sec',
+									round(mean(chunkTimes,na.rm=T)),round(mean(chunkTimes,na.rm=T))*(length(workUnitBoundaries)-i)))
 		}
 		tic()
 		workUnit <- workUnitBoundaries[i]:(workUnitBoundaries[i+1]-1)
-		runDat <- parLapply(cl=cl,X=workUnit,fun = runFridaPar)
+		runDat <- parLapply(cl=cl,X=workUnit,fun = runFridaOnceByIndex)
 		timing <- toc(quiet=T)
 		chunkTimes[i] <- timing$toc-timing$tic
 		saveRDS(runDat,file.path(location.output,paste0('workUnit-',i,'.RDS')))
@@ -169,8 +156,8 @@ for(i in 1:(length(workUnitBoundaries)-1)){
 		rm(runDat)
 	}
 }
-cat(sprintf('\r    runs completed average chunk time %f, over all run time %f                                       \n',
-						mean(chunkTimes,na.rm=T),sum(chunkTimes,na.rm=T)))
+cat(sprintf('\r    runs completed average chunk time %i sec, over all run time %i sec                                       \n',
+						round(mean(chunkTimes,na.rm=T)),round(sum(chunkTimes,na.rm=T))))
 cat('done')
 
 ### save figure ####
