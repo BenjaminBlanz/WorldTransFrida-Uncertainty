@@ -154,7 +154,8 @@ for(i in 1:(length(workUnitBoundaries)-1)){
 		rm(runDat)
 	}
 }
-cat(sprintf('\r    runs completed average chunk time %f, over all run time %f\n',mean(chunkTimes,na.rm=T),sum(chunkTimes,na.rm=T)))
+cat(sprintf('\r    runs completed average chunk time %f, over all run time %f %s\n',
+						mean(chunkTimes,na.rm=T),sum(chunkTimes,na.rm=T),rep(' ',20)))
 cat('done')
 
 ### cluster cleanup ####
