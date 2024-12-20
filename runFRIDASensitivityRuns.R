@@ -143,7 +143,7 @@ for(i in 1:(length(workUnitBoundaries)-1)){
 		}
 		tic()
 		workUnit <- workUnitBoundaries[i]:(workUnitBoundaries[i+1]-1)
-		runDat <- parLapply(cl=cl,X=workUnit,fun = runFridaOnceByIndex)
+		runDat <- parLapply(cl=cl,X=workUnit,fun = runFridaParmsByIndex)
 		timing <- toc(quiet=T)
 		chunkTimes[i] <- timing$toc-timing$tic
 		saveRDS(runDat,file.path(location.output,paste0('workUnit-',i,'.RDS')))

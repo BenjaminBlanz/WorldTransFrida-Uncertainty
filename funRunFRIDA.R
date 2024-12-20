@@ -12,10 +12,11 @@ writeFRIDAInput <- function(variables,values,location.frida,name.fridaInputFile)
 # fun runFridaOnceByIndex ####
 # Uses sampleParms,samplePoints,location.frida, and name.fridaInputFile
 # from the global environment!
-runFridaOnceByIndex <- function(i){
+runFridaParmsByIndex <- function(i){
 	writeFRIDAInput(sampleParms$Variable,samplePoints[,i],location.frida,name.fridaInputFile)
 	system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
 							 file.path(location.frida,'FRIDA.stmx')),
 				 ignore.stdout = T,ignore.stderr = T,wait = T)
 	return(read.csv(file.path(location.frida,'Data',name.fridaOutputFile)))
 }
+
