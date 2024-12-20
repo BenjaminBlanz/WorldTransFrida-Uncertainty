@@ -1,6 +1,9 @@
 #
 # Manager script for the uncertainty analysis of FRIDA
 # 
+#
+# 2024 Benjamin Blanz
+# 
 
 require(SobolSequence)
 require(tictoc)
@@ -10,7 +13,7 @@ require(scales)
 # config ####
 cat('Config...')
 numWorkers <- 10
-numSample <- 5e5
+numSample <- 5e3
 
 # How large the chunks of work are, smaller means more frequent pauses to write out
 # itermediate results (and update the diagnostic output).
@@ -30,7 +33,8 @@ location.stella<- './Stella_Simulator_Linux'
 name.fridaInputFile <- 'uncertainty_analysis_paramter_values.csv'
 name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
 
-location.output <- file.path('workOutput',paste0('NumSample-',numSample,'-chunkSizePerWorker-',chunkSizePerWorker))
+location.output <- file.path('workOutput',paste0('NumSample-',numSample,
+																								 '-chunkSizePerWorker-',chunkSizePerWorker))
 dir.create(location.output,showWarnings=F,recursive=T)
 cat('done\n')
 
@@ -41,7 +45,10 @@ cat('Specify sampling parameter...')
 frida_info <- read.csv("frida_info.csv")
 columnsThatAreFlags <- c(2,3,4,5,6,7,8,9,10)
 # select the parameters to be sampled
-sampleParms <- frida_info[rowSums(frida_info[,columnsThatAreFlags])>0 & frida_info$No.Sensi==0 & frida_info$Policy==0,-columnsThatAreFlags]
+sampleParms <- frida_info[rowSums(frida_info[,columnsThatAreFlags])>0 &
+														frida_info$No.Sensi==0 & 
+														frida_info$Policy==0,
+													-columnsThatAreFlags]
 cat('done\n')
 
 # generate sobol sequence ####
@@ -93,7 +100,8 @@ writeFRIDAInput <- function(variables,values){
 ### fun runFridaPar ####
 runFridaPar <- function(i){
 	writeFRIDAInput(sampleParms$Variable,samplePoints[,i])
-	system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',file.path(location.frida,'FRIDA.stmx')),
+	system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
+							 file.path(location.frida,'FRIDA.stmx')),
 				 ignore.stdout = T,ignore.stderr = T,wait = T)
 	return(read.csv(file.path(location.frida,'Data',name.fridaOutputFile)))
 }
@@ -105,12 +113,16 @@ workDirBasename <- 'workDir_'
 cl <- makeForkCluster(numWorkers,renice=15)
 workers <- 1:length(cl)
 # make working directories
-gobble <- clusterApply(cl,workers,function(i){dir.create(file.path('workerDirs',paste0(workDirBasename,i)),showWarnings = F,recursive = T)}) 
-gobble <- clusterApply(cl,workers,function(i){setwd(file.path('workerDirs',paste0(workDirBasename,i)))})
+gobble <- clusterApply(cl,workers,function(i){
+	dir.create(file.path('workerDirs',paste0(workDirBasename,i)),showWarnings = F,recursive = T)}) 
+gobble <- clusterApply(cl,workers,function(i){
+	setwd(file.path('workerDirs',paste0(workDirBasename,i)))})
 #clusterEvalQ(cl,getwd())
 # copy over the model and simulator
-gobble <- clusterApply(cl,workers,function(i){system(paste('cp -r',file.path(baseWD,location.frida),getwd()))})
-gobble <- clusterApply(cl,workers,function(i){system(paste('cp -r',file.path(baseWD,location.stella),getwd()))})
+gobble <- clusterApply(cl,workers,function(i){
+	system(paste('cp -r',file.path(baseWD,location.frida),getwd()))})
+gobble <- clusterApply(cl,workers,function(i){
+	system(paste('cp -r',file.path(baseWD,location.stella),getwd()))})
 cat('done\n')
 
 ### cluster run ####
@@ -129,13 +141,15 @@ if(workUnitBoundaries[length(workUnitBoundaries)]!=numSample){
 }
 # add one to the last work unit boundary, as during running we always deduct one from the next boundary
 workUnitBoundaries[length(workUnitBoundaries)] <- numSample+1
-cat(sprintf('  Run of %i runs split up into %i work units.\n',numSample,length(workUnitBoundaries)-1))
+cat(sprintf('  Run of %i runs split up into %i work units.\n',
+						numSample,length(workUnitBoundaries)-1))
 chunkTimes <- c()
 for(i in 1:(length(workUnitBoundaries)-1)){
 	if(file.exists(file.path(location.output,paste0('workUnit-',i,'.RDS')))){
 		cat(sprintf('\r   Skipping unit %i already exists',i))
 	} else {
-		cat(sprintf('\r   Running unit %i: samples %i to %i', i, workUnitBoundaries[i],workUnitBoundaries[i+1]-1))
+		cat(sprintf('\r   Running unit %i: samples %i to %i',
+								i, workUnitBoundaries[i],workUnitBoundaries[i+1]-1))
 		if(length(chunkTimes>1)){
 			cat(sprintf(', average duration per unit so far %f, expect completion in %f',
 									mean(chunkTimes,na.rm=T),mean(chunkTimes,na.rm=T)*(length(workUnitBoundaries)-1-i)))
@@ -161,7 +175,9 @@ cat('done')
 
 ### save figure ####
 if(plotWhileRunning){
-	dev.print(pdf,file.path(location.output,paste0(gsub('_$','',gsub('_+','_',gsub('[.]','_',whatToPlot))),'.pdf')))
+	dev.print(pdf,
+						file.path(location.output,
+											paste0(gsub('_$','',gsub('_+','_',gsub('[.]','_',whatToPlot))),'.pdf')))
 }
 
 ### cluster cleanup ####
