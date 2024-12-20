@@ -27,7 +27,7 @@ runFridaParmsByIndex <- function(i){
 # Uses sampleParms,samplePoints,location.frida, and name.fridaInputFile
 # from the global environment
 runFridaDefaultParms <- function(){
-	system(paste('rm',file.path(location.frida,'data',name.fridaInputFile)),
+	system(paste('rm',file.path(location.frida,'Data',name.fridaInputFile)),
 				 ignore.stdout = T, ignore.stderr = T)
 	system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
 							 file.path(location.frida,'FRIDA.stmx')),
