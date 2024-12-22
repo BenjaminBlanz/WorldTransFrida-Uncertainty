@@ -9,15 +9,18 @@ chunkSizePerWorker <- 100
 # equal density.
 # However we might want to ensure that there are similar number of points above and 
 # below the Value in our baseline calibration, our prior.
-restretchSamplePoints <- T
+restretchSamplePoints <- F
 
 plotWhileRunning <- T
 whatToPlot <- 'GDP_Real_GDP_in_2021c'
 
 location.frida <- './FRIDAforUncertaintyAnalysis'
 location.stella<- './Stella_Simulator_Linux'
+name.fridaExportVarsFile <- 'varsForExport.txt'
 name.fridaInputFile <- 'uncertainty_analysis_paramter_values.csv'
 name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
 
 location.output <- file.path('workOutput',paste0('NumSample-',numSample,
 																								 '-chunkSizePerWorker-',chunkSizePerWorker))
+
+minObsForLike <- 30
