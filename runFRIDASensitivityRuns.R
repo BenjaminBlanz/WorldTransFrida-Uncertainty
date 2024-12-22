@@ -18,7 +18,17 @@ dir.create(location.output,showWarnings=F,recursive=T)
 file.copy('config.R',location.output)
 cat('done\n')
 
-
+# read input files for likelihood ####
+if(file.exists(file.path(location.output,'sigma.RDS'))){
+	resSigma <- readRDS(file.path(location.output,'sigma.RDS'))
+} else {
+	stop('Missing covariance matrix file. Run runFRIDASensitivityRunLikelihood first.\n')
+}
+if(file.exists(file.path(location.output,'calDat.RDS'))){
+	calDat <- readRDS(file.path(location.output,'calDat.RDS'))
+} else {
+	stop('Missing calDat file. Run runFRIDASensitivityRunLikelihood first.\n')
+}
 # specify sampling parameters ####
 cat('Specify sampling parameter...')
 # read in the parameters in frida that have ranges defined
@@ -70,6 +80,8 @@ if(!restretchSamplePoints){
 cat('done\n')
 
 # run FRIDA with the samples ####
+negLogLikes <- data.frame(parmsIndex = 1:numSample,
+													negLogLike=rep(0,numSample))
 ## cluster ####
 ### cluster setup ####
 cat('cluster setup...')
@@ -94,9 +106,14 @@ cat('done\n')
 ### cluster run ####
 cat('cluster run...')
 if(plotWhileRunning){
-	plot(0,0,type='n',ylim=c(0,1e6),xlim=c(1980,2130),
+	defDat <- runFridaDefaultParms()
+	par(mfrow=c(1,1))
+	par(mar=c(5.1,5.1,4.1,2.1))
+	ylims <- range(defDat[[whatToPlot]])
+	plot(rownames(defDat),defDat[[whatToPlot]],type='l',
+			 ylim=c(ylims[1]-diff(ylims)*0.2,ylims[2]+diff(ylims)*0.2),xlim=c(1980,2130),
 			 xlab='year',ylab='Real GDP in 2021 bn intl$',
-			 xaxt='n')
+			 xaxt='n',lwd=4)
 	axis(1,at=seq(1980,2130,10))
 }
 workUnitBoundaries <- seq(1,numSample,chunkSizePerWorker*length(cl))
@@ -112,8 +129,11 @@ cat(sprintf('  Run of %i runs split up into %i work units.\n',
 chunkTimes <- c()
 for(i in 1:(length(workUnitBoundaries)-1)){
 	if(file.exists(file.path(location.output,paste0('workUnit-',i,'.RDS')))){
-		cat(sprintf('\r   Skipping unit %i already exists',i))
-	} else {
+		cat(sprintf('\r   Reading existing unit %i',i))
+		tryCatch({parOutput <- readRDS(file.path(location.output,paste0('workUnit-',i,'.RDS')))},
+						 error = function(e){},warning=function(w){})
+	} 
+	if(!exists('parOutput')){
 		cat(sprintf('\r   Running unit %i: samples %i to %i',
 								i, workUnitBoundaries[i],workUnitBoundaries[i+1]-1))
 		if(length(chunkTimes>1)){
@@ -122,22 +142,34 @@ for(i in 1:(length(workUnitBoundaries)-1)){
 		}
 		tic()
 		workUnit <- workUnitBoundaries[i]:(workUnitBoundaries[i+1]-1)
-		runDat <- parLapply(cl=cl,X=workUnit,fun = runFridaParmsByIndex)
+		parOutput <- parLapplyLB(cl=cl,X=workUnit,fun = runFridaParmsByIndex)
 		timing <- toc(quiet=T)
 		chunkTimes[i] <- timing$toc-timing$tic
-		saveRDS(runDat,file.path(location.output,paste0('workUnit-',i,'.RDS')))
-		if(plotWhileRunning){
-			# readline(prompt="Press [enter] to continue")
-			for(l in 1:length(runDat)){
-				lines(runDat[[l]]$Year,runDat[[l]][[whatToPlot]],col=alpha(i,0.25))
-			}
-		}
-		rm(runDat)
+		saveRDS(parOutput,file.path(location.output,paste0('workUnit-',i,'.RDS')))
 	}
+	for(l in 1:length(parOutput)){
+		negLogLikes$negLogLike[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$negLogLike
+	}
+	if(plotWhileRunning){
+		# readline(prompt="Press [enter] to continue")
+		for(l in 1:length(parOutput)){
+			lines(rownames(parOutput[[l]]$runDat),parOutput[[l]]$runDat[[whatToPlot]],
+						col=alpha(i,min(0.25,max(0.05,parOutput[[l]]$negLogLike/1e7))))
+		}
+	}
+	rm(parOutput)
 }
-cat(sprintf('\r    runs completed average chunk time %i sec, over all run time %i sec                                       \n',
-						round(mean(chunkTimes,na.rm=T)),round(sum(chunkTimes,na.rm=T))))
-cat('done')
+if(length(chunkTimes)==0){
+	cat('\r    all runs read, no calculation necessary.                                \n')
+} else {
+	cat(sprintf('\r    runs completed average chunk time %i sec, over all run time %i sec                                       \n',
+							round(mean(chunkTimes,na.rm=T)),round(sum(chunkTimes,na.rm=T))))
+}
+cat('done\n')
+
+### save Likelihoods and sample points ####
+saveData <- list(sampleParms=sampleParms,samplePoints = samplePoints,negLogLikes=negLogLikes)
+saveRDS(saveData,file.path(location.output,paste0('sensiParmsAndLikes.RDS')))
 
 ### save figure ####
 if(plotWhileRunning){

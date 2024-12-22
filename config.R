@@ -1,5 +1,5 @@
-numWorkers <- 2
-numSample <- 4e2
+numWorkers <- parallel::detectCores()
+numSample <- 1e5
 
 # How large the chunks of work are, smaller means more frequent pauses to write out
 # itermediate results (and update the diagnostic output).
@@ -12,7 +12,7 @@ chunkSizePerWorker <- 100
 restretchSamplePoints <- F
 
 plotWhileRunning <- T
-whatToPlot <- 'GDP_Real_GDP_in_2021c'
+whatToPlot <- tolower('GDP_Real_GDP_in_2021c')
 
 location.frida <- './FRIDAforUncertaintyAnalysis'
 location.stella<- './Stella_Simulator_Linux'

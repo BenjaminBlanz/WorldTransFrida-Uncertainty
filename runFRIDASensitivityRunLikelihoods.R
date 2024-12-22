@@ -328,6 +328,16 @@ if(plotWhileRunning){
 }
 
 # covar ####
+calDat <- calDat.afterImpute[,-exclude.idc]
+varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
+writeFRIDAExportSpec(varsForExport.fridaNames)
+defDat <- runFridaDefaultParms()
+if(sum(colnames(defDat)!=colnames(calDat))!=0){
+	stop('Mismatch in the columns of calibration data and model result data')
+}
+resDat <- defDat[1:nrow(calDat),]-calDat
+
+
 cat('Determining the distribution of the residuals in the default case...\n')
 resDat.cv <- NA
 # this is not the correct way to do it. May not yield a positive definit matrix.
@@ -398,6 +408,9 @@ if(is.infinite(defNegLogLike)||is.na(defNegLogLike)){
 	stop('Bad default negLogLike\n')
 }
 
-# run Runs ####
-source('runFRIDASensitivityRuns.R')
+# save run prep ####
+dir.create(location.output,showWarnings=F,recursive=T)
+writeFRIDAExportSpec(varsForExport.fridaNames.orig[-exclude.idc])
+saveRDS(resDat.cv,file.path(location.output,'sigma.RDS'))
+saveRDS(calDat,file.path(location.output,'calDat.RDS'))
 

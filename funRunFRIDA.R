@@ -21,19 +21,23 @@ writeFRIDAInput <- function(variables,values){
 # Uses from global env:
 #   sampleParms,samplePoints,location.frida, and name.fridaInputFile
 # If retNegLogLike also uses from global env:
-# 	calDat,resDat.cv
-runFridaParmsByIndex <- function(i,retNegLogLike=F){
+# 	calDat,resSigma
+runFridaParmsByIndex <- function(i){
 	writeFRIDAInput(sampleParms$Variable,samplePoints[,i])
 	system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
 							 file.path(location.frida,'FRIDA.stmx')),
 				 ignore.stdout = T,ignore.stderr = T,wait = T)
-	retDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
-	colnames(retDat) <- cleanNames(colnames(retDat))
-	rownames(retDat) <- retDat$year
-	retDat <- retDat[,-1]
-	resDat <- retDat[1:nrow(calDat),]-calDat
-	negLogLike <- funLikelihood(resDat[complete.cases(resDat),],resDat.cv)
-	return(list(retDat,negLogLike))
+	runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
+	colnames(runDat) <- cleanNames(colnames(runDat))
+	rownames(runDat) <- runDat$year
+	runDat <- runDat[,-1]
+	resDat <- runDat[1:nrow(calDat),]-calDat
+	if(is.na(runDat[[1]][nrow(runDat)])){
+		negLogLike <- 0
+	} else {
+		negLogLike <- funLikelihood(resDat[complete.cases(resDat),],resSigma)
+	}
+	return(list(parmsIndex=i,runDat=runDat,negLogLike=negLogLike))
 }
 
 # fun runFridaDefaultParms ####
@@ -45,11 +49,11 @@ runFridaDefaultParms <- function(){
 	system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
 							 file.path(location.frida,'FRIDA.stmx')),
 				 ignore.stdout = T,ignore.stderr = T,wait = T)
-	retDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
-	colnames(retDat) <- cleanNames(colnames(retDat))
-	rownames(retDat) <- retDat$year
-	retDat <- retDat[,-1]
-	return(retDat)
+	runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
+	colnames(runDat) <- cleanNames(colnames(runDat))
+	rownames(runDat) <- runDat$year
+	runDat <- runDat[,-1]
+	return(runDat)
 }
 
 # fun cleanNames ####
