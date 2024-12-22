@@ -5,8 +5,9 @@
 # 2024 Benjamin Blanz
 # 
 
-require(caret) # to find linear combinations and remove them in the calib dat
-require(matrixcalc) # to test positive definitnes of cov matrix
+require(caret,quietly = T) # to find linear combinations and remove them in the calib dat
+require(matrixcalc,quietly = T) # to test positive definitnes of cov matrix
+require(Rmpfr,quietly = T) # for the arbitrary precis math needed in the likelihood
 
 source('config.R')
 source('funRunFRIDA.R')
@@ -215,6 +216,14 @@ if(plotWhileRunning){
 				 ylim=c(0,1))
 		# abline(h=0)
 		axis(1,pos=1)
+		if(i == 1){
+			mtext('Gray areas do not have complete cases',
+						3,line = -4,adj=0)
+			mtext('Red lines highlight the vars which most limit the complete cases window',
+						3,line = -6,adj=0)
+			mtext(sprintf('Complete cases: %i',nrow(calDat)-length(incompleteIdc)),
+						3,line = -8,adj=0)
+		}
 		par(mar=oldMar)
 	}
 	for(i in 1:ncol(calDat)){
@@ -287,11 +296,6 @@ if(plotWhileRunning){
 				 colnames(calDat)[i],
 				 cex=0.8,xpd=T,adj=c(0.5,0))
 	}
-	plot(0,0,type='n',axes=F)
-	mtext('Gray areas do not have complete cases',3,line = -2,adj=0)
-	mtext('Red lines highlight the vars which most limit the complete cases window',
-				3,line = -4,adj=0)
-	mtext(sprintf('Complete cases: %i',nrow(calDat)-length(incompleteIdc)),3,line = -6,adj=0)
 }
 
 
@@ -350,7 +354,7 @@ if(sum(is.na(resDat.cv))>0){
 if(sum(is.na(resDat.cv))>0){
 	stop('The covariance matrix could not be calculated\n')
 }
-if(!is.negative.definite(resDat.cv)){
+if(is.negative.definite(resDat.cv)){
 	stop('The estimated covariance matrix is negative definite.\n')
 }
 if(is.singular.matrix(resDat.cv)){
@@ -360,77 +364,9 @@ if(is.singular.matrix(resDat.cv)){
 	cat('Estimated covariance matrix is fine\n')
 }
 
+# likelihood ####
+precisBit <- 2048
+resDat <- mpfr(as.matrix(resDat),precisBit)
+resDat.cv <- mpfr(as.matrix(resDat.cv),precisBit)
+funLikelihood(resDat,resDat.cv)
 
-
-
-
-if(F){
-
-resDat.mvn <- FitGMM(as.matrix(resDat),
-										 init_means = list(a=colMeans(resDat,na.rm=T)),
-										 init_covs = list(a=diag(1,nrow = ncol(resDat), ncol=ncol(resDat))),
-										 #fix_means = T,
-										 maxit = 1e5,
-										 eps = 1e-6)
-resDat.mu <- resDat.mvn@Mean
-resDat.sigma <- resDat.mvn@Covariance
-
-
-
-
-
-
-
-
-
-# Joint Model Likelihood Function ####
-# 
-# The model likelihood is likelihood that the residuals of the model are a 
-# multivariate normal distribution. This is the standard assumption in most 
-# fit procedures, including OLS.
-# In addition to the model parameters we need the residual variance and covariance
-# parameters. In principle these are also fit parameters. However, it is reasonable
-# to treat them as nuisance parameters and use the values from the calibration result
-# for these parameters for all likelihood evaluations.
-# 
-
-# vornoi in higher dimensions 
-#https://cran.r-project.org/web/packages/geometry/index.html
-
-# 
-# Likelihood is that the 
-# residuals of the model are a multivariate normal distribution with model parameters
-# and residual variances and covariance specified from jParVect.
-# Equations taken from: https://mathworld.wolfram.com/BivariateNormalDistribution.html
-# 
-# jParVect contains coefficeints of the mrate model, 
-# followed by the sd of the mortality residuals,
-# followed by the coefficients of the growth model,
-# followed by the sd of the growth residuals
-# followed by the covariance of the two residuals.
-#          Idx: 1  2  3  4      5  6  7  8  9      10      
-# jParVect == c(m1,m2,m3,msigma,g1,g2,g3,g4,gsigma,jcov)
-jnegLLikelihood.f <- function(jParVect){
-	mort.resid <- mort.resid.f(jParVect[1:3])
-	growth.resid <- growth.resid.f(jParVect[5:8])
-	x <- matrix(c(mort.resid,growth.resid),ncol=2,byrow = F)
-	cov.mat <- matrix(c(jParVect[4]^2,jParVect[10],jParVect[10],jParVect[9]^2),nrow=2)
-	return(-sum(dmvnorm(x,c(0,0),cov.mat,log=T)))
-}
-
-#note that the parVect here does not have the sigmas or jcov.
-jnegLLikelihoodFixedCovMat.f <- function(jParVectNoSigma){
-	mort.resid <- mort.resid.f(jParVectNoSigma[1:3])
-	growth.resid <- growth.resid.f(jParVectNoSigma[4:7])
-	x <- matrix(c(mort.resid,growth.resid),ncol=2,byrow = F)
-	return(-sum(dmvnorm(x,c(0,0),cov.mat,log=T)))
-}
-
-# Growth Model Likelihood Function ####
-# ignoring 
-gnegLLikelihood.f <- function(gParVect){
-	growth.resid <- growth.resid.f(gParVect)
-	return(-sum(dnorm(growth.resid,0,sd(growth.resid))))
-}
-
-}
