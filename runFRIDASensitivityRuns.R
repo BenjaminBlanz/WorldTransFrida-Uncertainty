@@ -15,6 +15,7 @@ source('funRunFRIDA.R')
 cat('Config...')
 source('config.R')
 dir.create(location.output,showWarnings=F,recursive=T)
+file.copy('config.R',location.output)
 cat('done\n')
 
 

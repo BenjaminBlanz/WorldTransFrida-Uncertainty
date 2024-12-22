@@ -2,6 +2,13 @@
 # Functions to run frida
 #
 
+# fun write firda export vars ####
+writeFRIDAExportSpec <- function(varsForExport.fridaNames){
+	sink(file=file.path(location.frida,'Data',name.fridaExportVarsFile))
+	cat(paste0(varsForExport.fridaNames,collapse='\n'))
+	sink()
+}
+
 # fun write frida input ####
 # uses location.frida and name.fridaInputFile from the global env.
 writeFRIDAInput <- function(variables,values){
@@ -11,9 +18,11 @@ writeFRIDAInput <- function(variables,values){
 }
 
 # fun runFridaParmsByIndex ####
-# Uses sampleParms,samplePoints,location.frida, and name.fridaInputFile
-# from the global environment
-runFridaParmsByIndex <- function(i){
+# Uses from global env:
+#   sampleParms,samplePoints,location.frida, and name.fridaInputFile
+# If retNegLogLike also uses from global env:
+# 	calDat,resDat.cv
+runFridaParmsByIndex <- function(i,retNegLogLike=F){
 	writeFRIDAInput(sampleParms$Variable,samplePoints[,i])
 	system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
 							 file.path(location.frida,'FRIDA.stmx')),
@@ -22,11 +31,13 @@ runFridaParmsByIndex <- function(i){
 	colnames(retDat) <- cleanNames(colnames(retDat))
 	rownames(retDat) <- retDat$year
 	retDat <- retDat[,-1]
-	return(retDat)
+	resDat <- retDat[1:nrow(calDat),]-calDat
+	negLogLike <- funLikelihood(resDat[complete.cases(resDat),],resDat.cv)
+	return(list(retDat,negLogLike))
 }
 
 # fun runFridaDefaultParms ####
-# Uses sampleParms,samplePoints,location.frida, and name.fridaInputFile
+# Uses location.frida, and name.fridaInputFile
 # from the global environment
 runFridaDefaultParms <- function(){
 	system(paste('rm',file.path(location.frida,'Data',name.fridaInputFile)),

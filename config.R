@@ -25,7 +25,7 @@ location.output <- file.path('workOutput',paste0('NumSample-',numSample,
 # For the likelihood we require a positive definite covariance matrix of the residuals.
 # A greater number of minObs increase the change of having more complete cases to 
 # work with, increasing our ods of a good cov mat.
-minObsForLike <- 44
+minObsForLike <- 40
 # linear combinations in the residuals will make the matrix singular, i.e. not 
 # positive definite. So we remove then
 removeLinearCombinations <- T

@@ -7,7 +7,7 @@
 
 require(caret,quietly = T) # to find linear combinations and remove them in the calib dat
 require(matrixcalc,quietly = T) # to test positive definitnes of cov matrix
-require(Rmpfr,quietly = T) # for the arbitrary precis math needed in the likelihood
+suppressPackageStartupMessages(require(imputeTS)) # used for interpolating missing values
 
 source('config.R')
 source('funRunFRIDA.R')
@@ -56,114 +56,15 @@ sink()
 calDat.orig <- read.csv(file.path(location.frida,'Data','Calibration Data Cleaned and Transposed.csv'))
 colnames(calDat.orig) <- cleanNames(colnames(calDat.orig))
 rownames(calDat.orig) <- calDat.orig$year
-calDat.orig <- calDat.orig[,-1]
+calDat <- calDat.orig <- calDat.orig[,-1]
 cat('done\n')
-
-# determine Vars to Exclude ####
-cat('Applying rules to exclude variables from likelihood analysis...\n')
-# exclude all that have fewer than three data points as we
-# can not determine variance in those cases.
-numNA <- c()
-for(i in 1:ncol(calDat.orig)){
-	numNA[i] <- sum(is.na(calDat.orig[,i]))
-}
-exclude.idc <- which((nrow(calDat.orig)-numNA) < minObsForLike)
-
-cat(sprintf('  Excluding for less than minObsForLike (%i) observations:\n    ',minObsForLike))
-cat(paste(colnames(calDat.orig)[exclude.idc],collapse='\n    '))
-cat('\n')
-
-# find linear combinations ####
-if(removeLinearCombinations){
-	calDat <- calDat.orig[,-exclude.idc]
-	linearCombos <- caret::findLinearCombos(calDat[complete.cases(calDat),])
-	if(length(linearCombos$remove)>0){
-		new.exclude.idc <- idxOfVarName(colnames(calDat)[linearCombos$remove],
-																		varsForExport.cleanNames.orig)
-		cat('  Excluding because they are linear combinations of other vars:\n    ')
-		cat(paste(varsForExport.cleanNames.orig[new.exclude.idc],collapse='\n    '))
-		cat('\n')
-		exclude.idc <- unique(c(exclude.idc,new.exclude.idc))
-	}
-}
-
-# exclude vars ####
-doneExcluding <- F
-while(!doneExcluding){
-	calDat <- calDat.orig[,-exclude.idc]
-	varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
-	doneExcluding <- T
-	
-	# write Vars to frida input file ####
-	sink(file=file.path(location.frida,'Data',name.fridaExportVarsFile))
-	cat(paste0(varsForExport.fridaNames,collapse='\n'))
-	sink()
-	
-	# default run ####
-	defDat <- runFridaDefaultParms()
-	if(sum(colnames(defDat)!=colnames(calDat))!=0){
-		stop('Mismatch in the columns of calibration data and model result data')
-	}
-	
-	# default resid ####
-	resDat <- defDat[1:nrow(calDat),]-calDat
-	
-	# check for zero var vars in resid ####
-	for(i in 1:ncol(resDat)){
-		if(var(resDat[,i],na.rm=T)==0){
-			cat(sprintf('  Excluding %s for zero variance in resid\n',
-					colnames(resDat)[i]))
-			doneExcluding <- F
-			exclude.idc <- c(exclude.idc,
-											 which(varsForExport.cleanNames.orig==colnames(resDat)[i]))
-		}
-	}
-	
-	# check for perfect corr in resid ####
-	if(doneExcluding){
-		resDat.cor <- cor(resDat,use='complete.obs')
-		perfCors <- which((resDat.cor-diag(1,ncol(resDat)))==1,arr.ind=T)
-		if(nrow(perfCors)>0){
-			for(i in 1:nrow(perfCors)){
-				if(!(colnames(resDat)[perfCors[i,2]] %in% varsForExport.cleanNames.orig[exclude.idc])){
-					cat(sprintf('  Excluding %s for perfect cor. with %s\n',
-											colnames(resDat)[perfCors[i,1]],colnames(resDat)[perfCors[i,2]]))
-					exclude.idc <- c(exclude.idc,
-													 which(varsForExport.cleanNames.orig==colnames(resDat)[perfCors[i,1]]))
-					doneExcluding <- F
-				}
-			}
-		}
-	}
-	
-	# check for further linear combos ####
-	if(removeLinearCombinations){
-		if(doneExcluding){
-			linearCombos <- caret::findLinearCombos(resDat[complete.cases(resDat),])
-			if(length(linearCombos$remove)>0){
-				new.exclude.idc <- idxOfVarName(colnames(calDat)[linearCombos$remove],
-																				varsForExport.cleanNames.orig)
-				cat('  Excluding because they are linear combinations of other vars:\n    ')
-				cat(paste(varsForExport.cleanNames.orig[new.exclude.idc],collapse='\n    '))
-				cat('\n\n')
-				exclude.idc <- unique(c(exclude.idc,new.exclude.idc))
-				doneExcluding <- F
-			}
-		}
-	}
-}
-calDat <- calDat.orig[,-exclude.idc]
-cat('...done\n')
-cat(sprintf('After exclusion we are left with %i out of %i variables\n',ncol(resDat),length(varsForExport.cleanNames.orig)))
 
 # impute missing vars ####
 if(imputeMissingVars||extrapolateMissingVarMethod!='n'){
-	calDat.beforeImputeExtr <- calDat.orig[,-exclude.idc]
 	ncols <- ncol(calDat)
-	require(imputeTS)
 	for(i in 1:ncol(calDat)){
 		## setup
-		x <- calDat.beforeImputeExtr[[i]]
+		x <- calDat.orig[[i]]
 		validRange <- funValidRange(x)
 		## impute 
 		if(imputeMissingVars){
@@ -181,9 +82,132 @@ if(imputeMissingVars||extrapolateMissingVarMethod!='n'){
 		## write back
 		calDat[[i]] <- x
 	}
-	calDat.impExtrValue <- calDat.beforeImputeExtr
-	calDat.impExtrValue <- is.na(calDat.beforeImputeExtr)&!is.na(calDat)
+	calDat.impExtrValue <- calDat.orig
+	calDat.impExtrValue <- is.na(calDat.orig)&!is.na(calDat)
 }
+calDat.afterImpute <- calDat
+
+# determine Vars to Exclude ####
+cat('Applying rules to exclude variables from likelihood analysis...\n')
+# exclude all that have fewer than three data points as we
+# can not determine variance in those cases.
+numNA <- c()
+for(i in 1:ncol(calDat.afterImpute)){
+	numNA[i] <- sum(is.na(calDat.afterImpute[,i]))
+}
+exclude.idc <- which((nrow(calDat.afterImpute)-numNA) < minObsForLike)
+
+cat(sprintf('  Excluding for less than minObsForLike (%i) observations:\n    ',minObsForLike))
+cat(paste(colnames(calDat.afterImpute)[exclude.idc],collapse='\n    '))
+cat('\n')
+calDat <- calDat.afterImpute[,-exclude.idc]
+
+# exclude vars ####
+doneExcluding <- F
+while(!doneExcluding){
+	doneExcluding <- T
+	# calc resid
+	calDat <- calDat.afterImpute[,-exclude.idc]
+	varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
+	writeFRIDAExportSpec(varsForExport.fridaNames)
+	defDat <- runFridaDefaultParms()
+	if(sum(colnames(defDat)!=colnames(calDat))!=0){
+		stop('Mismatch in the columns of calibration data and model result data')
+	}
+	resDat <- defDat[1:nrow(calDat),]-calDat
+	
+	# check for zero var vars in resid ####
+	for(i in 1:ncol(resDat)){
+		if(var(resDat[,i],na.rm=T)==0){
+			cat(sprintf('  Excluding %s for zero variance in resid\n',
+					colnames(resDat)[i]))
+			doneExcluding <- F
+			exclude.idc <- c(exclude.idc,
+											 which(varsForExport.cleanNames.orig==colnames(resDat)[i]))
+		}
+	}
+}
+
+# check for perfect corr in resid ####
+# calc resid
+calDat <- calDat.afterImpute[,-exclude.idc]
+varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
+writeFRIDAExportSpec(varsForExport.fridaNames)
+defDat <- runFridaDefaultParms()
+if(sum(colnames(defDat)!=colnames(calDat))!=0){
+	stop('Mismatch in the columns of calibration data and model result data')
+}
+resDat <- defDat[1:nrow(calDat),]-calDat
+
+resDat.cor <- cor(resDat,use='complete.obs')
+perfCors <- which((resDat.cor-diag(1,ncol(resDat)))==1,arr.ind=T)
+if(nrow(perfCors)>0){
+	for(i in 1:nrow(perfCors)){
+		if(!(colnames(resDat)[perfCors[i,2]] %in% varsForExport.cleanNames.orig[exclude.idc])){
+			cat(sprintf('  Excluding %s for perfect cor. with %s\n',
+									colnames(resDat)[perfCors[i,1]],colnames(resDat)[perfCors[i,2]]))
+			exclude.idc <- c(exclude.idc,
+											 which(varsForExport.cleanNames.orig==colnames(resDat)[perfCors[i,1]]))
+		}
+	}
+}
+
+# find linear combinations ####
+
+##  in calDat ####
+
+# new resid
+calDat <- calDat.afterImpute[,-exclude.idc]
+varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
+writeFRIDAExportSpec(varsForExport.fridaNames)
+defDat <- runFridaDefaultParms()
+if(sum(colnames(defDat)!=colnames(calDat))!=0){
+	stop('Mismatch in the columns of calibration data and model result data')
+}
+resDat <- defDat[1:nrow(calDat),]-calDat
+
+if(removeLinearCombinations){
+	linearCombos <- caret::findLinearCombos(resDat[complete.cases(resDat),])
+	if(length(linearCombos$remove)>0){
+		new.exclude.idc <- idxOfVarName(colnames(calDat)[linearCombos$remove],
+																		varsForExport.cleanNames.orig)
+		cat('  Excluding because they are linear combinations of other vars:\n    ')
+		cat(paste(varsForExport.cleanNames.orig[new.exclude.idc],collapse='\n    '))
+		cat('\n')
+		exclude.idc <- unique(c(exclude.idc,new.exclude.idc))
+	}
+}
+
+## in calDat.cv ####
+
+# new resid
+calDat <- calDat.afterImpute[,-exclude.idc]
+varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
+writeFRIDAExportSpec(varsForExport.fridaNames)
+defDat <- runFridaDefaultParms()
+if(sum(colnames(defDat)!=colnames(calDat))!=0){
+	stop('Mismatch in the columns of calibration data and model result data')
+}
+resDat <- defDat[1:nrow(calDat),]-calDat
+
+tryCatch({resDat.cv <- cov(resDat,use='complete.obs')},
+				 error=function(e){resDat.cv <- NA})
+if(sum(is.na(resDat.cv))==0){
+	if(is.singular.matrix(resDat.cv)){
+		linearCombos <- caret::findLinearCombos(calDat[complete.cases(calDat),])
+		if(length(linearCombos$remove)>0){
+			new.exclude.idc <- idxOfVarName(colnames(calDat)[linearCombos$remove],
+																			varsForExport.cleanNames.orig)
+			cat('  Excluding because they are linear combinations of other vars:\n    ')
+			cat(paste(varsForExport.cleanNames.orig[new.exclude.idc],collapse='\n    '))
+			cat('\n')
+			exclude.idc <- unique(c(exclude.idc,new.exclude.idc))
+		}
+	}
+}
+calDat <- calDat.afterImpute[,-exclude.idc]
+cat('...done\n')
+cat(sprintf('After exclusion we are left with %i out of %i variables\n',ncol(resDat),length(varsForExport.cleanNames.orig)))
 
 # data Plots ####
 completeIdc <- which(complete.cases(calDat))
@@ -192,6 +216,7 @@ incompleteYears <- as.numeric(rownames(calDat)[incompleteIdc])
 firstCompleteIdx <- completeIdc[1]
 lastCompleteIdx <- completeIdc[length(completeIdc)]
 years <- as.numeric(rownames(calDat))
+ncols <- ncol(calDat)
 if(plotWhileRunning){
 	sqrtNcols <- sqrt(ncols)
 	plotCols <- round(sqrtNcols)
@@ -217,18 +242,19 @@ if(plotWhileRunning){
 		# abline(h=0)
 		axis(1,pos=1)
 		if(i == 1){
-			mtext('Gray areas do not have complete cases',
+			mtext(sprintf(paste('Gray areas do not have complete cases.',
+			'Red lines highlight the vars which most limit the complete cases window.',
+			'Red crosses are imputed or extrapolated values.',
+			'Blue line is prior model calibration.',
+			'Complete cases: %i'),nrow(calDat)-length(incompleteIdc)),
 						3,line = -4,adj=0)
-			mtext('Red lines highlight the vars which most limit the complete cases window',
-						3,line = -6,adj=0)
-			mtext(sprintf('Complete cases: %i',nrow(calDat)-length(incompleteIdc)),
-						3,line = -8,adj=0)
 		}
 		par(mar=oldMar)
 	}
 	for(i in 1:ncol(calDat)){
 		plot(rownames(calDat),calDat[[i]],type='n',
-				 xaxt='n',yaxt='n')
+				 xaxt='n',yaxt='n',
+				 ylim=range(c(calDat[[i]],defDat[[i]]),na.rm=T))
 		for(year in incompleteYears){
 			year <- as.numeric(year)
 			rect(year-0.5,par('usr')[3],year+0.5,par('usr')[4],
@@ -236,7 +262,7 @@ if(plotWhileRunning){
 		}
 		box()
 		# add label specifying var indext to top left
-		text(years[1],max(calDat[[i]],na.rm=T),i,adj=c(0,1))
+		text(years[1],max(calDat[[i]],defDat[[i]],na.rm=T),i,adj=c(0,1))
 		# highlight if this var has its last obs on the boundary of incomplete obs
 		validRange <- funValidRange(calDat[[i]])
 		if(firstCompleteIdx!=1 && validRange[1]==firstCompleteIdx){
@@ -245,13 +271,16 @@ if(plotWhileRunning){
 		if(lastCompleteIdx!=nrow(calDat) && validRange[2]==lastCompleteIdx){
 			abline(v=years[validRange[2]+1]-0.5,col='red',lwd=3)
 		}
-		# add all points
-		points(rownames(calDat),calDat[[i]])
+		# add default model line
+		lines(rownames(defDat),defDat[[i]],col='blue')
+		# add obs points
+		points(rownames(calDat)[!calDat.impExtrValue[,i]],
+					 calDat[[i]][!calDat.impExtrValue[,i]])
 		# add imputed points in red
 		if(imputeMissingVars||extrapolateMissingVarMethod!='n'){
 			points(rownames(calDat)[calDat.impExtrValue[,i]],
 						 calDat[[i]][calDat.impExtrValue[,i]],
-						 col='red',pch=20)
+						 col='red',pch=3)
 		}
 		# add axis ticks
 		axis(1,labels=F,tcl=0.3)
@@ -263,7 +292,7 @@ if(plotWhileRunning){
 		if(ydev2in(yPosVal-par('usr')[3]) < 
 			 strwidth(as.character(min(yAxVals)),
 			 				 # font=par('font'),
-			 				 family = 'Times New Roman',
+			 				 family = 'Serif',
 			 				 units='inch',
 			 				 cex=axTextCex)){
 			adjVal <- c(0,0)
@@ -289,15 +318,14 @@ if(plotWhileRunning){
 				 yPosVal,
 				 max(yAxVals),
 				 xpd=T,cex=axTextCex,srt=90,adj=adjVal)
-		# highlight the labeld points
+		# highlight the labeled points
 		points(rep(par('usr')[1],2),range(yAxVals),col=1,xpd=F,pch=18,cex=2.1)
-		#
+		# title
 		text(mean(par('usr')[1:2]),par('usr')[4]+diff(par('usr')[3:4])*0.01,
 				 colnames(calDat)[i],
 				 cex=0.8,xpd=T,adj=c(0.5,0))
 	}
 }
-
 
 # covar ####
 cat('Determining the distribution of the residuals in the default case...\n')
@@ -308,7 +336,7 @@ resDat.cv <- NA
 # https://www.r-bloggers.com/2015/06/pairwise-complete-correlation-considered-dangerous/
 cat('  trying pariwise complete obs...')
 try({resDat.cv <- cov(resDat,use='pairwise.complete.obs')})
-if(sum(is.na(resDat.cv))>0||is.negative.definite(resDat.cv)){
+if(sum(is.na(resDat.cv))>0||!is.positive.definite(resDat.cv)){
 	cat('fail\n')
 	resDat.cv <- NA
 } else {
@@ -325,7 +353,7 @@ if(sum(is.na(resDat.cv))>0){
 		cat('success\n')
 	}
 }
-# if that there are no comple obs, give this a try but make it be quiet.
+# if there are no comple obs, give this a try but make it be quiet.
 if(sum(is.na(resDat.cv))>0){
 	cat('fail\n  trying FitGMMM...')
 	sinkFile <- file('FitGMMM_babble','w')
@@ -355,18 +383,21 @@ if(sum(is.na(resDat.cv))>0){
 	stop('The covariance matrix could not be calculated\n')
 }
 if(is.negative.definite(resDat.cv)){
-	stop('The estimated covariance matrix is negative definite.\n')
+	stop('The estimated covariance matrix is negative definite.\nLikelihood can not be calculated\n')
 }
 if(is.singular.matrix(resDat.cv)){
-	cat('Estimated covarianve matrix is singular.
-			We have linear combinations in calDat but can continue.\n')
+	cat('Estimated covarianve matrix is singular.\nMight be a problem.\n')
 } else {
 	cat('Estimated covariance matrix is fine\n')
 }
 
 # likelihood ####
-precisBit <- 2048
-resDat <- mpfr(as.matrix(resDat),precisBit)
-resDat.cv <- mpfr(as.matrix(resDat.cv),precisBit)
-funLikelihood(resDat,resDat.cv)
+defNegLogLike <- funLikelihood(resDat[complete.cases(resDat),],resDat.cv)
+cat(sprintf('-logLikelihood in the default case: %f',defNegLogLike))
+if(is.infinite(defNegLogLike)||is.na(defNegLogLike)){
+	stop('Bad default negLogLike\n')
+}
+
+# run Runs ####
+source('runFRIDASensitivityRuns.R')
 
