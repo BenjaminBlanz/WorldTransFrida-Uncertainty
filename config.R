@@ -23,4 +23,12 @@ name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
 location.output <- file.path('workOutput',paste0('NumSample-',numSample,
 																								 '-chunkSizePerWorker-',chunkSizePerWorker))
 
-minObsForLike <- 30
+minObsForLike <- 35
+removeLinearCombinations <- F
+imputeMissingVars <- T
+# this can 
+# 'n'      do not extrapolate
+# 'f'      fill in the last good value for all missing values
+# 'l##'    linear extrapolation using the first/last ##% of observations
+# 'q##'    quadratic extrapolation using the first/last ##% of observations
+extrapolateMissingVarMethod <- 'n'

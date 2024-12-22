@@ -66,3 +66,40 @@ idxOfVarName <- function(varNames,vecOfVarNames){
 	}
 	return(idx)
 }
+
+# taken from funchir package
+# convert plot region sizes to inches
+xdev2in <- function (x = 1) 
+{
+	x * par("pin")[1L]/diff(par("usr")[1L:2L])
+}
+ydev2in <- function (y = 1) 
+{
+	y * par("pin")[2L]/diff(par("usr")[3L:4L])
+}
+xydev2in <-	function (xy = 1) 
+{
+	u = par("usr")
+	xy * par("pin")/c(u[2L] - u[1L], u[4L] - u[3L])
+}
+dist.f <- function(oi,yi,ys,offsets,keepOutSize){
+	return(min(sqrt((ydev2in(ys-yi))^2+(xdev2in(offsets-oi))^2))-keepOutSize)
+}
+
+# funValidRange ####
+# returns the first and last index in the variable that has a data point
+funValidRange <- function(x){
+	validRange <- c(1,length(x))
+	if(is.na(x[1])){
+		validRange[1] <- which(diff(is.na(x))==-1)[1]+1
+	}
+	if(is.na(x[length(x)])){
+		validRange[2] <- max(which(diff(is.na(x))==1))
+	}
+	return(validRange)
+}
+
+# funLikelihood ####
+funLikelihood <- function(){
+	
+}
