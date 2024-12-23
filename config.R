@@ -1,5 +1,5 @@
 numWorkers <- parallel::detectCores()
-numSample <- 1e5
+numSample <- 1e4
 
 # How large the chunks of work are, smaller means more frequent pauses to write out
 # itermediate results (and update the diagnostic output).
@@ -40,3 +40,8 @@ imputeMissingVars <- T
 # 'l##'    linear extrapolation using the first/last ##% of observations
 # 'q##'    quadratic extrapolation using the first/last ##% of observations
 extrapolateMissingVarMethod <- 'n'
+
+
+# for the parms tightening, where should our threshold be?
+# threshold is in the likelihood 
+likeThreshold <- 20*.Machine$double.eps

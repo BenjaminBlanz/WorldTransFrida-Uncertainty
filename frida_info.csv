@@ -67,6 +67,38 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Emissions.sensitivity of non fossil CH4 per person to GDP per capita",0,0,0,0,0,0,0,0,0,0,-1,1
 "Emissions.sensitivity of Other N2O per person to GDP per capita",0,0,0,0,0,1,0,0,0,-0.272890376937794,-1,1
 "Emissions.tN2O emission per tN fertilizer 1980",0,0,0,0,0,1,0,0,0,0.0262730510536762,0,0.1
+"Forest.CO2 tree net primary production parameter",0,0,0,0,0,1,0,0,0,0.001,0.0005,0.001
+"Forest.forest aboveground biomass 1980",0,0,0,0,0,1,0,0,0,546.990743207387,450,700
+"Forest.STA maximum aboveground biomass per area parameter",0,0,0,0,0,1,0,0,0,0.253488316289495,0.2,0.35
+"Forest.STA squared maximum aboveground biomass per area parameter",0,0,0,0,0,1,0,0,0,-0.0487098107344002,-0.08,-0.02
+"Forest.STA squared tree net primary production parameter",0,0,0,0,0,1,0,0,0,-0.023015026037364,-0.05,-0.01
+"Forest.STA tree net primary production parameter",0,0,0,0,0,1,0,0,0,0.125348729226489,0.01,0.13
+"Forest.tree net primary production in 1980",0,0,0,0,0,1,0,0,0,0.00832071686493894,0.005,0.01
+"Forest.Young mature forest biomass ratio",0,0,0,0,0,1,0,0,0,0.558925781060304,0.3,0.7
+"Grass.CO2 grass net primary production parameter",0,0,0,0,0,1,0,0,0,0.000963653776025308,0.0005,0.001
+"Grass.grass net primary production in 1980",0,0,0,0,0,1,0,0,0,0.005,0.0025,0.005
+"Grass.GtC per PCal of grazing multiplier",0,0,0,0,0,1,0,0,0,0.31577880511698,0.2,0.6
+"Grass.STA grass net primary production parameter",0,0,0,0,0,1,0,0,0,0.126281691693998,0.01,0.13
+"Grass.STA squared grass net primary production",0,0,0,0,0,1,0,0,0,-0.0346543950643458,-0.05,-0.01
+"cropland soil carbon.cropland soil carbon 1980",0,0,0,0,0,1,0,0,0,106.352146988511,80,150
+"degraded land soil carbon.degraded land productivity reduction factor",0,0,0,0,1,0,0,0,0,0.05,0.01,0.1
+"forest soil carbon.forest soil carbon initialisation",0,0,0,0,0,1,0,0,0,799.996522487009,400,950
+"forest soil carbon.Young forest soil carbon reduction factor",0,0,0,0,0,1,0,0,0,0.862530531087245,0.5,1
+"grassland soil carbon.grassland soil carbon 1980",0,0,0,0,0,1,0,0,0,330,330,500
+"soil carbon decay.cropland litter input share slow soil carbon",0,0,0,0,0,1,0,0,0,0.0162331648914426,0.01,0.02
+"soil carbon decay.cropland slow soil carbon historic share",0,0,0,0,0,1,0,0,0,0.37474255141796,0.3,0.4
+"soil carbon decay.e0",0,0,0,0,0,1,0,0,0,290.028744464422,290,320
+"soil carbon decay.grassland litter input share slow soil carbon",0,0,0,0,0,1,0,0,0,0.0182493478295644,0.01,0.02
+"soil carbon decay.grassland slow soil carbon historic share",0,0,0,0,0,1,0,0,0,0.4,0.3,0.4
+"soil carbon decay.mature forest litter input share slow soil carbon",0,0,0,0,0,1,0,0,0,0.0213652503506472,0.015,0.025
+"soil carbon decay.mature forest slow soil carbon historic share",0,0,0,0,0,1,0,0,0,0.399614251669709,0.3,0.4
+"soil carbon decay.natural decay rate fast soil carbon",0,0,0,0,0,1,0,0,0,0.025,0.025,0.035
+"soil carbon decay.natural decay rate litter carbon",0,0,0,0,0,1,0,0,0,0.600513407157666,0.6,0.8
+"soil carbon decay.natural decay rate slow soil carbon",0,0,0,0,0,1,0,0,0,0.000808823659549357,0.0008,0.0012
+"soil carbon decay.temp response",0,0,0,0,0,1,0,0,0,60,40,60
+"soil carbon decay.young forest litter input share slow soil carbon",0,0,0,0,0,1,0,0,0,0.0117298173139784,0.01,0.025
+"soil carbon decay.young forest slow soil carbon historic share",0,0,0,0,0,1,0,0,0,0.3,0.3,0.4
+"Terrestrial Carbon Balance.Global peatland carbon uptake rate",0,0,0,0,0,1,0,0,0,0.29995460500312,0.1,0.3
 "Ocean.Initial Cold surface ocean carbon reservoir[1]",0,0,0,0,0,0,0,0,0,127.468766831,315,340
 "Ocean.Initial Cold surface ocean carbon reservoir[2]",0,0,0,0,0,0,0,0,0,356.90516641,315,340
 "Ocean.Initial Cold surface ocean carbon reservoir[3]",0,0,0,0,0,0,0,0,0,450.345429704,315,340
@@ -676,10 +708,6 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Sea Level.initial SLR from MG",0,0,0,0,1,0,0,0,0,-0.0035,-0.005,-0.001
 "Sea Level.initial thermosteric SLR",0,0,0,0,1,0,0,0,0,-0.008,-0.015,-0.005
 "Sea Level.Initial water storage from water impoundment",0,0,0,0,0,1,0,0,0,3950000000000,2500000000000,5500000000000
-"Sea Level.MICI AntIS critical Tant max",0,0,0,0,1,0,0,0,0,-15,-16,-14.6
-"Sea Level.MICI AntIS critical Tant min",0,0,0,0,1,0,0,0,0,-14,-16,-14.6
-"Sea Level.MICI AntIS disintegration max",0,0,0,0,1,0,0,0,0,0.008,-16,-14.6
-"Sea Level.MICI AntIS disintegration min",0,0,0,0,1,0,0,0,0,0,-16,-14.6
 "Sea Level.scale factor Antarctic ice sheet",0,0,1,0,1,0,0,0,0,0.5,0,1
 "Sea Level.scale factor Greenland ice sheet",0,0,1,0,1,0,0,0,0,0.5,0,1
 "Sea Level.scale factor mountain glaciers",0,0,1,0,1,0,0,0,0,0.5,0,1
@@ -796,7 +824,7 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Government.central bank interest rate reactivity",1,0,0,0,0,1,0,0,0,1,0.8,1.2
 "Government.curvature effect of debt to GDP ratio on government spending",1,0,0,0,0,1,0,0,0,10,9,11
 "Government.effect end effect of debt to GDP ratio on government spending",1,0,0,0,0,1,0,0,0,2,1.6,2.4
-"Government.effect start effect of debt to GDP ratio on government spending",1,0,0,0,0,1,0,0,0,1,1.8,1.8
+"Government.effect start effect of debt to GDP ratio on government spending",1,0,0,0,0,1,0,0,0,1,0.5,1.8
 "Government.GDP perception time",0,0,0,0,0,1,0,0,0,2.08053287072274,1,3
 "Government.inflation weight",1,0,0,0,0,1,0,0,0,1.33,1.2,1.4
 "Government.initial government debt",0,0,0,0,0,1,0,0,0,10000.6804028102,0,25000
@@ -1054,14 +1082,6 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Food Demand.initial crop demand for feed offset",0,0,0,0,0,1,0,0,0,0.95510156216511,0.9,0.98
 "Food Demand.time to change demand for feed",0,0,0,0,0,1,0,0,0,6.09350732047478,1,10
 "Food Demand.time to change dietary habits",0,0,0,0,0,1,0,0,0,10,5,20
-"Forest.CO2 tree net primary production parameter",0,0,0,0,0,1,0,0,0,0.001,0.0005,0.001
-"Forest.forest aboveground biomass 1980",0,0,0,0,0,1,0,0,0,546.990743207387,450,700
-"Forest.STA maximum aboveground biomass per area parameter",0,0,0,0,0,1,0,0,0,0.253488316289495,0.2,0.35
-"Forest.STA squared maximum aboveground biomass per area parameter",0,0,0,0,0,1,0,0,0,-0.0487098107344002,-0.08,-0.02
-"Forest.STA squared tree net primary production parameter",0,0,0,0,0,1,0,0,0,-0.023015026037364,-0.05,-0.01
-"Forest.STA tree net primary production parameter",0,0,0,0,0,1,0,0,0,0.125348729226489,0.01,0.13
-"Forest.tree net primary production in 1980",0,0,0,0,0,1,0,0,0,0.00832071686493894,0.005,0.01
-"Forest.Young mature forest biomass ratio",0,0,0,0,0,1,0,0,0,0.558925781060304,0.3,0.7
 "Freshwater.average deep groundwater infiltration time",0,0,0,0,0,1,0,0,0,100,20,200
 "Freshwater.base fraction of cropland irrigated",0,0,0,0,0,1,0,0,0,0.175096361655183,0,0.3
 "Freshwater.elasticity of non agricultural water withdrawal per capita to GDP per person",0,0,0,0,0,1,0,0,0,0.212565882590844,0.01,0.5
@@ -1076,11 +1096,6 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Freshwater.sensitivity of surface temperature anomaly on water used per Mtcrop",0,0,1,0,0,1,0,0,0,0.0643524347524963,0.02,0.1
 "Freshwater.technological water discovery 1980",0,0,0,0,0,1,0,0,0,30530715604.1891,10000000000,1000000000000
 "Freshwater.water withdrawal per MHa irrigated 1980",0,0,0,0,0,1,0,0,0,9622530556.56337,1000000000,100000000000
-"Grass.CO2 grass net primary production parameter",0,0,0,0,0,1,0,0,0,0.000963653776025308,0.0005,0.001
-"Grass.grass net primary production in 1980",0,0,0,0,0,1,0,0,0,0.005,0.0025,0.005
-"Grass.GtC per PCal of grazing multiplier",0,0,0,0,0,1,0,0,0,0.31577880511698,0.2,0.6
-"Grass.STA grass net primary production parameter",0,0,0,0,0,1,0,0,0,0.126281691693998,0.01,0.13
-"Grass.STA squared grass net primary production",0,0,0,0,0,1,0,0,0,-0.0346543950643458,-0.05,-0.01
 "Land Nutrients.elasticity of effect of animal products on manure fertilizer use",0,0,0,0,0,1,0,0,0,0.094818728859585,0.01,1.5
 "Land Nutrients.maximum desired growth in fertilizer use",0,0,0,0,0,1,0,0,0,0.05,0,0.05
 "Land Nutrients.sensitivity demand to relative use",0,0,0,0,0,1,0,0,0,-0.0816206526655366,-0.5,-0.001
@@ -1103,32 +1118,21 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Land Use.sensitivity of effect of animal products balance on grassland expansion rate",0,0,0,0,0,1,0,0,0,-0.167767622093889,-1,0
 "Land Use.sensitivity of effect of crop balance on crop land expansion rate",0,0,0,0,0,1,0,0,0,-0.242935802299059,-1,0
 "Land Use.time to close grassland gap",0,0,0,0,0,1,0,0,0,8.50216384310196,2,10
-"cropland soil carbon.cropland soil carbon 1980",0,0,0,0,0,1,0,0,0,106.352146988511,80,150
-"degraded land soil carbon.degraded land productivity reduction factor",0,0,0,0,1,0,0,0,0,0.05,0.01,0.1
-"forest soil carbon.forest soil carbon initialisation",0,0,0,0,0,1,0,0,0,799.996522487009,400,950
-"forest soil carbon.Young forest soil carbon reduction factor",0,0,0,0,0,1,0,0,0,0.862530531087245,0.5,1
-"grassland soil carbon.grassland soil carbon 1980",0,0,0,0,0,1,0,0,0,330,330,500
-"soil carbon decay.cropland litter input share slow soil carbon",0,0,0,0,0,1,0,0,0,0.0162331648914426,0.01,0.02
-"soil carbon decay.cropland slow soil carbon historic share",0,0,0,0,0,1,0,0,0,0.37474255141796,0.3,0.4
-"soil carbon decay.e0",0,0,0,0,0,1,0,0,0,290.028744464422,290,320
-"soil carbon decay.grassland litter input share slow soil carbon",0,0,0,0,0,1,0,0,0,0.0182493478295644,0.01,0.02
-"soil carbon decay.grassland slow soil carbon historic share",0,0,0,0,0,1,0,0,0,0.4,0.3,0.4
-"soil carbon decay.mature forest litter input share slow soil carbon",0,0,0,0,0,1,0,0,0,0.0213652503506472,0.015,0.025
-"soil carbon decay.mature forest slow soil carbon historic share",0,0,0,0,0,1,0,0,0,0.399614251669709,0.3,0.4
-"soil carbon decay.natural decay rate fast soil carbon",0,0,0,0,0,1,0,0,0,0.025,0.025,0.035
-"soil carbon decay.natural decay rate litter carbon",0,0,0,0,0,1,0,0,0,0.600513407157666,0.6,0.8
-"soil carbon decay.natural decay rate slow soil carbon",0,0,0,0,0,1,0,0,0,0.000808823659549357,0.0008,0.0012
-"soil carbon decay.temp response",0,0,0,0,0,1,0,0,0,60,40,60
-"soil carbon decay.young forest litter input share slow soil carbon",0,0,0,0,0,1,0,0,0,0.0117298173139784,0.01,0.025
-"soil carbon decay.young forest slow soil carbon historic share",0,0,0,0,0,1,0,0,0,0.3,0.3,0.4
-"Terrestrial carbon balance.Global peatland carbon uptake rate",0,0,0,0,0,1,0,0,0,0.29995460500312,0.1,0.3
+"Planetary Boundaries.Cropland net primary production 2000-2020",0,0,0,0,1,0,0,0,0,5.25,4.79,5.71
+"Planetary Boundaries.Holocene net primary production",0,0,0,0,1,0,0,0,0,55.9,55.9,55.9
+"Planetary Boundaries.Intended biological nitrogen fixation 2000-2020",0,0,0,0,1,0,0,0,0,50,30,70
+"Planetary Boundaries.PB2:1 Boundary value",0,0,0,0,1,0,0,0,0,0.75,0.75,0.75
+"Planetary Boundaries.PB2:1 High risk boundary value",0,0,0,0,1,0,0,0,0,0.54,0.54,0.54
+"Planetary Boundaries.Ratio N:P in man made fertilizer 2000",0,0,0,0,1,0,0,0,0,8.6,8.6,8.6
+"Planetary Boundaries.Total blue water extraction 2000-2020",0,0,0,0,1,0,0,0,0,3740,3480,4000
+"Planetary Boundaries.Total consumptive blue water use 2000-2020",0,0,0,0,1,0,0,0,0,2215.5,1831,2600
 "Concrete.BASE AVERAGE LIFETIME OF BUILDINGS",0,0,0,0,0,1,0,0,0,185.551125466542,75,200
 "Concrete.BASE AVERAGE LIFETIME OF INFRASTRUCTURE",0,0,0,0,0,1,0,0,0,60.6266188178707,25,150
-"Concrete.CLIMATE IMPACT ON CONCRETE LIFETIME",0,0,1,0,0,0,0,0,0,-0.075,0.05,0.15
+"Concrete.CLIMATE IMPACT ON CONCRETE LIFETIME",0,0,1,0,0,0,0,0,0,-0.075,-0.15,-0.05
 "Concrete.CO2 INTENSITY OF INFRASTRUCTURE CONCRETE",0,0,0,0,1,1,0,0,0,0.0842890302801893,0.07,0.164
 "Concrete.CO2 INTENSITY OF RS BUILDINGS CONCRETE",0,0,0,0,1,1,0,0,0,0.0542134551261592,0.05,0.163
 "Concrete.CONCRETE PER m2 UFA",0,0,0,0,1,0,0,0,0,0.998,0.452,1.43
-"Concrete.GAP ADJUSTMENT TIME FOR BUILDINGS",1,0,0,0,0,1,0,0,0,14.6616180859513,0.5,10
+"Concrete.GAP ADJUSTMENT TIME FOR BUILDINGS",1,0,0,0,0,1,0,0,0,14.6616180859513,0.5,20
 "Concrete.GAP ADJUSTMENT TIME FOR INFRASTRUCTURE",1,0,0,0,0,1,0,0,0,9.45930961383885,0.5,10
 "Concrete.INFRA ALPHA",1,0,0,0,0,1,0,0,0,-24055.7818588206,-40000,-5000
 "Concrete.INFRA BETA",1,0,0,0,0,1,0,0,0,-34.7999180884332,-40,-5

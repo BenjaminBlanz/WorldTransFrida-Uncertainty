@@ -22,22 +22,68 @@ writeFRIDAInput <- function(variables,values){
 #   sampleParms,samplePoints,location.frida, and name.fridaInputFile
 # If retNegLogLike also uses from global env:
 # 	calDat,resSigma
-runFridaParmsByIndex <- function(i){
-	writeFRIDAInput(sampleParms$Variable,samplePoints[,i])
-	system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
-							 file.path(location.frida,'FRIDA.stmx')),
-				 ignore.stdout = T,ignore.stderr = T,wait = T)
-	runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
-	colnames(runDat) <- cleanNames(colnames(runDat))
-	rownames(runDat) <- runDat$year
-	runDat <- runDat[,-1]
-	resDat <- runDat[1:nrow(calDat),]-calDat
-	if(is.na(runDat[[1]][nrow(runDat)])){
-		negLogLike <- 0
-	} else {
-		negLogLike <- funLikelihood(resDat[complete.cases(resDat),],resSigma)
+runFridaParmsByIndex <- function(runid){
+	retlist <- vector(mode = "list", length = length(runid))
+	for(i in runid){
+		if(i <= nrow(samplePoints)){
+			writeFRIDAInput(sampleParms$Variable,samplePoints[i,])
+			system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
+									 file.path(location.frida,'FRIDA.stmx')),
+						 ignore.stdout = T,ignore.stderr = T,wait = T)
+			runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
+			colnames(runDat) <- cleanNames(colnames(runDat))
+			rownames(runDat) <- runDat$year
+			runDat <- runDat[,-1]
+			resDat <- runDat[1:nrow(calDat),]-calDat
+			negLogLike <- funLikelihood(resDat[complete.cases(resDat),],resSigma)
+			# If the negLogLike is not NA but the run did not complete assign 
+			# lowest nonzero value. We use this when narrowing the parms space
+			if(!is.na(negLogLike)&&is.na(runDat[[1]][nrow(runDat)])){
+				negLogLike <- sum(!is.na(runDat[[1]]))*.Machine$double.eps
+			}
+			# If the negLogLike is NA, it is 0.
+			if(is.na(negLogLike)){
+				negLogLike <- 0
+			}
+			retlist[[i]] <- (list(parmsIndex=i,runDat=runDat,negLogLike=negLogLike))
+		}
 	}
-	return(list(parmsIndex=i,runDat=runDat,negLogLike=negLogLike))
+	return(retlist)
+}
+# the same as above, but runs all samples in samplePoints for pre allocated
+# samplePoints per worker.
+runFridaParmsBySamplePoints <- function(saveOutPutDontReturn=FALSE,workUnit=NULL){
+	retlist <- vector(mode = "list", length = nrow(samplePoints))
+	for(i in 1:nrow(samplePoints)){
+		writeFRIDAInput(sampleParms$Variable,samplePoints[i,])
+		system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
+								 file.path(location.frida,'FRIDA.stmx')),
+					 ignore.stdout = T,ignore.stderr = T,wait = T)
+		runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
+		colnames(runDat) <- cleanNames(colnames(runDat))
+		rownames(runDat) <- runDat$year
+		runDat <- runDat[,-1]
+		resDat <- runDat[1:nrow(calDat),]-calDat
+		negLogLike <- funLikelihood(resDat[complete.cases(resDat),],resSigma)
+		# If the negLogLike is not NA but the run did not complete assign 
+		# lowest nonzero value. We use this when narrowing the parms space
+		if(!is.na(negLogLike)&&is.na(runDat[[1]][nrow(runDat)])){
+			negLogLike <- sum(!is.na(runDat[[1]]))*.Machine$double.eps
+		}
+		# If the negLogLike is NA, it is 0.
+		if(is.na(negLogLike)){
+			negLogLike <- 0
+		}
+		retlist[[i]] <- (list(parmsIndex=as.numeric(row.names(samplePoints)[i]),
+													runDat=runDat,
+													negLogLike=negLogLike))
+	}
+	if(saveOutPutDontReturn){
+		saveRDS(retlist,file.path(baseWD,location.output,
+															paste0('workUnit-',workUnit,'-',workerID,'.RDS')))
+	} else {
+		return(retlist)
+	}
 }
 
 # fun runFridaDefaultParms ####
@@ -154,4 +200,43 @@ funValidRange <- function(x){
 # }
 funLikelihood <- function(resid,covmat){
 	return(-sum(mvtnorm::dmvnorm(resid,rep(0,ncol(resid)),covmat,log=T,checkSymmetry = F)))
+}
+
+# chunk ####
+# cuts a vector into n equal parts
+chunk <- function(x,n){
+	split(x, cut(seq_along(x), n, labels = FALSE)) 
+}
+
+# funStrechSamplePoints ####
+funStrechSamplePoints <- function(samplePoints,sampleParms,restretchSamplePoints){
+	samplePoints <- t(samplePoints)
+	if(!restretchSamplePoints){
+		# Substract the min and multiply by max-min to strecth the unit interval to the
+		# actual sampling range.
+		samplePointsStretched <- samplePoints*(sampleParms$Max-sampleParms$Min) + sampleParms$Min
+		# plot(samplePointsStretched[1,],samplePointsStretched[2,])
+		# abline(v=sampleParms$Value[1],h=sampleParms$Value[2],col='red')
+		samplePoints <- samplePointsStretched
+		rm(samplePointsStretched)
+	} else {
+		# stretch the sample points to be left and right of the mean centre value of the
+		# description file
+		lowIdc <- samplePoints<0.5
+		highIdc <- samplePoints>=0.5
+		samplePointsLow <- samplePointsHigh <- samplePoints
+		samplePointsLow[highIdc] <- NA
+		samplePointsLow <- samplePointsLow*2*(sampleParms$Value-sampleParms$Min) + sampleParms$Min
+		samplePointsHigh[lowIdc] <- NA
+		samplePointsHigh <- (samplePoints-0.5)*2*(sampleParms$Max-sampleParms$Value) + sampleParms$Value
+		samplePointsReStretched <- samplePoints
+		samplePointsReStretched[lowIdc] <- samplePointsLow[lowIdc]
+		samplePointsReStretched[highIdc] <- samplePointsHigh[highIdc]
+		# plot(samplePointsReStretched[1,],samplePointsReStretched[2,])
+		# abline(v=sampleParms$Value[1],h=sampleParms$Value[2],col='red')
+		samplePoints <- samplePointsReStretched
+		rm(samplePointsHigh,samplePointsLow,samplePointsReStretched,lowIdc,highIdc)
+	}
+	# back to vars in cols and samples in rows
+	samplePoints<- t(samplePoints)
 }

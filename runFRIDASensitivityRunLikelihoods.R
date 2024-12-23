@@ -292,7 +292,7 @@ if(plotWhileRunning){
 		if(ydev2in(yPosVal-par('usr')[3]) < 
 			 strwidth(as.character(min(yAxVals)),
 			 				 # font=par('font'),
-			 				 family = 'Serif',
+			 				 # family = 'Serif',
 			 				 units='inch',
 			 				 cex=axTextCex)){
 			adjVal <- c(0,0)
@@ -325,6 +325,8 @@ if(plotWhileRunning){
 				 colnames(calDat)[i],
 				 cex=0.8,xpd=T,adj=c(0.5,0))
 	}
+	dev.print(pdf,
+						file.path(location.output,'calDatPlot.pdf'))
 }
 
 # covar ####
