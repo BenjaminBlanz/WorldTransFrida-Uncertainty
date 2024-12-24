@@ -10,6 +10,7 @@ require(tictoc)
 require(parallel)
 require(scales)
 source('funRunFRIDA.R')
+source('funPlot.R')
 
 # config ####
 cat('Config...')
@@ -25,7 +26,9 @@ if(file.exists(file.path(location.output,'sigma.RDS'))){
 	stop('Missing covariance matrix file. Run runFRIDASensitivityRunLikelihood first.\n')
 }
 if(file.exists(file.path(location.output,'calDat.RDS'))){
-	calDat <- readRDS(file.path(location.output,'calDat.RDS'))
+	calDat.lst <- readRDS(file.path(location.output,'calDat.RDS'))
+	catDat <- calDat.lst$calDat
+	calDat.impExtrValue <- calDat.lst$calDat.impExtrValue
 } else {
 	stop('Missing calDat file. Run runFRIDASensitivityRunLikelihood first.\n')
 }
@@ -114,18 +117,6 @@ gobble <- clusterApply(cl,workers,function(i){
 	system(paste('cp -r',file.path(baseWD,location.stella),getwd()))})
 cat('done\n')
 
-## plot setup ####
-if(plotWhileRunning){
-	defDat <- runFridaDefaultParms()
-	par(mfrow=c(1,1))
-	par(mar=c(5.1,5.1,4.1,2.1))
-	ylims <- range(defDat[[whatToPlot]])
-	plot(rownames(defDat),defDat[[whatToPlot]],type='l',
-			 ylim=c(ylims[1]-diff(ylims)*0.2,ylims[2]+diff(ylims)*0.2),xlim=c(1980,2130),
-			 xlab='year',ylab='Real GDP in 2021 bn intl$',
-			 xaxt='n',lwd=4,col='gray')
-	axis(1,at=seq(1980,2130,10))
-}
 
 ## tighten parms ####
 location.output <- file.path(location.output,'BaseParmRange')
@@ -133,6 +124,18 @@ dir.create(location.output,showWarnings = F,recursive = T)
 doneTightening <- F
 tight.i <- 0
 while(!doneTightening){
+	## plot setup ####
+	if(plotWhileRunning){
+		defDat <- runFridaDefaultParms()
+		par(mfrow=c(1,1))
+		par(mar=c(5.1,5.1,4.1,2.1))
+		ylims <- range(defDat[[whatToPlot]])
+		plot(rownames(defDat),defDat[[whatToPlot]],type='l',
+				 ylim=c(ylims[1]-diff(ylims)*0.2,ylims[2]+diff(ylims)*0.2),xlim=c(1980,2130),
+				 xlab='year',ylab='Real GDP in 2021 bn intl$',
+				 xaxt='n',lwd=4,col='gray')
+		axis(1,at=seq(1980,2130,10))
+	}
 	## cluster run ####
 	cat('cluster run...\n')
 	workUnitBoundaries <- seq(1,numSample,chunkSizePerWorker*numWorkers)
@@ -145,7 +148,7 @@ while(!doneTightening){
 	workUnitBoundaries[length(workUnitBoundaries)] <- numSample+1
 	
 	### initialise  cluster ####
-	cat('    initialising cluster global env...')
+	cat('  initialising cluster global env...')
 	baseWD <- getwd()
 	clusterExport(cl,list('location.output','baseWD','sampleParms',
 												'chunkSizePerWorker','runFridaParmsBySamplePoints',
@@ -158,12 +161,12 @@ while(!doneTightening){
 	chunkTimes <- c()
 	for(i in 1:(length(workUnitBoundaries)-1)){
 		if(file.exists(file.path(location.output,paste0('workUnit-',i,'.RDS')))){
-			cat(sprintf('\r   Reading existing unit %i',i))
+			cat(sprintf('\r    Reading existing unit %i',i))
 			tryCatch({parOutput <- readRDS(file.path(location.output,paste0('workUnit-',i,'.RDS')))},
 							 error = function(e){},warning=function(w){})
 		} 
 		if(!exists('parOutput')){
-			cat(sprintf('\r   Running unit %i: samples %i to %i',
+			cat(sprintf('\r    Running unit %i: samples %i to %i',
 									i, workUnitBoundaries[i],workUnitBoundaries[i+1]-1))
 			if(length(chunkTimes>1)){
 				cat(sprintf(', average duration per unit so far %i sec (%.2f r/s, %.2f r/s/thread), expect completion in %i sec',
@@ -201,8 +204,10 @@ while(!doneTightening){
 		if(plotWhileRunning){
 			# readline(prompt="Press [enter] to continue")
 			for(l in 1:length(parOutput)){
-				lines(rownames(parOutput[[l]]$runDat),parOutput[[l]]$runDat[[whatToPlot]],
-							col=alpha(i,min(1,max(0.01,parOutput[[l]]$negLogLike/1e6))))
+				if(parOutput[[l]]$negLogLike>likeThreshold){
+					lines(rownames(parOutput[[l]]$runDat),parOutput[[l]]$runDat[[whatToPlot]],
+								col=alpha(i,min(1,max(0.01,parOutput[[l]]$negLogLike/1e6))))
+				}
 			}
 		}
 		rm(parOutput)
@@ -234,15 +239,15 @@ while(!doneTightening){
 	cat('done\n')
 	
 	### calculate probability ####
-	cat('    Calculating sample probabilities...')
-	# TODO: weight by spacing!
-	suppressPackageStartupMessages(require(Rmpfr))
-	negLogLike.mpfr <-  mpfr(negLogLike,512)
-	prob.mpfr <- exp(-negLogLike.mpfr)
-	prob <- as.double(prob.mpfr/sum(prob.mpfr))
-	names(prob) <- names(negLogLike)
-	rm(negLogLike.mpfr,prob.mpfr)
-	cat('done\n')
+	# cat('    Calculating sample probabilities...')
+	# # TODO: weight by spacing!
+	# suppressPackageStartupMessages(require(Rmpfr))
+	# negLogLike.mpfr <-  mpfr(negLogLike,512)
+	# prob.mpfr <- exp(-negLogLike.mpfr)
+	# prob <- as.double(prob.mpfr/sum(prob.mpfr))
+	# names(prob) <- names(negLogLike)
+	# rm(negLogLike.mpfr,prob.mpfr)
+	# cat('done\n')
 	
 	### plot Likelihood ####
 	# TODO: implement plot likelihood 
@@ -251,7 +256,7 @@ while(!doneTightening){
 	if(sum(negLogLike>likeThreshold)==0){
 		doneTightening <- T
 	} else {
-		relTightening<-rep(0,nrow(sampleParms))
+		)
 		for(i in 1:nrow(sampleParms)){
 			minmax <-  range(samplePoints[negLogLike>likeThreshold,i])
 			relTightening[i] <- 1-diff(minmax)/(sampleParms[i,c('Max')]-sampleParms[i,c('Min')])
