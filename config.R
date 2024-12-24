@@ -45,3 +45,6 @@ extrapolateMissingVarMethod <- 'n'
 # for the parms tightening, where should our threshold be?
 # threshold is in the likelihood 
 likeThreshold <- 20*.Machine$double.eps
+
+# padding for data plots y axis in share of the data range
+yaxPad <- 0.4

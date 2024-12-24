@@ -27,7 +27,7 @@ if(file.exists(file.path(location.output,'sigma.RDS'))){
 }
 if(file.exists(file.path(location.output,'calDat.RDS'))){
 	calDat.lst <- readRDS(file.path(location.output,'calDat.RDS'))
-	catDat <- calDat.lst$calDat
+	calDat <- calDat.lst$calDat
 	calDat.impExtrValue <- calDat.lst$calDat.impExtrValue
 } else {
 	stop('Missing calDat file. Run runFRIDASensitivityRunLikelihood first.\n')
@@ -88,13 +88,16 @@ if(file.exists(file.path(location.output,'samplePoints.RDS'))){
 	samplePoints <- rbind(samplePoints, t(sampleParms$Value))
 	cat('done\nWriting sample points to file...')
 	rownames(samplePoints) <- 1:nrow(samplePoints)
+	colnames(samplePoints) <- sampleParms[,1]
 	saveRDS(samplePoints,file.path(location.output,'samplePoints.RDS'))
 	cat('done\n')
 }
 
 # run FRIDA with the samples ####
-negLogLike <- rep(-1,numSample)
-names(negLogLike) <- 1:numSample
+logLike <- rep(NA,numSample)
+like <- rep(NA,numSample)
+names(logLike) <- 1:numSample
+names(like) <- 1:numSample
 
 ## cluster setup ####
 cat('cluster setup...')
@@ -126,15 +129,7 @@ tight.i <- 0
 while(!doneTightening){
 	## plot setup ####
 	if(plotWhileRunning){
-		defDat <- runFridaDefaultParms()
-		par(mfrow=c(1,1))
-		par(mar=c(5.1,5.1,4.1,2.1))
-		ylims <- range(defDat[[whatToPlot]])
-		plot(rownames(defDat),defDat[[whatToPlot]],type='l',
-				 ylim=c(ylims[1]-diff(ylims)*0.2,ylims[2]+diff(ylims)*0.2),xlim=c(1980,2130),
-				 xlab='year',ylab='Real GDP in 2021 bn intl$',
-				 xaxt='n',lwd=4,col='gray')
-		axis(1,at=seq(1980,2130,10))
+		subPlotLocations <- funPlotDat(calDat,calDat.impExtrValue,yaxPad = yaxPad)
 	}
 	## cluster run ####
 	cat('cluster run...\n')
@@ -199,14 +194,22 @@ while(!doneTightening){
 			saveRDS(parOutput,file.path(location.output,paste0('workUnit-',i,'.RDS')))
 		}
 		for(l in 1:length(parOutput)){
-			negLogLike[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$negLogLike
+			logLike[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$logLike
+			like[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$like
 		}
 		if(plotWhileRunning){
-			# readline(prompt="Press [enter] to continue")
-			for(l in 1:length(parOutput)){
-				if(parOutput[[l]]$negLogLike>likeThreshold){
-					lines(rownames(parOutput[[l]]$runDat),parOutput[[l]]$runDat[[whatToPlot]],
-								col=alpha(i,min(1,max(0.01,parOutput[[l]]$negLogLike/1e6))))
+			for(dat.i in 1:ncol(calDat)){
+				par(mfg = which(subPlotLocations==dat.i,arr.ind = T))
+				yrange <- range(calDat[[dat.i]],na.rm=T)
+				plot(rownames(calDat),calDat[[dat.i]],type='n',
+						 xaxt='n',yaxt='n',
+						 ylim=c(yrange[1]-abs(diff(yrange))*yaxPad,
+						 			 yrange[2]+abs(diff(yrange))*yaxPad))
+				for(l in 1:length(parOutput)){
+					if(parOutput[[l]]$like>likeThreshold){
+						lines(rownames(parOutput[[l]]$runDat),parOutput[[l]]$runDat[[dat.i]],
+									col=alpha(i,min(0.05,max(1,parOutput[[l]]$like))))
+					}
 				}
 			}
 		}
@@ -225,7 +228,7 @@ while(!doneTightening){
 	
 	### save Likelihoods and sample points ####
 	cat(sprintf('    Saving run data...'))
-	saveData <- list(sampleParms=sampleParms,samplePoints = samplePoints,negLogLike=negLogLike)
+	saveData <- list(sampleParms=sampleParms,samplePoints = samplePoints,logLike=logLike)
 	saveRDS(saveData,file.path(location.output,paste0('sensiParmsAndLikes.RDS')))
 	cat('done\n')
 	
@@ -233,17 +236,22 @@ while(!doneTightening){
 	cat(sprintf('    Saving figure...'))
 	if(plotWhileRunning){
 		dev.print(pdf,
-							file.path(location.output,
-												paste0(whatToPlot,'.pdf')))
+							file.path(location.output,'likelihoodWeightedModelRuns.pdf'))
 	}
 	cat('done\n')
 	
 	### calculate probability ####
 	# cat('    Calculating sample probabilities...')
-	# # TODO: weight by spacing!
+	# TODO: weight by spacing!
+	# TODO: check likelihoods for infinities and use Rmpfr in that case
+	
 	# suppressPackageStartupMessages(require(Rmpfr))
-	# negLogLike.mpfr <-  mpfr(negLogLike,512)
-	# prob.mpfr <- exp(-negLogLike.mpfr)
+	# logLike.mpfr <-  mpfr(logLike,32)
+	# like.mpfr <- exp(-logLike.mpfr)
+	# if(sum(is.infinite(as.double(like.mpfr)))==0){
+	# 	like <- as.double(like.mpfr)
+	# }
+	# like <- exp(logLike)
 	# prob <- as.double(prob.mpfr/sum(prob.mpfr))
 	# names(prob) <- names(negLogLike)
 	# rm(negLogLike.mpfr,prob.mpfr)
@@ -252,11 +260,18 @@ while(!doneTightening){
 	### plot Likelihood ####
 	# TODO: implement plot likelihood 
 	
+	### plot parm Range ####
+	if(plotWhileRunning){
+		funPlotParRangesLikelihoods(sampleParms,sampleParms.orig,
+																samplePoints,like)
+		dev.print(pdf,
+							file.path(location.output,'parmLikelihoods.pdf'))
+	}
+	
 	### tighten parms ####
 	if(sum(negLogLike>likeThreshold)==0){
 		doneTightening <- T
 	} else {
-		)
 		for(i in 1:nrow(sampleParms)){
 			minmax <-  range(samplePoints[negLogLike>likeThreshold,i])
 			relTightening[i] <- 1-diff(minmax)/(sampleParms[i,c('Max')]-sampleParms[i,c('Min')])

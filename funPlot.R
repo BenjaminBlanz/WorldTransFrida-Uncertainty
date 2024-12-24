@@ -1,12 +1,11 @@
 # funPlotDat ####
-funPlotDat <- function(calDat,calDat.impExtrValue=NULL,defDat=NULL){
-	if(is.null(defDat)){
-		defDat <- calDat
-		defDat[,] <- NA
-	}
-	if(is.null(alDat.impExtrValue)){
+funPlotDat <- function(calDat,calDat.impExtrValue=NULL,defDat=NULL,yaxPad=0.04,
+											 highlightConstrainingVars=F){
+	noImpExtrValues <- F
+	if(is.null(calDat.impExtrValue)){
 		calDat.impExtrValue <- calDat
 		calDat.impExtrValue[,] <- F
+		noImpExtrValues <- T
 	}
 	completeIdc <- which(complete.cases(calDat))
 	incompleteIdc <- which(!complete.cases(calDat))
@@ -30,46 +29,62 @@ funPlotDat <- function(calDat,calDat.impExtrValue=NULL,defDat=NULL){
 			widths = 1,
 			heights = heights)
 		par(mar=c(0,1,1,0.1))
+		xlims <- c(min(as.numeric(rownames(calDat)))-0.5,
+							 max(as.numeric(rownames(calDat)))+0.5)
 		for(i in 1:plotCols){
 			oldMar <- par('mar')
 			par(mar=c(0,oldMar[2],0,oldMar[4]))
 			plot(0,0,type='n',axes=F,
-					 xlim=as.numeric(range(rownames(calDat))),
+					 xlim=xlims,
+					 xaxs='i',
 					 ylim=c(0,1))
 			# abline(h=0)
 			axis(1,pos=1)
 			if(i == 1){
 				mtext(sprintf(paste('Gray areas do not have complete cases.',
-														'Red lines highlight the vars which most limit the complete cases window.',
-														'Red crosses are imputed or extrapolated values.',
-														'Blue line is prior model calibration.',
+														ifelse(highlightConstrainingVars,
+																	 'Red lines highlight the vars which most limit the complete cases window.',
+																	 ''),
+														ifelse(!noImpExtrValues,
+																	 'Red crosses are imputed or extrapolated values.',
+																	 ''),
+														ifelse(!is.null(defDat),
+																	 'Blue line is prior model calibration.',
+																	 ''),
 														'Complete cases: %i'),nrow(calDat)-length(incompleteIdc)),
-							3,line = -4,adj=0)
+							3,line = -4,adj=0,cex=0.8)
 			}
 			par(mar=oldMar)
 		}
 		for(i in 1:ncol(calDat)){
+			yrange <- range(calDat[[i]],na.rm=T)
+			ylims <- c(yrange[1]-abs(diff(yrange))*yaxPad,
+								 yrange[2]+abs(diff(yrange))*yaxPad)
 			plot(rownames(calDat),calDat[[i]],type='n',
 					 xaxt='n',yaxt='n',
-					 ylim=range(c(calDat[[i]],defDat[[i]]),na.rm=T))
+					 xaxs='i',
+					 xlim=xlims,
+					 ylim=ylims)
 			for(year in incompleteYears){
 				year <- as.numeric(year)
 				rect(year-0.5,par('usr')[3],year+0.5,par('usr')[4],
 						 density=-1,col='gray',border=NA)
 			}
 			box()
-			# add label specifying var indext to top left
-			text(years[1],max(calDat[[i]],defDat[[i]],na.rm=T),i,adj=c(0,1))
-			# highlight if this var has its last obs on the boundary of incomplete obs
-			validRange <- funValidRange(calDat[[i]])
-			if(firstCompleteIdx!=1 && validRange[1]==firstCompleteIdx){
-				abline(v=years[validRange[1]-1]+0.5,col='red',lwd=3)
-			}
-			if(lastCompleteIdx!=nrow(calDat) && validRange[2]==lastCompleteIdx){
-				abline(v=years[validRange[2]+1]-0.5,col='red',lwd=3)
+			if(highlightConstrainingVars){
+				# highlight if this var has its last obs on the boundary of incomplete obs
+				validRange <- funValidRange(calDat[[i]])
+				if(firstCompleteIdx!=1 && validRange[1]==firstCompleteIdx){
+					abline(v=years[validRange[1]-1]+0.5,col='red',lwd=3)
+				}
+				if(lastCompleteIdx!=nrow(calDat) && validRange[2]==lastCompleteIdx){
+					abline(v=years[validRange[2]+1]-0.5,col='red',lwd=3)
+				}
 			}
 			# add default model line
-			lines(rownames(defDat),defDat[[i]],col='blue')
+			if(!is.null(defDat)){
+				lines(rownames(defDat),defDat[[i]],col='blue')
+			}
 			# add obs points
 			points(rownames(calDat)[!calDat.impExtrValue[,i]],
 						 calDat[[i]][!calDat.impExtrValue[,i]])
@@ -121,8 +136,54 @@ funPlotDat <- function(calDat,calDat.impExtrValue=NULL,defDat=NULL){
 			text(mean(par('usr')[1:2]),par('usr')[4]+diff(par('usr')[3:4])*0.01,
 					 colnames(calDat)[i],
 					 cex=0.8,xpd=T,adj=c(0.5,0))
+			# add label specifying var indext to top left
+			text(years[1],yrange[2]+abs(diff(yrange))*yaxPad,i,adj=c(0,1))
 		}
 		padding <- rep(NA,(plotRows*plotCols)-ncol(calDat))
-		plotLocations <- matrix(c(1:ncol(calDat),padding),byrow=T,nrow=plotRows)
+		plotLocations <- matrix(c(rep(NA,plotCols),1:ncol(calDat),padding),byrow=T,ncol = plotCols)
 		return(plotLocations)
+}
+
+
+# funPlotParRanges ####
+funPlotParRangesLikelihoods <- function(sampleParms,sampleParms.orig,
+																				samplePoints=NULL,like=NULL,yaxPad=0.04){
+	if(is.null(samplePoints)){
+		samplePointBase <- seq(0,1,length.out=10)
+		samplePoints <- array(rep(samplePointBase,nrow(sampleParms)),
+													dim=c(length(samplePointBase),nrow(sampleParms)))
+		samplePoints <- funStrechSamplePoints(samplePoints,sampleParms,F)
+		colnames(samplePoints) <- sampleParms[,1]
+	}
+	if(is.null(like)){
+		like <- array(rep(1,nrow(samplePoints)),dim=c(nrow(samplePoints),nrow(sampleParms)))
+	}
+	like.range <- range(like)
+	
+	sqrtNplots <- sqrt(nrow(sampleParms))
+	plotCols <- round(sqrtNplots)
+	plotRows <- ceiling(sqrtNplots)
+	par(mfrow=c(plotRows,plotCols),mar=c(1,0.5,0,0.5),mgp=c(1,0.5,0))
+	for(i in 1:nrow(sampleParms)){
+		yrange <- c(0,like.range[2]+like.range[1])
+		plot(0,0,type='n',
+				 axes=F,
+				 xaxs='r',xlab='',ylab='',
+				 xlim = c(sampleParms.orig$Min[i],sampleParms.orig$Max[i]),
+				 ylim = yrange)
+		axis(1,padj=-1,at = c(sampleParms.orig$Min[i]),hadj=0,cex.axis=0.8)
+		axis(1,padj=-1,at = c(sampleParms.orig$Max[i]),hadj=1,cex.axis=0.8)
+		abline(h=0,col='gray')
+		abline(v=c(sampleParms.orig$Min[i],sampleParms.orig$Max[i]),col='gray')
+		if(sampleParms.orig$Min[i]<sampleParms$Min[i]){
+			abline(v=sampleParms$Min[i],lty=2)
+		}
+		if(sampleParms$Max[i]<sampleParms.orig$Max[i]){
+			abline(v=sampleParms$Min[i],lty=2)
+		}
+		points(samplePoints[,i],like,pch=20,cex=0.5)
+		# add label specifying var indext to top left
+		text(sampleParms.orig$Min[i],
+				 yrange[2]+abs(diff(yrange))*yaxPad,i,adj=c(0,1))
+	}
 }

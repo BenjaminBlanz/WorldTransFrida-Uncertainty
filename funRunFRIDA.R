@@ -2,6 +2,7 @@
 # Functions to run frida
 #
 
+
 # fun write firda export vars ####
 writeFRIDAExportSpec <- function(varsForExport.fridaNames){
 	sink(file=file.path(location.frida,'Data',name.fridaExportVarsFile))
@@ -35,17 +36,21 @@ runFridaParmsByIndex <- function(runid){
 			rownames(runDat) <- runDat$year
 			runDat <- runDat[,-1]
 			resDat <- runDat[1:nrow(calDat),]-calDat
-			negLogLike <- funLikelihood(resDat[complete.cases(resDat),],resSigma)
-			# If the negLogLike is not NA but the run did not complete assign 
+			logLike <- funLogLikelihood(resDat[complete.cases(resDat),],resSigma)
+			# If the logLike is not NA but the run did not complete assign 
 			# lowest nonzero value. We use this when narrowing the parms space
-			if(!is.na(negLogLike)&&is.na(runDat[[1]][nrow(runDat)])){
-				negLogLike <- sum(!is.na(runDat[[1]]))*.Machine$double.eps
+			if(!is.na(logLike)&&is.na(runDat[[1]][nrow(runDat)])){
+				logLike <- log(sum(!is.na(runDat[[1]]))*.Machine$double.eps)
 			}
-			# If the negLogLike is NA, it is 0.
-			if(is.na(negLogLike)){
-				negLogLike <- 0
+			# If the logLike is NA, like is 0 -> logLike is Inf.
+			if(is.na(logLike)){
+				logLike <- -Inf
 			}
-			retlist[[i]] <- (list(parmsIndex=i,runDat=runDat,negLogLike=negLogLike))
+			like <- exp(logLike)
+			retlist[[i]] <- (list(parmsIndex=i,
+														runDat=runDat,
+														logLike=logLike,
+														like=like))
 		}
 	}
 	return(retlist)
@@ -64,19 +69,21 @@ runFridaParmsBySamplePoints <- function(saveOutPutDontReturn=FALSE,workUnit=NULL
 		rownames(runDat) <- runDat$year
 		runDat <- runDat[,-1]
 		resDat <- runDat[1:nrow(calDat),]-calDat
-		negLogLike <- funLikelihood(resDat[complete.cases(resDat),],resSigma)
-		# If the negLogLike is not NA but the run did not complete assign 
+		logLike <- funLogLikelihood(resDat[complete.cases(resDat),],resSigma)
+		# If the logLike is not NA but the run did not complete assign 
 		# lowest nonzero value. We use this when narrowing the parms space
-		if(!is.na(negLogLike)&&is.na(runDat[[1]][nrow(runDat)])){
-			negLogLike <- sum(!is.na(runDat[[1]]))*.Machine$double.eps
+		if(!is.na(logLike)&&is.na(runDat[[1]][nrow(runDat)])){
+			logLike <- log(sum(!is.na(runDat[[1]]))*.Machine$double.eps)
 		}
-		# If the negLogLike is NA, it is 0.
-		if(is.na(negLogLike)){
-			negLogLike <- 0
+		# If the logLike is NA, it is 0.
+		if(is.na(logLike)){
+			logLike <- 0
 		}
+		like <- exp(logLike)
 		retlist[[i]] <- (list(parmsIndex=as.numeric(row.names(samplePoints)[i]),
 													runDat=runDat,
-													negLogLike=negLogLike))
+													logLike=logLike,
+													like=like))
 	}
 	if(saveOutPutDontReturn){
 		saveRDS(retlist,file.path(baseWD,location.output,
@@ -160,7 +167,7 @@ funValidRange <- function(x){
 	return(validRange)
 }
 
-# funLikelihood ####
+# funLogLikelihood ####
 # dmvnorm function from the mvtnorm package for reference
 # dmvnorm <- function (x, mean = rep(0, p), sigma = diag(p), log = FALSE, 
 # 										 checkSymmetry = TRUE) 
@@ -198,8 +205,8 @@ funValidRange <- function(x){
 # 		logretval
 # 	else exp(logretval)
 # }
-funLikelihood <- function(resid,covmat){
-	return(-sum(mvtnorm::dmvnorm(resid,rep(0,ncol(resid)),covmat,log=T,checkSymmetry = F)))
+funLogLikelihood <- function(resid,covmat){
+	return(sum(mvtnorm::dmvnorm(resid,rep(0,ncol(resid)),covmat,log=T,checkSymmetry = F)))
 }
 
 # chunk ####
@@ -209,7 +216,7 @@ chunk <- function(x,n){
 }
 
 # funStrechSamplePoints ####
-funStrechSamplePoints <- function(samplePoints,sampleParms,restretchSamplePoints){
+funStrechSamplePoints <- function(samplePoints,sampleParms,restretchSamplePoints=F){
 	samplePoints <- t(samplePoints)
 	if(!restretchSamplePoints){
 		# Substract the min and multiply by max-min to strecth the unit interval to the

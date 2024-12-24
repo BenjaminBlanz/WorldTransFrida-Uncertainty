@@ -139,7 +139,6 @@ if(sum(colnames(defDat)!=colnames(calDat))!=0){
 	stop('Mismatch in the columns of calibration data and model result data')
 }
 resDat <- defDat[1:nrow(calDat),]-calDat
-
 resDat.cor <- cor(resDat,use='complete.obs')
 perfCors <- which((resDat.cor-diag(1,ncol(resDat)))==1,arr.ind=T)
 if(nrow(perfCors)>0){
@@ -154,9 +153,7 @@ if(nrow(perfCors)>0){
 }
 
 # find linear combinations ####
-
 ##  in calDat ####
-
 # new resid
 calDat <- calDat.afterImpute[,-exclude.idc]
 varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
@@ -166,7 +163,6 @@ if(sum(colnames(defDat)!=colnames(calDat))!=0){
 	stop('Mismatch in the columns of calibration data and model result data')
 }
 resDat <- defDat[1:nrow(calDat),]-calDat
-
 if(removeLinearCombinations){
 	linearCombos <- caret::findLinearCombos(resDat[complete.cases(resDat),])
 	if(length(linearCombos$remove)>0){
@@ -180,7 +176,6 @@ if(removeLinearCombinations){
 }
 
 ## in calDat.cv ####
-
 # new resid
 calDat <- calDat.afterImpute[,-exclude.idc]
 varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
@@ -210,15 +205,21 @@ calDat <- calDat.afterImpute[,-exclude.idc]
 cat('...done\n')
 cat(sprintf('After exclusion we are left with %i out of %i variables\n',ncol(resDat),length(varsForExport.cleanNames.orig)))
 
+# remove excluded idc ###
+calDat.orig <- calDat.orig[,-exclude.idc]
+calDat <- calDat.afterImpute[,-exclude.idc]
+calDat.impExtrValue <- calDat.impExtrValue[,-exclude.idc]
+rm(calDat.afterImpute)
+
 # data Plots ####
 if(plotWhileRunning){
 	funPlotDat(calDat,calDat.impExtrValue,defDat)
+	dir.create(file.path(location.output),recursive = T,showWarnings = F)
 	dev.print(pdf,
 						file.path(location.output,'calDatPlot.pdf'))
 }
 
 # covar ####
-calDat <- calDat.afterImpute[,-exclude.idc]
 varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
 writeFRIDAExportSpec(varsForExport.fridaNames)
 defDat <- runFridaDefaultParms()
@@ -292,10 +293,10 @@ if(is.singular.matrix(resDat.cv)){
 }
 
 # likelihood ####
-defNegLogLike <- funLikelihood(resDat[complete.cases(resDat),],resDat.cv)
-cat(sprintf('-logLikelihood in the default case: %f',defNegLogLike))
-if(is.infinite(defNegLogLike)||is.na(defNegLogLike)){
-	stop('Bad default negLogLike\n')
+defLogLike <- funLogLikelihood(resDat[complete.cases(resDat),],resDat.cv)
+cat(sprintf('Likelihood in the default case: %f',defLogLike))
+if(is.infinite(defLogLike)||is.na(defLogLike)){
+	stop('Bad default log likelihood\n')
 }
 
 # save run prep ####
