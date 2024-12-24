@@ -2,6 +2,7 @@
 # Functions to run frida
 #
 
+suppressPackageStartupMessages(require(Rmpfr)) # use to calculate the likelihood from loglikelihood
 
 # fun write firda export vars ####
 writeFRIDAExportSpec <- function(varsForExport.fridaNames){
@@ -37,17 +38,13 @@ runFridaParmsByIndex <- function(runid){
 			runDat <- runDat[,-1]
 			resDat <- runDat[1:nrow(calDat),]-calDat
 			logLike <- funLogLikelihood(resDat[complete.cases(resDat),],resSigma)
+			like <- exp(logLike)
 			# If the logLike is not NA but the run did not complete assign 
 			# lowest nonzero value. We use this when narrowing the parms space
-			if(!is.na(logLike)&&is.na(runDat[[1]][nrow(runDat)])){
-				logLike <- log(sum(!is.na(runDat[[1]]))*.Machine$double.eps)
+			if(is.na(runDat[[1]][nrow(runDat)])||like==0){
+				like <- (sum(!is.na(runDat[[1]]))*.Machine$double.eps)
 			}
-			# If the logLike is NA, like is 0 -> logLike is Inf.
-			if(is.na(logLike)){
-				logLike <- -Inf
-			}
-			like <- exp(logLike)
-			retlist[[i]] <- (list(parmsIndex=i,
+			retlist[[i]] <- (list(parmsIndex=as.numeric(row.names(samplePoints)[i]),
 														runDat=runDat,
 														logLike=logLike,
 														like=like))
@@ -58,33 +55,7 @@ runFridaParmsByIndex <- function(runid){
 # the same as above, but runs all samples in samplePoints for pre allocated
 # samplePoints per worker.
 runFridaParmsBySamplePoints <- function(saveOutPutDontReturn=FALSE,workUnit=NULL){
-	retlist <- vector(mode = "list", length = nrow(samplePoints))
-	for(i in 1:nrow(samplePoints)){
-		writeFRIDAInput(sampleParms$Variable,samplePoints[i,])
-		system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
-								 file.path(location.frida,'FRIDA.stmx')),
-					 ignore.stdout = T,ignore.stderr = T,wait = T)
-		runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
-		colnames(runDat) <- cleanNames(colnames(runDat))
-		rownames(runDat) <- runDat$year
-		runDat <- runDat[,-1]
-		resDat <- runDat[1:nrow(calDat),]-calDat
-		logLike <- funLogLikelihood(resDat[complete.cases(resDat),],resSigma)
-		# If the logLike is not NA but the run did not complete assign 
-		# lowest nonzero value. We use this when narrowing the parms space
-		if(!is.na(logLike)&&is.na(runDat[[1]][nrow(runDat)])){
-			logLike <- log(sum(!is.na(runDat[[1]]))*.Machine$double.eps)
-		}
-		# If the logLike is NA, it is 0.
-		if(is.na(logLike)){
-			logLike <- 0
-		}
-		like <- exp(logLike)
-		retlist[[i]] <- (list(parmsIndex=as.numeric(row.names(samplePoints)[i]),
-													runDat=runDat,
-													logLike=logLike,
-													like=like))
-	}
+	retlist <- runFridaParmsByIndex(1:nrow(samplePoints))
 	if(saveOutPutDontReturn){
 		saveRDS(retlist,file.path(baseWD,location.output,
 															paste0('workUnit-',workUnit,'-',workerID,'.RDS')))
@@ -97,8 +68,8 @@ runFridaParmsBySamplePoints <- function(saveOutPutDontReturn=FALSE,workUnit=NULL
 # Uses location.frida, and name.fridaInputFile
 # from the global environment
 runFridaDefaultParms <- function(){
-	system(paste('rm',file.path(location.frida,'Data',name.fridaInputFile)),
-				 ignore.stdout = T, ignore.stderr = T)
+	frida_info <- read.csv("frida_info.csv")
+	writeFRIDAInput(frida_info$Variable,frida_info$Value)
 	system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
 							 file.path(location.frida,'FRIDA.stmx')),
 				 ignore.stdout = T,ignore.stderr = T,wait = T)
@@ -206,7 +177,16 @@ funValidRange <- function(x){
 # 	else exp(logretval)
 # }
 funLogLikelihood <- function(resid,covmat){
-	return(sum(mvtnorm::dmvnorm(resid,rep(0,ncol(resid)),covmat,log=T,checkSymmetry = F)))
+	if(nrow(resid)==0||sum(is.na(resid))>0){
+		return(-Inf)
+	}	else {
+		logLike <- sum(mvtnorm::dmvnorm(resid,rep(0,ncol(resid)),covmat,log=T,checkSymmetry = F))
+		if(is.na(logLike)){
+			return(-Inf)
+		} else {
+			return(logLike)
+		}
+	}
 }
 
 # chunk ####
@@ -215,8 +195,8 @@ chunk <- function(x,n){
 	split(x, cut(seq_along(x), n, labels = FALSE)) 
 }
 
-# funStrechSamplePoints ####
-funStrechSamplePoints <- function(samplePoints,sampleParms,restretchSamplePoints=F){
+# funStretchSamplePoints ####
+funStretchSamplePoints <- function(samplePoints,sampleParms,restretchSamplePoints=F){
 	samplePoints <- t(samplePoints)
 	if(!restretchSamplePoints){
 		# Substract the min and multiply by max-min to strecth the unit interval to the
@@ -247,3 +227,5 @@ funStrechSamplePoints <- function(samplePoints,sampleParms,restretchSamplePoints
 	# back to vars in cols and samples in rows
 	samplePoints<- t(samplePoints)
 }
+
+

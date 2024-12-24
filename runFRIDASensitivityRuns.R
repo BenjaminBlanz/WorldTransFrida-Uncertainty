@@ -33,6 +33,9 @@ if(file.exists(file.path(location.output,'calDat.RDS'))){
 	stop('Missing calDat file. Run runFRIDASensitivityRunLikelihood first.\n')
 }
 # specify sampling parameters ####
+# reads frida_info.csv and outputs the SampleParms
+# also removes parms we will not sample
+# and complains about invalid lines in frida_info.csv
 if(file.exists(file.path(location.output,'sampleParms.RDS'))){
 	cat('Reading sampling parameters...')
 	sampleParms <- readRDS(file.path(location.output,'sampleParms.RDS'))
@@ -65,33 +68,35 @@ if(file.exists(file.path(location.output,'sampleParms.RDS'))){
 	}
 	write.csv(sampleParms[invalidLines,],'frida_info_errorCases.csv')
 	sampleParms <- sampleParms[-invalidLines,]
-	saveRDS(sampleParms,file.path(location.output,'sampleParms.RDS'))
 	cat('done\n')
 }
 sampleParms.orig <- sampleParms
+saveRDS(sampleParms,file.path(location.output,'sampleParms.RDS'))
 
 # generate sobol sequence ####
 if(file.exists(file.path(location.output,'samplePoints.RDS'))){
 	cat('Reading sampling points...')
 	samplePoints <- readRDS(file.path(location.output,'samplePoints.RDS'))
+	samplePoints.base <- readRDS(file.path(location.output,'samplePointsBase.RDS'))
 	cat('done\n')
 } else {
 	cat('Generate sampling points using sobol sequence...')
 	# sobolSequence.points generates points on the unit interval for each var
 	# transformed, so vars are in rows samples in cols, makes the next steps easier
-	# numSample -1 as we add the baseline values as a sample at the end.
-	samplePoints <- sobolSequence.points(nrow(sampleParms),31,numSample-1) 
-	if(sum(duplicated(samplePoints))>0){
+	samplePoints.base <- sobolSequence.points(nrow(sampleParms),31,numSample) 
+	if(sum(duplicated(samplePoints.base))>0){
 		stop('Not enough unique sample points. Check the sobol generation\n')
 	}
-	samplePoints <- funStrechSamplePoints(samplePoints,sampleParms,restretchSamplePoints)
-	samplePoints <- rbind(samplePoints, t(sampleParms$Value))
+	samplePoints <- funStretchSamplePoints(samplePoints.base,sampleParms,restretchSamplePoints)
+	# samplePoints <- rbind(samplePoints, t(sampleParms$Value))
 	cat('done\nWriting sample points to file...')
 	rownames(samplePoints) <- 1:nrow(samplePoints)
 	colnames(samplePoints) <- sampleParms[,1]
 	saveRDS(samplePoints,file.path(location.output,'samplePoints.RDS'))
+	saveRDS(samplePoints.base,file.path(location.output,'samplePointsBase.RDS'))
 	cat('done\n')
 }
+samplePoints.orig <- samplePoints
 
 # run FRIDA with the samples ####
 logLike <- rep(NA,numSample)
@@ -124,11 +129,11 @@ cat('done\n')
 ## tighten parms ####
 location.output <- file.path(location.output,'BaseParmRange')
 dir.create(location.output,showWarnings = F,recursive = T)
-doneTightening <- F
+doneChangingParms <- F
 tight.i <- 0
-while(!doneTightening){
+while(!doneChangingParms){
 	## plot setup ####
-	if(plotWhileRunning){
+	if(plotWhileRunning&&plotDatWhileRunning){
 		subPlotLocations <- funPlotDat(calDat,calDat.impExtrValue,yaxPad = yaxPad)
 	}
 	## cluster run ####
@@ -161,7 +166,7 @@ while(!doneTightening){
 							 error = function(e){},warning=function(w){})
 		} 
 		if(!exists('parOutput')){
-			cat(sprintf('\r    Running unit %i: samples %i to %i',
+			cat(sprintf('\r(r) Running unit %i: samples %i to %i',
 									i, workUnitBoundaries[i],workUnitBoundaries[i+1]-1))
 			if(length(chunkTimes>1)){
 				cat(sprintf(', average duration per unit so far %i sec (%.2f r/s, %.2f r/s/thread), expect completion in %i sec',
@@ -191,26 +196,36 @@ while(!doneTightening){
 				recursive = F)
 			timing <- toc(quiet=T)
 			chunkTimes[i] <- timing$toc-timing$tic
+			cat('\r(s)')
 			saveRDS(parOutput,file.path(location.output,paste0('workUnit-',i,'.RDS')))
+			cat('\r   ')
 		}
+		cat('\r(l)')
 		for(l in 1:length(parOutput)){
 			logLike[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$logLike
 			like[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$like
 		}
-		if(plotWhileRunning){
+		cat('\r   ')
+		if(plotWhileRunning&&plotDatWhileRunning){
+			cat('\r(p)')
 			for(dat.i in 1:ncol(calDat)){
 				par(mfg = which(subPlotLocations==dat.i,arr.ind = T))
+				xlims <- c(min(as.numeric(rownames(calDat)))-0.5,
+									 max(as.numeric(rownames(calDat)))+0.5)
 				yrange <- range(calDat[[dat.i]],na.rm=T)
+				ylims <- c(yrange[1]-abs(diff(yrange))*yaxPad,
+									 yrange[2]+abs(diff(yrange))*yaxPad)
 				plot(rownames(calDat),calDat[[dat.i]],type='n',
 						 xaxt='n',yaxt='n',
-						 ylim=c(yrange[1]-abs(diff(yrange))*yaxPad,
-						 			 yrange[2]+abs(diff(yrange))*yaxPad))
+						 xaxs='i',yaxs='i',
+						 xlim=xlims,
+						 ylim=ylims)
 				for(l in 1:length(parOutput)){
-					if(parOutput[[l]]$like>likeThreshold){
-						lines(rownames(parOutput[[l]]$runDat),parOutput[[l]]$runDat[[dat.i]],
-									col=alpha(i,min(0.05,max(1,parOutput[[l]]$like))))
-					}
+					lines(rownames(parOutput[[l]]$runDat),parOutput[[l]]$runDat[[dat.i]],
+								col=i)
+								# col=alpha(i,min(0.01,max(1,0.01*parOutput[[l]]$like/.Machine$double.eps))))
 				}
+				cat('\r   ')
 			}
 		}
 		rm(parOutput)
@@ -227,18 +242,20 @@ while(!doneTightening){
 	}
 	
 	### save Likelihoods and sample points ####
-	cat(sprintf('    Saving run data...'))
+	cat(sprintf('  Saving run data...'))
 	saveData <- list(sampleParms=sampleParms,samplePoints = samplePoints,logLike=logLike)
 	saveRDS(saveData,file.path(location.output,paste0('sensiParmsAndLikes.RDS')))
 	cat('done\n')
 	
 	### save figure ####
-	cat(sprintf('    Saving figure...'))
-	if(plotWhileRunning){
-		dev.print(pdf,
-							file.path(location.output,'likelihoodWeightedModelRuns.pdf'))
+	if(plotWhileRunning&&plotDatWhileRunning){
+		cat(sprintf('  Saving figure...'))
+		dev.print(png,width=5*ncol(subPlotLocations),
+							height=5*(nrow(subPlotLocations)-1)+5/4,
+							unit='cm',res=150,
+							file.path(location.output,'likelihoodWeightedModelRuns.png'))
+		cat('done\n')
 	}
-	cat('done\n')
 	
 	### calculate probability ####
 	# cat('    Calculating sample probabilities...')
@@ -257,38 +274,51 @@ while(!doneTightening){
 	# rm(negLogLike.mpfr,prob.mpfr)
 	# cat('done\n')
 	
-	### plot Likelihood ####
-	# TODO: implement plot likelihood 
-	
-	### plot parm Range ####
-	if(plotWhileRunning){
-		funPlotParRangesLikelihoods(sampleParms,sampleParms.orig,
-																samplePoints,like)
-		dev.print(pdf,
-							file.path(location.output,'parmLikelihoods.pdf'))
-	}
-	
 	### tighten parms ####
-	if(sum(negLogLike>likeThreshold)==0){
-		doneTightening <- T
+	cat('checking parm bound tightness...\n')
+	fullTermLike <- nrow(calDat)*.Machine$double.eps
+	likeThreshold <- max(fullTermLike,-fullTermLike+max(like)/likeThresholdRatio)
+	if(sum(like>=likeThreshold)==0){
+		doneChangingParms <- T
+		cat(' seem tight enough\n')
 	} else {
+		relTightening <- c()
 		for(i in 1:nrow(sampleParms)){
-			minmax <-  range(samplePoints[negLogLike>likeThreshold,i])
+			minmax <- range(samplePoints[like>=likeThreshold,i])
 			relTightening[i] <- 1-diff(minmax)/(sampleParms[i,c('Max')]-sampleParms[i,c('Min')])
 			sampleParms$Min[i] <- minmax[1]
 			sampleParms$Max[i] <- minmax[2]
 		}
 		if(max(relTightening)>0){
-			doneTightening <- F
+			doneChangingParms <- F
 			tight.i <- tight.i + 1
 			cat(sprintf(' Tightening parm bounds: %i\n',tight.i))
-			location.output <- file.path(location.output,'..',paste('tightening-',tight.i))
-			dir.create(location.output,showWarnings = F,recursive = T)
-			samplePoints <- funStrechSamplePoints(samplePoints,sampleParms,restretchSamplePoints)
+			if(plotWhileRunning){
+				funPlotParRangesLikelihoods(sampleParms,sampleParms.orig,samplePoints,like,
+																		savePlotFilePath = file.path(location.output,paste0('parmLikelihoods-tightening-',tight.i,'.png')))
+			}
+			samplePoints <- funStretchSamplePoints(samplePoints.base,sampleParms,restretchSamplePoints)
+			location.output <- file.path(location.output,'..',paste0('tightening-',tight.i))
+			dir.create(location.output,recursive = T,showWarnings = F)
 		} else {
-			doneTightening <- T
+			doneChangingParms <- T
+			cat(' seem tight enough\n')
+		}
+		if(doneChangingParms){
+			### plot parm Range ####
+			if(plotWhileRunning){
+				cat('  Plotting parm range and likelihoods...')
+				funPlotParRangesLikelihoods(sampleParms,sampleParms.orig,
+																		samplePoints,like,
+																		savePlotFilePath = file.path(location.output,'parmLikelihoods-baseParmRange.png'))
+				cat('done\n')
+			}
 		}
 	}
+	
+	### expand parms ####
+	#TODO: expand parms
+	# if(like does not decrease below maxLike/likeThresholdRatio at the edges
 }
 ## cluster cleanup ####
 cat('cluster cleanup...')

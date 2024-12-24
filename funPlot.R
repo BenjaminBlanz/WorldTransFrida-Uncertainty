@@ -62,7 +62,7 @@ funPlotDat <- function(calDat,calDat.impExtrValue=NULL,defDat=NULL,yaxPad=0.04,
 								 yrange[2]+abs(diff(yrange))*yaxPad)
 			plot(rownames(calDat),calDat[[i]],type='n',
 					 xaxt='n',yaxt='n',
-					 xaxs='i',
+					 xaxs='i',yaxs='i',
 					 xlim=xlims,
 					 ylim=ylims)
 			for(year in incompleteYears){
@@ -147,12 +147,13 @@ funPlotDat <- function(calDat,calDat.impExtrValue=NULL,defDat=NULL,yaxPad=0.04,
 
 # funPlotParRanges ####
 funPlotParRangesLikelihoods <- function(sampleParms,sampleParms.orig,
-																				samplePoints=NULL,like=NULL,yaxPad=0.04){
+																				samplePoints=NULL,like=NULL,yaxPad=0.04,
+																				savePlotFilePath=NULL){
 	if(is.null(samplePoints)){
 		samplePointBase <- seq(0,1,length.out=10)
 		samplePoints <- array(rep(samplePointBase,nrow(sampleParms)),
 													dim=c(length(samplePointBase),nrow(sampleParms)))
-		samplePoints <- funStrechSamplePoints(samplePoints,sampleParms,F)
+		samplePoints <- funStretchSamplePoints(samplePoints,sampleParms,F)
 		colnames(samplePoints) <- sampleParms[,1]
 	}
 	if(is.null(like)){
@@ -176,14 +177,18 @@ funPlotParRangesLikelihoods <- function(sampleParms,sampleParms.orig,
 		abline(h=0,col='gray')
 		abline(v=c(sampleParms.orig$Min[i],sampleParms.orig$Max[i]),col='gray')
 		if(sampleParms.orig$Min[i]<sampleParms$Min[i]){
-			abline(v=sampleParms$Min[i],lty=2)
+			abline(v=sampleParms$Min[i],lty=2,col='red')
 		}
 		if(sampleParms$Max[i]<sampleParms.orig$Max[i]){
-			abline(v=sampleParms$Min[i],lty=2)
+			abline(v=sampleParms$Max[i],lty=2,col='red')
 		}
-		points(samplePoints[,i],like,pch=20,cex=0.5)
+		points(samplePoints[,i],like,pch=20,cex=0.1)
 		# add label specifying var indext to top left
 		text(sampleParms.orig$Min[i],
 				 yrange[2]+abs(diff(yrange))*yaxPad,i,adj=c(0,1))
+	}
+	if(!is.null(savePlotFilePath)){
+		dev.print(png,width=5*plotCols,height=5*plotRows,unit='cm',res=150,
+							savePlotFilePath)
 	}
 }

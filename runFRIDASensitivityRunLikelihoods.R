@@ -8,6 +8,7 @@
 suppressPackageStartupMessages(require(caret,quietly = T)) # to find linear combinations and remove them in the calib dat
 suppressPackageStartupMessages(require(matrixcalc,quietly = T)) # to test positive definitnes of cov matrix
 suppressPackageStartupMessages(require(imputeTS)) # used for interpolating missing values
+suppressPackageStartupMessages(require(Rmpfr)) # use to calculate the likelihood from loglikelihood
 
 source('config.R')
 source('funRunFRIDA.R')
@@ -211,22 +212,26 @@ calDat <- calDat.afterImpute[,-exclude.idc]
 calDat.impExtrValue <- calDat.impExtrValue[,-exclude.idc]
 rm(calDat.afterImpute)
 
-# data Plots ####
-if(plotWhileRunning){
-	funPlotDat(calDat,calDat.impExtrValue,defDat)
-	dir.create(file.path(location.output),recursive = T,showWarnings = F)
-	dev.print(pdf,
-						file.path(location.output,'calDatPlot.pdf'))
-}
-
-# covar ####
+# clean def run ####
 varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
 writeFRIDAExportSpec(varsForExport.fridaNames)
 defDat <- runFridaDefaultParms()
+resDat <- defDat[1:nrow(calDat),]-calDat
+
+# data Plots ####
+if(plotWhileRunning){
+	funPlotDat(calDat,calDat.impExtrValue,defDat)
+	dev.print(pdf,
+						file.path(location.output,'calDatPlot.pdf'))
+	funPlotDat(resDat,calDat.impExtrValue)
+	dev.print(pdf,
+						file.path(location.output,'resDatPlot.pdf'))
+}
+
+# covar ####
 if(sum(colnames(defDat)!=colnames(calDat))!=0){
 	stop('Mismatch in the columns of calibration data and model result data')
 }
-resDat <- defDat[1:nrow(calDat),]-calDat
 
 
 cat('Determining the distribution of the residuals in the default case...\n')
@@ -293,14 +298,13 @@ if(is.singular.matrix(resDat.cv)){
 }
 
 # likelihood ####
-defLogLike <- funLogLikelihood(resDat[complete.cases(resDat),],resDat.cv)
-cat(sprintf('Likelihood in the default case: %f',defLogLike))
-if(is.infinite(defLogLike)||is.na(defLogLike)){
+defLike <- exp(mpfr(funLogLikelihood(resDat[complete.cases(resDat),],resDat.cv),64))
+cat(paste0('Likelihood in the default case: ',formatMpfr(defLike)))
+if(is.infinite(defLike)||is.na(defLike)){
 	stop('Bad default log likelihood\n')
 }
 
 # save run prep ####
-dir.create(location.output,showWarnings=F,recursive=T)
 writeFRIDAExportSpec(varsForExport.fridaNames.orig[-exclude.idc])
 saveRDS(resDat.cv,file.path(location.output,'sigma.RDS'))
 saveRDS(list(calDat=calDat,calDat.impExtrValue=calDat.impExtrValue),file.path(location.output,'calDat.RDS'))

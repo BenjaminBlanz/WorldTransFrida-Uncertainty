@@ -12,6 +12,7 @@ chunkSizePerWorker <- 100
 restretchSamplePoints <- F
 
 plotWhileRunning <- T
+plotDatWhileRunning <- F
 whatToPlot <- tolower('GDP_Real_GDP_in_2021c')
 
 location.frida <- './FRIDAforUncertaintyAnalysis'
@@ -22,6 +23,7 @@ name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
 
 location.output <- file.path('workOutput',paste0('NumSample-',numSample,
 																								 '-chunkSizePerWorker-',chunkSizePerWorker))
+dir.create(file.path(location.output),recursive = T,showWarnings = F)
 # For the likelihood we require a positive definite covariance matrix of the residuals.
 # A greater number of minObs increase the change of having more complete cases to 
 # work with, increasing our ods of a good cov mat.
@@ -42,9 +44,12 @@ imputeMissingVars <- T
 extrapolateMissingVarMethod <- 'n'
 
 
-# for the parms tightening, where should our threshold be?
-# threshold is in the likelihood 
-likeThreshold <- 20*.Machine$double.eps
+# for changing the parm space where should our threshold be.
+# The threshold is a ratio between the maximum likelihood parms and the least likely
+# parms.
+# The parm range will be either increased or decreased to make this happen in each
+# parameter.
+likeThresholdRatio <- 100
 
 # padding for data plots y axis in share of the data range
 yaxPad <- 0.4
