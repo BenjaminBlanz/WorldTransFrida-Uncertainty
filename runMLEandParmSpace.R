@@ -90,9 +90,6 @@ newMaxFound <- T
 while(newMaxFound){
 	# MLE ####
 	cat('running fit procedure...')
-	sv <- jParVect
-	oldVal <- 0
-	newVal <- 1
 	# Optimisation of parameters (min neg log likelihood) is performed including
 	# the covariance properties. The evaluation of likelihood of each of the parameters
 	# for the uncertainty representation is performed with covariance matrix fixed to the
@@ -145,26 +142,39 @@ while(newMaxFound){
 	problemCases.resSigmaVect <- which(problemCases > length(parVect))
 	parscale[problemCases.resSigmaVect] <- 10^ordersOfMagGuesses[problemCases.resSigmaVect]
 	parscale.resSigmaVect <- parscale[(nrow(sampleParms)+1):length(jParVect)]
-	
-	excludeParmNames <- sampleParms$Variable[problemCases.parVect]
-	sampleParms <- prepareSampleParms(excludeNames = excludeParmNames)
-	parVect <- sampleParms$Value
-	names(parVect) <- sampleParms$Variable 
+	if(length(problemCases.parVect)>0){
+		cat('Indeterminate parscales in parvect, kicking out\n')
+		parscale.parvect <- parscale.parvect[-problemCases.parVect]
+		excludeParmNames <- sampleParms$Variable[problemCases.parVect]
+		cat(paste(excludeParmNames,collapse='\n'))
+		sampleParms <- prepareSampleParms(excludeNames = excludeParmNames)
+		parVect <- sampleParms$Value
+		names(parVect) <- sampleParms$Variable 
+		jParVect <- c(parVect,resSigmaVect)
+	}
 	
 	# save parscale ####
 	cat('saving ParScale...')
 	saveRDS(parscale,file.path(location.output,'parscale.RDS'))
+	sampleParms$parscale <- parscale.parvect
+	write.csv(sampleParms,file.path(location.output,'sampleParmsParscale.csv'))
 	
-	stop()
 	
+	
+	sv <- jParVect
+	oldVal <- 0
+	newVal <- 1
 	while(abs(oldVal-newVal)>1e-12){
 		oldVal <- newVal
 		# sv <- sv * 1.1
-		optRes <- optimx(sv,jnegLLikelihood.f,method=c('Nelder-Mead'),
+		optRes <- optimx(sv,jnegLLikelihood.f,method=c('bobyqa'),
+										 lower=c(sampleParms$Min,resSigmaVect-abs(parscale.resSigmaVect)*1e5),
+										 upper=c(sampleParms$Max,resSigmaVect+abs(parscale.resSigmaVect)*1e5),
 										 control=list(all.methods=F,
-										 						 parscale = parscale,
+										 						 parscale = parscale*1e-6,
 										 						 # fnscale = newVal,
-										 						 dowarn=F,
+										 						 dowarn=T,
+										 						 trace=9,
 										 						 kkt=F,
 										 						 maxit = 2e4,
 										 						 reltol = 1e-15))
