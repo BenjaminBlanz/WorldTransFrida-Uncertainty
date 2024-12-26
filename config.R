@@ -1,5 +1,5 @@
 numWorkers <- parallel::detectCores()
-numSample <- 1e4
+numSample <- 5e3
 
 # How large the chunks of work are, smaller means more frequent pauses to write out
 # itermediate results (and update the diagnostic output).
@@ -23,6 +23,7 @@ name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
 
 location.output <- file.path('workOutput',paste0('NumSample-',numSample,
 																								 '-chunkSizePerWorker-',chunkSizePerWorker))
+location.output.base <- location.output
 dir.create(file.path(location.output),recursive = T,showWarnings = F)
 # For the likelihood we require a positive definite covariance matrix of the residuals.
 # A greater number of minObs increase the change of having more complete cases to 
@@ -53,3 +54,5 @@ likeThresholdRatio <- 100
 
 # padding for data plots y axis in share of the data range
 yaxPad <- 0.4
+
+file.copy('config.R',location.output)
