@@ -80,9 +80,20 @@ resSigmaVect <- as.vector(resSigma[!lower.tri(resSigma)])
 names(resSigmaVect) <- as.vector(resSigma.names[!lower.tri(resSigma)])
 jParVect <- c(parVect,resSigmaVect)
 
+# start cluster ####
+source('clusterHelp.R')
+
+# MLE and Sensi Loop ####
+parscale <- rep(NA,length(jParVect))
+names(parscale) <- names(jParVect)
+if(file.exists(file.path(location.output,'parscale.RDS'))){
+	parscale.old <- readRDS('parscale.RDS')
+	matches <- which(names(parscale) %in% names(parscale.old))
+	parscale[matches] <- parscale.old[matches]
+}
 newMaxFound <- T
 while(newMaxFound){
-	#### MLE ####
+	# MLE ####
 	cat('running fit procedure...')
 	sv <- jParVect
 	oldVal <- 0
@@ -100,7 +111,6 @@ while(newMaxFound){
 		return(abs(baseNegLL-jnegLLikelihood.f(jParVect.i))-1)
 	}
 	baseNegLL <- jnegLLikelihood.f(jParVect)
-	parscale <- rep(NA,length(jParVect))
 	ordersOfMagGuesses <- c((floor(log10(abs(sampleParms$Max-sampleParms$Min)))-2),
 													rep(-20,length(resSigmaVect)))
 	ordersOfMagGuesses.orig <- ordersOfMagGuesses
@@ -148,6 +158,7 @@ while(newMaxFound){
 														'ordersOfMagLimits','ordersOfMag','responseTolerance',
 														'orderOfMagNegLLErrorFun','funFindParScale',
 														'jnegLLikelihood.f','ordersOfMagGuesses',
+														'calDat','resSigma',
 														'jParVect'))
 			gobble <- clusterEvalQ(cl,source(file.path(baseWD,'funParmSpace.R')))
 			parsToDet <- which(is.na(parscale)|is.infinite(parscale))

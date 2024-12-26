@@ -6,7 +6,7 @@ if(!exists('location.output')){
 
 # config ####
 numWorkers <- detectCores()
-clusterType <- 'fork'
+clusterType <- 'psock'
 
 # tmpfs location for the worker directories to not churn the hard drive
 # and be faster
