@@ -1,0 +1,14 @@
+*.Rproj*
+.Rhistory
+.RData
+.Ruserdata
+*abble*
+Rplots.pdf
+Stella_Simulator_Linux.zip
+UncertaintyAnalysis.Rproj
+*RData
+frida_info_errorCases.csv
+*RDS
+scraps.R
+test*
+workOutput
