@@ -152,7 +152,8 @@ while(newMaxFound){
 		}
 	}
 	iterations <- 0
-	while(iterations < 2 && sum(is.na(parscale)||is.infinite(parscale))>0){
+	parallelParscale <- T
+	while(iterations < 2 && sum(is.na(parscale)|is.infinite(parscale))>0){
 		if(parallelParscale){
 			clusterExport(cl,list('baseNegLL',
 														'ordersOfMagLimits','ordersOfMag','responseTolerance',
