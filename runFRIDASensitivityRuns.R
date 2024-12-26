@@ -17,20 +17,21 @@ cat('Config...')
 source('config.R')
 dir.create(location.output,showWarnings=F,recursive=T)
 file.copy('config.R',location.output)
+location.output.base <- location.output
 cat('done\n')
 
 # read input files for likelihood ####
 if(file.exists(file.path(location.output,'sigma.RDS'))){
 	resSigma <- readRDS(file.path(location.output,'sigma.RDS'))
 } else {
-	stop('Missing covariance matrix file. Run runFRIDASensitivityRunLikelihood first.\n')
+	stop('Missing covariance matrix file. Run runInitialiseData.R first.\n')
 }
 if(file.exists(file.path(location.output,'calDat.RDS'))){
 	calDat.lst <- readRDS(file.path(location.output,'calDat.RDS'))
 	calDat <- calDat.lst$calDat
 	calDat.impExtrValue <- calDat.lst$calDat.impExtrValue
 } else {
-	stop('Missing calDat file. Run runFRIDASensitivityRunLikelihood first.\n')
+	stop('Missing calDat file. Run runInitialiseData.R first.\n')
 }
 # specify sampling parameters ####
 # reads frida_info.csv and outputs the SampleParms
@@ -89,9 +90,6 @@ if(file.exists(file.path(location.output,'samplePoints.RDS'))){
 	}
 	samplePoints <- funStretchSamplePoints(samplePoints.base,sampleParms,restretchSamplePoints)
 	# samplePoints <- rbind(samplePoints, t(sampleParms$Value))
-	cat('done\nWriting sample points to file...')
-	rownames(samplePoints) <- 1:nrow(samplePoints)
-	colnames(samplePoints) <- sampleParms[,1]
 	saveRDS(samplePoints,file.path(location.output,'samplePoints.RDS'))
 	saveRDS(samplePoints.base,file.path(location.output,'samplePointsBase.RDS'))
 	cat('done\n')
@@ -127,7 +125,7 @@ cat('done\n')
 
 
 ## tighten parms ####
-location.output <- file.path(location.output,'BaseParmRange')
+location.output <- file.path(location.output.base,'BaseParmRange')
 dir.create(location.output,showWarnings = F,recursive = T)
 doneChangingParms <- F
 tight.i <- 0
@@ -180,7 +178,7 @@ while(!doneChangingParms){
 			workerWorkUnits <- chunk(workUnit,numWorkers)
 			# write the samplePoints of the work units to the worker directories
 			for(w.i in workers){
-				if(!is.null(workerWorkUnits[[w.i]])){
+				if(w.i <= length(workerWorkUnits) && !is.null(workerWorkUnits[[w.i]])){
 					saveRDS(samplePoints[workerWorkUnits[[w.i]],],
 									file.path('workerDirs',paste0(workDirBasename,w.i),'samplePoints.RDS'))
 				} else {
@@ -257,6 +255,8 @@ while(!doneChangingParms){
 		cat('done\n')
 	}
 	
+	stop()
+	
 	### calculate probability ####
 	# cat('    Calculating sample probabilities...')
 	# TODO: weight by spacing!
@@ -280,8 +280,14 @@ while(!doneChangingParms){
 	likeThreshold <- max(fullTermLike,-fullTermLike+max(like)/likeThresholdRatio)
 	if(sum(like>=likeThreshold)==0){
 		doneChangingParms <- T
-		cat(' seem tight enough\n')
+		cat(' seem tight enough\n') 
+	}	else if (sum(like>=likeThreshold)<=nrow(sampleParms)){
+		cat(sprintf('Not enough samples above threshold.\n %i above threshold, require %i.\n',
+				sum(like>=likeThreshold),
+				nrow(sampleParms)))
+		doneChangingParms <- T
 	} else {
+		cat(sprintf(' Tightening parm bounds: %i\n',tight.i))
 		relTightening <- c()
 		for(i in 1:nrow(sampleParms)){
 			minmax <- range(samplePoints[like>=likeThreshold,i])
@@ -289,17 +295,24 @@ while(!doneChangingParms){
 			sampleParms$Min[i] <- minmax[1]
 			sampleParms$Max[i] <- minmax[2]
 		}
-		if(max(relTightening)>0){
+		if(max(relTightening)>0 && max(relTightening)<1){
 			doneChangingParms <- F
 			tight.i <- tight.i + 1
-			cat(sprintf(' Tightening parm bounds: %i\n',tight.i))
+			cat(' ...done\n')
 			if(plotWhileRunning){
+				cat('   plotting...')
 				funPlotParRangesLikelihoods(sampleParms,sampleParms.orig,samplePoints,like,
 																		savePlotFilePath = file.path(location.output,paste0('parmLikelihoods-tightening-',tight.i,'.png')))
+				cat('done\n')
 			}
+			cat('   stretching sample points accross new parm space...')
 			samplePoints <- funStretchSamplePoints(samplePoints.base,sampleParms,restretchSamplePoints)
-			location.output <- file.path(location.output,'..',paste0('tightening-',tight.i))
+			cat('done\n')
+			location.output <- file.path(location.output.base,paste0('tightening-',tight.i))
 			dir.create(location.output,recursive = T,showWarnings = F)
+		} else if (sum(relTightening==1)<=nrow(sampleParms)){
+			cat('Tightening singularity. Can not continue\n')
+			doneChangingParms <- T
 		} else {
 			doneChangingParms <- T
 			cat(' seem tight enough\n')
