@@ -105,28 +105,48 @@ cat('\n')
 calDat <- calDat.afterImpute[,-exclude.idc]
 
 # exclude vars ####
-doneExcluding <- F
-while(!doneExcluding){
-	doneExcluding <- T
-	# calc resid
-	calDat <- calDat.afterImpute[,-exclude.idc]
-	varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
-	writeFRIDAExportSpec(varsForExport.fridaNames)
-	defDat <- runFridaDefaultParms()
-	if(sum(colnames(defDat)!=colnames(calDat))!=0){
-		stop('Mismatch in the columns of calibration data and model result data')
-	}
-	resDat <- defDat[1:nrow(calDat),]-calDat
-	
-	# check for zero var vars in resid ####
-	for(i in 1:ncol(resDat)){
-		if(var(resDat[,i],na.rm=T)==0){
-			cat(sprintf('  Excluding %s for zero variance in resid\n',
-					colnames(resDat)[i]))
-			doneExcluding <- F
-			exclude.idc <- c(exclude.idc,
-											 which(varsForExport.cleanNames.orig==colnames(resDat)[i]))
+# do not exclude from obs, only resid below
+if(F){
+	doneExcluding <- F
+	while(!doneExcluding){
+		doneExcluding <- T
+		# calc resid
+		calDat <- calDat.afterImpute[,-exclude.idc]
+		varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
+		writeFRIDAExportSpec(varsForExport.fridaNames)
+		defDat <- runFridaDefaultParms()
+		if(sum(colnames(defDat)!=colnames(calDat))!=0){
+			stop('Mismatch in the columns of calibration data and model result data')
 		}
+		resDat <- defDat[1:nrow(calDat),]-calDat
+		
+		# check for zero var vars in resid ####
+		for(i in 1:ncol(resDat)){
+			if(var(resDat[,i],na.rm=T)==0){
+				cat(sprintf('  Excluding %s for zero variance in resid\n',
+						colnames(resDat)[i]))
+				doneExcluding <- F
+				exclude.idc <- c(exclude.idc,
+												 which(varsForExport.cleanNames.orig==colnames(resDat)[i]))
+			}
+		}
+	}
+}
+
+# kick out zero variance in resid ####
+calDat <- calDat.afterImpute[,-exclude.idc]
+varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
+writeFRIDAExportSpec(varsForExport.fridaNames)
+defDat <- runFridaDefaultParms()
+if(sum(colnames(defDat)!=colnames(calDat))!=0){
+	stop('Mismatch in the columns of calibration data and model result data')
+}
+resDat <- defDat[1:nrow(calDat),]-calDat
+for(i in 1:ncol(resDat)){
+	res.sd <- sd(resDat[[i]],na.rm=T)
+	if(res.sd==0){
+		exclude.idc <- c(exclude.idc,which(varsForExport.cleanNames.orig==colnames(resDat)[i]))
+		cat(sprintf('Excluding %s for zero variance in resid\n',colnames(resDat)[i]))
 	}
 }
 
@@ -309,5 +329,5 @@ if(is.infinite(defLike)||is.na(defLike)){
 # save run prep ####
 writeFRIDAExportSpec(varsForExport.fridaNames.orig[-exclude.idc])
 saveRDS(resDat.cv,file.path(location.output,'sigma.RDS'))
-saveRDS(list(calDat=calDat,calDat.impExtrValue=calDat.impExtrValue),file.path(location.output,'calDat.RDS'))
+saveRDS(list(calDat=calDat,calDat.impExtrValue=calDat.impExtrValue,calDat.orig=calDat.orig),file.path(location.output,'calDat.RDS'))
 
