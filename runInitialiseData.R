@@ -107,6 +107,7 @@ calDat <- calDat.afterImpute[,-exclude.idc]
 # remove manual exclusion list ####
 manExclusionList <- read.csv('climateVarExclusionList.csv')
 exclude.idc <- c(exclude.idc,which(varsForExport.fridaNames.orig %in% manExclusionList$Variable))
+cat(paste('  Excluding because of manual exclusion list',manExclusionList$Variable,'\n'))
 
 # exclude vars ####
 # do not exclude from obs, only resid below
@@ -153,32 +154,34 @@ for(i in 1:ncol(resDat)){
 		cat(sprintf('Excluding %s for zero variance in resid\n',colnames(resDat)[i]))
 	}
 }
-
-# check for perfect corr in resid ####
-# calc resid
-calDat <- calDat.afterImpute[,-exclude.idc]
-varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
-writeFRIDAExportSpec(varsForExport.fridaNames)
-defDat <- runFridaDefaultParms()
-if(sum(colnames(defDat)!=colnames(calDat))!=0){
-	stop('Mismatch in the columns of calibration data and model result data')
-}
-resDat <- defDat[1:nrow(calDat),]-calDat
-resDat.cor <- cor(resDat,use='complete.obs')
-perfCors <- which((resDat.cor-diag(1,ncol(resDat)))==1,arr.ind=T)
-if(nrow(perfCors)>0){
-	for(i in 1:nrow(perfCors)){
-		if(!(colnames(resDat)[perfCors[i,2]] %in% varsForExport.cleanNames.orig[exclude.idc])){
-			cat(sprintf('  Excluding %s for perfect cor. with %s\n',
-									colnames(resDat)[perfCors[i,1]],colnames(resDat)[perfCors[i,2]]))
-			exclude.idc <- c(exclude.idc,
-											 which(varsForExport.cleanNames.orig==colnames(resDat)[perfCors[i,1]]))
+	
+if(!treatVarsAsIndep){	
+	# check for perfect corr in resid ####
+	# calc resid
+	calDat <- calDat.afterImpute[,-exclude.idc]
+	varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
+	writeFRIDAExportSpec(varsForExport.fridaNames)
+	defDat <- runFridaDefaultParms()
+	if(sum(colnames(defDat)!=colnames(calDat))!=0){
+		stop('Mismatch in the columns of calibration data and model result data')
+	}
+	resDat <- defDat[1:nrow(calDat),]-calDat
+	resDat.cor <- cor(resDat,use='complete.obs')
+	perfCors <- which((resDat.cor-diag(1,ncol(resDat)))==1,arr.ind=T)
+	if(nrow(perfCors)>0){
+		for(i in 1:nrow(perfCors)){
+			if(!(colnames(resDat)[perfCors[i,2]] %in% varsForExport.cleanNames.orig[exclude.idc])){
+				cat(sprintf('  Excluding %s for perfect cor. with %s\n',
+										colnames(resDat)[perfCors[i,1]],colnames(resDat)[perfCors[i,2]]))
+				exclude.idc <- c(exclude.idc,
+												 which(varsForExport.cleanNames.orig==colnames(resDat)[perfCors[i,1]]))
+			}
 		}
 	}
 }
 
 # find linear combinations ####
-if(removeLinearCombinations){
+if(removeLinearCombinations&&!treatVarsAsIndep){
 	##  in calDat ####
 	# new resid
 	calDat <- calDat.afterImpute[,-exclude.idc]
@@ -263,70 +266,82 @@ if(sum(colnames(defDat)!=colnames(calDat))!=0){
 
 
 cat('Determining the distribution of the residuals in the default case...\n')
-resDat.cv <- NA
-# this is not the correct way to do it. May not yield a positive definit matrix.
-# but if it is valid uses more of the observations, so try it.
-# See the following for why this is bad.
-# https://www.r-bloggers.com/2015/06/pairwise-complete-correlation-considered-dangerous/
-cat('  trying pariwise complete obs...')
-try({resDat.cv <- cov(resDat,use='pairwise.complete.obs')})
-if(sum(is.na(resDat.cv))>0||!is.positive.definite(resDat.cv)){
-	cat('fail\n')
+if(treatVarsAsIndep){
+	variances <- NA
+	for(i in 1:ncol(resDat)){
+		variances[i] <- var(resDat[[i]],na.rm=T)
+	}
+	resDat.cv <- diag(variances)
+} else {
 	resDat.cv <- NA
-} else {
-	cat('success\n')
-}
-if(sum(is.na(resDat.cv))>0){
-	cat(sprintf('  trying for complete obs, using %i obs...',sum(complete.cases(resDat))))
-	tryCatch({resDat.cv <- cov(resDat,use='complete.obs')},
-					 error=function(e){resDat.cv <- NA})
-	if(sum(is.na(resDat.cv))>0){
+	# this is not the correct way to do it. May not yield a positive definit matrix.
+	# but if it is valid uses more of the observations, so try it.
+	# See the following for why this is bad.
+	# https://www.r-bloggers.com/2015/06/pairwise-complete-correlation-considered-dangerous/
+	cat('  trying pariwise complete obs...')
+	try({resDat.cv <- cov(resDat,use='pairwise.complete.obs')})
+	if(sum(is.na(resDat.cv))>0||!is.positive.definite(resDat.cv)){
 		cat('fail\n')
 		resDat.cv <- NA
 	} else {
 		cat('success\n')
 	}
-}
-# if there are no comple obs, give this a try but make it be quiet.
-if(sum(is.na(resDat.cv))>0){
-	cat('fail\n  trying FitGMMM...')
-	sinkFile <- file('FitGMMM_babble','w')
-	sink(sinkFile,type=c('message'))
-	sink('FitGMM_babble2')
-	try({
-		resDat.mvn <- FitGMM(as.matrix(resDat),
-												 init_means = list(a=colMeans(resDat,na.rm=T)),
-												 init_covs = list(a=diag(1,nrow = ncol(resDat), ncol=ncol(resDat))),
-												 #fix_means = T,
-												 maxit = 1e5,
-												 eps = 1e-6)
-		resDat.mu <- resDat.mvn@Mean
-		resDat.sigma <- resDat.mvn@Covariance
-	})
-	sink(NULL,type='message')
-	sink()
-	close(sinkFile)
 	if(sum(is.na(resDat.cv))>0){
-		cat('fail\n')
-		resDat.cv <- NA
-	} else {
-		cat('success\n')
+		cat(sprintf('  trying for complete obs, using %i obs...',sum(complete.cases(resDat))))
+		tryCatch({resDat.cv <- cov(resDat,use='complete.obs')},
+						 error=function(e){resDat.cv <- NA})
+		if(sum(is.na(resDat.cv))>0){
+			cat('fail\n')
+			resDat.cv <- NA
+		} else {
+			cat('success\n')
+		}
 	}
-}
-if(sum(is.na(resDat.cv))>0){
-	stop('The covariance matrix could not be calculated\n')
-}
-if(is.negative.definite(resDat.cv)){
-	stop('The estimated covariance matrix is negative definite.\nLikelihood can not be calculated\n')
-}
-if(is.singular.matrix(resDat.cv)){
-	cat('Estimated covarianve matrix is singular.\nMight be a problem.\n')
-} else {
-	cat('Estimated covariance matrix is fine\n')
+	# if there are no comple obs, give this a try but make it be quiet.
+	if(sum(is.na(resDat.cv))>0){
+		cat('fail\n  trying FitGMMM...')
+		sinkFile <- file('FitGMMM_babble','w')
+		sink(sinkFile,type=c('message'))
+		sink('FitGMM_babble2')
+		try({
+			resDat.mvn <- FitGMM(as.matrix(resDat),
+													 init_means = list(a=colMeans(resDat,na.rm=T)),
+													 init_covs = list(a=diag(1,nrow = ncol(resDat), ncol=ncol(resDat))),
+													 #fix_means = T,
+													 maxit = 1e5,
+													 eps = 1e-6)
+			resDat.mu <- resDat.mvn@Mean
+			resDat.sigma <- resDat.mvn@Covariance
+		})
+		sink(NULL,type='message')
+		sink()
+		close(sinkFile)
+		if(sum(is.na(resDat.cv))>0){
+			cat('fail\n')
+			resDat.cv <- NA
+		} else {
+			cat('success\n')
+		}
+	}
+	if(sum(is.na(resDat.cv))>0){
+		stop('The covariance matrix could not be calculated\n')
+	}
+	if(is.negative.definite(resDat.cv)){
+		stop('The estimated covariance matrix is negative definite.\nLikelihood can not be calculated\n')
+	}
+	if(is.singular.matrix(resDat.cv)){
+		cat('Estimated covarianve matrix is singular.\nMight be a problem.\n')
+	} else {
+		cat('Estimated covariance matrix is fine\n')
+	}
 }
 
 # likelihood ####
-defLogLike <- funLogLikelihood(resDat[complete.cases(resDat),],resDat.cv)
+if(treatVarsAsIndep){
+	defLogLike <- funLogLikelihood(resDat,resDat.cv)
+} else {
+	defLogLike <- funLogLikelihood(resDat[complete.cases(resDat),],resDat.cv)
+}
 cat(paste0('Log Likelihood in the default case: ',defLogLike,'\n'))
 defLike <- exp(mpfr(defLogLike,64))
 cat(paste0('Likelihood in the default case: ',formatMpfr(defLike),'\n'))
@@ -337,5 +352,10 @@ if(is.infinite(defLike)||is.na(defLike)){
 # save run prep ####
 writeFRIDAExportSpec(varsForExport.fridaNames.orig[-exclude.idc])
 saveRDS(resDat.cv,file.path(location.output,'sigma.RDS'))
-saveRDS(list(calDat=calDat,calDat.impExtrValue=calDat.impExtrValue,calDat.orig=calDat.orig),file.path(location.output,'calDat.RDS'))
+saveRDS(list(
+	calDat=calDat,
+	calDat.impExtrValue=calDat.impExtrValue,
+	calDat.orig=calDat.orig,
+	calDat.withAllVars=calDat.withAllVars),
+	file.path(location.output,'calDat.RDS'))
 

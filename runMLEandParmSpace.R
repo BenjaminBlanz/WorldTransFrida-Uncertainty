@@ -10,6 +10,12 @@ if(file.exists(file.path(location.output,'sigma.RDS'))){
 																rep(1:nrow(resSigma),each=nrow(resSigma)),
 																sep='_'),
 													dim=dim(resSigma))
+	if(treatVarsAsIndep){
+		# get the diagonal elements
+		resSigma.var <- diag(resSigma)
+		# make a diagonal matrix with those elements
+		resSigma <- diag(resSigma.var)
+	}
 } else {
 	stop('Missing covariance matrix file. Run runInitialiseData.R first.\n')
 }
@@ -17,6 +23,8 @@ if(file.exists(file.path(location.output,'calDat.RDS'))){
 	calDat.lst <- readRDS(file.path(location.output,'calDat.RDS'))
 	calDat <- calDat.lst$calDat
 	calDat.impExtrValue <- calDat.lst$calDat.impExtrValue
+	calDat.orig <- calDat.orig
+	calDat.withAllVars <- calDat.lst$calDat.withAllVars
 } else {
 	stop('Missing calDat file. Run runInitialiseData.R first.\n')
 }
@@ -30,6 +38,7 @@ if(file.exists(file.path(location.output,'sampleParms.RDS'))){
 	sampleParms <- readRDS(file.path(location.output,'sampleParms.RDS'))
 	cat('done\n')
 } else {
+	#TODO: Deal with the climateCase parameter 1:100 integer!
 	cat('Specify sampling parameters...')
 	# read in the parameters in frida that have ranges defined
 	frida_info <- read.csv("frida_info.csv")
@@ -76,8 +85,13 @@ names(parVect) <- sampleParms$Variable
 # parVect contains the sampled fit parameters
 # Note that
 # jParVect == c(parVect,covarVect)
-resSigmaVect <- as.vector(resSigma[!lower.tri(resSigma)])
-names(resSigmaVect) <- as.vector(resSigma.names[!lower.tri(resSigma)])
+if(treatVarsAsIndep){
+	resSigmaVect <- diag(resSigma)
+	names(resSigmaVect) <- diag(resSigma.names)
+} else {
+	resSigmaVect <- as.vector(resSigma[!lower.tri(resSigma)])
+	names(resSigmaVect) <- as.vector(resSigma.names[!lower.tri(resSigma)])
+}
 jParVect <- c(parVect,resSigmaVect)
 
 # start cluster ####
@@ -117,6 +131,7 @@ while(newMaxFound){
 	ordersOfMagLimits <- c(min(ordersOfMagGuesses)-2,max(ordersOfMagGuesses)+4)
 	ordersOfMag <- seq(ordersOfMagLimits[1],ordersOfMagLimits[2])
 	responseTolerance <- 0.01
+	
 	funFindParScale <- function(par.i,niter=100,guessOrderOfMag=NULL){
 		if(is.null(guessOrderOfMag)){
 			guessOrderOfMag <- min(ordersOfMag)
@@ -151,6 +166,7 @@ while(newMaxFound){
 			return(ordersOfMagDeltRes[which.min(ordersOfMagNegLLResp)])
 		}
 	}
+	
 	iterations <- 0
 	parallelParscale <- T
 	while(iterations < 2 && sum(is.na(parscale)|is.infinite(parscale))>0){

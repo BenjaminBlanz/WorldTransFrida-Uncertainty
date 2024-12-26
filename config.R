@@ -28,13 +28,13 @@ dir.create(file.path(location.output),recursive = T,showWarnings = F)
 # For the likelihood we require a positive definite covariance matrix of the residuals.
 # A greater number of minObs increase the change of having more complete cases to 
 # work with, increasing our ods of a good cov mat.
-minObsForLike <- 40
+minObsForLike <- 5
 # linear combinations in the residuals will make the matrix singular, i.e. not 
 # positive definite. So we remove then
-removeLinearCombinations <- T
+removeLinearCombinations <- F
 # To increase the complete cases we can impute missing observations of individual 
 # vars (by linear interpolation, smarter later maybe)
-imputeMissingVars <- T
+imputeMissingVars <- F
 # In addition we can try to extrapolate from the calibration data we have to cover more
 # years. However this comes with the risk of producing nonsense, check the diagnostic plots!
 # So far only the 'n' and 'f' options are implemented.
@@ -43,6 +43,10 @@ imputeMissingVars <- T
 # 'l##'    linear extrapolation using the first/last ##% of observations
 # 'q##'    quadratic extrapolation using the first/last ##% of observations
 extrapolateMissingVarMethod <- 'n'
+
+# do we assume or pretend we assume that all residuals are independent.
+# I.e. the cov matrix is a diagonal withe the per variable variance on the diagonal
+treatVarsAsIndep <- T
 
 
 # for changing the parm space where should our threshold be.

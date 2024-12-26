@@ -6,14 +6,22 @@
 # This allows the user to specify the type of likelihood function.
 jnegLLikelihood.f <- function(jParVect){
 	parVect <- jParVect[1:nrow(sampleParms)]
-	resSigma <- array(NA,dim=rep(ncol(calDat),2))
-	resSigma[!lower.tri(resSigma)]<- jParVect[(nrow(sampleParms)+1):length(jParVect)]
-	resSigma[lower.tri(resSigma)] <- t(resSigma)[lower.tri(resSigma)]
+	if(treatVarsAsIndep){
+		resSigma <- diag(jParVect[(nrow(sampleParms)+1):length(jParVect)])
+	} else {
+		resSigma <- array(NA,dim=rep(ncol(calDat),2))
+		resSigma[!lower.tri(resSigma)]<- jParVect[(nrow(sampleParms)+1):length(jParVect)]
+		resSigma[lower.tri(resSigma)] <- t(resSigma)[lower.tri(resSigma)]
+	}
 	runDat <- runFRIDASpecParms(parVect)
 	if(sum(colnames(calDat)!=colnames(runDat))>0){
 		stop('missmatch in colnames(calDat)==colnames(runDat)\n')
 	}
-	calDatCompleteCases <- which(complete.cases(calDat))
+	if(!treatVarsAsIndep){
+		calDatCompleteCases <- which(complete.cases(calDat))
+	} else {
+		calDatCompleteCases <- 1:nrow(calDat)
+	}
 	resDat <- calDat[calDatCompleteCases,]-runDat[calDatCompleteCases,]
 	lLikelihood <- funLogLikelihood(resDat,resSigma)
 	# If the logLike is not NA but the run did not complete assign 

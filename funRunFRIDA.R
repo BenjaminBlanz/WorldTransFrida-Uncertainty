@@ -31,7 +31,7 @@ runFridaParmsByIndex <- function(runid){
 			writeFRIDAInput(sampleParms$Variable,samplePoints[i,])
 			system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
 									 file.path(location.frida,'FRIDA.stmx')),
-						 ignore.stdout = T,ignore.stderr = T,wait = T)
+						 ignore.stdout = T,ignore.stderr = F,wait = T)
 			runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
 			colnames(runDat) <- cleanNames(colnames(runDat))
 			rownames(runDat) <- runDat$year
@@ -186,6 +186,9 @@ funValidRange <- function(x){
 # 	else exp(logretval)
 # }
 funLogLikelihood <- function(resid,covmat){
+	if(treatVarsAsIndep){
+		resid[is.na(resid)] <- 0
+	}
 	if(nrow(resid)==0||sum(is.na(resid))>0){
 		return(-Inf)
 	}	else {
