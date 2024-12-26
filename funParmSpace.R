@@ -6,6 +6,7 @@
 # This allows the user to specify the type of likelihood function.
 jnegLLikelihood.f <- function(jParVect){
 	parVect <- jParVect[1:nrow(sampleParms)]
+	
 	resSigma <- matrix(jParVect[(nrow(sampleParms)+1):length(jParVect)],nrow=ncol(calDat))
 	runDat <- runFRIDASpecParms(parVect)
 	if(sum(colnames(calDat)!=colnames(runDat))>0){
