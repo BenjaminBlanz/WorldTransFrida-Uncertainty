@@ -1,6 +1,20 @@
 source('initialise.R')
 
-
+# config ####
+cat('Config...')
+source('config.R')
+if(file.exists(file.path(location.output,'sigma.RDS'))){
+	resSigma <- readRDS(file.path(location.output,'sigma.RDS'))
+} else {
+	stop('Missing covariance matrix file. Run runInitialiseData.R first.\n')
+}
+if(file.exists(file.path(location.output,'calDat.RDS'))){
+	calDat.lst <- readRDS(file.path(location.output,'calDat.RDS'))
+	calDat <- calDat.lst$calDat
+	calDat.impExtrValue <- calDat.lst$calDat.impExtrValue
+} else {
+	stop('Missing calDat file. Run runInitialiseData.R first.\n')
+}
 
 # specify sampling parameters ####
 # reads frida_info.csv and outputs the SampleParms
