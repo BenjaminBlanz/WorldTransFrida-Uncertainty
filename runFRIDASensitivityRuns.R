@@ -4,13 +4,7 @@
 #
 # 2024 Benjamin Blanz
 # 
-gc()
-require(SobolSequence)
-require(tictoc)
-require(parallel)
-require(scales)
-source('funRunFRIDA.R')
-source('funPlot.R')
+source('initialise.R')
 
 # config ####
 cat('Config...')
@@ -115,7 +109,7 @@ gobble <- clusterApply(cl,workers,function(i){
 	dir.create(file.path('workerDirs',paste0(workDirBasename,i)),showWarnings = F,recursive = T)
 	setwd(file.path('workerDirs',paste0(workDirBasename,i)))
 	})
-# clusterEvalQ(cl,getwd())
+#clusterEvalQ(cl,getwd())
 # copy over the model and simulator
 gobble <- clusterApply(cl,workers,function(i){
 	system(paste('cp -r',file.path(baseWD,location.frida),getwd()))})
@@ -275,56 +269,60 @@ while(!doneChangingParms){
 	# cat('done\n')
 	
 	### tighten parms ####
-	cat('checking parm bound tightness...\n')
-	fullTermLike <- nrow(calDat)*.Machine$double.eps
-	likeThreshold <- max(fullTermLike,-fullTermLike+max(like)/likeThresholdRatio)
-	if(sum(like>=likeThreshold)==0){
-		doneChangingParms <- T
-		cat(' seem tight enough\n') 
-	}	else if (sum(like>=likeThreshold)<=nrow(sampleParms)){
-		cat(sprintf('Not enough samples above threshold.\n %i above threshold, require %i.\n',
-				sum(like>=likeThreshold),
-				nrow(sampleParms)))
+	if(!tightenParms){
 		doneChangingParms <- T
 	} else {
-		cat(sprintf(' Tightening parm bounds: %i\n',tight.i))
-		relTightening <- c()
-		for(i in 1:nrow(sampleParms)){
-			minmax <- range(samplePoints[like>=likeThreshold,i])
-			relTightening[i] <- 1-diff(minmax)/(sampleParms[i,c('Max')]-sampleParms[i,c('Min')])
-			sampleParms$Min[i] <- minmax[1]
-			sampleParms$Max[i] <- minmax[2]
-		}
-		if(max(relTightening)>0 && max(relTightening)<1){
-			doneChangingParms <- F
-			tight.i <- tight.i + 1
-			cat(' ...done\n')
-			if(plotWhileRunning){
-				cat('   plotting...')
-				funPlotParRangesLikelihoods(sampleParms,sampleParms.orig,samplePoints,like,
-																		savePlotFilePath = file.path(location.output,paste0('parmLikelihoods-tightening-',tight.i,'.png')))
-				cat('done\n')
-			}
-			cat('   stretching sample points accross new parm space...')
-			samplePoints <- funStretchSamplePoints(samplePoints.base,sampleParms,restretchSamplePoints)
-			cat('done\n')
-			location.output <- file.path(location.output.base,paste0('tightening-',tight.i))
-			dir.create(location.output,recursive = T,showWarnings = F)
-		} else if (sum(relTightening==1)<=nrow(sampleParms)){
-			cat('Tightening singularity. Can not continue\n')
+		cat('checking parm bound tightness...\n')
+		fullTermLike <- nrow(calDat)*.Machine$double.eps
+		likeThreshold <- max(fullTermLike,-fullTermLike+max(like)/likeThresholdRatio)
+		if(sum(like>=likeThreshold)==0){
+			doneChangingParms <- T
+			cat(' seem tight enough\n') 
+		}	else if (sum(like>=likeThreshold)<=nrow(sampleParms)){
+			cat(sprintf('Not enough samples above threshold.\n %i above threshold, require %i.\n',
+					sum(like>=likeThreshold),
+					nrow(sampleParms)))
 			doneChangingParms <- T
 		} else {
-			doneChangingParms <- T
-			cat(' seem tight enough\n')
-		}
-		if(doneChangingParms){
-			### plot parm Range ####
-			if(plotWhileRunning){
-				cat('  Plotting parm range and likelihoods...')
-				funPlotParRangesLikelihoods(sampleParms,sampleParms.orig,
-																		samplePoints,like,
-																		savePlotFilePath = file.path(location.output,'parmLikelihoods-baseParmRange.png'))
+			cat(sprintf(' Tightening parm bounds: %i\n',tight.i))
+			relTightening <- c()
+			for(i in 1:nrow(sampleParms)){
+				minmax <- range(samplePoints[like>=likeThreshold,i])
+				relTightening[i] <- 1-diff(minmax)/(sampleParms[i,c('Max')]-sampleParms[i,c('Min')])
+				sampleParms$Min[i] <- minmax[1]
+				sampleParms$Max[i] <- minmax[2]
+			}
+			if(max(relTightening)>0 && max(relTightening)<1){
+				doneChangingParms <- F
+				tight.i <- tight.i + 1
+				cat(' ...done\n')
+				if(plotWhileRunning){
+					cat('   plotting...')
+					funPlotParRangesLikelihoods(sampleParms,sampleParms.orig,samplePoints,like,
+																			savePlotFilePath = file.path(location.output,paste0('parmLikelihoods-tightening-',tight.i,'.png')))
+					cat('done\n')
+				}
+				cat('   stretching sample points accross new parm space...')
+				samplePoints <- funStretchSamplePoints(samplePoints.base,sampleParms,restretchSamplePoints)
 				cat('done\n')
+				location.output <- file.path(location.output.base,paste0('tightening-',tight.i))
+				dir.create(location.output,recursive = T,showWarnings = F)
+			} else if (sum(relTightening==1)<=nrow(sampleParms)){
+				cat('Tightening singularity. Can not continue\n')
+				doneChangingParms <- T
+			} else {
+				doneChangingParms <- T
+				cat(' seem tight enough\n')
+			}
+			if(doneChangingParms){
+				### plot parm Range ####
+				if(plotWhileRunning){
+					cat('  Plotting parm range and likelihoods...')
+					funPlotParRangesLikelihoods(sampleParms,sampleParms.orig,
+																			samplePoints,like,
+																			savePlotFilePath = file.path(location.output,'parmLikelihoods-baseParmRange.png'))
+					cat('done\n')
+				}
 			}
 		}
 	}
@@ -333,12 +331,5 @@ while(!doneChangingParms){
 	#TODO: expand parms
 	# if(like does not decrease below maxLike/likeThresholdRatio at the edges
 }
-## cluster cleanup ####
-cat('cluster cleanup...')
-# stop cluster
-stopCluster(cl)
-# clean up working directories
-system('rm -r workerDirs')
-cat('done\n')
 
 
