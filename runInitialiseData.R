@@ -46,7 +46,7 @@ calDat.orig <- calDat.orig[-1,]
 calDat.orig <- calDat.orig[-seq(which(rowSums(calDat.orig!='')==0)[1],nrow(calDat.orig)),]
 # write out the transposed and cleaned calDat. Not sure it needs to be this complicaetd
 # but all other methods changed the data in situ.
-sink(file.path(location.frida,'Data','Calibration Data Cleaned and Transposed.csv'))
+sink(file.path(location.output,'Calibratio_Data_Cleaned_and_Transposed.csv'))
 cat(paste(paste0('"',colnames(calDat.orig),'"'),collapse=','))
 cat('\n')
 for(r in 1:nrow(calDat.orig)){
@@ -55,7 +55,7 @@ for(r in 1:nrow(calDat.orig)){
 }
 sink()
 # read in the cleaned and transformed file, this time read numbers as numbers etc.
-calDat.orig <- read.csv(file.path(location.frida,'Data','Calibration Data Cleaned and Transposed.csv'))
+calDat.orig <- read.csv(file.path(location.output,'Calibratio_Data_Cleaned_and_Transposed.csv'))
 colnames(calDat.orig) <- cleanNames(colnames(calDat.orig))
 rownames(calDat.orig) <- calDat.orig$year
 calDat <- calDat.orig <- calDat.orig[,-1]
