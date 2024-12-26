@@ -223,9 +223,9 @@ if(plotWhileRunning){
 	funPlotDat(calDat,calDat.impExtrValue,defDat)
 	dev.print(pdf,
 						file.path(location.output,'calDatPlot.pdf'))
-	funPlotDat(resDat,calDat.impExtrValue)
-	dev.print(pdf,
-						file.path(location.output,'resDatPlot.pdf'))
+	# funPlotDat(resDat,calDat.impExtrValue)
+	# dev.print(pdf,
+	# 					file.path(location.output,'resDatPlot.pdf'))
 }
 
 # covar ####
@@ -298,8 +298,10 @@ if(is.singular.matrix(resDat.cv)){
 }
 
 # likelihood ####
-defLike <- exp(mpfr(funLogLikelihood(resDat[complete.cases(resDat),],resDat.cv),64))
-cat(paste0('Likelihood in the default case: ',formatMpfr(defLike)))
+defLogLike <- funLogLikelihood(resDat[complete.cases(resDat),],resDat.cv)
+cat(paste0('Log Likelihood in the default case: ',defLogLike,'\n'))
+defLike <- exp(mpfr(defLogLike,64))
+cat(paste0('Likelihood in the default case: ',formatMpfr(defLike),'\n'))
 if(is.infinite(defLike)||is.na(defLike)){
 	stop('Bad default log likelihood\n')
 }
