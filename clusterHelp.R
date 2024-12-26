@@ -6,11 +6,12 @@ if(!exists('location.output')){
 
 # config ####
 numWorkers <- detectCores()
+clusterType <- 'fork'
 
 # tmpfs location for the worker directories to not churn the hard drive
 # and be faster
 # alternative path to /dev/shm would be /run/user/####/ where #### is the uid
-tmpfsDir <- '/dev/shm/fridaWorkDir'
+tmpfsDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork/')
 
 
 ## cluster cleanup ####
@@ -33,7 +34,11 @@ system(paste('ln -s',tmpfsDir,'workerDirs'))
 baseWD <- getwd()
 workDirBasename <- 'workDir_'
 # start cluster
-cl <- makePSOCKcluster(numWorkers)
+if(clusterType=='fork'){
+	cl <- makeForkCluster(numWorkers)
+} else if (clusterType=='psock'){
+	cl <- makePSOCKcluster(numWorkers)
+}
 gobble <- clusterEvalQ(cl,tools::psnice(value=15))
 gobble <- clusterExport(cl,list('location.output','baseWD',
 											'chunkSizePerWorker','workDirBasename'))
