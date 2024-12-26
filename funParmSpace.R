@@ -1,0 +1,169 @@
+# The following functions work together to 
+# find the borders of the density where density is equal to pdensEps
+# repeat two steps, find root in current parm
+# maximize density for root of cuurrent parm using other parms
+# This function relies on the negLLike function being present in the global env.
+# This allows the user to specify the type of likelihood function.
+jnegLLikelihood.f <- function(jParVect){
+	parVect <- jParVect[1:nrow(sampleParms)]
+	resSigma <- matrix(jParVect[(nrow(sampleParms)+1):length(jParVect)],nrow=ncol(calDat))
+	runDat <- runFRIDASpecParms(parVect)
+	if(sum(colnames(calDat)!=colnames(runDat))>0){
+		stop('missmatch in colnames(calDat)==colnames(runDat)\n')
+	}
+	calDatCompleteCases <- which(complete.cases(calDat))
+	resDat <- calDat[calDatCompleteCases,]-runDat[calDatCompleteCases,]
+	lLikelihood <- funLogLikelihood(resDat,resSigma)
+	# If the logLike is not NA but the run did not complete assign 
+	# lowest value. We use this when narrowing the parms space
+	if(is.na(runDat[[1]][nrow(runDat)])){
+		lLikelihood <- -.Machine$double.xmax+(sum(!is.na(runDat[[1]]))*.Machine$double.eps)
+	}
+	return(-lLikelihood)
+}
+
+
+likeGoalDiffFun <- function(par,parVect,parIdx,lpdensEps, ...){
+	parVect[parIdx] <- par
+	llike <- -negLLike(parVect, ...)
+	return(llike-lpdensEps)
+}
+densMaxGivenParFun <- function(otherPars,parVect,parIdx,idcToMod, ...){
+	parVect[idcToMod[-parIdx]] <- otherPars
+	return(negLLike(parVect, ...))
+}
+secant <- function(fun, x0, x1, tol=1e-07, niter=1e4, doWarn=T, trace=0,...){
+	for ( i in 1:niter ) {
+		# cat(sprintf('x0=%10.2e x1=%10.2e',x0,x1))
+		x2 <- x1-fun(x1,...)*(x1-x0)/(fun(x1,...)-fun(x0,...))
+		if(trace>0){
+			cat('secant x2: ',x2,'\n')
+		}
+		if(is.infinite(x2)||is.nan(x2)){
+			return(sign(x1)*Inf)
+		}
+		# cat(sprintf(' x2=%10.2e\n',x2))
+		if (abs(fun(x2,...)) < tol){
+			return(x2)
+		}
+		x0 <- x1
+		x1 <- x2
+	}
+	if(doWarn){
+		warning("In secant exceeded allowed number of iterations\n")
+	}
+	return(x2)
+}
+# if ceterisParibusPars is TRUE, the densValBorder is found for the selecteed par Idx,
+# keeping all other pars at the values in parVect, i.e. this will not account
+# for rotatet elipsoid parameter distributions, but just for the slice through
+# the likelihood at parVect.
+# 
+# idcToMod: Specify the indices that should be varied together with parIdx in the 
+#           search. Defaults to all.
+findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
+															maxiter=1e4,tol=1e-4,max=F,
+															trace=0, idcToMod=1:length(parVect),
+															parscale=rep(1,length(parVect)),
+															...){
+	if(is.list(idcToMod)){
+		idcToMod <- idcToMod[[parIdx]]
+	}
+	idcToMod.base <- idcToMod
+	for(idcsToMod.i in 2:length(idcToMod.base)){
+		idcToMod <- idcToMod.base[c(1:idcsToMod.i)]
+		if(trace>0){
+			cat('Running with idcToMod ',idcToMod,'\n')
+		}
+		par.val <- parVect[parIdx]
+		likeAtMax  <- lpdensEps+5
+		likeAtMaxOld  <- lpdensEps
+		iter <- 1
+		while(likeAtMax-lpdensEps > tol && 
+					# likeAtMax-likeAtMaxOld > tol &&
+					iter <= maxiter){
+			# find root
+			if(max){
+				root.range <- c(par.val,par.val+abs(par.val)*10)
+			} else {
+				root.range <- c(par.val-abs(par.val)*10,par.val)
+			}
+			#if there is no sign change between the endpoints of root.range, use secant's
+			#method otherwise use uniroot
+			if(((likeGoalDiffFun(root.range[1],parVect,parIdx,lpdensEps, ...)>0)-
+					(likeGoalDiffFun(root.range[2],parVect,parIdx,lpdensEps, ...)>0))==0){
+				if(max){
+					root.range <- c(par.val,par.val+abs(par.val)*0.001)
+				} else {
+					root.range <- c(par.val-abs(par.val)*0.001,par.val)
+				}
+				par.val.old <-par.val
+				par.val <- secant(likeGoalDiffFun,
+													root.range[1],root.range[2],
+													parVect=parVect,
+													parIdx=parIdx,
+													lpdensEps=lpdensEps,
+													doWarn = F,
+													trace=trace,
+													...)
+				if(max){
+					if(par.val < par.val.old){
+						# hail mary
+						par.val <- par.val.old
+					}
+				} else {
+					par.val <- min(par.val,par.val.old)
+				}
+				if(is.infinite(par.val)){
+					return(par.val)
+				}
+			} else {
+				par.val <- suppressWarnings(uniroot(likeGoalDiffFun,
+																						root.range,
+																						parVect=parVect,
+																						parIdx=parIdx,
+																						lpdensEps=lpdensEps,
+																						tol = 1e-16, ...)$root)
+			}
+			if(ceterisParibusPars){
+				return(par.val)
+			} else {
+				parVect[parIdx] <- par.val
+				if(trace>0){
+					cat('iter ',iter,' ',par.val,' : ')
+				}
+				# maximize density at root using other parms
+				otherIdx <- idcToMod[-parIdx]
+				otherPars <- parVect[otherIdx]
+				res <- suppressWarnings(optimx(otherPars,densMaxGivenParFun,
+																			 method = 'Nelder-Mead',
+																			 control=list(dowarn = F,
+																			 						 parscale=parscale[otherIdx]),
+																			 parVect=parVect,
+																			 parIdx=parIdx, 
+																			 idcToMod=idcToMod,...))
+				parVect[otherIdx] <- unlist(res[1:length(otherIdx)])
+				likeAtMaxOld <- likeAtMax
+				likeAtMax <- -res$value
+				if(trace>0){
+					cat(parVect,' ',likeAtMax-lpdensEps,'\n')
+				}
+				if(likeAtMax>likeAtMaxOld){
+					if(trace>0){
+						cat('Likelihood Imporovement After Step Reoptimizing\n')
+						res <- suppressWarnings(optimx(parVect,negLLike,
+																					 method = 'Nelder-Mead',
+																					 control=list(dowarn = F,
+																					 						 parscale=parscale)))#,trace=99)))
+						parVect <- unlist(res[1:length(parVect)])
+						par.val <- parVect[parIdx]
+						likeAtMax <- -res$value
+						cat(parVect,' ',likeAtMax-lpdensEps,'\n')
+					}
+				}
+			}
+			iter <- iter+1
+		} 
+	}
+	return(par.val)
+}
