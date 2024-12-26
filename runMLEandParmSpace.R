@@ -38,35 +38,7 @@ if(file.exists(file.path(location.output,'sampleParms.RDS'))){
 	sampleParms <- readRDS(file.path(location.output,'sampleParms.RDS'))
 	cat('done\n')
 } else {
-	#TODO: Deal with the climateCase parameter 1:100 integer!
-	cat('Specify sampling parameters...')
-	# read in the parameters in frida that have ranges defined
-	frida_info <- read.csv("frida_info.csv")
-	columnsThatAreFlags <- c(2,3,4,5,6,7,8,9,10)
-	# select the parameters to be sampled
-	sampleParms <- frida_info[rowSums(frida_info[,columnsThatAreFlags])>0 &
-															frida_info$No.Sensi==0 &
-															frida_info$Policy==0,
-														-columnsThatAreFlags]
-	invalidLines <- which(!((sampleParms$Max-sampleParms$Min)>0 &
-														sampleParms$Min <= sampleParms$Value &
-														sampleParms$Value <= sampleParms$Max))
-	# cat('invalid parm specs min val max\n')
-	# for(i in invalidLines){
-	# 	cat(sprintf('%5i %-100s %10.f %10.f %10.f\n',
-	# 							i,
-	# 							sampleParms$Variable[i],
-	# 							sampleParms$Min[i],
-	# 							sampleParms$Value[i],
-	# 							sampleParms$Max[i]))
-	# }
-	suppressWarnings(file.remove('frida_info_errorCases.csv'))
-	if(length(invalidLines)>0){
-		cat('invalid lines detected, see frida_info_errorCases.csv...')
-	}
-	write.csv(sampleParms[invalidLines,],'frida_info_errorCases.csv')
-	sampleParms <- sampleParms[-invalidLines,]
-	cat('done\n')
+	sampleParms <- prepareSampleParms()
 }
 sampleParms.orig <- sampleParms
 saveRDS(sampleParms,file.path(location.output,'sampleParms.RDS'))
@@ -105,6 +77,15 @@ if(file.exists(file.path(location.output,'parscale.RDS'))){
 	matches <- which(names(parscale) %in% names(parscale.old))
 	parscale[matches] <- parscale.old[matches]
 }
+
+
+ordersOfMagGuesses <- c(funOrderOfMagnitude(sampleParms$Max-sampleParms$Min),
+												funOrderOfMagnitude(resSigmaVect)-6)
+# used by the funFindParScale function
+ordersOfMagLimits <- c(min(ordersOfMagGuesses)-2,max(ordersOfMagGuesses)+4)
+ordersOfMag <- seq(ordersOfMagLimits[1],ordersOfMagLimits[2])
+responseTolerance <- 0.01
+
 newMaxFound <- T
 while(newMaxFound){
 	# MLE ####
@@ -119,88 +100,56 @@ while(newMaxFound){
 	
 	#determine parscale
 	cat('Determining parscales...\n')
-	orderOfMagNegLLErrorFun <- function(delta,par.i){
-		jParVect.i <- jParVect
-		jParVect.i[par.i] <- jParVect[par.i] + delta
-		return(abs(baseNegLL-jnegLLikelihood.f(jParVect.i))-1)
-	}
 	baseNegLL <- jnegLLikelihood.f(jParVect)
-	ordersOfMagGuesses <- c((floor(log10(abs(sampleParms$Max-sampleParms$Min)))-2),
-													rep(-20,length(resSigmaVect)))
-	ordersOfMagGuesses.orig <- ordersOfMagGuesses
-	ordersOfMagLimits <- c(min(ordersOfMagGuesses)-2,max(ordersOfMagGuesses)+4)
-	ordersOfMag <- seq(ordersOfMagLimits[1],ordersOfMagLimits[2])
-	responseTolerance <- 0.01
-	
-	funFindParScale <- function(par.i,niter=100,guessOrderOfMag=NULL){
-		if(is.null(guessOrderOfMag)){
-			guessOrderOfMag <- min(ordersOfMag)
-		}
-		if(is.vector(guessOrderOfMag)){
-			guessOrderOfMag <- guessOrderOfMag[par.i]
-		}
-		cat(sprintf('%4i %-50s ... magscale:     ',
-								par.i,substr(names(jParVect)[par.i],1,50)))
-		ordersOfMagDeltRes <- c()
-		ordersOfMagNegLLResp <- c()
-		for(ord.i in max(which(ordersOfMag<=guessOrderOfMag)):length(ordersOfMag)){
-			cat(sprintf('\b\b\b\b\b\b\b\b\b\b%+10.1e',10^ordersOfMag[ord.i]))
-			ordersOfMagDeltRes[ord.i] <- secant(orderOfMagNegLLErrorFun,x0=10^ordersOfMag[ord.i],
-																					x1=10^ordersOfMag[ord.i]*1.1,
-																					niter=niter,
-																					doWarn=F,tol=1e-2,par.i=par.i)
-			ordersOfMagNegLLResp[ord.i] <- orderOfMagNegLLErrorFun(ordersOfMagDeltRes[ord.i],par.i)
-			if(!is.nan(ordersOfMagNegLLResp[ord.i])&&
-				 abs(ordersOfMagNegLLResp[ord.i])<responseTolerance){
-				break
-			}
-		}
-		if(length(ordersOfMagDeltRes)==0){
-			cat(sprintf('\r%4i %-50s ... %+e                     \n',
-									par.i,substr(names(jParVect)[par.i],1,50),NA))
-			return(NA)
-		} else {
-			retScale <- ordersOfMagDeltRes[which.min(ordersOfMagNegLLResp)]
-			cat(sprintf('\r%4i %-50s ... %+e                     \n',
-									par.i,substr(names(jParVect)[par.i],1,50),retScale))
-			return(ordersOfMagDeltRes[which.min(ordersOfMagNegLLResp)])
-		}
-	}
 	
 	iterations <- 0
 	parallelParscale <- T
+	useOrdersOfMagGuesses <- T
 	while(iterations < 2 && sum(is.na(parscale)|is.infinite(parscale))>0){
 		if(parallelParscale){
 			clusterExport(cl,list('baseNegLL',
 														'ordersOfMagLimits','ordersOfMag','responseTolerance',
 														'orderOfMagNegLLErrorFun','funFindParScale',
 														'jnegLLikelihood.f','ordersOfMagGuesses',
+														'ordersOfMagLimits',
 														'calDat','resSigma',
 														'jParVect'))
 			gobble <- clusterEvalQ(cl,source(file.path(baseWD,'funParmSpace.R')))
 			parsToDet <- which(is.na(parscale)|is.infinite(parscale))
 			parParscaleOutput <- parLapplyLB(cl,parsToDet,funFindParScale,
-																			 chunk.size = 1,
-																			 guessOrderOfMag=ordersOfMagGuesses)
+																			 useOrdersOfMagGuesses=useOrdersOfMagGuesses)
 			parscale[parsToDet] <- unlist(parParscaleOutput)
 			names(parscale) <- names(jParVect)
 		} else {
 			for(par.i in 1:length(jParVect)){
-				if(is.na(parscale[par.i])){
-					parscale[par.i] <- funFindParScale(par.i,guessOrderOfMag=ordersOfMagGuesses)
+				if(is.na(parscale[par.i])|is.infinite(parscale[par.i])){
+					parscale[par.i] <- funFindParScale(par.i,useOrdersOfMagGuesses=useOrdersOfMagGuesses)
 				}
 			}
 		}
 		# try those that did not succeed with the guess again with the full range
-		ordersOfMagGuesses <- ordersOfMagLimits[1]
+		useOrdersOfMagGuesses <- F
 		iterations <- iterations+1
+		cat('saving ParScale...')
+		saveRDS(parscale,file.path(location.output,'parscale.RDS'))
 	}
 	cat('done\n')
 	
 	# check for bad behaviour in parscale ####
 	#TODO: deal with bad behaviour in parscale: Kick them out
+	# only the entries in parVect can be excluded. The entries in resSigmaVect need to 
+	# be delt with. E.g. by using the guess values. The maximum likelihood vars (diag
+	# elements of the covmat can always be determined as the variance of those obs.
 	problemCases <- which(is.infinite(parscale)|is.na(parscale))
-	parscale[problemCases] <- ordersOfMagGuesses.orig[problemCases]
+	problemCases.parVect <- problemCases[which(problemCases <= length(parVect))]
+	problemCases.resSigmaVect <- which(problemCases > length(parVect))
+	parscale[problemCases.resSigmaVect] <- 10^ordersOfMagGuesses[problemCases.resSigmaVect]
+	parscale.resSigmaVect <- parscale[(nrow(sampleParms)+1):length(jParVect)]
+	
+	excludeParmNames <- sampleParms$Variable[problemCases.parVect]
+	sampleParms <- prepareSampleParms(excludeNames = excludeParmNames)
+	parVect <- sampleParms$Value
+	names(parVect) <- sampleParms$Variable 
 	
 	# save parscale ####
 	cat('saving ParScale...')

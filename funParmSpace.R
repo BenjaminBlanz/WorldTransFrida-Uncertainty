@@ -17,12 +17,13 @@ jnegLLikelihood.f <- function(jParVect){
 	if(sum(colnames(calDat)!=colnames(runDat))>0){
 		stop('missmatch in colnames(calDat)==colnames(runDat)\n')
 	}
+	resDat <- calDat-runDat
 	if(!treatVarsAsIndep){
 		calDatCompleteCases <- which(complete.cases(calDat))
+		resDat <- resDat[calDatCompleteCases]
 	} else {
-		calDatCompleteCases <- 1:nrow(calDat)
+		resDat[is.na(resDat)] <- 0
 	}
-	resDat <- calDat[calDatCompleteCases,]-runDat[calDatCompleteCases,]
 	lLikelihood <- funLogLikelihood(resDat,resSigma)
 	# If the logLike is not NA but the run did not complete assign 
 	# lowest value. We use this when narrowing the parms space
@@ -41,28 +42,6 @@ likeGoalDiffFun <- function(par,parVect,parIdx,lpdensEps, ...){
 densMaxGivenParFun <- function(otherPars,parVect,parIdx,idcToMod, ...){
 	parVect[idcToMod[-parIdx]] <- otherPars
 	return(negLLike(parVect, ...))
-}
-secant <- function(fun, x0, x1, tol=1e-07, niter=1e4, doWarn=T, trace=0,...){
-	for ( i in 1:niter ) {
-		# cat(sprintf('x0=%10.2e x1=%10.2e',x0,x1))
-		x2 <- x1-fun(x1,...)*(x1-x0)/(fun(x1,...)-fun(x0,...))
-		if(trace>0){
-			cat('secant x2: ',x2,'\n')
-		}
-		if(is.infinite(x2)||is.nan(x2)){
-			return(sign(x1)*Inf)
-		}
-		# cat(sprintf(' x2=%10.2e\n',x2))
-		if (abs(fun(x2,...)) < tol){
-			return(x2)
-		}
-		x0 <- x1
-		x1 <- x2
-	}
-	if(doWarn){
-		warning("In secant exceeded allowed number of iterations\n")
-	}
-	return(x2)
 }
 # if ceterisParibusPars is TRUE, the densValBorder is found for the selecteed par Idx,
 # keeping all other pars at the values in parVect, i.e. this will not account
@@ -177,3 +156,100 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 	}
 	return(par.val)
 }
+
+
+secant <- function(fun, x0, x1, tol=1e-07, niter=1e4, doWarn=T, trace=0,...){
+	for ( i in 1:niter ) {
+		# cat(sprintf('x0=%10.2e x1=%10.2e',x0,x1))
+		x2 <- x1-fun(x1,...)*(x1-x0)/(fun(x1,...)-fun(x0,...))
+		if(trace>0){
+			cat('secant x2: ',x2,'\n')
+		}
+		if(is.infinite(x2)||is.nan(x2)){
+			return(sign(x1)*Inf)
+		}
+		# cat(sprintf(' x2=%10.2e\n',x2))
+		if (abs(fun(x2,...)) < tol){
+			return(x2)
+		}
+		x0 <- x1
+		x1 <- x2
+	}
+	if(doWarn){
+		warning("In secant exceeded allowed number of iterations\n")
+	}
+	return(x2)
+}
+# requires baseNegLL in the global env
+orderOfMagNegLLErrorFun <- function(delta,par.i){
+	jParVect.i <- jParVect
+	jParVect.i[par.i] <- jParVect[par.i] + delta
+	return(abs(baseNegLL-jnegLLikelihood.f(jParVect.i))-1)
+}
+funFindParScale <- function(par.i,niter=100,useOrdersOfMagGuesses=F){
+	if(!useOrdersOfMagGuesses|length(ordersOfMagGuesses)<par.i){
+		minOrderOfMag <- min(ordersOfMagLimits)
+		maxOrderOfMag <- max(ordersOfMagLimits)
+	} else {
+		minOrderOfMag <- ordersOfMagGuesses[par.i] -2
+		maxOrderOfMag <- ordersOfMagGuesses[par.i] +1
+	}
+	ordersOfMag <- minOrderOfMag:maxOrderOfMag
+	cat(sprintf('%4i %-50s ... magscale:     ',
+							par.i,substr(names(jParVect)[par.i],1,50)))
+	ordersOfMagDeltRes <- c()
+	ordersOfMagNegLLResp <- c()
+	for(ord.i in 1:length(ordersOfMag)){
+		cat(sprintf('\b\b\b\b\b\b\b\b\b\b%+10.1e',10^ordersOfMag[ord.i]))
+		ordersOfMagDeltRes[ord.i] <- secant(orderOfMagNegLLErrorFun,x0=0,
+																				x1=10^ordersOfMag[ord.i],
+																				niter=niter,
+																				doWarn=F,tol=1e-2,par.i=par.i)
+		ordersOfMagNegLLResp[ord.i] <- orderOfMagNegLLErrorFun(ordersOfMagDeltRes[ord.i],par.i)
+		if(!is.nan(ordersOfMagNegLLResp[ord.i])&&
+			 abs(ordersOfMagNegLLResp[ord.i])<responseTolerance){
+			break
+		}
+	}
+	if(length(ordersOfMagDeltRes)==0){
+		cat(sprintf('\r%4i %-50s ... %+e                     \n',
+								par.i,substr(names(jParVect)[par.i],1,50),NA))
+		return(NA)
+	} else {
+		retScale <- ordersOfMagDeltRes[which.min(ordersOfMagNegLLResp)]
+		cat(sprintf('\r%4i %-50s ... %+e                     \n',
+								par.i,substr(names(jParVect)[par.i],1,50),retScale))
+		return(ordersOfMagDeltRes[which.min(ordersOfMagNegLLResp)])
+	}
+}
+
+prepareSampleParms <- function(excludeNames=c()){
+	#TODO: Deal with the climateCase parameter 1:100 integer!
+	cat('Specify sampling parameters...')
+	# read in the parameters in frida that have ranges defined
+	frida_info <- read.csv("frida_info.csv")
+	columnsThatAreFlags <- c(2,3,4,5,6,7,8,9,10)
+	# select the parameters to be sampled
+	sampleParms <- frida_info[rowSums(frida_info[,columnsThatAreFlags])>0 &
+															frida_info$No.Sensi==0 &
+															frida_info$Policy==0,
+														-columnsThatAreFlags]
+	invalidLines <- which(!((sampleParms$Max-sampleParms$Min)>0 &
+														sampleParms$Min <= sampleParms$Value &
+														sampleParms$Value <= sampleParms$Max))
+	suppressWarnings(file.remove('frida_info_errorCases.csv'))
+	if(length(invalidLines)>0){
+		cat('invalid lines detected, see frida_info_errorCases.csv...')
+	}
+	write.csv(sampleParms[invalidLines,],'frida_info_errorCases.csv')
+	# deal with excluded Names
+	excludedIdc <- which(sampleParms$Variable %in% excludeNames)
+	sampleParms <- sampleParms[-c(invalidLines,excludedIdc),]
+	cat('done\n')
+	return(sampleParms)
+}
+funOrderOfMagnitude <- function(x){
+	return(floor(log10(abs(x))))
+}
+
+
