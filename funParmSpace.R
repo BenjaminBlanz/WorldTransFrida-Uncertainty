@@ -6,8 +6,9 @@
 # This allows the user to specify the type of likelihood function.
 jnegLLikelihood.f <- function(jParVect){
 	parVect <- jParVect[1:nrow(sampleParms)]
-	
-	resSigma <- matrix(jParVect[(nrow(sampleParms)+1):length(jParVect)],nrow=ncol(calDat))
+	resSigma <- matrix(NA,dim=rep(ncol(calDat),2))
+	resSigma[!lower.tri(resSigma)]<- jParVect[(nrow(sampleParms)+1):length(jParVect)]
+	resSigma[lower.tri(resSigma)] <- t(resSigma)[lower.tri(resSigma)]
 	runDat <- runFRIDASpecParms(parVect)
 	if(sum(colnames(calDat)!=colnames(runDat))>0){
 		stop('missmatch in colnames(calDat)==colnames(runDat)\n')

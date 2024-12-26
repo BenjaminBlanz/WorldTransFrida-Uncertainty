@@ -5,6 +5,11 @@ cat('Config...')
 source('config.R')
 if(file.exists(file.path(location.output,'sigma.RDS'))){
 	resSigma <- readRDS(file.path(location.output,'sigma.RDS'))
+	resSigma.names <- array(paste('s',
+																rep(1:nrow(resSigma),ncol(resSigma)),
+																rep(1:nrow(resSigma),each=nrow(resSigma)),
+																sep='_'),
+													dim=dim(resSigma))
 } else {
 	stop('Missing covariance matrix file. Run runInitialiseData.R first.\n')
 }
@@ -71,11 +76,8 @@ names(parVect) <- sampleParms$Variable
 # parVect contains the sampled fit parameters
 # Note that
 # jParVect == c(parVect,covarVect)
-resSigmaVect <- as.vector(resSigma)
-names(resSigmaVect) <- paste('s',
-															rep(1:nrow(resSigma),ncol(resSigma)),
-															rep(1:nrow(resSigma),each=nrow(resSigma)),
-														 sep='_')
+resSigmaVect <- as.vector(resSigma[!lower.tri(resSigma)])
+names(resSigmaVect) <- as.vector(resSigma.names[!lower.tri(resSigma)])
 jParVect <- c(parVect,resSigmaVect)
 
 newMaxFound <- T
