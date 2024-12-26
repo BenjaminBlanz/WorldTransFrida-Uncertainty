@@ -198,8 +198,7 @@ while(newMaxFound){
 	cat('done\n')
 	
 	# check for bad behaviour in parscale ####
-	
-	
+	#TODO: deal with bad behaviour in parscale: Kick them out
 	problemCases <- which(is.infinite(parscale)|is.na(parscale))
 	parscale[problemCases] <- ordersOfMagGuesses.orig[problemCases]
 	
