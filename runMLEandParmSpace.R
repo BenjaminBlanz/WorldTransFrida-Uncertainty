@@ -191,6 +191,7 @@ while(newMaxFound){
 	cat('saving ParScale...')
 	saveRDS(parscale,file.path(location.output,'parscale.RDS'))
 	
+	stop()
 	
 	while(abs(oldVal-newVal)>1e-12){
 		oldVal <- newVal
@@ -497,5 +498,4 @@ while(newMaxFound){
 	} else {
 		newMaxFound <- F	
 	}
-	stopCluster(cl)
 }
