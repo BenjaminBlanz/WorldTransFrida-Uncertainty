@@ -1,0 +1,13 @@
+Variable
+Emissions.CO Emissions[1]
+Emissions.VOC Emissions[1]
+Emissions.NOx non AFOLU Emissions[1]
+Emissions.NOx AFOLU Emissions[1]
+Emissions.Total NOx Emissions[1]
+CO2 Forcing.CO2 Effective Radiative Forcing[1]
+CH4 Forcing.CH4 Effective Radiative Forcing[1]
+N2O Forcing.N2O Effective Radiative Forcing[1]
+CO2 Forcing.Atmospheric CO2 Concentration[1]
+N2O Forcing.Atmospheric N2O Concentration[1]
+CH4 Forcing.Atmospheric CH4 Concentration[1]
+Energy Balance Model.Surface Temperature Anomaly[1]

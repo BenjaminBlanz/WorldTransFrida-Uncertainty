@@ -84,9 +84,9 @@ if(imputeMissingVars||extrapolateMissingVarMethod!='n'){
 		## write back
 		calDat[[i]] <- x
 	}
-	calDat.impExtrValue <- calDat.orig
-	calDat.impExtrValue <- is.na(calDat.orig)&!is.na(calDat)
-}
+} 
+calDat.impExtrValue <- calDat.orig
+calDat.impExtrValue <- is.na(calDat.orig)&!is.na(calDat)
 calDat.afterImpute <- calDat
 
 # determine Vars to Exclude ####
@@ -103,6 +103,10 @@ cat(sprintf('  Excluding for less than minObsForLike (%i) observations:\n    ',m
 cat(paste(colnames(calDat.afterImpute)[exclude.idc],collapse='\n    '))
 cat('\n')
 calDat <- calDat.afterImpute[,-exclude.idc]
+
+# remove manual exclusion list ####
+manExclusionList <- read.csv('climateVarExclusionList.csv')
+exclude.idc <- c(exclude.idc,which(varsForExport.fridaNames.orig %in% manExclusionList$Variable))
 
 # exclude vars ####
 # do not exclude from obs, only resid below
@@ -174,17 +178,17 @@ if(nrow(perfCors)>0){
 }
 
 # find linear combinations ####
-##  in calDat ####
-# new resid
-calDat <- calDat.afterImpute[,-exclude.idc]
-varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
-writeFRIDAExportSpec(varsForExport.fridaNames)
-defDat <- runFridaDefaultParms()
-if(sum(colnames(defDat)!=colnames(calDat))!=0){
-	stop('Mismatch in the columns of calibration data and model result data')
-}
-resDat <- defDat[1:nrow(calDat),]-calDat
 if(removeLinearCombinations){
+	##  in calDat ####
+	# new resid
+	calDat <- calDat.afterImpute[,-exclude.idc]
+	varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
+	writeFRIDAExportSpec(varsForExport.fridaNames)
+	defDat <- runFridaDefaultParms()
+	if(sum(colnames(defDat)!=colnames(calDat))!=0){
+		stop('Mismatch in the columns of calibration data and model result data')
+	}
+	resDat <- defDat[1:nrow(calDat),]-calDat
 	linearCombos <- caret::findLinearCombos(resDat[complete.cases(resDat),])
 	if(length(linearCombos$remove)>0){
 		new.exclude.idc <- idxOfVarName(colnames(calDat)[linearCombos$remove],
@@ -194,39 +198,43 @@ if(removeLinearCombinations){
 		cat('\n')
 		exclude.idc <- unique(c(exclude.idc,new.exclude.idc))
 	}
-}
-
-## in calDat.cv ####
-# new resid
-calDat <- calDat.afterImpute[,-exclude.idc]
-varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
-writeFRIDAExportSpec(varsForExport.fridaNames)
-defDat <- runFridaDefaultParms()
-if(sum(colnames(defDat)!=colnames(calDat))!=0){
-	stop('Mismatch in the columns of calibration data and model result data')
-}
-resDat <- defDat[1:nrow(calDat),]-calDat
-
-tryCatch({resDat.cv <- cov(resDat,use='complete.obs')},
-				 error=function(e){resDat.cv <- NA})
-if(sum(is.na(resDat.cv))==0){
-	if(is.singular.matrix(resDat.cv)){
-		linearCombos <- caret::findLinearCombos(calDat[complete.cases(calDat),])
-		if(length(linearCombos$remove)>0){
-			new.exclude.idc <- idxOfVarName(colnames(calDat)[linearCombos$remove],
-																			varsForExport.cleanNames.orig)
-			cat('  Excluding because they are linear combinations of other vars:\n    ')
-			cat(paste(varsForExport.cleanNames.orig[new.exclude.idc],collapse='\n    '))
-			cat('\n')
-			exclude.idc <- unique(c(exclude.idc,new.exclude.idc))
+	
+	
+	## in calDat.cv ####
+	# new resid
+	calDat <- calDat.afterImpute[,-exclude.idc]
+	varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
+	writeFRIDAExportSpec(varsForExport.fridaNames)
+	defDat <- runFridaDefaultParms()
+	if(sum(colnames(defDat)!=colnames(calDat))!=0){
+		stop('Mismatch in the columns of calibration data and model result data')
+	}
+	resDat <- defDat[1:nrow(calDat),]-calDat
+	
+	tryCatch({resDat.cv <- cov(resDat,use='complete.obs')},
+					 error=function(e){resDat.cv <- NA})
+	if(sum(is.na(resDat.cv))==0){
+		if(is.singular.matrix(resDat.cv)){
+			linearCombos <- caret::findLinearCombos(calDat[complete.cases(calDat),])
+			if(length(linearCombos$remove)>0){
+				new.exclude.idc <- idxOfVarName(colnames(calDat)[linearCombos$remove],
+																				varsForExport.cleanNames.orig)
+				cat('  Excluding because they are linear combinations of other vars:\n    ')
+				cat(paste(varsForExport.cleanNames.orig[new.exclude.idc],collapse='\n    '))
+				cat('\n')
+				exclude.idc <- unique(c(exclude.idc,new.exclude.idc))
+			}
 		}
 	}
+	calDat <- calDat.afterImpute[,-exclude.idc]
+	cat('...done\n')
 }
-calDat <- calDat.afterImpute[,-exclude.idc]
-cat('...done\n')
+
 cat(sprintf('After exclusion we are left with %i out of %i variables\n',ncol(resDat),length(varsForExport.cleanNames.orig)))
 
+
 # remove excluded idc ###
+calDat.withAllVars <- calDat.orig
 calDat.orig <- calDat.orig[,-exclude.idc]
 calDat <- calDat.afterImpute[,-exclude.idc]
 calDat.impExtrValue <- calDat.impExtrValue[,-exclude.idc]
