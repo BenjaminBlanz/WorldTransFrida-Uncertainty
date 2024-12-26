@@ -4,14 +4,14 @@
 
 suppressPackageStartupMessages(require(Rmpfr)) # use to calculate the likelihood from loglikelihood
 
-# fun write firda export vars ####
+# write firda export vars ####
 writeFRIDAExportSpec <- function(varsForExport.fridaNames){
 	sink(file=file.path(location.frida,'Data',name.fridaExportVarsFile))
 	cat(paste0(varsForExport.fridaNames,collapse='\n'))
 	sink()
 }
 
-# fun write frida input ####
+# write frida input ####
 # uses location.frida and name.fridaInputFile from the global env.
 writeFRIDAInput <- function(variables,values){
 	parmValues <- data.frame(Variable=variables,Value=values)
@@ -19,7 +19,7 @@ writeFRIDAInput <- function(variables,values){
 							row.names = F,col.names = F,sep=',')
 }
 
-# fun runFridaParmsByIndex ####
+# runFridaParmsByIndex ####
 # Uses from global env:
 #   sampleParms,samplePoints,location.frida, and name.fridaInputFile
 # If retNegLogLike also uses from global env:
@@ -36,7 +36,7 @@ runFridaParmsByIndex <- function(runid){
 			colnames(runDat) <- cleanNames(colnames(runDat))
 			rownames(runDat) <- runDat$year
 			runDat <- runDat[,-1]
-			resDat <- runDat[1:nrow(calDat),]-calDat
+			resDat <- calDat-runDat[1:nrow(calDat),]
 			logLike <- funLogLikelihood(resDat[complete.cases(resDat),],resSigma)
 			like <- exp(logLike)
 			# If the logLike is not NA but the run did not complete assign 
@@ -64,12 +64,21 @@ runFridaParmsBySamplePoints <- function(saveOutPutDontReturn=FALSE,workUnit=NULL
 	}
 }
 
-# fun runFridaDefaultParms ####
+# runFridaDefaultParms ####
 # Uses location.frida, and name.fridaInputFile
 # from the global environment
 runFridaDefaultParms <- function(){
 	frida_info <- read.csv("frida_info.csv")
-	writeFRIDAInput(frida_info$Variable,frida_info$Value)
+	parVect <- frida_info$Value
+	names(parVect) <- frida_info$Variable
+	return(runFRIDASpecParms(parVect))
+}
+# runFRIDASpecParms ####
+runFRIDASpecParms <- function(parVect){
+	if(is.null(names(parVect))){
+		stop('need names in parVect to write FRIDA input\n')
+	}
+	writeFRIDAInput(names(parVect),parVect)
 	system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
 							 file.path(location.frida,'FRIDA.stmx')),
 				 ignore.stdout = T,ignore.stderr = T,wait = T)
@@ -80,7 +89,7 @@ runFridaDefaultParms <- function(){
 	return(runDat)
 }
 
-# fun cleanNames ####
+# cleanNames ####
 # takes a vector of e.g. column names and brings them into 
 # a comparable standard format
 # also drops the trailing 1 of the run id which we do not use
@@ -95,7 +104,7 @@ cleanNames <- function(colNames){
 			 		 		 		 		 		 tolower(colNames)))))))
 }
 
-# fun idxOfVarName ####
+# idxOfVarName ####
 idxOfVarName <- function(varNames,vecOfVarNames){
 	varNames <- cleanNames(varNames)
 	vecOfVarNames <- cleanNames(vecOfVarNames)
@@ -226,6 +235,9 @@ funStretchSamplePoints <- function(samplePoints,sampleParms,restretchSamplePoint
 	}
 	# back to vars in cols and samples in rows
 	samplePoints<- t(samplePoints)
+	rownames(samplePoints) <- 1:nrow(samplePoints)
+	colnames(samplePoints) <- sampleParms[,1]
+	return(samplePoints)
 }
 
 
