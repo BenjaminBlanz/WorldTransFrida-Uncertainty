@@ -5,6 +5,15 @@ if(!exists('numWorkers')){
 # How large the chunks of work are, smaller means more frequent pauses to write out
 # itermediate results (and update the diagnostic output).
 chunkSizePerWorker <- 100
+# tyoe of cluster. PSOCK allows connections across a network
+# FORK forks the currently running process, but with copy on write memory
+# sharing
+clusterType <- 'psock'
+# tmpfs location for the worker directories to not churn the hard drive
+# and be faster
+# alternative path to /dev/shm would be /run/user/####/ where #### is the uid
+# /dev/shm is not executable on some distros use /run/user
+tmpfsDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork/')
 
 #plotting related things
 plotWhileRunning <- T
@@ -69,5 +78,24 @@ location.output <- file.path('workOutput',paste0('NumSample-',numSample,
 location.output.base <- location.output
 dir.create(file.path(location.output),recursive = T,showWarnings = F)
 
+
+
+# not part of config ===================================================
+
+# create the tmpfsDir and link to workerDirs
+dir.create(tmpfsDir,recursive = F,showWarnings = F)
+system(paste('ln -s',tmpfsDir,'workerDirs'))
+
+# set up the tmpfs for the single threaded runs
+location.frida.storage <- './FRIDAforUncertaintyAnalysis-store'
+system(paste('mv',location.frida,location.frida.storage))
+system(paste('cp -r',location.frida.storage,file.path(tmpfsDir,location.frida)))
+system(paste('ln -s',file.path(tmpfsDir,location.frida),location.frida))
+location.stella.storage <- './Stella_Simulator_Linux-store'
+system(paste('mv',location.stella,location.stella.storage))
+system(paste('cp -r',location.stella.storage,file.path(tmpfsDir,location.stella)))
+system(paste('ln -s',file.path(tmpfsDir,location.stella),location.stella))
+
 # save the config to the output folder
 file.copy('config.R',location.output)
+

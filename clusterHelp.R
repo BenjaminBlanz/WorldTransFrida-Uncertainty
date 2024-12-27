@@ -4,17 +4,7 @@ if(!exists('location.output')){
 	stop('run this only after config.R\n')
 }
 
-# config ####
-numWorkers <- detectCores()
-clusterType <- 'psock'
-
-# tmpfs location for the worker directories to not churn the hard drive
-# and be faster
-# alternative path to /dev/shm would be /run/user/####/ where #### is the uid
-tmpfsDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork/')
-
-
-## cluster cleanup ####
+# cluster cleanup ####
 cat('cluster cleanup...')
 # stop cluster
 tryCatch(stopCluster(cl),error=function(e){})
@@ -23,14 +13,8 @@ unlink('workerDirs',recursive=T,force=T)
 unlink(tmpfsDir,recursive=T,force=T)
 cat('done\n')
 
-
-
 # cluster setup ####
 cat('cluster setup...')
-
-dir.create(tmpfsDir,recursive = F)
-system(paste('ln -s',tmpfsDir,'workerDirs'))
-
 baseWD <- getwd()
 workDirBasename <- 'workDir_'
 # start cluster
