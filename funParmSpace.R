@@ -243,13 +243,16 @@ prepareSampleParms <- function(excludeNames=c()){
 	}
 	write.csv(sampleParms[invalidLines,],'frida_info_errorCases.csv')
 	# deal with manually excluded items
-	if(file.exists('parExclusionList.csv')){
-		manExclusionList <- read.csv('parExclusionList.csv')
-		excludeNames <- c(excludeNames,manExclusionList[,1])
+	if(file.exists('parExclusionList.csv')&&file.size('parExclusionList.csv')>0){
+		manParExclusionList <- read.csv('parExclusionList.csv')
+		excludeNames <- c(excludeNames,manParExclusionList[,1])
 	}
 	# deal with excluded Names
 	excludedIdc <- which(sampleParms$Variable %in% excludeNames)
-	sampleParms <- sampleParms[-c(invalidLines,excludedIdc),]
+	if(length(c(invalidLines,excludedIdc))>0){
+		excludeIdc <- unique(c(invalidLines,excludedIdc))
+		sampleParms <- sampleParms[-excludedIdc,]
+	}
 	cat('done\n')
 	return(sampleParms)
 }
