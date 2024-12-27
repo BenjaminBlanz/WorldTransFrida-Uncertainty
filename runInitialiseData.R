@@ -105,7 +105,7 @@ cat('\n')
 calDat <- calDat.afterImpute[,-exclude.idc]
 
 # remove manual exclusion list ####
-manExclusionList <- read.csv('climateVarExclusionList.csv')
+manExclusionList <- read.csv('varExclusionList.csv')
 exclude.idc <- c(exclude.idc,which(varsForExport.fridaNames.orig %in% manExclusionList$Variable))
 cat(paste('  Excluding because of manual exclusion list',manExclusionList$Variable,'\n'))
 
