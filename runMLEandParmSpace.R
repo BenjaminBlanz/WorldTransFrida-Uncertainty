@@ -33,14 +33,7 @@ if(file.exists(file.path(location.output,'calDat.RDS'))){
 # reads frida_info.csv and outputs the SampleParms
 # also removes parms we will not sample
 # and complains about invalid lines in frida_info.csv
-if(file.exists(file.path(location.output,'sampleParms.RDS'))){
-	cat('Reading sampling parameters...')
-	sampleParms <- readRDS(file.path(location.output,'sampleParms.RDS'))
-	cat('done\n')
-} else {
-	sampleParms <- prepareSampleParms()
-}
-sampleParms.orig <- sampleParms
+sampleParms <- prepareSampleParms()
 saveRDS(sampleParms,file.path(location.output,'sampleParms.RDS'))
 
 
@@ -77,8 +70,6 @@ if(file.exists(file.path(location.output,'parscale.RDS'))){
 	matches <- which(names(parscale) %in% names(parscale.old))
 	parscale[matches] <- parscale.old[matches]
 }
-
-
 ordersOfMagGuesses <- c(funOrderOfMagnitude(sampleParms$Max-sampleParms$Min),
 												funOrderOfMagnitude(resSigmaVect)-6)
 # used by the funFindParScale function
