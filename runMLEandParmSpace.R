@@ -66,19 +66,21 @@ source('clusterHelp.R')
 parscale <- rep(NA,length(jParVect))
 names(parscale) <- names(jParVect)
 if(file.exists(file.path(location.output,'parscale.RDS'))){
-	parscale.old <- readRDS('parscale.RDS')
+	parscale.old <- readRDS(file.path(location.output,'parscale.RDS'))
 	matches <- which(names(parscale) %in% names(parscale.old))
 	parscale[matches] <- parscale.old[matches]
 }
-ordersOfMagGuesses <- c(funOrderOfMagnitude(sampleParms$Max-sampleParms$Min),
-												funOrderOfMagnitude(resSigmaVect)-6)
+ordersOfMagGuesses.parvect <- funOrderOfMagnitude(sampleParms$Max-sampleParms$Min)
+ordersOfMagGuesses.resSigmaVect <- funOrderOfMagnitude(resSigmaVect)-6
+ordersOfMagGuesses <- c(ordersOfMagGuesses.parvect,ordersOfMagGuesses.resSigmaVect)
+
 # used by the funFindParScale function
 ordersOfMagLimits <- c(min(ordersOfMagGuesses)-2,max(ordersOfMagGuesses)+4)
 ordersOfMag <- seq(ordersOfMagLimits[1],ordersOfMagLimits[2])
 responseTolerance <- 0.01
 
 newMaxFound <- T
-while(newMaxFound){
+# while(newMaxFound){
 	# MLE ####
 	cat('running fit procedure...')
 	# Optimisation of parameters (min neg log likelihood) is performed including
@@ -94,6 +96,10 @@ while(newMaxFound){
 	parallelParscale <- T
 	useOrdersOfMagGuesses <- T
 	while(iterations < 2 && sum(is.na(parscale)|is.infinite(parscale))>0){
+		parsToDet <- which(is.na(parscale)|is.infinite(parscale))
+		cat(sprintf('Determining the parscale of %i parameters. %i parameters with already known parscale.%s\n',
+								length(parsToDet),length(parscale)-length(parsToDet),
+								if(useOrdersOfMagGuesses){' Using guesses.'}else{' Not using guesses.'}))
 		if(parallelParscale){
 			clusterExport(cl,list('baseNegLL',
 														'ordersOfMagLimits','ordersOfMag','responseTolerance',
@@ -103,7 +109,6 @@ while(newMaxFound){
 														'calDat','resSigma',
 														'jParVect'))
 			gobble <- clusterEvalQ(cl,source(file.path(baseWD,'funParmSpace.R')))
-			parsToDet <- which(is.na(parscale)|is.infinite(parscale))
 			parParscaleOutput <- parLapplyLB(cl,parsToDet,funFindParScale,
 																			 useOrdersOfMagGuesses=useOrdersOfMagGuesses)
 			parscale[parsToDet] <- unlist(parParscaleOutput)
@@ -115,12 +120,15 @@ while(newMaxFound){
 				}
 			}
 		}
+		# cat('saving ParScale...')
+		# saveRDS(parscale,file.path(location.output,'parscale.RDS'))
+		# cat('done\n')
 		# try those that did not succeed with the guess again with the full range
 		useOrdersOfMagGuesses <- F
 		iterations <- iterations+1
-		cat('saving ParScale...')
-		saveRDS(parscale,file.path(location.output,'parscale.RDS'))
 	}
+	parscale.parvect <- parscale[1:nrow(sampleParms)]
+	parscale.resSigmaVect <- parscale[(nrow(sampleParms)+1):length(jParVect)]
 	cat('done\n')
 	
 	# check for bad behaviour in parscale ####
@@ -128,15 +136,22 @@ while(newMaxFound){
 	# only the entries in parVect can be excluded. The entries in resSigmaVect need to 
 	# be delt with. E.g. by using the guess values. The maximum likelihood vars (diag
 	# elements of the covmat can always be determined as the variance of those obs.
-	problemCases <- which(is.infinite(parscale)|is.na(parscale))
-	problemCases.parVect <- problemCases[which(problemCases <= length(parVect))]
-	problemCases.resSigmaVect <- which(problemCases > length(parVect))
-	parscale[problemCases.resSigmaVect] <- 10^ordersOfMagGuesses[problemCases.resSigmaVect]
-	parscale.resSigmaVect <- parscale[(nrow(sampleParms)+1):length(jParVect)]
-	if(length(problemCases.parVect)>0){
-		cat('Indeterminate parscales in parvect, kicking out\n')
-		parscale.parvect <- parscale.parvect[-problemCases.parVect]
-		excludeParmNames <- sampleParms$Variable[problemCases.parVect]
+	problemCasesIdc <- which(is.infinite(parscale)|is.na(parscale))
+	problemCasesIdc.parVect <- which(is.infinite(parscale.parvect)|is.na(parscale.parvect))
+	problemCasesIdc.resSigmaVect <- which(is.infinite(parscale.resSigmaVect)|is.na(parscale.resSigmaVect))
+	cat(sprintf('%i parscales could not be determined.',length(problemCasesIdc)))
+	if(length(problemCasesIdc.resSigmaVect)>0){
+		cat(sprintf('  %i in resSigmaVect, guesses will be used',
+								length(problemCasesIdc.resSigmaVect)))
+		parscale.resSigmaVect[problemCasesIdc.resSigmaVect] <- 
+			10^ordersOfMagGuesses.resSigmaVect[problemCasesIdc.resSigmaVect]
+	} else {
+		cat('  No problem cases in resSigmaVect\n')
+	}
+	if(length(problemCasesIdc.parVect)>0){
+		cat(sprintf('  %i in parVect, these parms will be dropped',length(problemCasesIdc.parVect)))
+		parscale.parvect <- parscale.parvect[-problemCasesIdc.parVect]
+		excludeParmNames <- sampleParms$Variable[problemCasesIdc.parVect]
 		cat(paste(excludeParmNames,collapse='\n'))
 		sampleParms <- prepareSampleParms(excludeNames = excludeParmNames)
 		parVect <- sampleParms$Value
