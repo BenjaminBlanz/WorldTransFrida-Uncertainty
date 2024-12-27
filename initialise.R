@@ -5,7 +5,6 @@ suppressPackageStartupMessages({
 	library(Rmpfr,quietly=T,warn.conflicts = F) # use to calculate the likelihood from loglikelihood
 	library(parallel,quietly=T,warn.conflicts = F)
 	library(optimx,quietly=T,warn.conflicts = F)
-	library(MASS,quietly=T,warn.conflicts = F)
 	library(spatstat.explore,quietly=T,warn.conflicts = F) # used for the quantile.density function
 	library(tictoc)
 })
