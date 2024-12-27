@@ -23,7 +23,7 @@ if(file.exists(file.path(location.output,'calDat.RDS'))){
 	calDat.lst <- readRDS(file.path(location.output,'calDat.RDS'))
 	calDat <- calDat.lst$calDat
 	calDat.impExtrValue <- calDat.lst$calDat.impExtrValue
-	calDat.orig <- calDat.orig
+	calDat.orig <- calDat.lst$calDat.orig
 	calDat.withAllVars <- calDat.lst$calDat.withAllVars
 } else {
 	stop('Missing calDat file. Run runInitialiseData.R first.\n')
@@ -33,7 +33,7 @@ if(file.exists(file.path(location.output,'calDat.RDS'))){
 # reads frida_info.csv and outputs the SampleParms
 # also removes parms we will not sample
 # and complains about invalid lines in frida_info.csv
-sampleParms <- prepareSampleParms()
+sampleParms.orig <- sampleParms <- prepareSampleParms()
 saveRDS(sampleParms,file.path(location.output,'sampleParms.RDS'))
 
 
@@ -154,10 +154,19 @@ newMaxFound <- T
 		excludeParmNames <- sampleParms$Variable[problemCasesIdc.parVect]
 		cat(paste(excludeParmNames,collapse='\n'))
 		sampleParms <- prepareSampleParms(excludeNames = excludeParmNames)
+		if(file.exists('parExclusionList.csv')&&file.size('parExclusionList.csv')>0){
+			oldExclusionList <- read.csv('parExclusionList.csv')
+			exclusionList <- unique(c(oldExclusionList$excludedName,excludeParmNames))
+		} else {
+			exclusionList <- data.frame(excludedName=excludeParmNames)
+		}
+		write.csv(exclusionList,'parExclusionList.csv')
 		parVect <- sampleParms$Value
 		names(parVect) <- sampleParms$Variable 
 		jParVect <- c(parVect,resSigmaVect)
 	}
+	parscale.all <- parscale
+	parscale <- c(parscale.parvect,parscale.resSigmaVect)
 	
 	# save parscale ####
 	cat('saving ParScale...')
@@ -187,212 +196,124 @@ newMaxFound <- T
 										 lower=c(sampleParms$Min,resSigmaVect-abs(parscale.resSigmaVect)*1e5),
 										 upper=c(sampleParms$Max,resSigmaVect+abs(parscale.resSigmaVect)*1e5),
 										 control=list(all.methods=F,
-										 						 parscale = parscale,
+										 						 parscale = parscale*1e-6,
 										 						 # fnscale = newVal,
 										 						 dowarn=F,
-										 						 # trace=9,
+										 						 trace=9,
 										 						 kkt=F,
-										 						 maxit = 2e4,
+										 						 maxit = 1000,#10*length(jParVect)^2,
 										 						 reltol = 1e-15))
 		optimOutput[(nrow(optimOutput)+1):nrow(optRes),] <- optRes
 		write.csv(optimOutput,file.path(location.output,'optRes.csv'))
 		newVal <- optRes$value
 		rownames(optRes) <- NULL
 		sv <- unlist(optRes[1:length(jParVect)])
-		cat(sptintf('%f\n',optRes$value[1]))
+		cat(sprintf('%f\n',optRes$value[1]))
 	}
-	jParVect <- sv
-	cat('completed optimization\n')
-	
-	# something else ####
-	cat('optRes:\n')
-	print(sv)
-	jParVect.names <- names(jParVect)
-	jParVect <- sv
-	if(fitType=='sTime'){
-		jParVect <- unlist(optRes[1:10])
+	if(sum(is.na(sv[1:length(jParVect)]))==0|optRes$value<baseNegLL){
+		jParVect.names <- names(jParVect)
+		jParVect <- sv[1:length(jParVect)]
 		names(jParVect) <- jParVect.names
-		mParVect <- jParVect[1:3]
-		gParVect <- jParVect[5:8]
-		cov.mat <- matrix(c(jParVect[4]^2,jParVect[10],jParVect[10],jParVect[9]^2),nrow=2)
-		parVect.parscale <- parscale[c(1:3,5:8)]
-	} else if (fitType=='sTime2'||fitType=='sTime3'){
-		jParVect <- unlist(optRes[1:8])
-		names(jParVect) <- jParVect.names
-		mParVect <- jParVect[1:3]
-		gParVect <- jParVect[5:6]
-		cov.mat <- matrix(c(jParVect[4]^2,jParVect[8],jParVect[8],jParVect[7]^2),nrow=2)
-		parVect.parscale <- parscale[c(1:3,5:6)]
-	} else if (fitType=='nsplRa0b0'||fitType=='nsplBH'){
-		jParVect <- unlist(optRes[1:3])
-		names(jParVect) <- jParVect.names
-		mParVect <- c()
-		gParVect <- jParVect[1:2]
-		cov.mat <- jParVect[3]
-		parVect.parscale <- parscale[1:3]
-	}else if (fitType=='nsplRa0b0MR1'){
-		jParVect <- unlist(optRes[1:4])
-		names(jParVect) <- jParVect.names
-		mParVect <- jParVect[1]
-		gParVect <- jParVect[2:3]
-		cov.mat <- jParVect[4]
-		parVect.parscale <- parscale[1:3]
-	} else if (fitType=='nsplTVRa2b2MR1'){
-		jParVect <- unlist(optRes[1:8])
-		names(jParVect) <- jParVect.names
-		mParVect <- jParVect[1]
-		gParVect <- jParVect[2:7]
-		cov.mat <- jParVect[8]
-		parVect.parscale <- parscale[c(1,2:7)]
-	} else {
-		stop('Unkown fitType\n')
-	}
-	saveRDS(jParVect,file.path(storeCalcLocation2,paste0('jParVect-',fitType,'-',yrsForFit.name,'.RDS')))
-	parVect <- c(mParVect,gParVect)
-	
-	
-	sgslDat.l$jParVect <- jParVect
-	sgslDat.l$mParVect <- mParVect
-	sgslDat.l$gParVect <- gParVect
-	sgslDat.l$coefs.gm.mle <- parVect
-	sgslDat.l$llike.gm.mle <- -jnegLLikelihood.f(jParVect)
-	sgslDat.l$sigma.gm.mle <- cov.mat
-	sgslDat.l$m.pred.mle <- mort.f(mParVect)
-	sgslDat.l$m.resid.mle <- sgslDat.l$m - sgslDat.l$m.pred.mle
-	sgslDat.l$g.pred.mle <- growth.f(gParVect)
-	sgslDat.l$g.resid.mle <- sgslDat.l$g - sgslDat.l$g.pred.mle
-	cat('done\n')
-	
-	#### coef range ####
-	# manually specify borders
-	if(fitType=='sTime'){
-		distances  <- c(1.25, #m1
-										0.00075, #m2
-										0.3e-6, #m3
-										0.2, #g1
-										4e-6, #g2
-										4e-9, #g3
-										2e-12) #g4
-	} else if(fitType=='sTime2'||fitType=='sTime3'){
-		distances  <- c(1.25, #m1
-										0.00075, #m2
-										0.3e-6, #m3
-										0.2, #g1
-										4e-6) #g2
-	} else if(fitType=='nsplBH'){
-		distances  <- c(9.24, 
-										2e5) 
-	}else if(fitType=='nsplRa0b0'){
-		distances  <- c(9.24, #ga1
-										2.03e-5) #gb1
-	} else if(fitType=='nsplRa0b0MR1'){
-		distances  <- c(0.36, #m1
-										9.24, #ga1
-										2.03e-5) #gb1
-	} else if(fitType=='nsplTVRa2b2MR1'){
-		distances  <- c(0.36, #m1
-										9.24, #ga1
-										4.68e-3, #ga2
-										2.43e-6, #ga3
-										2.03e-5, #gb1
-										1.02e-8, #gb2
-										5.07e-12) #gb3
-	}
-	if(n.sample==1){
-		max.coefs <- parVect+distances
-		min.coefs <- parVect-distances
-	} else {
-		# minimize and maximize each parameter with others free, until density is 
-		# equal to pdensEps
-		cat('determining coef sample range...')
-		
-		# boundary value in log likelihood
-		lpdensEps <- -negLLike(parVect) - log(likeCutoffRatio)
-		max.coefs <- parVect
-		min.coefs <- parVect
-		#limit to 4 c. due to mem. reqs. and also len(coefs)
-		if(speratelyDetermineCoefRangeForMortAndGrowth){
-			for(i in 1:length(parVect)){
-				idcToMod <- list()
-				if(i <= length(mParVect)){
-					idcToMod[[i]] <- 1:length(mParVect)
-				} else {
-					idcToMod[[i]] <- (length(mParVect)+1):length(parVect)
-				}
-			}
+		parVect <- jParVect[1:length(parVect)]
+		resSigmaVect <- jParVect[(length(parVect)+1):length(jParVect)]
+		if(treatVarsAsIndep){
+			resSigma <- diag(resSigmaVect)
 		} else {
-			idcToMod <- 1:length(parVect)
+			resSigma <- array(NA,dim=rep(ncol(calDat),2))
+			resSigma[!lower.tri(resSigma)]<- resSigmaVect
+			resSigma[lower.tri(resSigma)] <- t(resSigma)[lower.tri(resSigma)]
 		}
-		## for testing
-		# for(i in 1:length(parVect)){
-		# 	cat('\n\nmax parm ',i,'\n')
-		# 	findDensValBorder(i,parVect=parVect,lpdensEps=lpdensEps,
-		# 										ceterisParibusPars=ceterisParibusPars,
-		# 										tol=1e-10,max=T,trace=1,idcToMod=idcToMod,
-		# 										maxiter=1e3,
-		# 										parscale=parVect.parscale)
-		# 	cat('\nmin parm ',i,'\n')
-		# 	findDensValBorder(i,parVect=parVect,lpdensEps=lpdensEps,
-		# 										ceterisParibusPars=ceterisParibusPars,
-		# 										tol=1e-10,max=F,trace=1,idcToMod=idcToMod,
-		# 										maxiter=1e3,
-		# 										parscale=parVect.parscale)
-		# }
-		clRoot <- makeForkCluster(min(length(parVect),detectCores())) 
-		cat('\rdetermining coef sample range... min\n')
-		min.coefs <- unlist(parLapply(clRoot,1:length(parVect),findDensValBorder,
-																	parVect=parVect,lpdensEps=lpdensEps,
-																	ceterisParibusPars=ceterisParibusPars,
-																	tol=1e-10,max=F,idcToMod=idcToMod,
-																	parscale=parVect.parscale))
-		names(min.coefs) <- names(parVect)
-		# fallback values in case borders could not be determined:
-		min.coefs[(is.infinite(min.coefs)+(parVect==min.coefs))>=1] <- 
-			parVect[(is.infinite(min.coefs)+(parVect==min.coefs))>=1]-
-			distances[(is.infinite(min.coefs)+(parVect==min.coefs))>=1]
-		print(min.coefs)
-		cat('\rdetermining coef sample range... max\n')
-		max.coefs <- unlist(parLapply(clRoot,1:length(parVect),findDensValBorder,
-																	parVect=parVect,lpdensEps=lpdensEps,
-																	ceterisParibusPars=ceterisParibusPars,
-																	tol=1e-10,max=T,idcToMod=idcToMod,
-																	parscale=parVect.parscale))
-		names(max.coefs) <- names(parVect)
-		# fallback values in case borders could not be determined:
-		max.coefs[(is.infinite(max.coefs)+(max.coefs==parVect))>=1] <- 
-			parVect[(is.infinite(max.coefs)+(max.coefs==parVect))>=1]+
-			distances[(is.infinite(max.coefs)+(parVect==max.coefs))>=1]
-		print(max.coefs)
-		stopCluster(clRoot)
-		cat('\rdetermining coef sample range...done   \n')
-		
-		# look at the min max and opt coefs
-		# if(FALSE){
-		# mat.coefs <- matrix(c(min.coefs,parVect,max.coefs),nrow=3,byrow=T)
-		# colnames(mat.coefs) <- names(parVect)
-		# rownames(mat.coefs) <- c('min.coefs','parVect','max.coefs')
-		# View(mat.coefs)
-		# }
-		# reselect coefs
-		# max.coefs <- par.vals[6,]
-		# min.coefs <- par.vals[4,]
+		saveRDS(jParVect,file.path(location.output,'jParVectAfterOptim.RDS'))
+		cat('completed optimization\n')
+	} else {
+		stop('failed optimization\n')
 	}
+	
+	# coef range ####
+	# manually specify borders
+	max.coefs.prior <- max.coefs <- sampleParms$Max
+	min.coefs.prior <- min.coefs <- sampleParms$Min
+	# minimize and maximize each parameter with others free, until density is 
+	# equal to pdensEps
+	cat('determining coef sample range...\n')
+	# boundary value in log likelihood
+	lpdensEps <- -negLLike(parVect) - log(likeCutoffRatio)
+	#limit to 4 c. due to mem. reqs. and also len(coefs)
+	idcToMod <- 1:length(parVect)
+	## for testing
+	# for(i in 1:length(parVect)){
+	# 	cat('\n\nmax parm ',i,'\n')
+	# 	findDensValBorder(i,parVect=parVect,lpdensEps=lpdensEps,
+	# 										ceterisParibusPars=ceterisParibusPars,
+	# 										tol=1e-10,max=T,trace=1,idcToMod=idcToMod,
+	# 										maxiter=1e3,
+	# 										parscale=parVect.parscale)
+	# 	cat('\nmin parm ',i,'\n')
+	# 	findDensValBorder(i,parVect=parVect,lpdensEps=lpdensEps,
+	# 										ceterisParibusPars=ceterisParibusPars,
+	# 										tol=1e-10,max=F,trace=1,idcToMod=idcToMod,
+	# 										maxiter=1e3,
+	# 										parscale=parVect.parscale)
+	# }
+	
+	cat('  determining min par values...')
+	min.coefs <- unlist(parLapply(cl,1:length(parVect),findDensValBorder,
+																parVect=parVect,lpdensEps=lpdensEps,
+																ceterisParibusPars=treatVarsAsIndep,
+																tol=1e-10,max=F,idcToMod=idcToMod,
+																parscale=parVect.parscale))
+	names(min.coefs) <- names(parVect)
+	# fallback values in case borders could not be determined:
+	notDeterminedMinBorders <- which((is.infinite(min.coefs)+(parVect==min.coefs))>=1)
+	min.coefs[notDeterminedMinBorders] <- min.coefs.prior[notDeterminedMinBorders]
+	cat(sprintf('done %i failures\n',length(notDeterminedMinBorders)))
+	
+	cat('  determining max par values...')
+	max.coefs <- unlist(parLapply(cl,1:length(parVect),findDensValBorder,
+																parVect=parVect,lpdensEps=lpdensEps,
+																ceterisParibusPars=treatVarsAsIndep,
+																tol=1e-10,max=T,idcToMod=idcToMod,
+																parscale=parVect.parscale))
+	names(max.coefs) <- names(parVect)
+	# fallback values in case borders could not be determined:
+	notDeterminedMaxBorders <- which((is.infinite(max.coefs)+(max.coefs==parVect))>=1)
+	max.coefs[notDeterminedMaxBorders] <- max.coefs.prior[notDeterminedMaxBorders]
+	cat(sprintf('done %i failures\n',length(notDeterminedMinBorders)))
+	
+	cat('  saving par ranges...')
+	sampleParms$oldMin <- sampleParms.orig$Min
+	sampleParms$oldMax <- sampleParms.orig$Max
+	sampleParms$Max <- max.coefs
+	sampleParms$Min <- min.coefs
+	write.csv(sampleParms,file.path(location.output,'sampleParmsParscale.csv'))
+	cat('...done   \n')
+	
+	# look at the min max and opt coefs
+	# if(FALSE){
+	# mat.coefs <- matrix(c(min.coefs,parVect,max.coefs),nrow=3,byrow=T)
+	# colnames(mat.coefs) <- names(parVect)
+	# rownames(mat.coefs) <- c('min.coefs','parVect','max.coefs')
+	# View(mat.coefs)
+	# }
+	# reselect coefs
+	# max.coefs <- par.vals[6,]
+	# min.coefs <- par.vals[4,]
 	
 	#### llike ####
 	if(runMaxLikeForAllSamples){
-		n.sample <- n.sample.runMaxLikeForAllSamples
+		numSample <- numSample.runMaxLikeForAllSamples
 	} else {
-		n.sample <- n.sample.full
+		numSample <- numSample.full
 	}
-	par.vals <- array(NA,dim=c(n.sample,n.par))
-	like.arr <- array(NA, dim=c(n.sample^n.par,n.par+2))
+	par.vals <- array(NA,dim=c(numSample,n.par))
+	like.arr <- array(NA, dim=c(numSample^n.par,n.par+2))
 	colnames(like.arr) <- c(names(parVect),'llike','prob')
 	if(!exists('samplingType') || samplingType=='raster'){
 		for(i in 1:n.par){
-			# par.vals[,i] <- seq(min.coefs[i],max.coefs[i],length.out=n.sample)
-			par.vals[,i] <- sort(c(parVect[i],seq(min.coefs[i],max.coefs[i],length.out=n.sample-1)))
-			# like.arr[2:(n.sample+1),i] <- runif(n.sample,min.coefs[i],max.coefs[i])
-			# like.arr[,i] <- rnorm(n.sample,parVect[i],mean((parVect[i]-min.coefs[i])^2,
+			# par.vals[,i] <- seq(min.coefs[i],max.coefs[i],length.out=numSample)
+			par.vals[,i] <- sort(c(parVect[i],seq(min.coefs[i],max.coefs[i],length.out=numSample-1)))
+			# like.arr[2:(numSample+1),i] <- runif(numSample,min.coefs[i],max.coefs[i])
+			# like.arr[,i] <- rnorm(numSample,parVect[i],mean((parVect[i]-min.coefs[i])^2,
 			# 																								(parVect[i]-max.coefs[i])^2))
 		}
 	} else if (samplingType=='orthogonal-latin-hypercube'){
@@ -400,8 +321,8 @@ newMaxFound <- T
 	}
 	sgslDat.l$mleCoefsAdded <- TRUE
 	for(i in 1:n.par){
-		like.arr[,i] <- rep(rep(unname(par.vals[,i]),each=n.sample^(i-1)),
-												n.sample^(n.par-i))
+		like.arr[,i] <- rep(rep(unname(par.vals[,i]),each=numSample^(i-1)),
+												numSample^(n.par-i))
 	}
 	# cl <- makePSOCKcluster(detectCores()/2)
 	# clusterEvalQ(cl,source('runEarlyWarningPaper2-FitExploration-JointModelLikelihood.R'))
@@ -411,7 +332,7 @@ newMaxFound <- T
 	#### run opt par for all samplees ####
 	likeMaxVals.max <- NA
 	if(runMaxLikeForAllSamples){
-		cat('Optimising Coef for each sample (n.sample=',n.sample,')...')
+		cat('Optimising Coef for each sample (numSample=',numSample,')...')
 		parMaxLikelyFun <- function(i){
 			sv <- c(like.arr[i,1:3],
 							jParVect[4],
@@ -435,7 +356,7 @@ newMaxFound <- T
 		likeMaxVals.max <- -likeMaxVals[maxInd]
 		cat('done\n')
 	} else {
-		cat('calculating coef llike...')	# for testing# for(i in 1:(n.sample+1)){
+		cat('calculating coef llike...')	# for testing# for(i in 1:(numSample+1)){
 		# 	like.arr[i,n.par+1] <- -negLLike(like.arr[i,1:n.par])
 		
 		# Note that
@@ -476,7 +397,7 @@ newMaxFound <- T
 		}
 		newMaxFound <- T
 		cat('Found greater likelihood pars in sampling, rerunning fit procedure\n')
-	} else if(runMaxLikeForAllSamples && n.sample.full!=n.sample.runMaxLikeForAllSamples){
+	} else if(runMaxLikeForAllSamples && numSample.full!=numSample.runMaxLikeForAllSamples){
 		runMaxLikeForAllSamples <- F
 		cat('No greater likelihood found in per sample opt, now rerunning with full samples\n')
 	} else if(runMaxLikeForAllSamples){

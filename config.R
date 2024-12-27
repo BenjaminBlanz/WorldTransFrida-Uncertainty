@@ -54,7 +54,7 @@ treatVarsAsIndep <- T
 # parms.
 # The parm range will be either increased or decreased to make this happen in each
 # parameter.
-likeThresholdRatio <- 100
+likeCutoffRatio <- 100
 
 # padding for data plots y axis in share of the data range
 yaxPad <- 0.4

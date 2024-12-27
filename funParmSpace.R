@@ -245,7 +245,7 @@ prepareSampleParms <- function(excludeNames=c()){
 	# deal with manually excluded items
 	if(file.exists('parExclusionList.csv')&&file.size('parExclusionList.csv')>0){
 		manParExclusionList <- read.csv('parExclusionList.csv')
-		excludeNames <- c(excludeNames,manParExclusionList[,1])
+		excludeNames <- c(excludeNames,manParExclusionList$excludedName)
 	}
 	# deal with excluded Names
 	excludedIdc <- which(sampleParms$Variable %in% excludeNames)
