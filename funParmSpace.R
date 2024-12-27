@@ -32,7 +32,35 @@ jnegLLikelihood.f <- function(jParVect){
 	}
 	return(-lLikelihood)
 }
-
+negLLike <- function(parVect){
+	runDat <- runFRIDASpecParms(parVect)
+	if(sum(colnames(calDat)!=colnames(runDat))>0){
+		stop('missmatch in colnames(calDat)==colnames(runDat)\n')
+	}
+	resDat <- calDat-runDat
+	if(!treatVarsAsIndep){
+		calDatCompleteCases <- which(complete.cases(calDat))
+		resDat <- resDat[calDatCompleteCases]
+	} else {
+		resDat[is.na(resDat)] <- 0
+	}
+	lLikelihood <- funLogLikelihood(resDat,resSigma)
+	# If the logLike is not NA but the run did not complete assign 
+	# lowest value. We use this when narrowing the parms space
+	if(is.na(runDat[[1]][nrow(runDat)])){
+		lLikelihood <- -.Machine$double.xmax+(sum(!is.na(runDat[[1]]))*.Machine$double.eps)
+	}
+	return(-lLikelihood)
+}
+jnegLLikelihood.gr <- function(jParVect){
+	nllike <- jnegLLikelihood.f(jParVect)
+	grad <- c()
+	for(i in 1:length(jParVect)){
+		jParVectD <- jParVect
+		jParVectD[i] <- jParVect[i]+parscale[i]/100
+		#TODO: finish this
+	}
+}
 
 likeGoalDiffFun <- function(par,parVect,parIdx,lpdensEps, ...){
 	parVect[parIdx] <- par
