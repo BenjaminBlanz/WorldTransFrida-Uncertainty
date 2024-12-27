@@ -3,13 +3,12 @@ source('initialise.R')
 # config ####
 cat('Config...')
 source('config.R')
-if(file.exists(file.path(location.output,'sigma.RDS'))){
+# read covariance matrix used for baseNegLL
+if(treatVarsAsIndep&&
+	 file.exists(file.path(location.output,'sigma-indepParms.RDS'))){
+	resSigma <- readRDS(file.path(location.output,'sigma-indepParms.RDS'))
+} else if(file.exists(file.path(location.output,'sigma.RDS'))){
 	resSigma <- readRDS(file.path(location.output,'sigma.RDS'))
-	resSigma.names <- array(paste('s',
-																rep(1:nrow(resSigma),ncol(resSigma)),
-																rep(1:nrow(resSigma),each=nrow(resSigma)),
-																sep='_'),
-													dim=dim(resSigma))
 	if(treatVarsAsIndep){
 		# get the diagonal elements
 		resSigma.var <- diag(resSigma)
@@ -19,6 +18,12 @@ if(file.exists(file.path(location.output,'sigma.RDS'))){
 } else {
 	stop('Missing covariance matrix file. Run runInitialiseData.R first.\n')
 }
+resSigma.names <- array(paste('s',
+															rep(1:nrow(resSigma),ncol(resSigma)),
+															rep(1:nrow(resSigma),each=nrow(resSigma)),
+															sep='_'),
+												dim=dim(resSigma))
+# read calibration data
 if(file.exists(file.path(location.output,'calDat.RDS'))){
 	calDat.lst <- readRDS(file.path(location.output,'calDat.RDS'))
 	calDat <- calDat.lst$calDat
@@ -153,6 +158,7 @@ newMaxFound <- T
 		parscale.parvect <- parscale.parvect[-problemCasesIdc.parVect]
 		excludeParmNames <- sampleParms$Variable[problemCasesIdc.parVect]
 		cat(paste(excludeParmNames,collapse='\n'))
+		cat('\n')
 		sampleParms <- prepareSampleParms(excludeNames = excludeParmNames)
 		if(file.exists('parExclusionList.csv')&&file.size('parExclusionList.csv')>0){
 			oldExclusionList <- read.csv('parExclusionList.csv')
@@ -170,18 +176,19 @@ newMaxFound <- T
 	
 	# save parscale ####
 	cat('saving ParScale...')
-	saveRDS(parscale,file.path(location.output,'parscale.RDS'))
+	saveRDS(parscale.all,file.path(location.output,'parscale.RDS'))
 	sampleParms$parscale <- parscale.parvect
 	write.csv(sampleParms,file.path(location.output,'sampleParmsParscale.csv'))
 	
 	
 	# optimize parameters ####
 	sv <- jParVect
-	optimOutput <- array(NA,dim=c(1,length(jParVect)+8))
+	optimOutput <- array(NA,dim=c(1,length(jParVect)+9))
 	colnames(optimOutput) <- c(names(jParVect),
-														 c('value','fevals','gevals','niter','convcode','kkt1','kkt2','xtime'))
+														 c('value','fevals','gevals','niter','convcode',
+														 	'kkt1','kkt2','xtime','check value'))
 	optimOutput <- as.data.frame(optimOutput)
-	optimOutput[1,] <- c(jParVect,baseNegLL,rep(NA,7))
+	optimOutput[1,] <- c(jParVect,baseNegLL,rep('',8))
 	rownames(optimOutput) <- 'sv'
 	oldVal <- 0
 	newVal <- 1
@@ -192,23 +199,32 @@ newMaxFound <- T
 								iteration))
 		oldVal <- newVal
 		# sv <- sv * 1.1
+		# specifying limits breaks the parscale info for bobyqa!
 		optRes <- optimx(sv,jnegLLikelihood.f,method=c('bobyqa'),
-										 lower=c(sampleParms$Min,resSigmaVect-abs(parscale.resSigmaVect)*1e5),
-										 upper=c(sampleParms$Max,resSigmaVect+abs(parscale.resSigmaVect)*1e5),
 										 control=list(all.methods=F,
-										 						 parscale = parscale*1e-6,
+										 						 parscale = parscale,
 										 						 # fnscale = newVal,
 										 						 dowarn=F,
-										 						 trace=9,
+										 						 # trace=9,
 										 						 kkt=F,
-										 						 maxit = 1000,#10*length(jParVect)^2,
+										 						 maxit = 2e4, # recommended: 10*length(jParVect)^2,
 										 						 reltol = 1e-15))
-		optimOutput[(nrow(optimOutput)+1):nrow(optRes),] <- optRes
-		write.csv(optimOutput,file.path(location.output,'optRes.csv'))
 		newVal <- optRes$value
-		rownames(optRes) <- NULL
-		sv <- unlist(optRes[1:length(jParVect)])
-		cat(sprintf('%f\n',optRes$value[1]))
+		svNegLLike <-c ()
+		for(opt.i in 1:nrow(optRes)){
+			sv.i <- unlist(as.vector(optRes[opt.i,1:length(jParVect)]))
+			svNegLLike[opt.i] <- jnegLLikelihood.f(sv.i)
+		}
+		maxMethod <- which.max(svNegLLike)
+		sv <- unlist(as.vector(optRes[maxMethod,1:length(jParVect)]))
+		cat(sprintf('%10f %10f\n',
+								optRes$value[1],svNegLLike[maxMethod]))
+		newOptimOutputRowNums <- (nrow(optimOutput)+1):((nrow(optimOutput))+nrow(optRes))
+		optimOutput[newOptimOutputRowNums,] <- 
+			base::cbind(optRes,svNegLLike)
+		rownames(optimOutput)[newOptimOutputRowNums] <-
+			paste(rep(iteration,nrow(optRes)),rownames(optRes))
+		write.csv(optimOutput,file.path(location.output,'optRes.csv'))
 	}
 	if(sum(is.na(sv[1:length(jParVect)]))==0|optRes$value<baseNegLL){
 		jParVect.names <- names(jParVect)
@@ -224,6 +240,10 @@ newMaxFound <- T
 			resSigma[lower.tri(resSigma)] <- t(resSigma)[lower.tri(resSigma)]
 		}
 		saveRDS(jParVect,file.path(location.output,'jParVectAfterOptim.RDS'))
+		saveRDS(resSigma,file.path(location.output,
+															 paste0('sigma',
+															 			 ifelse(treatVarsAsIndep,'-indepParms',''),
+															 			 '.RDS')))
 		cat('completed optimization\n')
 	} else {
 		stop('failed optimization\n')
@@ -300,77 +320,7 @@ newMaxFound <- T
 	# min.coefs <- par.vals[4,]
 	
 	#### llike ####
-	if(runMaxLikeForAllSamples){
-		numSample <- numSample.runMaxLikeForAllSamples
-	} else {
-		numSample <- numSample.full
-	}
-	par.vals <- array(NA,dim=c(numSample,n.par))
-	like.arr <- array(NA, dim=c(numSample^n.par,n.par+2))
-	colnames(like.arr) <- c(names(parVect),'llike','prob')
-	if(!exists('samplingType') || samplingType=='raster'){
-		for(i in 1:n.par){
-			# par.vals[,i] <- seq(min.coefs[i],max.coefs[i],length.out=numSample)
-			par.vals[,i] <- sort(c(parVect[i],seq(min.coefs[i],max.coefs[i],length.out=numSample-1)))
-			# like.arr[2:(numSample+1),i] <- runif(numSample,min.coefs[i],max.coefs[i])
-			# like.arr[,i] <- rnorm(numSample,parVect[i],mean((parVect[i]-min.coefs[i])^2,
-			# 																								(parVect[i]-max.coefs[i])^2))
-		}
-	} else if (samplingType=='orthogonal-latin-hypercube'){
-		
-	}
-	sgslDat.l$mleCoefsAdded <- TRUE
-	for(i in 1:n.par){
-		like.arr[,i] <- rep(rep(unname(par.vals[,i]),each=numSample^(i-1)),
-												numSample^(n.par-i))
-	}
-	# cl <- makePSOCKcluster(detectCores()/2)
-	# clusterEvalQ(cl,source('runEarlyWarningPaper2-FitExploration-JointModelLikelihood.R'))
-	# clusterExport(cl,list('n.par','like.arr','data','negLLike','parlike.f','cov.mat'))
-	cl <- makeForkCluster(floor(detectCores()),renice=10)
 	
-	#### run opt par for all samplees ####
-	likeMaxVals.max <- NA
-	if(runMaxLikeForAllSamples){
-		cat('Optimising Coef for each sample (numSample=',numSample,')...')
-		parMaxLikelyFun <- function(i){
-			sv <- c(like.arr[i,1:3],
-							jParVect[4],
-							like.arr[i,4:7],
-							jParVect[9:10])
-			optRes <- NA
-			try({
-				optRes <- optimx(sv,jnegLLikelihood.f,method=c('Nelder-Mead'),
-												 control=list(all.methods=F,
-												 						 parscale = parscale,
-												 						 # fnscale = newVal,
-												 						 dowarn=F,
-												 						 kkt=F,
-												 						 maxit = 2e4,
-												 						 reltol = 1e-20))$value
-			})
-			return(unlist(optRes))
-		}
-		likeMaxVals <- unlist(parLapply(cl,1:(dim(like.arr)[1]),parMaxLikelyFun))
-		maxInd <- which.min(likeMaxVals)
-		likeMaxVals.max <- -likeMaxVals[maxInd]
-		cat('done\n')
-	} else {
-		cat('calculating coef llike...')	# for testing# for(i in 1:(numSample+1)){
-		# 	like.arr[i,n.par+1] <- -negLLike(like.arr[i,1:n.par])
-		
-		# Note that
-		#          Idx: 1  2  3  4  5  6  7  8  9  10      
-		# jParVect == c(m1,m2,m3,ms,g1,g2,g3,g4,gs,jcov)
-		# parVect  ==  c(m1,m2,m3,g1,g2,g3,g4)
-		parlike.f <- function(i){
-			-negLLike(like.arr[i,1:n.par])
-		}
-		like.arr[,'llike'] <- unlist(parLapply(cl,1:(dim(like.arr)[1]),parlike.f))
-		cat('done\n')
-		# check if a highler likelihood than at jParVect was found
-		maxInd <- which.max(like.arr[,'llike'])
-	}
 	
 	if(max(like.arr[maxInd,'llike'],likeMaxVals.max,na.rm = T) > -jnegLLikelihoodFixedCovMat.f(parVect)){
 		if(fitType=='sTime'){
@@ -397,7 +347,7 @@ newMaxFound <- T
 		}
 		newMaxFound <- T
 		cat('Found greater likelihood pars in sampling, rerunning fit procedure\n')
-	} else if(runMaxLikeForAllSamples && numSample.full!=numSample.runMaxLikeForAllSamples){
+	} else if(runMaxLikeForAllSamples && n.sample.full!=n.sample.runMaxLikeForAllSamples){
 		runMaxLikeForAllSamples <- F
 		cat('No greater likelihood found in per sample opt, now rerunning with full samples\n')
 	} else if(runMaxLikeForAllSamples){

@@ -1,4 +1,6 @@
 numWorkers <- parallel::detectCores()
+
+# number of samples for the sobol sequence across all dimensions
 numSample <- 5e3
 
 # How large the chunks of work are, smaller means more frequent pauses to write out
