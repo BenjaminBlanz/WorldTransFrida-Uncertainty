@@ -149,7 +149,7 @@ newMaxFound <- T
 		cat('  No problem cases in resSigmaVect\n')
 	}
 	if(length(problemCasesIdc.parVect)>0){
-		cat(sprintf('  %i in parVect, these parms will be dropped',length(problemCasesIdc.parVect)))
+		cat(sprintf('  %i in parVect, these parms will be dropped\n',length(problemCasesIdc.parVect)))
 		parscale.parvect <- parscale.parvect[-problemCasesIdc.parVect]
 		excludeParmNames <- sampleParms$Variable[problemCasesIdc.parVect]
 		cat(paste(excludeParmNames,collapse='\n'))
@@ -166,42 +166,49 @@ newMaxFound <- T
 	write.csv(sampleParms,file.path(location.output,'sampleParmsParscale.csv'))
 	
 	
-	
+	# optimize parameters ####
 	sv <- jParVect
+	optimOutput <- array(NA,dim=c(1,length(jParVect)+8))
+	colnames(optimOutput) <- c(names(jParVect),
+														 c('value','fevals','gevals','niter','convcode','kkt1','kkt2','xtime'))
+	optimOutput <- as.data.frame(optimOutput)
+	optimOutput[1,] <- c(jParVect,baseNegLL,rep(NA,7))
+	rownames(optimOutput) <- 'sv'
 	oldVal <- 0
 	newVal <- 1
+	iteration <- 0
 	while(abs(oldVal-newVal)>1e-12){
+		iteration <- iteration+1
+		cat(sprintf('Running likelihood maximization (min neg log like) iteration %i...',
+								iteration))
 		oldVal <- newVal
 		# sv <- sv * 1.1
 		optRes <- optimx(sv,jnegLLikelihood.f,method=c('bobyqa'),
 										 lower=c(sampleParms$Min,resSigmaVect-abs(parscale.resSigmaVect)*1e5),
 										 upper=c(sampleParms$Max,resSigmaVect+abs(parscale.resSigmaVect)*1e5),
 										 control=list(all.methods=F,
-										 						 parscale = parscale*1e-6,
+										 						 parscale = parscale,
 										 						 # fnscale = newVal,
-										 						 dowarn=T,
-										 						 trace=9,
+										 						 dowarn=F,
+										 						 # trace=9,
 										 						 kkt=F,
 										 						 maxit = 2e4,
 										 						 reltol = 1e-15))
+		optimOutput[(nrow(optimOutput)+1):nrow(optRes),] <- optRes
+		write.csv(optimOutput,file.path(location.output,'optRes.csv'))
 		newVal <- optRes$value
 		rownames(optRes) <- NULL
-		# print(optRes[1,c(1:12,15)])
-		if(fitType=='sTime'){
-			sv <- c(unlist(optRes[1,1:10]))
-		} else if(fitType=='sTime2'||fitType=='sTime3'){
-			sv <- c(unlist(optRes[1,1:8]))
-		} else if (fitType=='nsplRa0b0'||fitType=='nsplBH'){
-			sv <- c(unlist(optRes[1,1:3]))
-		} else if (fitType=='nsplRa0b0MR1'){
-			sv <- c(unlist(optRes[1,1:4]))
-		} else if (fitType=='nsplTVRa2b2MR1'){
-			sv <- c(unlist(optRes[1,1:8]))
-		}
+		sv <- unlist(optRes[1:length(jParVect)])
+		cat(sptintf('%f\n',optRes$value[1]))
 	}
+	jParVect <- sv
+	cat('completed optimization\n')
+	
+	# something else ####
 	cat('optRes:\n')
 	print(sv)
 	jParVect.names <- names(jParVect)
+	jParVect <- sv
 	if(fitType=='sTime'){
 		jParVect <- unlist(optRes[1:10])
 		names(jParVect) <- jParVect.names
