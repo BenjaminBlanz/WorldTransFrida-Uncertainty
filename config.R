@@ -1,17 +1,3 @@
-
-location.frida <- './FRIDAforUncertaintyAnalysis'
-location.stella<- './Stella_Simulator_Linux'
-name.fridaExportVarsFile <- 'varsForExport.txt'
-name.fridaInputFile <- 'uncertainty_analysis_paramter_values.csv'
-name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
-
-location.output <- file.path('workOutput',paste0('NumSample-',numSample,
-																								 '-chunkSizePerWorker-',chunkSizePerWorker))
-location.output.base <- location.output
-dir.create(file.path(location.output),recursive = T,showWarnings = F)
-
-
-
 # parallel things
 if(!exists('numWorkers')){
 	numWorkers <- parallel::detectCores()
@@ -71,6 +57,17 @@ likeCutoffRatio <- 100
 if(!exists('skipParMLE')){
 	skipParMLE <- F
 }
+
+# locations and names ####
+location.frida <- './FRIDAforUncertaintyAnalysis'
+location.stella<- './Stella_Simulator_Linux'
+name.fridaExportVarsFile <- 'varsForExport.txt'
+name.fridaInputFile <- 'uncertainty_analysis_paramter_values.csv'
+name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
+location.output <- file.path('workOutput',paste0('NumSample-',numSample,
+																								 '-chunkSizePerWorker-',chunkSizePerWorker))
+location.output.base <- location.output
+dir.create(file.path(location.output),recursive = T,showWarnings = F)
 
 # save the config to the output folder
 file.copy('config.R',location.output)
