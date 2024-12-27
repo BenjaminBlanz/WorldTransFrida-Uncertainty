@@ -281,7 +281,7 @@ newMaxFound <- T
 	
 	cat('  determining min par values...')
 	clusterExport(cl,list('calDat','treatVarsAsIndep'))
-	min.coefs <- unlist(parLapply(cl,1:length(parVect),findDensValBorder,
+	min.coefs <- unlist(parLapplyLB(cl,1:length(parVect),findDensValBorder,
 																parVect=parVect,lpdensEps=lpdensEps,
 																ceterisParibusPars=treatVarsAsIndep,
 																tol=1e-10,max=F,idcToMod=idcToMod,
@@ -290,13 +290,13 @@ newMaxFound <- T
 	# fallback values in case borders could not be determined:
 	notDeterminedMinBorders <- which((is.infinite(min.coefs)+(parVect==min.coefs))>=1)
 	min.coefs[notDeterminedMinBorders] <- min.coefs.prior[notDeterminedMinBorders]
-	cat(sprintf('done %i failures\n',length(notDeterminedMinBorders)))
+	cat(sprintf('done. %i failures\n',length(notDeterminedMinBorders)))
 	sink(file.path(location.output,'notDeterminedMinBorders.csv'))
 	cat(paste(names(parVect)[notDeterminedMinBorders],collapse='\n'))
 	sink()
 	
 	cat('  determining max par values...')
-	max.coefs <- unlist(parLapply(cl,1:length(parVect),findDensValBorder,
+	max.coefs <- unlist(parLapplyLB(cl,1:length(parVect),findDensValBorder,
 																parVect=parVect,lpdensEps=lpdensEps,
 																ceterisParibusPars=treatVarsAsIndep,
 																tol=1e-10,max=T,idcToMod=idcToMod,
@@ -305,7 +305,7 @@ newMaxFound <- T
 	# fallback values in case borders could not be determined:
 	notDeterminedMaxBorders <- which((is.infinite(max.coefs)+(max.coefs==parVect))>=1)
 	max.coefs[notDeterminedMaxBorders] <- max.coefs.prior[notDeterminedMaxBorders]
-	cat(sprintf('done %i failures\n',length(notDeterminedMinBorders)))
+	cat(sprintf('done. %i failures\n',length(notDeterminedMinBorders)))
 	sink(file.path(location.output,'notDeterminedMaxBorders.csv'))
 	cat(paste(names(parVect)[notDeterminedMaxBorders],collapse='\n'))
 	sink()
