@@ -93,7 +93,7 @@ newMaxFound <- T
 	# for the uncertainty representation is performed with covariance matrix fixed to the
 	# MLE.
 	
-	#determine parscale
+	# determine parscale ####
 	cat('Determining parscales...\n')
 	baseNegLL <- jnegLLikelihood.f(jParVect)
 	
@@ -193,6 +193,7 @@ newMaxFound <- T
 	oldVal <- 0
 	newVal <- 1
 	iteration <- 0
+	all.methods <- T
 	while(abs(oldVal-newVal)>1e-12){
 		iteration <- iteration+1
 		cat(sprintf('Running likelihood maximization (min neg log like) iteration %i...',
@@ -201,7 +202,7 @@ newMaxFound <- T
 		# sv <- sv * 1.1
 		# specifying limits breaks the parscale info for bobyqa!
 		optRes <- optimx(sv,jnegLLikelihood.f,method=c('bobyqa'),
-										 control=list(all.methods=F,
+										 control=list(all.methods=all.methods,
 										 						 parscale = parscale,
 										 						 # fnscale = newVal,
 										 						 dowarn=F,
@@ -209,13 +210,12 @@ newMaxFound <- T
 										 						 kkt=F,
 										 						 maxit = 2e4, # recommended: 10*length(jParVect)^2,
 										 						 reltol = 1e-15))
-		newVal <- optRes$value
 		svNegLLike <-c ()
 		for(opt.i in 1:nrow(optRes)){
 			sv.i <- unlist(as.vector(optRes[opt.i,1:length(jParVect)]))
 			svNegLLike[opt.i] <- jnegLLikelihood.f(sv.i)
 		}
-		maxMethod <- which.max(svNegLLike)
+		maxMethod <- which.min(svNegLLike)
 		sv <- unlist(as.vector(optRes[maxMethod,1:length(jParVect)]))
 		cat(sprintf('%10f %10f\n',
 								optRes$value[1],svNegLLike[maxMethod]))
@@ -225,6 +225,8 @@ newMaxFound <- T
 		rownames(optimOutput)[newOptimOutputRowNums] <-
 			paste(rep(iteration,nrow(optRes)),rownames(optRes))
 		write.csv(optimOutput,file.path(location.output,'optRes.csv'))
+		newVal <- optRes$value[maxMethod]
+		all.methods <- F
 	}
 	if(sum(is.na(sv[1:length(jParVect)]))==0|optRes$value<baseNegLL){
 		jParVect.names <- names(jParVect)
