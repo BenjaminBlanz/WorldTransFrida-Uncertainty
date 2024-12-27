@@ -291,6 +291,9 @@ newMaxFound <- T
 	notDeterminedMinBorders <- which((is.infinite(min.coefs)+(parVect==min.coefs))>=1)
 	min.coefs[notDeterminedMinBorders] <- min.coefs.prior[notDeterminedMinBorders]
 	cat(sprintf('done %i failures\n',length(notDeterminedMinBorders)))
+	sink(file.path(location.output,'notDeterminedMinBorders.csv'))
+	cat(paste(names(parVect)[notDeterminedMinBorders],collapse='\n'))
+	sink()
 	
 	cat('  determining max par values...')
 	max.coefs <- unlist(parLapply(cl,1:length(parVect),findDensValBorder,
@@ -303,6 +306,9 @@ newMaxFound <- T
 	notDeterminedMaxBorders <- which((is.infinite(max.coefs)+(max.coefs==parVect))>=1)
 	max.coefs[notDeterminedMaxBorders] <- max.coefs.prior[notDeterminedMaxBorders]
 	cat(sprintf('done %i failures\n',length(notDeterminedMinBorders)))
+	sink(file.path(location.output,'notDeterminedMaxBorders.csv'))
+	cat(paste(names(parVect)[notDeterminedMaxBorders],collapse='\n'))
+	sink()
 	
 	cat('  saving par ranges...')
 	sampleParms$oldMin <- sampleParms.orig$Min
