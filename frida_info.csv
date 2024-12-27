@@ -1017,8 +1017,8 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "bio fuel energy.Initial Installation Costs",0,0,0,0,0,1,0,0,0,1177719565.64476,100000000,100000000000
 "bio fuel energy.Learning Rate",1,0,0,0,0,1,0,0,0,0.0446576738196583,0.01,0.4
 "bio fuel energy.stepping on toes parameter",1,0,0,0,0,1,0,0,0,0.402774716236313,0.1,0.5
-"hydropower energy."Slope of Hydropwer Instllation Costs wrt. Capacity"",0,0,0,0,0,1,0,0,0,0.00000163415093676841,1e-7,0.0001
 "hydropower energy.Base Hydropower Installation Costs",0,0,0,0,0,1,0,0,0,100.335633411328,10,5000
+"hydropower energy.Slope of Hydropower Installation Costs wrt Capacity",0,0,0,0,0,1,0,0,0,0.00000163415093676841,1e-7,0.0001
 "other energy.Floor of Other Installation Costs",0,0,0,0,0,1,0,0,0,949.698778788993,100,10000
 "other energy.Initial Other Installation Costs",0,0,0,0,0,1,0,0,0,1999.96729277803,500,10000
 "other energy.Learning Rate",1,0,0,0,0,1,0,0,0,0.0780908876868298,0.01,0.4
@@ -1118,14 +1118,6 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Land Use.sensitivity of effect of animal products balance on grassland expansion rate",0,0,0,0,0,1,0,0,0,-0.167767622093889,-1,0
 "Land Use.sensitivity of effect of crop balance on crop land expansion rate",0,0,0,0,0,1,0,0,0,-0.242935802299059,-1,0
 "Land Use.time to close grassland gap",0,0,0,0,0,1,0,0,0,8.50216384310196,2,10
-"Planetary Boundaries.Cropland net primary production 2000-2020",0,0,0,0,1,0,0,0,0,5.25,4.79,5.71
-"Planetary Boundaries.Holocene net primary production",0,0,0,0,1,0,0,0,0,55.9,55.9,55.9
-"Planetary Boundaries.Intended biological nitrogen fixation 2000-2020",0,0,0,0,1,0,0,0,0,50,30,70
-"Planetary Boundaries.PB2:1 Boundary value",0,0,0,0,1,0,0,0,0,0.75,0.75,0.75
-"Planetary Boundaries.PB2:1 High risk boundary value",0,0,0,0,1,0,0,0,0,0.54,0.54,0.54
-"Planetary Boundaries.Ratio N:P in man made fertilizer 2000",0,0,0,0,1,0,0,0,0,8.6,8.6,8.6
-"Planetary Boundaries.Total blue water extraction 2000-2020",0,0,0,0,1,0,0,0,0,3740,3480,4000
-"Planetary Boundaries.Total consumptive blue water use 2000-2020",0,0,0,0,1,0,0,0,0,2215.5,1831,2600
 "Concrete.BASE AVERAGE LIFETIME OF BUILDINGS",0,0,0,0,0,1,0,0,0,185.551125466542,75,200
 "Concrete.BASE AVERAGE LIFETIME OF INFRASTRUCTURE",0,0,0,0,0,1,0,0,0,60.6266188178707,25,150
 "Concrete.CLIMATE IMPACT ON CONCRETE LIFETIME",0,0,1,0,0,0,0,0,0,-0.075,-0.15,-0.05
@@ -1138,6 +1130,15 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Concrete.INFRA BETA",1,0,0,0,0,1,0,0,0,-34.7999180884332,-40,-5
 "Concrete.INFRA GAMMA",1,0,0,0,0,1,0,0,0,6.01537251853227,4.48,6.824
 "Concrete.INIT CONCRETE IN NEW BUILDINGS",1,0,0,0,0,1,0,0,0,20000.6694269533,1000,70000
+"Concrete.INIT CONCRETE IN NEW INFRASTRUCTURE",1,0,0,0,0,1,0,0,0,6502.54623003724,1000,16000
+"Concrete.INIT CONCRETE IN OLD BUILDINGS",1,0,0,0,0,1,0,0,0,50963.6563089793,20000,80000
+"Concrete.INIT CONCRETE IN OLD INFRASTRUCTURE",1,0,0,0,0,1,0,0,0,12294.8402422716,1000,15000
+"Concrete.INTERCEPT",1,0,0,0,0,1,0,0,0,165310,165310,322082
+"Concrete.NORMAL CONCRETE DETERIORATION RATE",0,0,0,0,0,1,0,0,0,0.0158950991238031,0.001,0.1
+"Concrete.TIME TO ADJUST DESIRED FLOOR AREA",1,0,0,0,0,1,0,0,0,3.94347304975288,2,30
+"Concrete.TIME TO ADJUST DESIRED INFRASTRUCTURE AREA",1,0,0,0,0,1,0,0,0,5.1383825712853,1,10
+"Concrete.UFA alpha",1,0,0,0,0,1,0,0,0,25.2572561601996,1,45
+"Concrete.UFA intercept",1,0,0,0,0,1,0,0,0,-200.729776361609,-300,-50
 "Concrete.INIT CONCRETE IN NEW INFRASTRUCTURE",1,0,0,0,0,1,0,0,0,6502.54623003724,1000,16000
 "Concrete.INIT CONCRETE IN OLD BUILDINGS",1,0,0,0,0,1,0,0,0,50963.6563089793,20000,80000
 "Concrete.INIT CONCRETE IN OLD INFRASTRUCTURE",1,0,0,0,0,1,0,0,0,12294.8402422716,1000,15000
