@@ -13,7 +13,9 @@ dir.create(file.path(location.output),recursive = T,showWarnings = F)
 
 
 # parallel things
-numWorkers <- parallel::detectCores()
+if(!exists('numWorkers')){
+	numWorkers <- parallel::detectCores()
+}
 # How large the chunks of work are, smaller means more frequent pauses to write out
 # itermediate results (and update the diagnostic output).
 chunkSizePerWorker <- 100
