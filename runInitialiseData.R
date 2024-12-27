@@ -105,9 +105,11 @@ cat('\n')
 calDat <- calDat.afterImpute[,-exclude.idc]
 
 # remove manual exclusion list ####
-manExclusionList <- read.csv('varExclusionList.csv')
-exclude.idc <- c(exclude.idc,which(varsForExport.fridaNames.orig %in% manExclusionList$Variable))
-cat(paste('  Excluding because of manual exclusion list',manExclusionList$Variable,'\n'))
+if(file.exists('varExclusionList.csv')){
+	manExclusionList <- read.csv('varExclusionList.csv')
+	exclude.idc <- c(exclude.idc,which(varsForExport.fridaNames.orig %in% manExclusionList$Variable))
+	cat(paste('  Excluding because of manual exclusion list',manExclusionList$Variable,'\n'))
+}
 
 # exclude vars ####
 # do not exclude from obs, only resid below
