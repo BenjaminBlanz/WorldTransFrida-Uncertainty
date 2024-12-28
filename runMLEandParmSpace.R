@@ -279,40 +279,44 @@ newMaxFound <- T
 	## for testing
 	# for(i in 1:length(parVect)){
 	# 	cat('\n\nmax parm ',i,'\n')
-	#		findDensValBorder(i,
-	#											parVect=parVect,lpdensEps=lpdensEps,
-	#											ceterisParibusPars=treatVarsAsIndep,
-	#											tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
-	#											parscale=parscale.parvect,
-	#											bounds=parBounds,
-	#											niter=1e2))
+	# 	findDensValBorder(i,
+	# 										parVect=parVect,lpdensEps=lpdensEps,
+	# 										ceterisParibusPars=treatVarsAsIndep,
+	# 										tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
+	# 										parscale=parscale.parvect,
+	# 										bounds=parBounds,
+	# 										niter=1e2))
 	# 	cat('\nmin parm ',i,'\n')
 	# 	findDensValBorder(i,
-	#											parVect=parVect,lpdensEps=lpdensEps,
-	#											ceterisParibusPars=treatVarsAsIndep,
-	#											tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
-	#											parscale=parscale.parvect,
-	#											bounds=parBounds,
-	#											niter=1e2))
+	# 										parVect=parVect,lpdensEps=lpdensEps,
+	# 										ceterisParibusPars=treatVarsAsIndep,
+	# 										tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
+	# 										trace=9,
+	# 										parscale=parscale.parvect,
+	# 										bounds=parBounds,
+	# 										niter=1e2)
 	# }
-	parBounds <- sampleParms[,c('Min','Max')]
-	notDeterminedBorders <- array(NA,dim=c(length(parVect),2))
+	# parBounds <- sampleParms[,c('Min','Max')]
+	notDeterminedBorders <- array(TRUE,dim=c(length(parVect),2))
 	colnames(notDeterminedBorders) <- c('Min','Max')
 	borderLogLikeError <- notDeterminedBorders
+	border.coefs <- notDeterminedBorders
 	for(direction in c('Min','Max')){
 		cat(sprintf('  determining %s par values...',tolower(direction)))
 		clusterExport(cl,list('calDat','treatVarsAsIndep'))
-		border.coefs <- unlist(parLapplyLB(cl,which(notDeterminedBorders[,direction]),findDensValBorder,
+		border.coefs[,direction] <- unlist(parLapplyLB(cl,which(notDeterminedBorders[,direction]),findDensValBorder,
 																		parVect=parVect,lpdensEps=lpdensEps,
 																		ceterisParibusPars=treatVarsAsIndep,
 																		tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
 																		parscale=parscale.parvect,
 																		bounds=parBounds,
-																		niter=1e2))
-		names(border.coefs) <- names(parVect)
+																		niter=1e4,# set niter so that the errors at least in the indep case are small
+																		workerStagger = T)) 
+		names(border.coefs[,direction]) <- names(parVect)
 		# fallback values in case borders could not be determined:
-		notDeterminedBorders[,direction] <- (is.infinite(border.coefs)+(parVect==border.coefs))>=1
-		border.coefs[notDeterminedBorders[,direction]] <- sampleParms[[direction]][notDeterminedBorders]
+		notDeterminedBorders[,direction] <- (is.infinite(border.coefs[,direction])+(parVect==border.coefs[,direction]))>=1
+		border.coefs[,direction].orig <- border.coefs[,direction]
+		border.coefs[,direction][notDeterminedBorders[,direction]] <- sampleParms[[direction]][notDeterminedBorders[,direction]]
 		cat(sprintf('done. %i failures\n',sum(notDeterminedBorders[,direction])))
 		write.csv(notDeterminedBorders,file.path(location.output,'notDeterminedBorders.csv'))
 		# check that the min val actually has the desired like
@@ -320,10 +324,10 @@ newMaxFound <- T
 		# what the values of the other parameters where during range finding
 		if(treatVarsAsIndep){
 			cat(sprintf('Checking for likelihood at %s failures...\n',tolower(direction)))
-			for(rangeCheck.i in 1:length(parVect)[!notDeterminedBorders[,direction]]){
+			for(rangeCheck.i in 1:length(parVect)){
 				cat(sprintf('\r%4i',rangeCheck.i))
 				parVectMinCheck.i <- parVect
-				parVectMinCheck.i[rangeCheck.i] <- border.coefs[rangeCheck.i]
+				parVectMinCheck.i[rangeCheck.i] <- border.coefs[,direction][rangeCheck.i]
 				lLike <- -negLLike(parVectMinCheck.i)
 				borderLogLikeError[rangeCheck.i,direction] <- lLike-lpdensEps
 				if(lLike-lpdensEps >= 1e-5){
@@ -333,16 +337,25 @@ newMaxFound <- T
 		}
 		cat('\nsaving...')
 		sampleParms[[paste0('old',direction)]] <- sampleParms[[direction]]
-		sampleParms[[direction]] <- border.coefs
 		sampleParms[[paste0(direction,'borderLogLikeError')]] <- borderLogLikeError[,direction] 
+		sampleParms[[paste0(direction,'NotDeterminedBorder')]] <- notDeterminedBorders[,direction]
+		sampleParms[[paste0(direction,'ResultOfBorderSearch')]] <- border.coefs[,direction].orig
+		if(direction=='Min'){
+			sampleParms[[direction]] <- pmax(border.coefs[,direction],sampleParms[[direction]])
+			sampleParms[[paste0(direction,'borderSearchOverriddenByParmBounds')]] <- border.coefs[,direction].orig < sampleParms[[direction]]
+		} else {
+			sampleParms[[direction]] <- pmin(border.coefs[,direction],sampleParms[[direction]])
+			sampleParms[[paste0(direction,'borderSearchOverriddenByParmBounds')]] <- border.coefs[,direction].orig > sampleParms[[direction]]
+		}
 		write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
+		saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
 		cat('done\n')	
 	}
 	
-	# stop before legacy code that still needs to be ported
-	stop()
 	
 	# llike ####
+	# stop before legacy code that still needs to be ported
+	stop()
 	
 	
 	if(max(like.arr[maxInd,'llike'],likeMaxVals.max,na.rm = T) > -jnegLLikelihoodFixedCovMat.f(parVect)){
