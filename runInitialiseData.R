@@ -356,6 +356,7 @@ if(exists('location.frida.storage')&&file.exists(location.frida.storage)){
 	writeFRIDAExportSpec(varsForExport.fridaNames.orig[-exclude.idc],location.frida.storage)
 }
 saveRDS(resDat.cv,file.path(location.output,'sigma.RDS'))
+saveRDS(diag(diag(resDat.cv)),file.path(location.output,'sigma-indepParms.RDS'))
 saveRDS(list(
 	calDat=calDat,
 	calDat.impExtrValue=calDat.impExtrValue,
