@@ -302,7 +302,7 @@ newMaxFound <- T
 	for(direction in c('Min','Max')){
 		cat(sprintf('  determining %s par values...',tolower(direction)))
 		clusterExport(cl,list('calDat','treatVarsAsIndep'))
-		border.coefs <- unlist(parLapplyLB(cl,1:length(parVect),findDensValBorder,
+		border.coefs <- unlist(parLapplyLB(cl,which(notDeterminedBorders[,direction]),findDensValBorder,
 																		parVect=parVect,lpdensEps=lpdensEps,
 																		ceterisParibusPars=treatVarsAsIndep,
 																		tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
@@ -312,7 +312,7 @@ newMaxFound <- T
 		names(border.coefs) <- names(parVect)
 		# fallback values in case borders could not be determined:
 		notDeterminedBorders[,direction] <- (is.infinite(border.coefs)+(parVect==border.coefs))>=1
-		notDeterminedBorders[notDeterminedBorders,direction] <- parBounds[notDeterminedBorders,direction]
+		border.coefs[notDeterminedBorders[,direction]] <- sampleParms[[direction]][notDeterminedBorders]
 		cat(sprintf('done. %i failures\n',sum(notDeterminedBorders[,direction])))
 		write.csv(notDeterminedBorders,file.path(location.output,'notDeterminedBorders.csv'))
 		# check that the min val actually has the desired like
@@ -320,7 +320,7 @@ newMaxFound <- T
 		# what the values of the other parameters where during range finding
 		if(treatVarsAsIndep){
 			cat(sprintf('Checking for likelihood at %s failures...\n',tolower(direction)))
-			for(rangeCheck.i in 1:length(parVect)[-notDeterminedBorders[,direction]]){
+			for(rangeCheck.i in 1:length(parVect)[!notDeterminedBorders[,direction]]){
 				cat(sprintf('\r%4i',rangeCheck.i))
 				parVectMinCheck.i <- parVect
 				parVectMinCheck.i[rangeCheck.i] <- border.coefs[rangeCheck.i]
@@ -331,7 +331,6 @@ newMaxFound <- T
 				}
 			}
 		}
-		border.coefs[notDeterminedBorders[,direction]] <- sampleParms[[direction]]
 		cat('\nsaving...')
 		sampleParms[[paste0('old',direction)]] <- sampleParms[[direction]]
 		sampleParms[[direction]] <- border.coefs
