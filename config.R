@@ -1,5 +1,5 @@
 # redo all calculations instead of using stored values
-redoAllCalc <- T
+redoAllCalc <- F
 
 # parallel things
 if(!exists('numWorkers')){
@@ -19,7 +19,7 @@ clusterType <- 'psock'
 tmpfsDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork')
 
 #plotting related things
-plotWhileRunning <- T
+plotWhileRunning <- F
 plotDatWhileRunning <- F
 whatToPlot <- tolower('GDP_Real_GDP_in_2021c')
 # padding for data plots y axis in share of the data range
@@ -67,7 +67,7 @@ likeCutoffRatio <- 100
 # should we skip the parameter maximum likelihood estimation and use the default
 # frida pars
 if(!exists('skipParMLE')){
-	skipParMLE <- F
+	skipParMLE <- T
 }
 
 # locations and names ####
