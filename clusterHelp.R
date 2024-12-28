@@ -14,6 +14,9 @@ if(exists('cl')&&try(clusterEvalQ(cl,1+1)[[1]],silent=T)==2){
 	gobble <- clusterExport(cl,list('location.output','baseWD',
 																	'chunkSizePerWorker','workDirBasename'))
 	gobble <- clusterEvalQ(cl,source(file.path(baseWD,'initialise.R')))
+	gobble <- clusterApply(cl,workers,function(i){
+		workerID <- i
+	})
 } else {
 	# cluster setup ####
 	cat('cluster setup...')
