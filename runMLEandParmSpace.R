@@ -293,47 +293,50 @@ newMaxFound <- T
 	# 										maxiter=1e3,
 	# 										parscale=parVect.parscale)
 	# }
-	
-	cat('  determining min par values...')
-	clusterExport(cl,list('calDat','treatVarsAsIndep'))
-	min.coefs <- unlist(parLapplyLB(cl,1:length(parVect),findDensValBorder,
-																parVect=parVect,lpdensEps=lpdensEps,
-																ceterisParibusPars=treatVarsAsIndep,
-																tol=1e-10,max=F,idcToMod=idcToMod,
-																parscale=parscale.parvect,
-																niter=1e4))
-	names(min.coefs) <- names(parVect)
-	# fallback values in case borders could not be determined:
-	notDeterminedMinBorders <- which((is.infinite(min.coefs)+(parVect==min.coefs))>=1)
-	min.coefs[notDeterminedMinBorders] <- min.coefs.prior[notDeterminedMinBorders]
-	cat(sprintf('done. %i failures\n',length(notDeterminedMinBorders)))
-	sink(file.path(location.output,'notDeterminedMinBorders.csv'))
-	cat(paste(names(parVect)[notDeterminedMinBorders],collapse='\n'))
-	sink()
-	
-	cat('  determining max par values...')
-	max.coefs <- unlist(parLapplyLB(cl,1:length(parVect),findDensValBorder,
-																parVect=parVect,lpdensEps=lpdensEps,
-																ceterisParibusPars=treatVarsAsIndep,
-																tol=1e-10,max=T,idcToMod=idcToMod,
-																parscale=parscale.parvect,
-																niter=1e2))
-	names(max.coefs) <- names(parVect)
-	# fallback values in case borders could not be determined:
-	notDeterminedMaxBorders <- which((is.infinite(max.coefs)+(max.coefs==parVect))>=1)
-	max.coefs[notDeterminedMaxBorders] <- max.coefs.prior[notDeterminedMaxBorders]
-	cat(sprintf('done. %i failures\n',length(notDeterminedMinBorders)))
-	sink(file.path(location.output,'notDeterminedMaxBorders.csv'))
-	cat(paste(names(parVect)[notDeterminedMaxBorders],collapse='\n'))
-	sink()
-	
-	cat('  saving par ranges...')
-	sampleParms$oldMin <- sampleParms.orig$Min
-	sampleParms$oldMax <- sampleParms.orig$Max
-	sampleParms$Max <- max.coefs
-	sampleParms$Min <- min.coefs
-	write.csv(sampleParms,file.path(location.output,'sampleParmsParscale.csv'))
-	cat('...done   \n')
+	parBounds <- sampleParms[,c('Min','Max')]
+	rangeTol <- 1e-8
+	notDeterminedBorders <- array(NA,dim=c(length(parVect),2))
+	colnames(notDeterminedBorders) <- c('Min','Max')
+	borderLogLikeError <- notDeterminedBorders
+	for(direction in c('Min','Max')){
+		cat(sprintf('  determining %s par values...',tolower(direction)))
+		clusterExport(cl,list('calDat','treatVarsAsIndep'))
+		border.coefs <- unlist(parLapplyLB(cl,1:length(parVect),findDensValBorder,
+																		parVect=parVect,lpdensEps=lpdensEps,
+																		ceterisParibusPars=treatVarsAsIndep,
+																		tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
+																		parscale=parscale.parvect,
+																		bounds=parBounds,
+																		niter=1e2))
+		names(border.coefs) <- names(parVect)
+		# fallback values in case borders could not be determined:
+		notDeterminedBorders[,direction] <- (is.infinite(border.coefs)+(parVect==border.coefs))>=1
+		notDeterminedBorders[notDeterminedMinBorders,direction] <- parBounds[notDeterminedMinBorders,direction]
+		cat(sprintf('done. %i failures\n',sum(notDeterminedBorders[,direction])))
+		write.csv(notDeterminedBorders,file.path(location.output,'notDeterminedBorders.csv'))
+		# check that the min val actually has the desired like
+		# this check only works for the independent case, as we do not retain the information
+		# what the values of the other parameters where during range finding
+		if(treatVarsAsIndep){
+			cat(sprintf('Checking for likelihood at %s failures...\n',tolower(direction)))
+			for(rangeCheck.i in 1:length(parVect)[-notDeterminedBorders[,direction]]){
+				cat(sprintf('\r%4i',rangeCheck.i))
+				parVectMinCheck.i <- parVect
+				parVectMinCheck.i[rangeCheck.i] <- border.coefs[rangeCheck.i]
+				lLike <- -negLLike(parVectMinCheck.i)
+				borderLogLikeError[rangeCheck.i,direction] <- lLike-lpdensEps
+				if(lLike-lpdensEps >= 1e-5){
+					cat(sprintf('\r%4i %80s %10f\n',rangeCheck.i,names(parVect[rangeCheck.i]),lLike-lpdensEps))
+				}
+			}
+		}
+		cat('\nsaving...')
+		sampleParms$oldMin <- sampleParms$Min
+		sampleParms$Min <- min.coefs
+		sampleParms[[paste0(direction,'borderLogLikeError')]] <- borderLogLikeError[,direction] 
+		write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
+		cat('done\n')	
+	}
 	
 	# stop before legacy code that still needs to be ported
 	stop()
