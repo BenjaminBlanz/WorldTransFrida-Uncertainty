@@ -13,7 +13,10 @@ if(file.exists(location.stella.storage)){
 # cluster cleanup ####
 cat('cluster cleanup...')
 # stop cluster
-tryCatch(stopCluster(cl),error=function(e){})
+if(exists('cl')){
+	tryCatch(stopCluster(cl),error=function(e){})
+	rm(cl)
+}
 # clean up working directories
 unlink('workerDirs',recursive=T,force=T)
 unlink(tmpfsDir,recursive=T,force=T)

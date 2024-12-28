@@ -28,7 +28,7 @@ if(exists('cl')&&try(clusterEvalQ(cl,1+1)[[1]],silent=T)==2){
 	if(clusterType=='fork'){
 		cl <- makeForkCluster(numWorkers)
 	} else if (clusterType=='psock'){
-		cl <- makePSOCKcluster(numWorkers,setup_strategy='sequential') # setup sequential to not dos the server
+		cl <- makePSOCKcluster(numWorkers,setup_strategy='sequential') # setup sequential to not DOS the server
 	}
 	gobble <- clusterEvalQ(cl,tools::psnice(value=15))
 	gobble <- clusterExport(cl,list('location.output','baseWD',
@@ -45,6 +45,7 @@ if(exists('cl')&&try(clusterEvalQ(cl,1+1)[[1]],silent=T)==2){
 	# clusterEvalQ(cl,getwd())
 	# copy over the model and simulator
 	gobble <- clusterApply(cl,workers,function(i){
+		Sys.sleep(i*0.01) # stagger the file copying to not DOS the server
 		file.copy(file.path(baseWD,location.frida),getwd(),recursive=T)
 		file.copy(file.path(baseWD,location.stella),getwd(),recursive=T)
 		file.copy(file.path(baseWD,'frida_info.csv'),getwd())
