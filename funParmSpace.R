@@ -84,7 +84,11 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 															parscale=rep(1,length(parVect)),
 															bounds=NULL,
 															niter=1000,
+															workerStagger=FALSE,
 															...){
+	if(workerStagger){
+		Sys.sleep(workerID*0.01)
+	}
 	if(length(parIdx)>1){
 		stop('only one parIdx at a time\n')
 	}
