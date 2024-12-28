@@ -15,7 +15,7 @@ if(exists('cl')&&try(clusterEvalQ(cl,1+1)[[1]],silent=T)==2){
 																	'chunkSizePerWorker','workDirBasename'))
 	gobble <- clusterEvalQ(cl,source(file.path(baseWD,'initialise.R')))
 	gobble <- clusterApply(cl,workers,function(i){
-		workerID <- i
+		workerID <<- i
 	})
 } else {
 	# cluster setup ####
@@ -40,7 +40,7 @@ if(exists('cl')&&try(clusterEvalQ(cl,1+1)[[1]],silent=T)==2){
 	# make working directories
 	workers <- 1:length(cl)
 	gobble <- clusterApply(cl,workers,function(i){
-		workerID <- i
+		workerID <<- i
 		system(paste('rm -r',file.path('workerDirs',paste0(workDirBasename,i))),ignore.stdout = T,ignore.stderr = T)
 		dir.create(file.path('workerDirs',paste0(workDirBasename,i)),showWarnings = F,recursive = T)
 		setwd(file.path('workerDirs',paste0(workDirBasename,i)))
