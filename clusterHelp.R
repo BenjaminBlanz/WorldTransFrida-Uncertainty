@@ -6,7 +6,7 @@ if(!exists('location.output')){
 }
 
 # do not stop and start the cluster, instead just reinitialise
-if(exists('cl')){
+if(exists('cl')&&try(clusterEvalQ(cl,1+1)[[1]],silent=T)==2){
 	if(exists('sampleParms')){clusterExport(cl,list('sampleParms'))}
 	if(exists('calDat')){clusterExport(cl,list('calDat'))}
 	if(exists('resSigma')){clusterExport(cl,list('resSigma'))}
