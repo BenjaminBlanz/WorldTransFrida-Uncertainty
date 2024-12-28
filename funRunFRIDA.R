@@ -4,7 +4,7 @@
 
 suppressPackageStartupMessages(require(Rmpfr)) # use to calculate the likelihood from loglikelihood
 
-
+# prepareSampleParms ####
 prepareSampleParms <- function(excludeNames=c()){
 	#TODO: Deal with the climateCase parameter 1:100 integer!
 	cat('Specify sampling parameters...')
@@ -25,9 +25,9 @@ prepareSampleParms <- function(excludeNames=c()){
 	}
 	write.csv(sampleParms[invalidLines,],'frida_info_errorCases.csv')
 	# deal with manually excluded items
-	if(!redoAllCalc && file.exists('parExclusionList.csv')&&file.size('parExclusionList.csv')>0){
+	if(!redoAllCalc && file.exists('parExclusionList.csv') && file.size('parExclusionList.csv')>0){
 		manParExclusionList <- read.csv('parExclusionList.csv')
-		excludeNames <- c(excludeNames,manParExclusionList$excludedName)
+		excludeNames <- unique(c(excludeNames,manParExclusionList$excludedName))
 	}
 	# deal with excluded Names
 	excludedIdc <- which(sampleParms$Variable %in% excludeNames)
