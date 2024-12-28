@@ -268,12 +268,10 @@ newMaxFound <- T
 	}
 	
 	# coef range ####
-	# manually specify borders
-	max.coefs.prior <- max.coefs <- sampleParms$Max
-	min.coefs.prior <- min.coefs <- sampleParms$Min
 	# minimize and maximize each parameter with others free, until density is 
 	# equal to pdensEps
 	cat('determining coef sample range...\n')
+	rangeTol <- 1e-8
 	# boundary value in log likelihood
 	lpdensEps <- -negLLike(parVect) - log(likeCutoffRatio)
 	#limit to 4 c. due to mem. reqs. and also len(coefs)
@@ -281,20 +279,23 @@ newMaxFound <- T
 	## for testing
 	# for(i in 1:length(parVect)){
 	# 	cat('\n\nmax parm ',i,'\n')
-	# 	findDensValBorder(i,parVect=parVect,lpdensEps=lpdensEps,
-	# 										ceterisParibusPars=ceterisParibusPars,
-	# 										tol=1e-10,max=T,trace=1,idcToMod=idcToMod,
-	# 										maxiter=1e3,
-	# 										parscale=parVect.parscale)
+	#		findDensValBorder(i,
+	#											parVect=parVect,lpdensEps=lpdensEps,
+	#											ceterisParibusPars=treatVarsAsIndep,
+	#											tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
+	#											parscale=parscale.parvect,
+	#											bounds=parBounds,
+	#											niter=1e2))
 	# 	cat('\nmin parm ',i,'\n')
-	# 	findDensValBorder(i,parVect=parVect,lpdensEps=lpdensEps,
-	# 										ceterisParibusPars=ceterisParibusPars,
-	# 										tol=1e-10,max=F,trace=1,idcToMod=idcToMod,
-	# 										maxiter=1e3,
-	# 										parscale=parVect.parscale)
+	# 	findDensValBorder(i,
+	#											parVect=parVect,lpdensEps=lpdensEps,
+	#											ceterisParibusPars=treatVarsAsIndep,
+	#											tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
+	#											parscale=parscale.parvect,
+	#											bounds=parBounds,
+	#											niter=1e2))
 	# }
 	parBounds <- sampleParms[,c('Min','Max')]
-	rangeTol <- 1e-8
 	notDeterminedBorders <- array(NA,dim=c(length(parVect),2))
 	colnames(notDeterminedBorders) <- c('Min','Max')
 	borderLogLikeError <- notDeterminedBorders
