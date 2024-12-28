@@ -1,20 +1,22 @@
-require(parallel)
+
+library(parallel,quietly=T,warn.conflicts = F)
 
 if(!exists('location.output')){
 	stop('run this only after config.R\n')
 }
 
 # cluster cleanup ####
-cat('cluster cleanup...')
-# stop cluster
-tryCatch(stopCluster(cl),error=function(e){})
-# clean up working directories
-unlink('workerDirs',recursive=T,force=T)
-unlink(tmpfsDir,recursive=T,force=T)
-cat('done\n')
+if(exists('cl')){
+	try(stopCluster(cl),silent = T)
+}
 
 # cluster setup ####
 cat('cluster setup...')
+
+if(!file.exists('workerDirs')){
+	source('setupTMPFS.R')
+}
+
 baseWD <- getwd()
 workDirBasename <- 'workDir_'
 # start cluster
@@ -31,6 +33,7 @@ gobble <- clusterEvalQ(cl,source(file.path(baseWD,'initialise.R')))
 workers <- 1:length(cl)
 gobble <- clusterApply(cl,workers,function(i){
 	workerID <- i
+	system(paste('rm -r',file.path('workerDirs',paste0(workDirBasename,i))),ignore.stdout = T,ignore.stderr = T)
 	dir.create(file.path('workerDirs',paste0(workDirBasename,i)),showWarnings = F,recursive = T)
 	setwd(file.path('workerDirs',paste0(workDirBasename,i)))
 })

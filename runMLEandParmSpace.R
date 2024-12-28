@@ -1,8 +1,13 @@
 source('initialise.R')
+library(spatstat.explore,quietly=T,warn.conflicts = F) # used for the quantile.density function
 
 # config ####
 cat('Config...')
+if(redoAllCalc){
+	source('runInitialiseData.R')
+}
 source('config.R')
+source('setupTMPFS.R')
 # read covariance matrix used for baseNegLL
 if(treatVarsAsIndep&&
 	 file.exists(file.path(location.output,'sigma-indepParms.RDS'))){
@@ -69,11 +74,13 @@ source('clusterHelp.R')
 
 # MLE and Sensi Loop ####
 parscale <- rep(NA,length(jParVect))
-names(parscale) <- names(jParVect)
-if(file.exists(file.path(location.output,'parscale.RDS'))){
-	parscale.old <- readRDS(file.path(location.output,'parscale.RDS'))
-	matches <- which(names(parscale) %in% names(parscale.old))
-	parscale[matches] <- parscale.old[matches]
+if(!redoAllCalc){
+	names(parscale) <- names(jParVect)
+	if(file.exists(file.path(location.output,'parscale.RDS'))){
+		parscale.old <- readRDS(file.path(location.output,'parscale.RDS'))
+		matches <- which(names(parscale) %in% names(parscale.old))
+		parscale[matches] <- parscale.old[matches]
+	}
 }
 ordersOfMagGuesses.parvect <- funOrderOfMagnitude(sampleParms$Max-sampleParms$Min)
 ordersOfMagGuesses.resSigmaVect <- funOrderOfMagnitude(resSigmaVect)-6
@@ -195,16 +202,23 @@ newMaxFound <- T
 		newVal <- 1
 		iteration <- 0
 		all.methods <- T # use all methods on the first iteration then use whichever was the best
-		while(abs(oldVal-newVal)>1e-12){
+		methods <- c('bobyqa')
+		while(abs(oldVal-newVal)>1e-12&&iteration<1e3){
 			iteration <- iteration+1
 			cat(sprintf('Running likelihood maximization (min neg log like) iteration %i...',
 									iteration))
 			oldVal <- newVal
 			# sv <- sv * 1.1
 			# specifying limits breaks the parscale info for bobyqa!
-			optRes <- optimx(sv,jnegLLikelihood.f,method=c('bobyqa'),
+			lower <- c(sampleParms$Min,resSigmaVect-abs(parscale.resSigmaVect)*100)
+			names(lower) <- names(jParVect)
+			which(lower==sv)
+			upper <- c(sampleParms$Min,resSigmaVect+abs(parscale.resSigmaVect)*100)
+			optRes <- optimx(sv,jnegLLikelihood.f,method=methods,
+											 lower = lower,
+											 upper = upper,
 										 control=list(all.methods=all.methods,
-											 						 parscale = parscale,
+											 						 parscale = 1/parscale,
 											 						 # fnscale = newVal,
 											 						 dowarn=F,
 											 						 # trace=9,
@@ -217,6 +231,7 @@ newMaxFound <- T
 				svNegLLike[opt.i] <- jnegLLikelihood.f(sv.i)
 			}
 			maxMethod <- which.min(svNegLLike)
+			methods <- rownames(optRes[which(!is.na(optRes[,1]))])
 			sv <- unlist(as.vector(optRes[maxMethod,1:length(jParVect)]))
 			cat(sprintf('%10f %10f\n',
 									optRes$value[1],svNegLLike[maxMethod]))
@@ -225,8 +240,8 @@ newMaxFound <- T
 				base::cbind(optRes,svNegLLike)
 			rownames(optimOutput)[newOptimOutputRowNums] <-
 				paste(rep(iteration,nrow(optRes)),rownames(optRes))
-			write.csv(optimOutput,file.path(location.output,'optRes.csv'))
-			saveRDS(optRes,,file.path(location.output,'optRes.RDS'))
+			write.csv(optimOutput,file.path(location.output,'optRes.csv'),)
+			saveRDS(optRes,file.path(location.output,'optRes.RDS'))
 			newVal <- optRes$value[maxMethod]
 			all.methods <- F
 		}
@@ -287,7 +302,8 @@ newMaxFound <- T
 																parVect=parVect,lpdensEps=lpdensEps,
 																ceterisParibusPars=treatVarsAsIndep,
 																tol=1e-10,max=F,idcToMod=idcToMod,
-																parscale=parscale.parvect))
+																parscale=parscale.parvect,
+																niter=1e4))
 	names(min.coefs) <- names(parVect)
 	# fallback values in case borders could not be determined:
 	notDeterminedMinBorders <- which((is.infinite(min.coefs)+(parVect==min.coefs))>=1)
@@ -302,7 +318,8 @@ newMaxFound <- T
 																parVect=parVect,lpdensEps=lpdensEps,
 																ceterisParibusPars=treatVarsAsIndep,
 																tol=1e-10,max=T,idcToMod=idcToMod,
-																parscale=parscale.parvect))
+																parscale=parscale.parvect,
+																niter=1e2))
 	names(max.coefs) <- names(parVect)
 	# fallback values in case borders could not be determined:
 	notDeterminedMaxBorders <- which((is.infinite(max.coefs)+(max.coefs==parVect))>=1)

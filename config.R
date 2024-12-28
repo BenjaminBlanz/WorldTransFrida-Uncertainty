@@ -1,3 +1,6 @@
+# redo all calculations instead of using stored values
+redoAllCalc <- T
+
 # parallel things
 if(!exists('numWorkers')){
 	numWorkers <- parallel::detectCores()
@@ -13,7 +16,7 @@ clusterType <- 'psock'
 # and be faster
 # alternative path to /dev/shm would be /run/user/####/ where #### is the uid
 # /dev/shm is not executable on some distros use /run/user
-tmpfsDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork/')
+tmpfsDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork')
 
 #plotting related things
 plotWhileRunning <- T
@@ -68,8 +71,13 @@ if(!exists('skipParMLE')){
 }
 
 # locations and names ####
+# location of frida/stella for running
 location.frida <- './FRIDAforUncertaintyAnalysis'
 location.stella<- './Stella_Simulator_Linux'
+# location frida/stella is stored while the above is located in tmpfs
+location.frida.storage <- './FRIDAforUncertaintyAnalysis-store'
+location.stella.storage <- './Stella_Simulator_Linux-store'
+
 name.fridaExportVarsFile <- 'varsForExport.txt'
 name.fridaInputFile <- 'uncertainty_analysis_paramter_values.csv'
 name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
@@ -77,24 +85,6 @@ location.output <- file.path('workOutput',paste0('NumSample-',numSample,
 																								 '-chunkSizePerWorker-',chunkSizePerWorker))
 location.output.base <- location.output
 dir.create(file.path(location.output),recursive = T,showWarnings = F)
-
-
-
-# not part of config ===================================================
-
-# create the tmpfsDir and link to workerDirs
-dir.create(tmpfsDir,recursive = F,showWarnings = F)
-system(paste('ln -s',tmpfsDir,'workerDirs'))
-
-# set up the tmpfs for the single threaded runs
-location.frida.storage <- './FRIDAforUncertaintyAnalysis-store'
-system(paste('mv',location.frida,location.frida.storage))
-system(paste('cp -r',location.frida.storage,file.path(tmpfsDir,location.frida)))
-system(paste('ln -s',file.path(tmpfsDir,location.frida),location.frida))
-location.stella.storage <- './Stella_Simulator_Linux-store'
-system(paste('mv',location.stella,location.stella.storage))
-system(paste('cp -r',location.stella.storage,file.path(tmpfsDir,location.stella)))
-system(paste('ln -s',file.path(tmpfsDir,location.stella),location.stella))
 
 # save the config to the output folder
 file.copy('config.R',location.output)

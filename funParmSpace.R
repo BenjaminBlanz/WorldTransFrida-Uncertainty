@@ -82,6 +82,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 															maxiter=1e4,tol=1e-4,max=F,
 															trace=0, idcToMod=1:length(parVect),
 															parscale=rep(1,length(parVect)),
+															niter=1000,
 															...){
 	if(is.list(idcToMod)){
 		idcToMod <- idcToMod[[parIdx]]
@@ -122,6 +123,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 													lpdensEps=lpdensEps,
 													doWarn = F,
 													trace=trace,
+													niter=niter,
 													...)
 				if(max){
 					if(par.val < par.val.old){
@@ -140,7 +142,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 																						parVect=parVect,
 																						parIdx=parIdx,
 																						lpdensEps=lpdensEps,
-																						tol = 1e-16, ...)$root)
+																						tol = 1e-16, maxiter = niter, ...)$root)
 			}
 			if(ceterisParibusPars){
 				return(par.val)
@@ -208,6 +210,7 @@ secant <- function(fun, x0, x1, tol=1e-07, niter=1e4, doWarn=T, trace=0,...){
 	}
 	return(x2)
 }
+
 # requires baseNegLL in the global env
 orderOfMagNegLLErrorFun <- function(delta,par.i){
 	jParVect.i <- jParVect

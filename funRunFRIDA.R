@@ -5,7 +5,7 @@
 suppressPackageStartupMessages(require(Rmpfr)) # use to calculate the likelihood from loglikelihood
 
 # write firda export vars ####
-writeFRIDAExportSpec <- function(varsForExport.fridaNames){
+writeFRIDAExportSpec <- function(varsForExport.fridaNames,location.frida){
 	sink(file=file.path(location.frida,'Data',name.fridaExportVarsFile))
 	cat(paste0(varsForExport.fridaNames,collapse='\n'))
 	sink()
@@ -14,9 +14,25 @@ writeFRIDAExportSpec <- function(varsForExport.fridaNames){
 # write frida input ####
 # uses location.frida and name.fridaInputFile from the global env.
 writeFRIDAInput <- function(variables,values){
+	if(disk.free(location.frida)< 2e4){
+		stop('less than 20mib in frida location\n')
+	}
 	parmValues <- data.frame(Variable=variables,Value=values)
 	write.table(parmValues,file = file.path(location.frida,'Data',name.fridaInputFile),
 							row.names = F,col.names = F,sep=',')
+}
+
+# check for free space
+disk.free <- function(path = getwd()) {
+	if(length(system("which df", intern = TRUE))) {
+		cmd <- sprintf("df %s", path)
+		exec <- system(cmd, intern = TRUE)
+		exec <- strsplit(exec[length(exec)], "[ ]+")[[1]]
+		exec <- as.numeric(exec[4])
+		structure(exec, names = c("available"))
+	} else {
+		stop("'df' command not found")
+	}
 }
 
 # runFridaParmsByIndex ####

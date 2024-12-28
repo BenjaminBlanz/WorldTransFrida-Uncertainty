@@ -5,14 +5,13 @@
 # 2024 Benjamin Blanz
 # 
 
-suppressPackageStartupMessages(require(caret,quietly = T)) # to find linear combinations and remove them in the calib dat
-suppressPackageStartupMessages(require(matrixcalc,quietly = T)) # to test positive definitnes of cov matrix
-suppressPackageStartupMessages(require(imputeTS)) # used for interpolating missing values
-suppressPackageStartupMessages(require(Rmpfr)) # use to calculate the likelihood from loglikelihood
+library(caret,quietly=T,warn.conflicts = F) # to find linear combinations and remove them in the calib dat
+library(matrixcalc,quietly=T,warn.conflicts = F) # to test positive definitnes of cov matrix
+library(imputeTS,quietly=T,warn.conflicts = F) # used for interpolating missing values
 
-source('config.R')
-source('funRunFRIDA.R')
-source('funPlot.R')
+if(!exists('runFridaDefaultParms')){
+	stop('run initialise.R first\n')
+}
 
 # read calib data ####
 cat('reading calibration data ...')
@@ -120,7 +119,7 @@ if(F){
 		# calc resid
 		calDat <- calDat.afterImpute[,-exclude.idc]
 		varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
-		writeFRIDAExportSpec(varsForExport.fridaNames)
+		writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 		defDat <- runFridaDefaultParms()
 		if(sum(colnames(defDat)!=colnames(calDat))!=0){
 			stop('Mismatch in the columns of calibration data and model result data')
@@ -143,7 +142,7 @@ if(F){
 # kick out zero variance in resid ####
 calDat <- calDat.afterImpute[,-exclude.idc]
 varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
-writeFRIDAExportSpec(varsForExport.fridaNames)
+writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 defDat <- runFridaDefaultParms()
 if(sum(colnames(defDat)!=colnames(calDat))!=0){
 	stop('Mismatch in the columns of calibration data and model result data')
@@ -162,7 +161,7 @@ if(!treatVarsAsIndep){
 	# calc resid
 	calDat <- calDat.afterImpute[,-exclude.idc]
 	varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
-	writeFRIDAExportSpec(varsForExport.fridaNames)
+	writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 	defDat <- runFridaDefaultParms()
 	if(sum(colnames(defDat)!=colnames(calDat))!=0){
 		stop('Mismatch in the columns of calibration data and model result data')
@@ -188,7 +187,7 @@ if(removeLinearCombinations&&!treatVarsAsIndep){
 	# new resid
 	calDat <- calDat.afterImpute[,-exclude.idc]
 	varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
-	writeFRIDAExportSpec(varsForExport.fridaNames)
+	writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 	defDat <- runFridaDefaultParms()
 	if(sum(colnames(defDat)!=colnames(calDat))!=0){
 		stop('Mismatch in the columns of calibration data and model result data')
@@ -209,7 +208,7 @@ if(removeLinearCombinations&&!treatVarsAsIndep){
 	# new resid
 	calDat <- calDat.afterImpute[,-exclude.idc]
 	varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
-	writeFRIDAExportSpec(varsForExport.fridaNames)
+	writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 	defDat <- runFridaDefaultParms()
 	if(sum(colnames(defDat)!=colnames(calDat))!=0){
 		stop('Mismatch in the columns of calibration data and model result data')
@@ -247,7 +246,7 @@ rm(calDat.afterImpute)
 
 # clean def run ####
 varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
-writeFRIDAExportSpec(varsForExport.fridaNames)
+writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 defDat <- runFridaDefaultParms()
 resDat <- defDat[1:nrow(calDat),]-calDat
 
@@ -352,7 +351,10 @@ if(is.infinite(defLike)||is.na(defLike)){
 }
 
 # save run prep ####
-writeFRIDAExportSpec(varsForExport.fridaNames.orig[-exclude.idc])
+writeFRIDAExportSpec(varsForExport.fridaNames.orig[-exclude.idc],location.frida)
+if(exists('location.frida.storage')&&file.exists(location.frida.storage)){
+	writeFRIDAExportSpec(varsForExport.fridaNames.orig[-exclude.idc],location.frida.storage)
+}
 saveRDS(resDat.cv,file.path(location.output,'sigma.RDS'))
 saveRDS(list(
 	calDat=calDat,
