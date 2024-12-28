@@ -93,7 +93,6 @@ responseTolerance <- 0.01
 
 newMaxFound <- T
 # while(newMaxFound){
-	# MLE ####
 	cat('running fit procedure...')
 	# Optimisation of parameters (min neg log likelihood) is performed including
 	# the covariance properties. The evaluation of likelihood of each of the parameters
@@ -143,8 +142,7 @@ newMaxFound <- T
 	parscale.resSigmaVect <- parscale[(nrow(sampleParms)+1):length(jParVect)]
 	cat('done\n')
 	
-	# check for bad behaviour in parscale ####
-	#TODO: deal with bad behaviour in parscale: Kick them out
+	## check for bad behaviour in parscale ####
 	# only the entries in parVect can be excluded. The entries in resSigmaVect need to 
 	# be delt with. E.g. by using the guess values. The maximum likelihood vars (diag
 	# elements of the covmat can always be determined as the variance of those obs.
@@ -181,14 +179,14 @@ newMaxFound <- T
 	parscale.all <- parscale
 	parscale <- c(parscale.parvect,parscale.resSigmaVect)
 	
-	# save parscale ####
+	## save parscale ####
 	cat('saving ParScale...')
 	saveRDS(parscale.all,file.path(location.output,'parscale.RDS'))
 	sampleParms$parscale <- parscale.parvect
 	write.csv(sampleParms,file.path(location.output,'sampleParmsParscale.csv'))
 	
 	
-	# optimize parameters ####
+	# MLE ####
 	if(!skipParMLE){
 		sv <- jParVect
 		optimOutput <- array(NA,dim=c(1,length(jParVect)+9))
@@ -340,18 +338,7 @@ newMaxFound <- T
 	# stop before legacy code that still needs to be ported
 	stop()
 	
-	# look at the min max and opt coefs
-	# if(FALSE){
-	# mat.coefs <- matrix(c(min.coefs,parVect,max.coefs),nrow=3,byrow=T)
-	# colnames(mat.coefs) <- names(parVect)
-	# rownames(mat.coefs) <- c('min.coefs','parVect','max.coefs')
-	# View(mat.coefs)
-	# }
-	# reselect coefs
-	# max.coefs <- par.vals[6,]
-	# min.coefs <- par.vals[4,]
-	
-	#### llike ####
+	# llike ####
 	
 	
 	if(max(like.arr[maxInd,'llike'],likeMaxVals.max,na.rm = T) > -jnegLLikelihoodFixedCovMat.f(parVect)){

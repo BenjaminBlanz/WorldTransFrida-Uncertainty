@@ -4,6 +4,41 @@
 
 suppressPackageStartupMessages(require(Rmpfr)) # use to calculate the likelihood from loglikelihood
 
+
+prepareSampleParms <- function(excludeNames=c()){
+	#TODO: Deal with the climateCase parameter 1:100 integer!
+	cat('Specify sampling parameters...')
+	# read in the parameters in frida that have ranges defined
+	frida_info <- read.csv("frida_info.csv")
+	columnsThatAreFlags <- c(2,3,4,5,6,7,8,9,10)
+	# select the parameters to be sampled
+	sampleParms <- frida_info[rowSums(frida_info[,columnsThatAreFlags])>0 &
+															frida_info$No.Sensi==0 &
+															frida_info$Policy==0,
+														-columnsThatAreFlags]
+	invalidLines <- which(!((sampleParms$Max-sampleParms$Min)>0 &
+														sampleParms$Min <= sampleParms$Value &
+														sampleParms$Value <= sampleParms$Max))
+	suppressWarnings(file.remove('frida_info_errorCases.csv'))
+	if(length(invalidLines)>0){
+		cat('invalid lines detected, see frida_info_errorCases.csv...')
+	}
+	write.csv(sampleParms[invalidLines,],'frida_info_errorCases.csv')
+	# deal with manually excluded items
+	if(!redoAllCalc && file.exists('parExclusionList.csv')&&file.size('parExclusionList.csv')>0){
+		manParExclusionList <- read.csv('parExclusionList.csv')
+		excludeNames <- c(excludeNames,manParExclusionList$excludedName)
+	}
+	# deal with excluded Names
+	excludedIdc <- which(sampleParms$Variable %in% excludeNames)
+	if(length(c(invalidLines,excludedIdc))>0){
+		excludeIdc <- unique(c(invalidLines,excludedIdc))
+		sampleParms <- sampleParms[-excludedIdc,]
+	}
+	cat('done\n')
+	return(sampleParms)
+}
+
 # write firda export vars ####
 writeFRIDAExportSpec <- function(varsForExport.fridaNames,location.frida){
 	sink(file=file.path(location.frida,'Data',name.fridaExportVarsFile))
