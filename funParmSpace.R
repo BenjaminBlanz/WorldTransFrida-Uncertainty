@@ -82,8 +82,12 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 															maxiter=1e4,tol=1e-4,max=F,
 															trace=0, idcToMod=1:length(parVect),
 															parscale=rep(1,length(parVect)),
+															bounds=NULL,
 															niter=1000,
 															...){
+	if(length(parIdx)>1){
+		stop('only one parIdx at a time\n')
+	}
 	if(is.list(idcToMod)){
 		idcToMod <- idcToMod[[parIdx]]
 	}
@@ -102,14 +106,28 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 					iter <= maxiter){
 			# find root
 			if(max){
-				root.range <- c(par.val,par.val+abs(par.val)*10)
+				if(!is.null(bounds)){
+					if(par.val>=bounds[parIdx,2]){
+						return(bounds[parIdx,2])
+					}
+					root.range <- c(par.val,bounds[parIdx,2])
+				} else {
+					root.range <- c(par.val,par.val+abs(par.val)*10)
+				}
 			} else {
-				root.range <- c(par.val-abs(par.val)*10,par.val)
+				if(!is.null(bounds)){
+					if(par.val<=bounds[parIdx,1]){
+						return(bounds[parIdx,1])
+					}
+					root.range <- c(par.val-bounds[parIdx,1],par.val)
+				} else {
+					root.range <- c(par.val-abs(par.val)*10,par.val)
+				}
 			}
 			#if there is no sign change between the endpoints of root.range, use secant's
 			#method otherwise use uniroot
-			if(((likeGoalDiffFun(root.range[1],parVect,parIdx,lpdensEps, ...)>0)-
-					(likeGoalDiffFun(root.range[2],parVect,parIdx,lpdensEps, ...)>0))==0){
+			if(((likeGoalDiffFun(root.range[1],parVect,parIdx,lpdensEps,...)>0)-
+					(likeGoalDiffFun(root.range[2],parVect,parIdx,lpdensEps,...)>0))==0){
 				if(max){
 					root.range <- c(par.val,par.val+abs(par.val)*0.001)
 				} else {
@@ -117,14 +135,13 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 				}
 				par.val.old <-par.val
 				par.val <- secant(likeGoalDiffFun,
-													root.range[1],root.range[2],
+													root.range[1],root.range[1]*1.001,
 													parVect=parVect,
 													parIdx=parIdx,
 													lpdensEps=lpdensEps,
 													doWarn = F,
 													trace=trace,
-													niter=niter,
-													...)
+													niter=niter,...)
 				if(max){
 					if(par.val < par.val.old){
 						# hail mary
@@ -142,7 +159,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 																						parVect=parVect,
 																						parIdx=parIdx,
 																						lpdensEps=lpdensEps,
-																						tol = 1e-16, maxiter = niter, ...)$root)
+																						tol = 1e-16, maxiter = niter,...)$root)
 			}
 			if(ceterisParibusPars){
 				return(par.val)
@@ -173,7 +190,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 						res <- suppressWarnings(optimx(parVect,negLLike,
 																					 method = 'Nelder-Mead',
 																					 control=list(dowarn = F,
-																					 						 parscale=parscale)))#,trace=99)))
+																					 						 parscale=parscale,...)))#,trace=99)))
 						parVect <- unlist(res[1:length(parVect)])
 						par.val <- parVect[parIdx]
 						likeAtMax <- -res$value
