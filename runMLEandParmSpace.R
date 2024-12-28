@@ -312,7 +312,7 @@ newMaxFound <- T
 		names(border.coefs) <- names(parVect)
 		# fallback values in case borders could not be determined:
 		notDeterminedBorders[,direction] <- (is.infinite(border.coefs)+(parVect==border.coefs))>=1
-		notDeterminedBorders[notDeterminedMinBorders,direction] <- parBounds[notDeterminedMinBorders,direction]
+		notDeterminedBorders[notDeterminedBorders,direction] <- parBounds[notDeterminedBorders,direction]
 		cat(sprintf('done. %i failures\n',sum(notDeterminedBorders[,direction])))
 		write.csv(notDeterminedBorders,file.path(location.output,'notDeterminedBorders.csv'))
 		# check that the min val actually has the desired like
@@ -331,9 +331,10 @@ newMaxFound <- T
 				}
 			}
 		}
+		border.coefs[notDeterminedBorders[,direction]] <- sampleParms[[direction]]
 		cat('\nsaving...')
-		sampleParms$oldMin <- sampleParms$Min
-		sampleParms$Min <- min.coefs
+		sampleParms[[paste0('old',direction)]] <- sampleParms[[direction]]
+		sampleParms[[direction]] <- border.coefs
 		sampleParms[[paste0(direction,'borderLogLikeError')]] <- borderLogLikeError[,direction] 
 		write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
 		cat('done\n')	
