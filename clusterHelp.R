@@ -7,6 +7,9 @@ if(!exists('location.output')){
 
 # do not stop and start the cluster, instead just reinitialise
 if(exists('cl')&&try(clusterEvalQ(cl,1+1)[[1]],silent=T)==2){
+	gobble <- clusterApply(cl,workers,function(i){
+		workerID <<- i
+	})
 	if(exists('sampleParms')){clusterExport(cl,list('sampleParms'))}
 	if(exists('calDat')){clusterExport(cl,list('calDat'))}
 	if(exists('resSigma')){clusterExport(cl,list('resSigma'))}
@@ -14,9 +17,6 @@ if(exists('cl')&&try(clusterEvalQ(cl,1+1)[[1]],silent=T)==2){
 	gobble <- clusterExport(cl,list('location.output','baseWD',
 																	'chunkSizePerWorker','workDirBasename'))
 	gobble <- clusterEvalQ(cl,source(file.path(baseWD,'initialise.R')))
-	gobble <- clusterApply(cl,workers,function(i){
-		workerID <<- i
-	})
 } else {
 	# cluster setup ####
 	cat('cluster setup...')
