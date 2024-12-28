@@ -28,7 +28,7 @@ if(exists('cl')){
 	if(clusterType=='fork'){
 		cl <- makeForkCluster(numWorkers)
 	} else if (clusterType=='psock'){
-		cl <- makePSOCKcluster(numWorkers)
+		cl <- makePSOCKcluster(numWorkers,setup_strategy='sequential') # setup sequential to not dos the server
 	}
 	gobble <- clusterEvalQ(cl,tools::psnice(value=15))
 	gobble <- clusterExport(cl,list('location.output','baseWD',
