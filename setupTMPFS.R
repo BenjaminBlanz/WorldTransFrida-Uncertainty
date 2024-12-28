@@ -1,5 +1,5 @@
 # clean up first
-if(length(cl)<0&&try(clusterEvalQ(cl,1+1)[[1]],silent=T)!=2){
+if(!exists('cl')<0&&try(clusterEvalQ(cl,1+1)[[1]],silent=T)!=2){
 	if(file.exists('workerDirs')){
 		source('cleanup.R')
 	}
