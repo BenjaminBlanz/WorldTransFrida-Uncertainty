@@ -87,5 +87,5 @@ location.output.base <- location.output
 dir.create(file.path(location.output),recursive = T,showWarnings = F)
 
 # save the config to the output folder
-file.copy('config.R',location.output)
+file.copy('config.R',location.output,overwrite = T)
 
