@@ -351,6 +351,7 @@ newMaxFound <- T
 				}
 			}
 			cat('\nsaving...')
+			sampleParms[[direction]] <- border.coefs[,direction]
 			sampleParms[[paste0(direction,'BorderLogLikeError')]] <- borderLogLikeError[,direction] 
 			sampleParms[[paste0(direction,'NotDeterminedBorder')]] <- notDeterminedBorders[,direction]
 			sampleParms[[paste0(direction,'BoundByAuthors')]] <- border.coefs[,direction]==parBounds[,if(direction=='Min'){1}else{2}]
@@ -388,7 +389,6 @@ newMaxFound <- T
 	}
 	# Sample the Parmeter Space ####
 	# stop before legacy code that still needs to be ported
-	stop()
 	sampleParms <- prepareSampleParms()
 	parVect <- sampleParms$Value
 	maxLLike <- -negLLike(parVect)
@@ -417,6 +417,8 @@ newMaxFound <- T
 	logLikes[logLikes==-Inf] <- -.Machine$double.xmax
 	likes <- clusterRunRetList$like
 	
+	
+	stop()
 	
 	if(max(like.arr[maxInd,'llike'],likeMaxVals.max,na.rm = T) > -negLLike(parVect)){
 		parVect <- 
