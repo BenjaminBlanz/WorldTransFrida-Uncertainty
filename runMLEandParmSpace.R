@@ -311,7 +311,7 @@ newMaxFound <- T
 																		tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
 																		parscale=parscale.parvect,
 																		bounds=parBounds,
-																		niter=1e4,# set niter so that the errors at least in the indep case are small
+																		niter=1e2,# set niter so that the errors at least in the indep case are small
 																		workerStagger = T)) 
 		names(border.coefs[,direction]) <- names(parVect)
 		# fallback values in case borders could not be determined:
