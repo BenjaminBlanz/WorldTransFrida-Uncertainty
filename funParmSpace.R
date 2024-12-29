@@ -219,11 +219,17 @@ secant <- function(fun, x0, x1, tol=1e-07, niter=1e4, doWarn=T, trace=0, bound=s
 		if(trace>0){
 			cat('secant x2: ',x2,'\n')
 		}
-		if (abs(fun(x2,...)) < tol || abs(x2)>abs(bound)){
+		if(is.infinite(x2)||is.nan(x2)){
+			return(bound)
+		}
+		if(abs(fun(x2,...)) < tol || abs(x2)>abs(bound)){
 			return(x2)
 		}
-		if(is.infinite(x2)||is.nan(x2)){
-			return(sign(x1)*Inf)
+		if(x0==x2){
+			if(doWarn){
+				warning("In secant cycle detected\n")
+			}
+			return(x2)
 		}
 		# cat(sprintf(' x2=%10.2e\n',x2))
 		x0 <- x1
