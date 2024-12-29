@@ -43,7 +43,8 @@ if(file.exists(file.path(location.output,'calDat.RDS'))){
 # reads frida_info.csv and outputs the SampleParms
 # also removes parms we will not sample
 # and complains about invalid lines in frida_info.csv
-sampleParms.orig <- sampleParms <- prepareSampleParms()
+excludedParmsForBeingIntegers <- c('Climate Units.selected climate case')
+sampleParms.orig <- sampleParms <- prepareSampleParms(excludeNames=excludedParmsForBeingIntegers)
 saveRDS(sampleParms,file.path(location.output,'sampleParms.RDS'))
 
 
@@ -171,7 +172,7 @@ newMaxFound <- T
 			excludeParmNames <- sampleParms$Variable[problemCasesIdc.parVect]
 			cat(paste(excludeParmNames,collapse='\n'))
 			cat('\n')
-			sampleParms <- prepareSampleParms(excludeNames = excludeParmNames)
+			sampleParms <- prepareSampleParms(excludeNames = c(excludeParmNames,excludedParmsForBeingIntegers))
 			if(file.exists('parExclusionList.csv')&&file.size('parExclusionList.csv')>0){
 				oldExclusionList <- read.csv('parExclusionList.csv')
 				exclusionList <- unique(c(oldExclusionList$excludedName,excludeParmNames))
@@ -385,6 +386,8 @@ newMaxFound <- T
 	# Sample the Parmeter Space ####
 	# stop before legacy code that still needs to be ported
 	stop()
+	#TODO make sure the correct parms are included in here> remove irrelevant parameters
+	sampleParms <- prepareSampleParms()
 	
 	maxLLike <- -negLLike(parVect)
 	if(-baseNegLL!=maxLLike){stop('call ghostbusters\n')}
