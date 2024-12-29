@@ -100,8 +100,8 @@ runFridaParmsByIndex <- function(runid){
 			logLike <- funLogLikelihood(resDat,resSigma)
 			# If the logLike is not NA but the run did not complete assign 
 			# lowest nonzero value. We use this when narrowing the parms space
-			if(is.na(runDat[[1]][nrow(runDat)])||like==0){
-				like <- (sum(!is.na(runDat[[1]]))*.Machine$double.eps)
+			if(is.na(runDat[[1]][nrow(runDat)])||logLike==-Inf){
+				logLike <- -.Machine$double.xmax+sum(!is.na(runDat[[1]]))*.Machine$double.eps
 			}
 			retlist[[i]] <- (list(parmsIndex=as.numeric(row.names(samplePoints)[i]),
 														runDat=runDat,
@@ -279,7 +279,6 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 	dir.create(location.output,showWarnings = F,recursive = T)
 	numSample <- nrow(samplePoints)
 	logLike <- rep(NA,numSample)
-	like <- rep(NA,numSample)
 	names(logLike) <- 1:numSample
 	names(like) <- 1:numSample
 	numWorkers <- length(cl)
