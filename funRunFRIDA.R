@@ -404,6 +404,6 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 								round(sum(chunkTimes,na.rm=T)),
 								'                                                                             '))
 	}
-	return(loglike)
+	return(logLike)
 }
 
