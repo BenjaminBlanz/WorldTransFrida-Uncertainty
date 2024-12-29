@@ -19,7 +19,7 @@ clusterType <- 'psock'
 tmpfsDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork')
 
 #plotting related things
-plotWhileRunning <- F
+plotWhileRunning <- T
 plotDatWhileRunning <- F
 whatToPlot <- tolower('GDP_Real_GDP_in_2021c')
 # padding for data plots y axis in share of the data range
