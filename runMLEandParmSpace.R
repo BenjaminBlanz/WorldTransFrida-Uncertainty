@@ -91,6 +91,9 @@ ordersOfMagLimits <- c(min(ordersOfMagGuesses)-2,max(ordersOfMagGuesses)+4)
 ordersOfMag <- seq(ordersOfMagLimits[1],ordersOfMagLimits[2])
 responseTolerance <- 0.01
 
+#
+frida_info <- read.csv('frida_info.csv')
+
 newMaxFound <- T
 # while(newMaxFound){
 	cat('running fit procedure...')
@@ -99,295 +102,333 @@ newMaxFound <- T
 	# for the uncertainty representation is performed with covariance matrix fixed to the
 	# MLE.
 	
-	# determine parscale ####
-	cat('Determining parscales...\n')
 	baseNegLL <- jnegLLikelihood.f(jParVect)
 	
-	iterations <- 0
-	parallelParscale <- T
-	useOrdersOfMagGuesses <- T
-	while(iterations < 2 && sum(is.na(parscale)|is.infinite(parscale))>0){
-		parsToDet <- which(is.na(parscale)|is.infinite(parscale))
-		cat(sprintf('Determining the parscale of %i parameters. %i parameters with already known parscale.%s\n',
-								length(parsToDet),length(parscale)-length(parsToDet),
-								if(useOrdersOfMagGuesses){' Using guesses.'}else{' Not using guesses.'}))
-		if(parallelParscale){
-			clusterExport(cl,list('baseNegLL',
-														'ordersOfMagLimits','ordersOfMag','responseTolerance',
-														'orderOfMagNegLLErrorFun','funFindParScale',
-														'jnegLLikelihood.f','ordersOfMagGuesses',
-														'ordersOfMagLimits',
-														'calDat','resSigma',
-														'jParVect'))
-			gobble <- clusterEvalQ(cl,source(file.path(baseWD,'funParmSpace.R')))
-			parParscaleOutput <- parLapplyLB(cl,parsToDet,funFindParScale,
-																			 useOrdersOfMagGuesses=useOrdersOfMagGuesses)
-			parscale[parsToDet] <- unlist(parParscaleOutput)
-			names(parscale) <- names(jParVect)
-		} else {
-			for(par.i in 1:length(jParVect)){
-				if(is.na(parscale[par.i])|is.infinite(parscale[par.i])){
-					parscale[par.i] <- funFindParScale(par.i,useOrdersOfMagGuesses=useOrdersOfMagGuesses)
-				}
-			}
-		}
-		# cat('saving ParScale...')
-		# saveRDS(parscale,file.path(location.output,'parscale.RDS'))
-		# cat('done\n')
-		# try those that did not succeed with the guess again with the full range
-		useOrdersOfMagGuesses <- F
-		iterations <- iterations+1
-	}
-	parscale.parvect <- parscale[1:nrow(sampleParms)]
-	parscale.resSigmaVect <- parscale[(nrow(sampleParms)+1):length(jParVect)]
-	cat('done\n')
-	
-	## check for bad behaviour in parscale ####
-	# only the entries in parVect can be excluded. The entries in resSigmaVect need to 
-	# be delt with. E.g. by using the guess values. The maximum likelihood vars (diag
-	# elements of the covmat can always be determined as the variance of those obs.
-	problemCasesIdc <- which(is.infinite(parscale)|is.na(parscale))
-	problemCasesIdc.parVect <- which(is.infinite(parscale.parvect)|is.na(parscale.parvect))
-	problemCasesIdc.resSigmaVect <- which(is.infinite(parscale.resSigmaVect)|is.na(parscale.resSigmaVect))
-	cat(sprintf('%i parscales could not be determined.',length(problemCasesIdc)))
-	if(length(problemCasesIdc.resSigmaVect)>0){
-		cat(sprintf('  %i in resSigmaVect, guesses will be used',
-								length(problemCasesIdc.resSigmaVect)))
-		parscale.resSigmaVect[problemCasesIdc.resSigmaVect] <- 
-			10^ordersOfMagGuesses.resSigmaVect[problemCasesIdc.resSigmaVect]
+	if(!redoAllCalc&&file.exists(file.path(location.output,'sampleParmsParscaleRanged.RDS'))){
+		sampleParms <- readRDS(file.path(location.output,'sampleParmsParscaleRanged.RDS'))
 	} else {
-		cat('  No problem cases in resSigmaVect\n')
-	}
-	if(length(problemCasesIdc.parVect)>0){
-		cat(sprintf('  %i in parVect, these parms will be dropped\n',length(problemCasesIdc.parVect)))
-		parscale.parvect <- parscale.parvect[-problemCasesIdc.parVect]
-		excludeParmNames <- sampleParms$Variable[problemCasesIdc.parVect]
-		cat(paste(excludeParmNames,collapse='\n'))
-		cat('\n')
-		sampleParms <- prepareSampleParms(excludeNames = excludeParmNames)
-		if(file.exists('parExclusionList.csv')&&file.size('parExclusionList.csv')>0){
-			oldExclusionList <- read.csv('parExclusionList.csv')
-			exclusionList <- unique(c(oldExclusionList$excludedName,excludeParmNames))
-		} else {
-			exclusionList <- data.frame(excludedName=excludeParmNames)
-		}
-		write.csv(exclusionList,'parExclusionList.csv')
-		parVect <- sampleParms$Value
-		names(parVect) <- sampleParms$Variable 
-		jParVect <- c(parVect,resSigmaVect)
-	}
-	parscale.all <- parscale
-	parscale <- c(parscale.parvect,parscale.resSigmaVect)
-	
-	## save parscale ####
-	cat('saving ParScale...')
-	saveRDS(parscale.all,file.path(location.output,'parscale.RDS'))
-	sampleParms$parscale <- parscale.parvect
-	write.csv(sampleParms,file.path(location.output,'sampleParmsParscale.csv'))
-	
-	
-	# MLE ####
-	if(!skipParMLE){
-		sv <- jParVect
-		optimOutput <- array(NA,dim=c(1,length(jParVect)+9))
-		colnames(optimOutput) <- c(names(jParVect),
-															 c('value','fevals','gevals','niter','convcode',
-															 	'kkt1','kkt2','xtime','check value'))
-		optimOutput <- as.data.frame(optimOutput)
-		optimOutput[1,] <- c(jParVect,baseNegLL,rep('',8))
-		rownames(optimOutput) <- 'sv'
-		oldVal <- 0
-		newVal <- 1
-		iteration <- 0
-		all.methods <- T # use all methods on the first iteration then use whichever was the best
-		methods <- c('bobyqa')
-		while(abs(oldVal-newVal)>1e-12&&iteration<1e3){
-			iteration <- iteration+1
-			cat(sprintf('Running likelihood maximization (min neg log like) iteration %i...',
-									iteration))
-			oldVal <- newVal
-			# sv <- sv * 1.1
-			# specifying limits breaks the parscale info for bobyqa!
-			lower <- c(sampleParms$Min,resSigmaVect-abs(parscale.resSigmaVect)*100)
-			names(lower) <- names(jParVect)
-			which(lower==sv)
-			upper <- c(sampleParms$Min,resSigmaVect+abs(parscale.resSigmaVect)*100)
-			optRes <- optimx(sv,jnegLLikelihood.f,method=methods,
-											 lower = lower,
-											 upper = upper,
-										 control=list(all.methods=all.methods,
-											 						 parscale = 1/parscale,
-											 						 # fnscale = newVal,
-											 						 dowarn=F,
-											 						 # trace=9,
-											 						 kkt=F,
-											 						 maxit = 10*length(jParVect)^2,
-											 						 reltol = 1e-15))
-			svNegLLike <-c ()
-			for(opt.i in 1:nrow(optRes)){
-				sv.i <- unlist(as.vector(optRes[opt.i,1:length(jParVect)]))
-				svNegLLike[opt.i] <- jnegLLikelihood.f(sv.i)
-			}
-			maxMethod <- which.min(svNegLLike)
-			methods <- rownames(optRes[which(!is.na(optRes[,1]))])
-			sv <- unlist(as.vector(optRes[maxMethod,1:length(jParVect)]))
-			cat(sprintf('%10f %10f\n',
-									optRes$value[1],svNegLLike[maxMethod]))
-			newOptimOutputRowNums <- (nrow(optimOutput)+1):((nrow(optimOutput))+nrow(optRes))
-			optimOutput[newOptimOutputRowNums,] <- 
-				base::cbind(optRes,svNegLLike)
-			rownames(optimOutput)[newOptimOutputRowNums] <-
-				paste(rep(iteration,nrow(optRes)),rownames(optRes))
-			write.csv(optimOutput,file.path(location.output,'optRes.csv'),)
-			saveRDS(optRes,file.path(location.output,'optRes.RDS'))
-			newVal <- optRes$value[maxMethod]
-			all.methods <- F
-		}
-		if(sum(is.na(sv[1:length(jParVect)]))==0|optRes$value<baseNegLL){
-			jParVect.names <- names(jParVect)
-			jParVect <- sv[1:length(jParVect)]
-			names(jParVect) <- jParVect.names
-			parVect <- jParVect[1:length(parVect)]
-			resSigmaVect <- jParVect[(length(parVect)+1):length(jParVect)]
-			if(treatVarsAsIndep){
-				resSigma <- diag(resSigmaVect)
+		# determine parscale ####
+		cat('Determining parscales...\n')
+		
+		iterations <- 0
+		parallelParscale <- T
+		useOrdersOfMagGuesses <- T
+		while(iterations < 2 && sum(is.na(parscale)|is.infinite(parscale))>0){
+			parsToDet <- which(is.na(parscale)|is.infinite(parscale))
+			cat(sprintf('Determining the parscale of %i parameters. %i parameters with already known parscale.%s\n',
+									length(parsToDet),length(parscale)-length(parsToDet),
+									if(useOrdersOfMagGuesses){' Using guesses.'}else{' Not using guesses.'}))
+			if(parallelParscale){
+				clusterExport(cl,list('baseNegLL',
+															'ordersOfMagLimits','ordersOfMag','responseTolerance',
+															'orderOfMagNegLLErrorFun','funFindParScale',
+															'jnegLLikelihood.f','ordersOfMagGuesses',
+															'ordersOfMagLimits',
+															'calDat','resSigma',
+															'jParVect'))
+				gobble <- clusterEvalQ(cl,source(file.path(baseWD,'funParmSpace.R')))
+				parParscaleOutput <- parLapplyLB(cl,parsToDet,funFindParScale,
+																				 useOrdersOfMagGuesses=useOrdersOfMagGuesses)
+				parscale[parsToDet] <- unlist(parParscaleOutput)
+				names(parscale) <- names(jParVect)
 			} else {
-				resSigma <- array(NA,dim=rep(ncol(calDat),2))
-			resSigma[!lower.tri(resSigma)]<- resSigmaVect
-			resSigma[lower.tri(resSigma)] <- t(resSigma)[lower.tri(resSigma)]
-		}
-		saveRDS(jParVect,file.path(location.output,'jParVectAfterOptim.RDS'))
-		saveRDS(resSigma,file.path(location.output,
-															 paste0('sigma',
-															 			 ifelse(treatVarsAsIndep,'-indepParms',''),
-															 			 '.RDS')))
-			cat('completed optimization\n')
-		} else {
-			stop('failed optimization\n')
-		}
-	}
-	
-	# coef range ####
-	# minimize and maximize each parameter with others free, until density is 
-	# equal to pdensEps
-	cat('determining coef sample range...\n')
-	rangeTol <- 1e-8
-	# boundary value in log likelihood
-	lpdensEps <- -negLLike(parVect) - log(likeCutoffRatio)
-	#limit to 4 c. due to mem. reqs. and also len(coefs)
-	idcToMod <- 1:length(parVect)
-	## for testing
-	# for(i in 1:length(parVect)){
-	# 	cat('\n\nmax parm ',i,'\n')
-	# 	findDensValBorder(i,
-	# 										parVect=parVect,lpdensEps=lpdensEps,
-	# 										ceterisParibusPars=treatVarsAsIndep,
-	# 										tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
-	# 										parscale=parscale.parvect,
-	# 										bounds=parBounds,
-	# 										niter=1e2))
-	# 	cat('\nmin parm ',i,'\n')
-	# 	findDensValBorder(i,
-	# 										parVect=parVect,lpdensEps=lpdensEps,
-	# 										ceterisParibusPars=treatVarsAsIndep,
-	# 										tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
-	# 										trace=9,
-	# 										parscale=parscale.parvect,
-	# 										bounds=parBounds,
-	# 										niter=1e2)
-	# }
-	# parBounds <- sampleParms[,c('Min','Max')]
-	notDeterminedBorders <- array(TRUE,dim=c(length(parVect),2))
-	colnames(notDeterminedBorders) <- c('Min','Max')
-	borderLogLikeError <- notDeterminedBorders
-	border.coefs <- notDeterminedBorders
-	border.coefs.orig <- notDeterminedBorders
-	for(direction in c('Min','Max')){
-		cat(sprintf('  determining %s par values...',tolower(direction)))
-		clusterExport(cl,list('calDat','treatVarsAsIndep'))
-		border.coefs[,direction] <- unlist(parLapplyLB(cl,which(notDeterminedBorders[,direction]),findDensValBorder,
-																		parVect=parVect,lpdensEps=lpdensEps,
-																		ceterisParibusPars=treatVarsAsIndep,
-																		tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
-																		parscale=parscale.parvect,
-																		bounds=parBounds,
-																		niter=1e2,# set niter so that the errors at least in the indep case are small
-																		workerStagger = T)) 
-		names(border.coefs[,direction]) <- names(parVect)
-		# fallback values in case borders could not be determined:
-		notDeterminedBorders[,direction] <- (is.infinite(border.coefs[,direction])+(parVect==border.coefs[,direction]))>=1
-		border.coefs.orig[,direction] <- border.coefs[,direction]
-		border.coefs[,direction][notDeterminedBorders[,direction]] <- sampleParms[[direction]][notDeterminedBorders[,direction]]
-		cat(sprintf('done. %i failures\n',sum(notDeterminedBorders[,direction])))
-		write.csv(notDeterminedBorders,file.path(location.output,'notDeterminedBorders.csv'))
-		# check that the min val actually has the desired like
-		# this check only works for the independent case, as we do not retain the information
-		# what the values of the other parameters where during range finding
-		if(treatVarsAsIndep){
-			cat(sprintf('Checking for likelihood at %s failures...\n',tolower(direction)))
-			for(rangeCheck.i in 1:length(parVect)){
-				cat(sprintf('\r%4i',rangeCheck.i))
-				parVectMinCheck.i <- parVect
-				parVectMinCheck.i[rangeCheck.i] <- border.coefs[,direction][rangeCheck.i]
-				lLike <- -negLLike(parVectMinCheck.i)
-				borderLogLikeError[rangeCheck.i,direction] <- lLike-lpdensEps
-				if(lLike-lpdensEps >= 1e-5){
-					cat(sprintf('\r%4i %80s %10f\n',rangeCheck.i,names(parVect[rangeCheck.i]),lLike-lpdensEps))
+				for(par.i in 1:length(jParVect)){
+					if(is.na(parscale[par.i])|is.infinite(parscale[par.i])){
+						parscale[par.i] <- funFindParScale(par.i,useOrdersOfMagGuesses=useOrdersOfMagGuesses)
+					}
 				}
 			}
+			# cat('saving ParScale...')
+			# saveRDS(parscale,file.path(location.output,'parscale.RDS'))
+			# cat('done\n')
+			# try those that did not succeed with the guess again with the full range
+			useOrdersOfMagGuesses <- F
+			iterations <- iterations+1
 		}
-		cat('\nsaving...')
-		sampleParms[[paste0('old',direction)]] <- sampleParms[[direction]]
-		sampleParms[[paste0(direction,'borderLogLikeError')]] <- borderLogLikeError[,direction] 
-		sampleParms[[paste0(direction,'NotDeterminedBorder')]] <- notDeterminedBorders[,direction]
-		sampleParms[[paste0(direction,'ResultOfBorderSearch')]] <- border.coefs.orig[,direction]
-		if(direction=='Min'){
-			sampleParms[[direction]] <- pmax(border.coefs[,direction],sampleParms[[direction]])
-			sampleParms[[paste0(direction,'borderSearchOverriddenByParmBounds')]] <- border.coefs.orig[,direction] < sampleParms[[direction]]
+		parscale.parvect <- parscale[1:nrow(sampleParms)]
+		parscale.resSigmaVect <- parscale[(nrow(sampleParms)+1):length(jParVect)]
+		cat('done\n')
+		
+		## check for bad behaviour in parscale ####
+		# only the entries in parVect can be excluded. The entries in resSigmaVect need to 
+		# be delt with. E.g. by using the guess values. The maximum likelihood vars (diag
+		# elements of the covmat can always be determined as the variance of those obs.
+		problemCasesIdc <- which(is.infinite(parscale)|is.na(parscale))
+		problemCasesIdc.parVect <- which(is.infinite(parscale.parvect)|is.na(parscale.parvect))
+		problemCasesIdc.resSigmaVect <- which(is.infinite(parscale.resSigmaVect)|is.na(parscale.resSigmaVect))
+		cat(sprintf('%i parscales could not be determined.',length(problemCasesIdc)))
+		if(length(problemCasesIdc.resSigmaVect)>0){
+			cat(sprintf('  %i in resSigmaVect, guesses will be used',
+									length(problemCasesIdc.resSigmaVect)))
+			parscale.resSigmaVect[problemCasesIdc.resSigmaVect] <- 
+				10^ordersOfMagGuesses.resSigmaVect[problemCasesIdc.resSigmaVect]
 		} else {
-			sampleParms[[direction]] <- pmin(border.coefs[,direction],sampleParms[[direction]])
-			sampleParms[[paste0(direction,'borderSearchOverriddenByParmBounds')]] <- border.coefs.orig[,direction] > sampleParms[[direction]]
+			cat('  No problem cases in resSigmaVect\n')
 		}
-		write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
-		saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
-		cat('done\n')	
+		if(length(problemCasesIdc.parVect)>0){
+			cat(sprintf('  %i in parVect, these parms will be dropped\n',length(problemCasesIdc.parVect)))
+			parscale.parvect <- parscale.parvect[-problemCasesIdc.parVect]
+			excludeParmNames <- sampleParms$Variable[problemCasesIdc.parVect]
+			cat(paste(excludeParmNames,collapse='\n'))
+			cat('\n')
+			sampleParms <- prepareSampleParms(excludeNames = excludeParmNames)
+			if(file.exists('parExclusionList.csv')&&file.size('parExclusionList.csv')>0){
+				oldExclusionList <- read.csv('parExclusionList.csv')
+				exclusionList <- unique(c(oldExclusionList$excludedName,excludeParmNames))
+			} else {
+				exclusionList <- data.frame(excludedName=excludeParmNames)
+			}
+			write.csv(exclusionList,'parExclusionList.csv')
+			parVect <- sampleParms$Value
+			names(parVect) <- sampleParms$Variable 
+			jParVect <- c(parVect,resSigmaVect)
+		}
+		parscale.all <- parscale
+		parscale <- c(parscale.parvect,parscale.resSigmaVect)
+		
+		## save parscale ####
+		cat('saving ParScale...')
+		saveRDS(parscale.all,file.path(location.output,'parscale.RDS'))
+		sampleParms$parscale <- parscale.parvect
+		write.csv(sampleParms,file.path(location.output,'sampleParmsParscale.csv'))
+		
+		
+		# MLE ####
+		if(!skipParMLE){
+			sv <- jParVect
+			optimOutput <- array(NA,dim=c(1,length(jParVect)+9))
+			colnames(optimOutput) <- c(names(jParVect),
+																 c('value','fevals','gevals','niter','convcode',
+																 	'kkt1','kkt2','xtime','check value'))
+			optimOutput <- as.data.frame(optimOutput)
+			optimOutput[1,] <- c(jParVect,baseNegLL,rep('',8))
+			rownames(optimOutput) <- 'sv'
+			oldVal <- 0
+			newVal <- 1
+			iteration <- 0
+			all.methods <- T # use all methods on the first iteration then use whichever was the best
+			methods <- c('bobyqa')
+			while(abs(oldVal-newVal)>1e-12&&iteration<1e3){
+				iteration <- iteration+1
+				cat(sprintf('Running likelihood maximization (min neg log like) iteration %i...',
+										iteration))
+				oldVal <- newVal
+				# sv <- sv * 1.1
+				# specifying limits breaks the parscale info for bobyqa!
+				lower <- c(sampleParms$Min,resSigmaVect-abs(parscale.resSigmaVect)*100)
+				names(lower) <- names(jParVect)
+				which(lower==sv)
+				upper <- c(sampleParms$Min,resSigmaVect+abs(parscale.resSigmaVect)*100)
+				optRes <- optimx(sv,jnegLLikelihood.f,method=methods,
+												 lower = lower,
+												 upper = upper,
+											 control=list(all.methods=all.methods,
+												 						 parscale = 1/parscale,
+												 						 # fnscale = newVal,
+												 						 dowarn=F,
+												 						 # trace=9,
+												 						 kkt=F,
+												 						 maxit = 10*length(jParVect)^2,
+												 						 reltol = 1e-15))
+				svNegLLike <-c ()
+				for(opt.i in 1:nrow(optRes)){
+					sv.i <- unlist(as.vector(optRes[opt.i,1:length(jParVect)]))
+					svNegLLike[opt.i] <- jnegLLikelihood.f(sv.i)
+				}
+				maxMethod <- which.min(svNegLLike)
+				methods <- rownames(optRes[which(!is.na(optRes[,1]))])
+				sv <- unlist(as.vector(optRes[maxMethod,1:length(jParVect)]))
+				cat(sprintf('%10f %10f\n',
+										optRes$value[1],svNegLLike[maxMethod]))
+				newOptimOutputRowNums <- (nrow(optimOutput)+1):((nrow(optimOutput))+nrow(optRes))
+				optimOutput[newOptimOutputRowNums,] <- 
+					base::cbind(optRes,svNegLLike)
+				rownames(optimOutput)[newOptimOutputRowNums] <-
+					paste(rep(iteration,nrow(optRes)),rownames(optRes))
+				write.csv(optimOutput,file.path(location.output,'optRes.csv'),)
+				saveRDS(optRes,file.path(location.output,'optRes.RDS'))
+				newVal <- optRes$value[maxMethod]
+				all.methods <- F
+			}
+			if(sum(is.na(sv[1:length(jParVect)]))==0|optRes$value<baseNegLL){
+				jParVect.names <- names(jParVect)
+				jParVect <- sv[1:length(jParVect)]
+				names(jParVect) <- jParVect.names
+				parVect <- jParVect[1:length(parVect)]
+				resSigmaVect <- jParVect[(length(parVect)+1):length(jParVect)]
+				if(treatVarsAsIndep){
+					resSigma <- diag(resSigmaVect)
+				} else {
+					resSigma <- array(NA,dim=rep(ncol(calDat),2))
+				resSigma[!lower.tri(resSigma)]<- resSigmaVect
+				resSigma[lower.tri(resSigma)] <- t(resSigma)[lower.tri(resSigma)]
+			}
+			saveRDS(jParVect,file.path(location.output,'jParVectAfterOptim.RDS'))
+			saveRDS(resSigma,file.path(location.output,
+																 paste0('sigma',
+																 			 ifelse(treatVarsAsIndep,'-indepParms',''),
+																 			 '.RDS')))
+				cat('completed optimization\n')
+			} else {
+				stop('failed optimization\n')
+			}
+		}
+		
+		# coef range ####
+		# minimize and maximize each parameter with others free, until density is 
+		# equal to pdensEps
+		cat('determining coef sample range...\n')
+		rangeTol <- 1e-8
+		# boundary value in log likelihood
+		lpdensEps <- -negLLike(parVect) - log(likeCutoffRatio)
+		idcToMod <- 1:length(parVect)
+		# par bounds
+		idcOfSampleParmsInFridaInfo <- c()
+		for(p.i in 1:nrow(sampleParms)){
+			idcOfSampleParmsInFridaInfo[p.i] <- which(frida_info$Variable==sampleParms$Variable[p.i])
+		}
+		parBounds <- frida_info[idcOfSampleParmsInFridaInfo,c('Min','Max')]
+		rownames(parBounds) <- sampleParms$Variable
+		## for testing
+		# test.i <- 1
+		# #min bound
+		# findDensValBorder(test.i,
+		# 									parVect=parVect,lpdensEps=lpdensEps,
+		# 									ceterisParibusPars=treatVarsAsIndep,
+		# 									tol=rangeTol,max=F,idcToMod=idcToMod,
+		# 									parscale=parscale.parvect,
+		# 									bounds=parBounds,
+		# 									trace = 9,
+		# 									niter=1e2)
+		# #max bound
+		# findDensValBorder(test.i,
+		# 									parVect=parVect,lpdensEps=lpdensEps,
+		# 									ceterisParibusPars=treatVarsAsIndep,
+		# 									tol=rangeTol,max=T,idcToMod=idcToMod,
+		# 									parscale=parscale.parvect,
+		# 									bounds=parBounds,
+		# 									trace = 9,
+		# 									niter=1e2)
+		notDeterminedBorders <- array(TRUE,dim=c(length(parVect),2))
+		colnames(notDeterminedBorders) <- c('Min','Max')
+		borderLogLikeError <- notDeterminedBorders
+		border.coefs <- notDeterminedBorders
+		border.coefs.orig <- notDeterminedBorders
+		for(direction in c('Min','Max')){
+			cat(sprintf('  determining %s par values...',tolower(direction)))
+			clusterExport(cl,list('calDat','treatVarsAsIndep'))
+			border.coefs[,direction] <- unlist(parLapplyLB(cl,which(notDeterminedBorders[,direction]),findDensValBorder,
+																			parVect=parVect,lpdensEps=lpdensEps,
+																			ceterisParibusPars=treatVarsAsIndep,
+																			tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
+																			parscale=parscale.parvect,
+																			bounds=parBounds,
+																			niter=1e2,# set niter so that the errors at least in the indep case are small
+																			workerStagger = T)) 
+			names(border.coefs[,direction]) <- names(parVect)
+			# fallback values in case borders could not be determined:
+			notDeterminedBorders[,direction] <- (is.infinite(border.coefs[,direction])+(parVect==border.coefs[,direction]))>=1
+			border.coefs.orig[,direction] <- border.coefs[,direction]
+			border.coefs[,direction][notDeterminedBorders[,direction]] <- sampleParms[[direction]][notDeterminedBorders[,direction]]
+			cat(sprintf('done. %i failures\n',sum(notDeterminedBorders[,direction])))
+			write.csv(notDeterminedBorders,file.path(location.output,'notDeterminedBorders.csv'))
+			# check that the min val actually has the desired like
+			# this check only works for the independent case, as we do not retain the information
+			# what the values of the other parameters where during range finding
+			if(treatVarsAsIndep){
+				cat(sprintf('Checking for likelihood at %s failures...\n',tolower(direction)))
+				for(rangeCheck.i in 1:length(parVect)){
+					cat(sprintf('\r%4i',rangeCheck.i))
+					parVectMinCheck.i <- parVect
+					parVectMinCheck.i[rangeCheck.i] <- border.coefs[,direction][rangeCheck.i]
+					lLike <- -negLLike(parVectMinCheck.i)
+					borderLogLikeError[rangeCheck.i,direction] <- lLike-lpdensEps
+					if(lLike-lpdensEps >= 1e-5){
+						cat(sprintf('\r%4i %80s %10f\n',rangeCheck.i,names(parVect[rangeCheck.i]),lLike-lpdensEps))
+					}
+				}
+			}
+			cat('\nsaving...')
+			sampleParms[[paste0('old',direction)]] <- sampleParms[[direction]]
+			sampleParms[[paste0(direction,'borderLogLikeError')]] <- borderLogLikeError[,direction] 
+			sampleParms[[paste0(direction,'NotDeterminedBorder')]] <- notDeterminedBorders[,direction]
+			sampleParms[[paste0(direction,'ResultOfBorderSearch')]] <- border.coefs.orig[,direction]
+			if(direction=='Min'){
+				sampleParms[[direction]] <- pmax(border.coefs[,direction],sampleParms[[direction]])
+				sampleParms[[paste0(direction,'borderSearchOverriddenByParmBounds')]] <- border.coefs.orig[,direction] < sampleParms[[direction]]
+			} else {
+				sampleParms[[direction]] <- pmin(border.coefs[,direction],sampleParms[[direction]])
+				sampleParms[[paste0(direction,'borderSearchOverriddenByParmBounds')]] <- border.coefs.orig[,direction] > sampleParms[[direction]]
+			}
+			write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
+			saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
+			cat('done\n')	
+		}
+		
+		# write to frida_info like file for comparison to input
+		frida_info.toModify <- read.csv('frida_info.csv')
+		frida_info.toModify$includedInSampleParms <- frida_info.toModify$Variable %in% sampleParms$Variable
+		idcOfSampleParmsInFridaInfo <- c()
+		for(p.i in 1:nrow(sampleParms)){
+			idcOfSampleParmsInFridaInfo[p.i] <- which(frida_info.toModify$Variable==sampleParms$Variable[p.i])
+		}
+		frida_info.toModify$newMin <- NA
+		frida_info.toModify$newMin[idcOfSampleParmsInFridaInfo] <- sampleParms$Min
+		frida_info.toModify$newMax <- NA
+		frida_info.toModify$newMax[idcOfSampleParmsInFridaInfo] <- sampleParms$Max
+		frida_info.toModify$llikeErrorAtNewMin <- NA
+		frida_info.toModify$llikeErrorAtNewMin[idcOfSampleParmsInFridaInfo] <- sampleParms$MinborderLogLikeError
+		frida_info.toModify$llikeErrorAtNewMax <- NA
+		frida_info.toModify$llikeErrorAtNewMax[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxborderLogLikeError
+		frida_info.toModify$minParBoundsBinding <- NA
+		frida_info.toModify$minParBoundsBinding[idcOfSampleParmsInFridaInfo] <- sampleParms$MinborderSearchOverriddenByParmBounds
+		frida_info.toModify$maxParBoundsBinding <- NA
+		frida_info.toModify$maxParBoundsBinding[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxborderSearchOverriddenByParmBounds
+		frida_info.toModify$newMinParmSearch <- NA
+		frida_info.toModify$newMinParmSearch[idcOfSampleParmsInFridaInfo] <- sampleParms$MinResultOfBorderSearch
+		frida_info.toModify$newMaxParmSearch <- NA
+		frida_info.toModify$newMaxParmSearch[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxResultOfBorderSearch
+		frida_info.toModify$minNotDetermined <- NA
+		frida_info.toModify$minNotDetermined[idcOfSampleParmsInFridaInfo] <- sampleParms$MinNotDeterminedBorder
+		frida_info.toModify$maxNotDetermined <- NA
+		frida_info.toModify$maxNotDetermined[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxNotDeterminedBorder
+		write.csv(frida_info.toModify,file.path(location.output,'frida_info_ranged.csv'))
+		
+		# TODO: kick out some more parameters?
 	}
-	
-	# write to frida_info like file for comparison to input
-	frida_info <- read.csv('frida_info.csv')
-	frida_info$includedInSampleParms <- frida_info$Variable %in% sampleParms$Variable
-	idcOfSampleParmsInFridaInfo <- c()
-	for(p.i in 1:nrow(sampleParms)){
-		idcOfSampleParmsInFridaInfo[p.i] <- which(frida_info$Variable==sampleParms$Variable[p.i])
-	}
-	frida_info$newMin <- NA
-	frida_info$newMin[idcOfSampleParmsInFridaInfo] <- sampleParms$Min
-	frida_info$newMax <- NA
-	frida_info$newMax[idcOfSampleParmsInFridaInfo] <- sampleParms$Max
-	frida_info$llikeErrorAtNewMin <- NA
-	frida_info$llikeErrorAtNewMin[idcOfSampleParmsInFridaInfo] <- sampleParms$MinborderLogLikeError
-	frida_info$llikeErrorAtNewMax <- NA
-	frida_info$llikeErrorAtNewMax[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxborderLogLikeError
-	frida_info$minParBoundsBinding <- NA
-	frida_info$minParBoundsBinding[idcOfSampleParmsInFridaInfo] <- sampleParms$MinborderSearchOverriddenByParmBounds
-	frida_info$maxParBoundsBinding <- NA
-	frida_info$maxParBoundsBinding[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxborderSearchOverriddenByParmBounds
-	frida_info$newMinParmSearch <- NA
-	frida_info$newMinParmSearch[idcOfSampleParmsInFridaInfo] <- sampleParms$MinResultOfBorderSearch
-	frida_info$newMaxParmSearch <- NA
-	frida_info$newMaxParmSearch[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxResultOfBorderSearch
-	frida_info$minNotDetermined <- NA
-	frida_info$minNotDetermined[idcOfSampleParmsInFridaInfo] <- sampleParms$MinNotDeterminedBorder
-	frida_info$maxNotDetermined <- NA
-	frida_info$maxNotDetermined[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxNotDeterminedBorder
-	write.csv(frida_info,file.path(location.output,'frida_info_ranged.csv'))
-	
-	# llike ####
+	# Sample the Parmeter Space ####
 	# stop before legacy code that still needs to be ported
 	stop()
 	
+	maxLLike <- -negLLike(parVect)
+	if(-baseNegLL!=maxLLike){stop('call ghostbusters\n')}
 	
-	if(max(like.arr[maxInd,'llike'],likeMaxVals.max,na.rm = T) > -jnegLLikelihoodFixedCovMat.f(parVect)){
+	## sample points ####
+	samplePoints <- generateSobolSequenceForSampleParms(sampleParms,numSample,
+																											restretchSamplePoints,
+																											ignoreExistingResults = redoAllCalc)
+	if(ncol(samplePoints) != nrow(sampleParms)){
+		cat('Invalid sample points regenerating\n')
+		samplePoints <- generateSobolSequenceForSampleParms(sampleParms,numSample,
+																												restretchSamplePoints,
+																												ignoreExistingResults = T)
+	}
+	samplePoints.orig <- samplePoints
+	
+	## evaluate sample points ####	
+	clusterRunRetList <- clusterRunFridaForSamplePoints(samplePoints,chunkSizePerWorker,
+																											calDat=calDat,
+																											resSigma=resSigma,
+																											file.path(location.output,'detectedParmSpace'),
+																											redoAllCalc,
+																											plotDatWhileRunning=F)
+	logLikes <- clusterRunRetList$logLike
+	logLikes[logLikes==-Inf] <- -.Machine$double.xmax
+	likes <- clusterRunRetList$like
+	
+	
+	if(max(like.arr[maxInd,'llike'],likeMaxVals.max,na.rm = T) > -negLLike(parVect)){
+		parVect <- 
 		if(fitType=='sTime'){
 			jParVect <- c(like.arr[maxInd,1:3],
 										jParVect[4],
