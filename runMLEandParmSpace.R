@@ -436,22 +436,41 @@ while(newMaxFound){
 																						 plotDatWhileRunning=F)
 	logLikes[logLikes==-Inf] <- -.Machine$double.xmax
 	if(plotWhileRunning){
-		plot(density(logLikes),main='Kernel density estimate of log likelihoods of sample points',
-						xlab='log likelihood')
-		abline(v=maxLLike)
-		mtext(3,1,'Vertical line is best guess of maximum likelihood')
-		dev.print(pdf,width=10,
-							height=10,
-							unit='cm',res=150,
-							file.path(location.output,paste0('logLikesDensity-',iterationNewMax,'.pdf')))
+		plotCape <- capabilities()
+		if(!(plotCape['X11']|plotCape['aqua'])){
+			pdf(file.path(location.output,paste0('logLikesDensity-',iterationNewMax,'.pdf')),
+					width=10,	height=10)
+		}
+		histDat <- hist(logLikes,plot=F)
+		plot(0,type='n',
+				 main='Distribution log likelihoods of sample points',
+				 xlab='log likelihood',
+				 xlim=c(min(logLikes,maxLLike),max(logLikes,maxLLike)),
+				 ylim=c(-1,max(histDat$counts)*1.04),
+				 yaxs='i')
+		box(col='gray')
+		plot(histDat,add=T)
+		abline(v=maxLLike,col='red')
+		mtext('Vertical line is log likelihood of the best guess',3,0.1)
+		if(!(plotCape['X11']|plotCape['aqua'])){
+			dev.off()
+		} else {
+			dev.print(pdf,width=10,
+								height=10,
+								unit='cm',res=150,
+								file.path(location.output,paste0('logLikesDensity-',iterationNewMax,'.pdf')))
+		}
 	}
 	
 	maxInd <- which.max(logLikes)
 	if(logLikes[maxInd] > maxLLike){
 		parVect <- samplePoints[maxInd,]
 		newMaxFound <- T
-		cat('Found greater likelihood pars in sampling, rerunning fit procedure\n')
+		redoAllCalc <- F
+		skipParMLE <- F
+		cat('Found greater likelihood pars in sampling, rerunning with fit procedure\n')
 	} else {
+		cat('No greater likelihood found in sampling.\n')
 		newMaxFound <- F	
 	}
 	
