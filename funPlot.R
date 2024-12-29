@@ -1,6 +1,6 @@
 # funPlotDat ####
 funPlotDat <- function(calDat,calDat.impExtrValue=NULL,defDat=NULL,yaxPad=0.04,
-											 highlightConstrainingVars=F){
+											 highlightConstrainingVars=F,shadowIncompleteYears=F){
 	noImpExtrValues <- F
 	if(is.null(calDat.impExtrValue)){
 		calDat.impExtrValue <- calDat
@@ -65,12 +65,14 @@ funPlotDat <- function(calDat,calDat.impExtrValue=NULL,defDat=NULL,yaxPad=0.04,
 					 xaxs='i',yaxs='i',
 					 xlim=xlims,
 					 ylim=ylims)
-			for(year in incompleteYears){
-				year <- as.numeric(year)
-				rect(year-0.5,par('usr')[3],year+0.5,par('usr')[4],
-						 density=-1,col='gray',border=NA)
+			if(shadowIncompleteYears){
+				for(year in incompleteYears){
+					year <- as.numeric(year)
+					rect(year-0.5,par('usr')[3],year+0.5,par('usr')[4],
+							 density=-1,col='gray',border=NA)
+				}
+				box()
 			}
-			box()
 			if(highlightConstrainingVars){
 				# highlight if this var has its last obs on the boundary of incomplete obs
 				validRange <- funValidRange(calDat[[i]])
