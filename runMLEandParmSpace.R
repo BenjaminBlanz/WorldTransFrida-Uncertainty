@@ -371,9 +371,9 @@ newMaxFound <- T
 		frida_info.toModify$newMax <- NA
 		frida_info.toModify$newMax[idcOfSampleParmsInFridaInfo] <- sampleParms$Max
 		frida_info.toModify$llikeErrorAtNewMin <- NA
-		frida_info.toModify$llikeErrorAtNewMin[idcOfSampleParmsInFridaInfo] <- sampleParms$MinborderLogLikeError
+		frida_info.toModify$llikeErrorAtNewMin[idcOfSampleParmsInFridaInfo] <- sampleParms$MinBorderLogLikeError
 		frida_info.toModify$llikeErrorAtNewMax <- NA
-		frida_info.toModify$llikeErrorAtNewMax[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxborderLogLikeError
+		frida_info.toModify$llikeErrorAtNewMax[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxBorderLogLikeError
 		frida_info.toModify$MinBoundByAuthors <- NA
 		frida_info.toModify$MinBoundByAuthors[idcOfSampleParmsInFridaInfo] <- sampleParms$MinBoundByAuthors
 		frida_info.toModify$MaxBoundByAuthors <- NA
