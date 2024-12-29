@@ -317,7 +317,7 @@ generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 		saveRDS(samplePoints.base,file.path(location.output,'samplePointsBase.RDS'))
 		cat('done\n')
 		if('Climate Units.selected climate case'%in%sampleParms$Variable){
-			samplePoints[,'Climate Units.selected climate case'] <- round('Climate Units.selected climate case')
+			samplePoints[,'Climate Units.selected climate case'] <- round(samplePoints[,'Climate Units.selected climate case'])
 		}
 	}
 	return(samplePoints)
