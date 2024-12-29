@@ -307,6 +307,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 	cat(sprintf('  Run of %i runs split up into %i work units.\n',
 							numSample,length(workUnitBoundaries)-1))
 	chunkTimes <- c()
+	completeRunsSoFar <- 0
 	for(i in 1:(length(workUnitBoundaries)-1)){
 		if(!redoAllCalc && file.exists(file.path(location.output,paste0('workUnit-',i,'.RDS')))){
 			cat(sprintf('\r    Reading existing unit %i',i))
@@ -314,10 +315,12 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 							 error = function(e){},warning=function(w){})
 		} 
 		if(!exists('parOutput')){
-			cat(sprintf('\r(r) Running unit %i: samples %i to %i',
+			cat(sprintf('\r(r) Running unit %i: samples %i to %i. ',
 									i, workUnitBoundaries[i],workUnitBoundaries[i+1]-1))
 			if(length(chunkTimes>1)){
-				cat(sprintf(', average duration per unit so far %i sec (%.2f r/s, %.2f r/s/thread), expect completion in %i sec',
+				cat(sprintf('So far: Complete runs rate %.2f%%'),
+						completeRunsSoFar/(workUnitBoundaries[i+1]-1))
+				cat(sprintf(', time per unit %i s (%.2f r/s, %.2f r/s/thread), expect completion in %i sec',
 										round(mean(chunkTimes,na.rm=T)),
 										length(cl)*chunkSizePerWorker/mean(chunkTimes,na.rm=T),
 										chunkSizePerWorker/mean(chunkTimes,na.rm=T),
@@ -349,9 +352,13 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			cat('\r   ')
 		}
 		cat('\r(l)')
+		chun
 		for(l in 1:length(parOutput)){
 			logLike[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$logLike
 			like[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$like
+			if(is.na(parOutput[[l]]$runDat[[1]][nrow(parOutput[[l]]$runDat[[1]])])){
+				completeRunsSoFar <- completeRunsSoFar + 1
+			}
 		}
 		cat('\r   ')
 		if(plotDatWhileRunning){
