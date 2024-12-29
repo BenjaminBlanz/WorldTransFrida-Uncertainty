@@ -426,13 +426,12 @@ while(newMaxFound){
 	samplePoints.orig <- samplePoints
 	
 	## evaluate sample points ####	
-	clusterRunRetList <- clusterRunFridaForSamplePoints(samplePoints,chunkSizePerWorker,
-																											calDat=calDat,
-																											resSigma=resSigma,
-																											location.output=file.path(location.output,'detectedParmSpace'),
-																											redoAllCalc=redoAllCalc,
-																											plotDatWhileRunning=F)
-	logLikes <- clusterRunRetList$logLike
+	logLikes <- clusterRunFridaForSamplePoints(samplePoints,chunkSizePerWorker,
+																						 calDat=calDat,
+																						 resSigma=resSigma,
+																						 location.output=file.path(location.output,'detectedParmSpace'),
+																						 redoAllCalc=redoAllCalc,
+																						 plotDatWhileRunning=F)
 	logLikes[logLikes==-Inf] <- -.Machine$double.xmax
 	density(logLikes,main='Kernel density estimate of log likelihoods of sample points',
 					xlab='log likelihood')
