@@ -280,7 +280,6 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 	numSample <- nrow(samplePoints)
 	logLike <- rep(NA,numSample)
 	names(logLike) <- 1:numSample
-	names(like) <- 1:numSample
 	numWorkers <- length(cl)
 	workUnitBoundaries <- seq(1,numSample,chunkSizePerWorker*numWorkers)
 	# in case the chunkSize is not a perfect divisor of the numSample, add numSample as the 
