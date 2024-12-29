@@ -410,6 +410,7 @@ newMaxFound <- T
 	# stop before legacy code that still needs to be ported
 	sampleParms <- prepareSampleParms()
 	parVect <- sampleParms$Value
+	names(parVect) <- rownames(sampleParms)
 	maxLLike <- -negLLike(parVect)
 	if(-baseNegLL!=maxLLike){stop('call ghostbusters\n')}
 	

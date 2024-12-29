@@ -16,7 +16,16 @@ if(exists('cl')&&try(clusterEvalQ(cl,1+1)[[1]],silent=T)==2){
 	gobble <- clusterEvalQ(cl,tools::psnice(value=15))
 	gobble <- clusterExport(cl,list('location.output','baseWD',
 																	'chunkSizePerWorker','workDirBasename'))
-	gobble <- clusterEvalQ(cl,source(file.path(baseWD,'initialise.R')))
+	gobble <- clusterEvalQ(cl,suppressPackageStartupMessages({
+		library(Rmpfr,quietly=T,warn.conflicts = F) # use to calculate the likelihood from loglikelihood
+		library(optimx,quietly=T,warn.conflicts = F)
+		library(tictoc)
+		library(SobolSequence,quietly = T)
+	}))
+	gobble <- clusterEvalQ(cl,source(file.path(baseWD,'config.R')))
+	gobble <- clusterEvalQ(cl,source(file.path(baseWD,'funRunFRIDA.R')))
+	gobble <- clusterEvalQ(cl,source(file.path(baseWD,'funPlot.R')))
+	gobble <- clusterEvalQ(cl,source(file.path(baseWD,'funParmSpace.R')))
 } else {
 	# cluster setup ####
 	cat('cluster setup...')
