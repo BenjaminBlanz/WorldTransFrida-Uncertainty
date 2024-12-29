@@ -96,7 +96,9 @@ responseTolerance <- 0.01
 frida_info <- read.csv('frida_info.csv')
 
 newMaxFound <- T
+iterationNewMax <-0
 while(newMaxFound){
+	iterationNewMax <- iterationNewMax+1
 	cat('running fit procedure...')
 	# Optimisation of parameters (min neg log likelihood) is performed including
 	# the covariance properties. The evaluation of likelihood of each of the parameters
@@ -433,10 +435,16 @@ while(newMaxFound){
 																						 redoAllCalc=redoAllCalc,
 																						 plotDatWhileRunning=F)
 	logLikes[logLikes==-Inf] <- -.Machine$double.xmax
-	density(logLikes,main='Kernel density estimate of log likelihoods of sample points',
-					xlab='log likelihood')
-	abline(v=maxLLike)
-	mtext(3,1,'Vertical line is best guess of maximum likelihood')
+	if(plotWhileRunning){
+		plot(density(logLikes),main='Kernel density estimate of log likelihoods of sample points',
+						xlab='log likelihood')
+		abline(v=maxLLike)
+		mtext(3,1,'Vertical line is best guess of maximum likelihood')
+		dev.print(pdf,width=10,
+							height=10,
+							unit='cm',res=150,
+							file.path(location.output,paste0('logLikesDensity-',iterationNewMax,'.pdf')))
+	}
 	
 	maxInd <- which.max(loglikes, na.rm=T)
 	if(logLikes[maxInd] > maxLLike){
