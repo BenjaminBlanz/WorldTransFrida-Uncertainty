@@ -98,7 +98,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 	idcToMod.base <- idcToMod
 	for(idcsToMod.i in 2:length(idcToMod.base)){
 		idcToMod <- idcToMod.base[c(1:idcsToMod.i)]
-		if(trace>0){
+		if(trace>0&&!ceterisParibusPars){
 			cat('Running with idcToMod ',idcToMod,'\n')
 		}
 		par.val <- parVect[parIdx]
@@ -123,7 +123,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 					if(par.val<=bounds[parIdx,1]){
 						return(bounds[parIdx,1])
 					}
-					root.range <- c(par.val-bounds[parIdx,1],par.val)
+					root.range <- c(bounds[parIdx,1],par.val)
 				} else {
 					root.range <- c(par.val-abs(par.val)*10,par.val)
 				}
@@ -133,9 +133,9 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 			if(((likeGoalDiffFun(root.range[1],parVect,parIdx,lpdensEps,...)>0)-
 					(likeGoalDiffFun(root.range[2],parVect,parIdx,lpdensEps,...)>0))==0){
 				if(max){
-					root.range <- c(par.val,par.val+abs(par.val)*0.001)
+					root.range <- c(par.val,par.val+parscale[parIdx])
 				} else {
-					root.range <- c(par.val-abs(par.val)*0.001,par.val)
+					root.range <- c(par.val-parscale[parIdx],par.val)
 				}
 				par.val.old <-par.val
 				par.val <- secant(likeGoalDiffFun,
