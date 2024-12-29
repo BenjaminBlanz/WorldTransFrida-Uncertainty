@@ -313,7 +313,6 @@ newMaxFound <- T
 		colnames(notDeterminedBorders) <- c('Min','Max')
 		borderLogLikeError <- notDeterminedBorders
 		border.coefs <- notDeterminedBorders
-		border.coefs.orig <- notDeterminedBorders
 		for(direction in c('Min','Max')){
 			cat(sprintf('  determining %s par values...',tolower(direction)))
 			clusterExport(cl,list('calDat','treatVarsAsIndep'))
@@ -328,7 +327,6 @@ newMaxFound <- T
 			names(border.coefs[,direction]) <- names(parVect)
 			# fallback values in case borders could not be determined:
 			notDeterminedBorders[,direction] <- (is.infinite(border.coefs[,direction])+(parVect==border.coefs[,direction]))>=1
-			border.coefs.orig[,direction] <- border.coefs[,direction]
 			border.coefs[,direction][notDeterminedBorders[,direction]] <- sampleParms[[direction]][notDeterminedBorders[,direction]]
 			cat(sprintf('done. %i failures\n',sum(notDeterminedBorders[,direction])))
 			write.csv(notDeterminedBorders,file.path(location.output,'notDeterminedBorders.csv'))
@@ -349,17 +347,9 @@ newMaxFound <- T
 				}
 			}
 			cat('\nsaving...')
-			sampleParms[[paste0('old',direction)]] <- sampleParms[[direction]]
-			sampleParms[[paste0(direction,'borderLogLikeError')]] <- borderLogLikeError[,direction] 
+			sampleParms[[paste0(direction,'BorderLogLikeError')]] <- borderLogLikeError[,direction] 
 			sampleParms[[paste0(direction,'NotDeterminedBorder')]] <- notDeterminedBorders[,direction]
-			sampleParms[[paste0(direction,'ResultOfBorderSearch')]] <- border.coefs.orig[,direction]
-			if(direction=='Min'){
-				sampleParms[[direction]] <- pmax(border.coefs[,direction],sampleParms[[direction]])
-				sampleParms[[paste0(direction,'borderSearchOverriddenByParmBounds')]] <- border.coefs.orig[,direction] < sampleParms[[direction]]
-			} else {
-				sampleParms[[direction]] <- pmin(border.coefs[,direction],sampleParms[[direction]])
-				sampleParms[[paste0(direction,'borderSearchOverriddenByParmBounds')]] <- border.coefs.orig[,direction] > sampleParms[[direction]]
-			}
+			sampleParms[[paste0(direction,'BoundByAuthors')]] <- border.coefs==parBounds[,if(direction=='Min'){1}else{2}]
 			write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
 			saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
 			cat('done\n')	
@@ -380,14 +370,10 @@ newMaxFound <- T
 		frida_info.toModify$llikeErrorAtNewMin[idcOfSampleParmsInFridaInfo] <- sampleParms$MinborderLogLikeError
 		frida_info.toModify$llikeErrorAtNewMax <- NA
 		frida_info.toModify$llikeErrorAtNewMax[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxborderLogLikeError
-		frida_info.toModify$minParBoundsBinding <- NA
-		frida_info.toModify$minParBoundsBinding[idcOfSampleParmsInFridaInfo] <- sampleParms$MinborderSearchOverriddenByParmBounds
-		frida_info.toModify$maxParBoundsBinding <- NA
-		frida_info.toModify$maxParBoundsBinding[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxborderSearchOverriddenByParmBounds
-		frida_info.toModify$newMinParmSearch <- NA
-		frida_info.toModify$newMinParmSearch[idcOfSampleParmsInFridaInfo] <- sampleParms$MinResultOfBorderSearch
-		frida_info.toModify$newMaxParmSearch <- NA
-		frida_info.toModify$newMaxParmSearch[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxResultOfBorderSearch
+		frida_info.toModify$MinBoundByAuthors <- NA
+		frida_info.toModify$MinBoundByAuthors[idcOfSampleParmsInFridaInfo] <- sampleParms$MinBoundByAuthors
+		frida_info.toModify$MaxBoundByAuthors <- NA
+		frida_info.toModify$MaxBoundByAuthors[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxBoundByAuthors
 		frida_info.toModify$minNotDetermined <- NA
 		frida_info.toModify$minNotDetermined[idcOfSampleParmsInFridaInfo] <- sampleParms$MinNotDeterminedBorder
 		frida_info.toModify$maxNotDetermined <- NA
