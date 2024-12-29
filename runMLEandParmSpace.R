@@ -175,7 +175,7 @@ newMaxFound <- T
 			sampleParms <- prepareSampleParms(excludeNames = c(excludeParmNames,excludedParmsForBeingIntegers))
 			if(file.exists('parExclusionList.csv')&&file.size('parExclusionList.csv')>0){
 				oldExclusionList <- read.csv('parExclusionList.csv')
-				exclusionList <- unique(c(oldExclusionList$excludedName,excludeParmNames))
+				exclusionList <- data.frame(excludedName=unique(c(oldExclusionList$excludedName,excludeParmNames)))
 			} else {
 				exclusionList <- data.frame(excludedName=excludeParmNames)
 			}
@@ -386,9 +386,8 @@ newMaxFound <- T
 	# Sample the Parmeter Space ####
 	# stop before legacy code that still needs to be ported
 	stop()
-	#TODO make sure the correct parms are included in here> remove irrelevant parameters
 	sampleParms <- prepareSampleParms()
-	
+	parVect <- sampleParms$Value
 	maxLLike <- -negLLike(parVect)
 	if(-baseNegLL!=maxLLike){stop('call ghostbusters\n')}
 	
@@ -408,8 +407,8 @@ newMaxFound <- T
 	clusterRunRetList <- clusterRunFridaForSamplePoints(samplePoints,chunkSizePerWorker,
 																											calDat=calDat,
 																											resSigma=resSigma,
-																											file.path(location.output,'detectedParmSpace'),
-																											redoAllCalc,
+																											location.output=file.path(location.output,'detectedParmSpace'),
+																											redoAllCalc=redoAllCalc,
 																											plotDatWhileRunning=F)
 	logLikes <- clusterRunRetList$logLike
 	logLikes[logLikes==-Inf] <- -.Machine$double.xmax

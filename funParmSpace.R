@@ -115,9 +115,10 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 						return(bounds[parIdx,2])
 					}
 					root.range <- c(par.val,bounds[parIdx,2])
+					bound <- bounds[parIdx,2]
 				} else {
 					root.range <- c(par.val,par.val+abs(par.val)*10)
-					bound <- bounds[parIdx,2]
+					bound <- NULL
 				}
 			} else { # Minimizing
 				if(!is.null(bounds)){
@@ -125,9 +126,10 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 						return(bounds[parIdx,1])
 					}
 					root.range <- c(bounds[parIdx,1],par.val)
+					bound <- bounds[parIdx,1]
 				} else {
 					root.range <- c(par.val-abs(par.val)*10,par.val)
-					bound <- bounds[parIdx,1]
+					bound <- NULL
 				}
 			}
 			#if there is no sign change between the endpoints of root.range, use secant's
@@ -212,7 +214,11 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 }
 
 
-secant <- function(fun, x0, x1, tol=1e-07, niter=1e4, doWarn=T, trace=0, bound=sign(x1-x0)*Inf,...){
+secant <- function(fun, x0, x1, tol=1e-07, niter=1e4, doWarn=T, trace=0,
+									 bound=NULL,...){
+	if(is.null(bound)){
+		bound <- sign(x1-x0)*Inf
+	}
 	for ( i in 1:niter ) {
 		# cat(sprintf('x0=%10.2e x1=%10.2e',x0,x1))
 		x2 <- x1-fun(x1,...)*(x1-x0)/(fun(x1,...)-fun(x0,...))
