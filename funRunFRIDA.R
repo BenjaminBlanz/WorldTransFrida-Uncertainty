@@ -6,7 +6,6 @@ suppressPackageStartupMessages(require(Rmpfr)) # use to calculate the likelihood
 
 # prepareSampleParms ####
 prepareSampleParms <- function(excludeNames=c()){
-	#TODO: Deal with the climateCase parameter 1:100 integer!
 	cat('Specify sampling parameters...')
 	# read in the parameters in frida that have ranges defined
 	frida_info <- read.csv("frida_info.csv")
@@ -35,6 +34,12 @@ prepareSampleParms <- function(excludeNames=c()){
 		excludeIdc <- unique(c(invalidLines,excludedIdc))
 		sampleParms <- sampleParms[-excludedIdc,]
 	}
+	# add the climate case
+	newIdx <- nrow(sampleParms)+1
+	sampleParms[newIdx,c('Variable','Value','Min','Max')] <- c('Climate Units.selected climate case',37,1,100)
+	sampleParmsRowNames <- rownames(sampleParms)
+	sampleParmsRowNames[newIdx] <- as.character(as.numeric(sampleParmsRowNames[newIdx-1])+1)
+	rownames(sampleParms) <- sampleParmsRowNames
 	cat('done\n')
 	return(sampleParms)
 }
@@ -82,7 +87,7 @@ runFridaParmsByIndex <- function(runid){
 			writeFRIDAInput(sampleParms$Variable,samplePoints[i,])
 			system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
 									 file.path(location.frida,'FRIDA.stmx')),
-						 ignore.stdout = T,ignore.stderr = F,wait = T)
+						 ignore.stdout = T,ignore.stderr = T,wait = T)
 			runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
 			colnames(runDat) <- cleanNames(colnames(runDat))
 			rownames(runDat) <- runDat$year
@@ -103,6 +108,7 @@ runFridaParmsByIndex <- function(runid){
 	}
 	return(retlist)
 }
+# runFridaParmsBySamplePoints ####
 # the same as above, but runs all samples in samplePoints for pre allocated
 # samplePoints per worker.
 runFridaParmsBySamplePoints <- function(saveOutPutDontReturn=FALSE,workUnit=NULL){
@@ -124,6 +130,7 @@ runFridaDefaultParms <- function(){
 	names(parVect) <- frida_info$Variable
 	return(runFRIDASpecParms(parVect))
 }
+
 # runFRIDASpecParms ####
 runFRIDASpecParms <- function(parVect){
 	if(is.null(names(parVect))){
@@ -258,40 +265,125 @@ chunk <- function(x,n){
 	split(x, cut(seq_along(x), n, labels = FALSE)) 
 }
 
-# funStretchSamplePoints ####
-funStretchSamplePoints <- function(samplePoints,sampleParms,restretchSamplePoints=F){
-	samplePoints <- t(samplePoints)
-	if(!restretchSamplePoints){
-		# Substract the min and multiply by max-min to strecth the unit interval to the
-		# actual sampling range.
-		samplePointsStretched <- samplePoints*(sampleParms$Max-sampleParms$Min) + sampleParms$Min
-		# plot(samplePointsStretched[1,],samplePointsStretched[2,])
-		# abline(v=sampleParms$Value[1],h=sampleParms$Value[2],col='red')
-		samplePoints <- samplePointsStretched
-		rm(samplePointsStretched)
-	} else {
-		# stretch the sample points to be left and right of the mean centre value of the
-		# description file
-		lowIdc <- samplePoints<0.5
-		highIdc <- samplePoints>=0.5
-		samplePointsLow <- samplePointsHigh <- samplePoints
-		samplePointsLow[highIdc] <- NA
-		samplePointsLow <- samplePointsLow*2*(sampleParms$Value-sampleParms$Min) + sampleParms$Min
-		samplePointsHigh[lowIdc] <- NA
-		samplePointsHigh <- (samplePoints-0.5)*2*(sampleParms$Max-sampleParms$Value) + sampleParms$Value
-		samplePointsReStretched <- samplePoints
-		samplePointsReStretched[lowIdc] <- samplePointsLow[lowIdc]
-		samplePointsReStretched[highIdc] <- samplePointsHigh[highIdc]
-		# plot(samplePointsReStretched[1,],samplePointsReStretched[2,])
-		# abline(v=sampleParms$Value[1],h=sampleParms$Value[2],col='red')
-		samplePoints <- samplePointsReStretched
-		rm(samplePointsHigh,samplePointsLow,samplePointsReStretched,lowIdc,highIdc)
+# cluster run ####
+clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
+																					 location.output,
+																					 calDat,resSigma,
+																					 redoAllCalc=F,
+																					 plotDatWhileRunning=F){
+	cat('cluster run...\n')
+	dir.create(location.output,showWarnings = F,recursive = T)
+	numSample <- nrow(samplePoints)
+	logLike <- rep(NA,numSample)
+	like <- rep(NA,numSample)
+	names(logLike) <- 1:numSample
+	names(like) <- 1:numSample
+	numWorkers <- length(cl)
+	workUnitBoundaries <- seq(1,numSample,chunkSizePerWorker*numWorkers)
+	# in case the chunkSize is not a perfect divisor of the numSample, add numSample as the 
+	# final boundary
+	if(workUnitBoundaries[length(workUnitBoundaries)]!=numSample){
+		workUnitBoundaries <- c(workUnitBoundaries,numSample)
 	}
-	# back to vars in cols and samples in rows
-	samplePoints<- t(samplePoints)
-	rownames(samplePoints) <- 1:nrow(samplePoints)
-	colnames(samplePoints) <- sampleParms[,1]
-	return(samplePoints)
+	# add one to the last work unit boundary, as during running we always deduct one from the next boundary
+	workUnitBoundaries[length(workUnitBoundaries)] <- numSample+1
+	
+	# initialise  cluster
+	baseWD <- getwd()
+	clusterExport(cl,list('location.output','baseWD','sampleParms',
+												'chunkSizePerWorker','runFridaParmsBySamplePoints',
+												'calDat','resSigma',
+												'runFridaParmsByIndex'))
+	# plot setup 
+	if(plotDatWhileRunning){
+		subPlotLocations <- funPlotDat(calDat,calDat.impExtrValue,yaxPad = yaxPad,
+																	 shadowIncompleteYears=F)
+	}
+	# running
+	cat(sprintf('  Run of %i runs split up into %i work units.\n',
+							numSample,length(workUnitBoundaries)-1))
+	chunkTimes <- c()
+	for(i in 1:(length(workUnitBoundaries)-1)){
+		if(!redoAllCalc && file.exists(file.path(location.output,paste0('workUnit-',i,'.RDS')))){
+			cat(sprintf('\r    Reading existing unit %i',i))
+			tryCatch({parOutput <- readRDS(file.path(location.output,paste0('workUnit-',i,'.RDS')))},
+							 error = function(e){},warning=function(w){})
+		} 
+		if(!exists('parOutput')){
+			cat(sprintf('\r(r) Running unit %i: samples %i to %i',
+									i, workUnitBoundaries[i],workUnitBoundaries[i+1]-1))
+			if(length(chunkTimes>1)){
+				cat(sprintf(', average duration per unit so far %i sec (%.2f r/s, %.2f r/s/thread), expect completion in %i sec',
+										round(mean(chunkTimes,na.rm=T)),
+										length(cl)*chunkSizePerWorker/mean(chunkTimes,na.rm=T),
+										chunkSizePerWorker/mean(chunkTimes,na.rm=T),
+										round(mean(chunkTimes,na.rm=T))*(length(workUnitBoundaries)-i)))
+			}
+			tic()
+			workUnit <- workUnitBoundaries[i]:(workUnitBoundaries[i+1]-1)
+			workerWorkUnits <- chunk(workUnit,numWorkers)
+			# write the samplePoints of the work units to the worker directories
+			for(w.i in workers){
+				if(w.i <= length(workerWorkUnits) && !is.null(workerWorkUnits[[w.i]])){
+					saveRDS(samplePoints[workerWorkUnits[[w.i]],],
+									file.path('workerDirs',paste0(workDirBasename,w.i),'samplePoints.RDS'))
+				} else {
+					saveRDS(samplePoints[c(),],
+									file.path('workerDirs',paste0(workDirBasename,w.i),'samplePoints.RDS'))
+				}
+			}
+			gobble <- clusterEvalQ(cl,{
+				samplePoints <- readRDS('samplePoints.RDS')
+			})
+			parOutput <- unlist(
+				clusterEvalQ(cl,runFridaParmsBySamplePoints()),
+				recursive = F)
+			timing <- toc(quiet=T)
+			chunkTimes[i] <- timing$toc-timing$tic
+			cat('\r(s)')
+			saveRDS(parOutput,file.path(location.output,paste0('workUnit-',i,'.RDS')))
+			cat('\r   ')
+		}
+		cat('\r(l)')
+		for(l in 1:length(parOutput)){
+			logLike[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$logLike
+			like[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$like
+		}
+		cat('\r   ')
+		if(plotDatWhileRunning){
+			cat('\r(p)')
+			for(dat.i in 1:ncol(calDat)){
+				par(mfg = which(subPlotLocations==dat.i,arr.ind = T))
+				xlims <- c(min(as.numeric(rownames(calDat)))-0.5,
+									 max(as.numeric(rownames(calDat)))+0.5)
+				yrange <- range(calDat[[dat.i]],na.rm=T)
+				ylims <- c(yrange[1]-abs(diff(yrange))*yaxPad,
+									 yrange[2]+abs(diff(yrange))*yaxPad)
+				plot(rownames(calDat),calDat[[dat.i]],type='n',
+						 xaxt='n',yaxt='n',
+						 xaxs='i',yaxs='i',
+						 xlim=xlims,
+						 ylim=ylims)
+				for(l in 1:length(parOutput)){
+					lines(rownames(parOutput[[l]]$runDat),parOutput[[l]]$runDat[[dat.i]],
+								col=i)
+					# col=alpha(i,min(0.01,max(1,0.01*parOutput[[l]]$like/.Machine$double.eps))))
+				}
+				cat('\r   ')
+			}
+		}
+		rm(parOutput)
+	}
+	if(length(chunkTimes)==0){
+		cat('\r    all runs read, no calculation necessary.                                \n')
+	} else {
+		cat(sprintf('\r    runs completed average chunk time %i sec (%.2f r/s, %.2f r/s/thread), over all run time %i sec %s\n',
+								round(mean(chunkTimes,na.rm=T)),
+								length(cl)*chunkSizePerWorker/mean(chunkTimes,na.rm=T),
+								chunkSizePerWorker/mean(chunkTimes,na.rm=T),
+								round(sum(chunkTimes,na.rm=T)),
+								'                                                                             '))
+	}
+	return(list(logLike=logLike,like=like))
 }
-
 
