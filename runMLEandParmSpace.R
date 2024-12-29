@@ -446,7 +446,7 @@ while(newMaxFound){
 							file.path(location.output,paste0('logLikesDensity-',iterationNewMax,'.pdf')))
 	}
 	
-	maxInd <- which.max(loglikes, na.rm=T)
+	maxInd <- which.max(loglikes)
 	if(logLikes[maxInd] > maxLLike){
 		parVect <- samplePoints[maxInd,]
 		newMaxFound <- T
