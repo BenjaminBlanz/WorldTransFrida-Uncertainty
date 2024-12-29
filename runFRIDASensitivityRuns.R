@@ -9,8 +9,6 @@ source('initialise.R')
 # config ####
 cat('Config...')
 source('config.R')
-dir.create(location.output,showWarnings=F,recursive=T)
-file.copy('config.R',location.output)
 location.output.base <- location.output
 cat('done\n')
 
@@ -69,54 +67,16 @@ sampleParms.orig <- sampleParms
 saveRDS(sampleParms,file.path(location.output,'sampleParms.RDS'))
 
 # generate sobol sequence ####
-if(file.exists(file.path(location.output,'samplePoints.RDS'))){
-	cat('Reading sampling points...')
-	samplePoints <- readRDS(file.path(location.output,'samplePoints.RDS'))
-	samplePoints.base <- readRDS(file.path(location.output,'samplePointsBase.RDS'))
-	cat('done\n')
-} else {
-	cat('Generate sampling points using sobol sequence...')
-	# sobolSequence.points generates points on the unit interval for each var
-	# transformed, so vars are in rows samples in cols, makes the next steps easier
-	samplePoints.base <- sobolSequence.points(nrow(sampleParms),31,numSample) 
-	if(sum(duplicated(samplePoints.base))>0){
-		stop('Not enough unique sample points. Check the sobol generation\n')
-	}
-	samplePoints <- funStretchSamplePoints(samplePoints.base,sampleParms,restretchSamplePoints)
-	# samplePoints <- rbind(samplePoints, t(sampleParms$Value))
-	saveRDS(samplePoints,file.path(location.output,'samplePoints.RDS'))
-	saveRDS(samplePoints.base,file.path(location.output,'samplePointsBase.RDS'))
-	cat('done\n')
-}
+samplePoints <- generateSobolSequenceForSampleParms(sampleParms,numSample,
+																										restretchSamplePoints,
+																										redoAllCalc)
 samplePoints.orig <- samplePoints
 
 # run FRIDA with the samples ####
-logLike <- rep(NA,numSample)
-like <- rep(NA,numSample)
-names(logLike) <- 1:numSample
-names(like) <- 1:numSample
+
 
 ## cluster setup ####
-cat('cluster setup...')
-baseWD <- getwd()
-workDirBasename <- 'workDir_'
-# start cluster
-cl <- makeForkCluster(numWorkers,renice=15)
-workers <- 1:length(cl)
-# make working directories
-gobble <- clusterApply(cl,workers,function(i){
-	workerID <- i
-	dir.create(file.path('workerDirs',paste0(workDirBasename,i)),showWarnings = F,recursive = T)
-	setwd(file.path('workerDirs',paste0(workDirBasename,i)))
-	})
-#clusterEvalQ(cl,getwd())
-# copy over the model and simulator
-gobble <- clusterApply(cl,workers,function(i){
-	system(paste('cp -r',file.path(baseWD,location.frida),getwd()))})
-gobble <- clusterApply(cl,workers,function(i){
-	system(paste('cp -r',file.path(baseWD,location.stella),getwd()))})
-cat('done\n')
-
+source('clusterHelp.R')
 
 ## tighten parms ####
 location.output <- file.path(location.output.base,'BaseParmRange')
@@ -124,114 +84,15 @@ dir.create(location.output,showWarnings = F,recursive = T)
 doneChangingParms <- F
 tight.i <- 0
 while(!doneChangingParms){
-	## plot setup ####
-	if(plotWhileRunning&&plotDatWhileRunning){
-		subPlotLocations <- funPlotDat(calDat,calDat.impExtrValue,yaxPad = yaxPad)
-	}
 	## cluster run ####
-	cat('cluster run...\n')
-	workUnitBoundaries <- seq(1,numSample,chunkSizePerWorker*numWorkers)
-	# in case the chunkSize is not a perfect divisor of the numSample, add numSample as the 
-	# final boundary
-	if(workUnitBoundaries[length(workUnitBoundaries)]!=numSample){
-		workUnitBoundaries <- c(workUnitBoundaries,numSample)
-	}
-	# add one to the last work unit boundary, as during running we always deduct one from the next boundary
-	workUnitBoundaries[length(workUnitBoundaries)] <- numSample+1
-	
-	### initialise  cluster ####
-	cat('  initialising cluster global env...')
-	baseWD <- getwd()
-	clusterExport(cl,list('location.output','baseWD','sampleParms',
-												'chunkSizePerWorker','runFridaParmsBySamplePoints',
-												'calDat','resSigma',
-												'runFridaParmsByIndex'))
-	cat('done\n')
-	### running ####
-	cat(sprintf('  Run of %i runs split up into %i work units.\n',
-							numSample,length(workUnitBoundaries)-1))
-	chunkTimes <- c()
-	for(i in 1:(length(workUnitBoundaries)-1)){
-		if(file.exists(file.path(location.output,paste0('workUnit-',i,'.RDS')))){
-			cat(sprintf('\r    Reading existing unit %i',i))
-			tryCatch({parOutput <- readRDS(file.path(location.output,paste0('workUnit-',i,'.RDS')))},
-							 error = function(e){},warning=function(w){})
-		} 
-		if(!exists('parOutput')){
-			cat(sprintf('\r(r) Running unit %i: samples %i to %i',
-									i, workUnitBoundaries[i],workUnitBoundaries[i+1]-1))
-			if(length(chunkTimes>1)){
-				cat(sprintf(', average duration per unit so far %i sec (%.2f r/s, %.2f r/s/thread), expect completion in %i sec',
-										round(mean(chunkTimes,na.rm=T)),
-										length(cl)*chunkSizePerWorker/mean(chunkTimes,na.rm=T),
-										chunkSizePerWorker/mean(chunkTimes,na.rm=T),
-										round(mean(chunkTimes,na.rm=T))*(length(workUnitBoundaries)-i)))
-			}
-			tic()
-			workUnit <- workUnitBoundaries[i]:(workUnitBoundaries[i+1]-1)
-			workerWorkUnits <- chunk(workUnit,numWorkers)
-			# write the samplePoints of the work units to the worker directories
-			for(w.i in workers){
-				if(w.i <= length(workerWorkUnits) && !is.null(workerWorkUnits[[w.i]])){
-					saveRDS(samplePoints[workerWorkUnits[[w.i]],],
-									file.path('workerDirs',paste0(workDirBasename,w.i),'samplePoints.RDS'))
-				} else {
-					saveRDS(samplePoints[c(),],
-									file.path('workerDirs',paste0(workDirBasename,w.i),'samplePoints.RDS'))
-				}
-			}
-			gobble <- clusterEvalQ(cl,{
-				samplePoints <- readRDS('samplePoints.RDS')
-			})
-			parOutput <- unlist(
-				clusterEvalQ(cl,runFridaParmsBySamplePoints()),
-				recursive = F)
-			timing <- toc(quiet=T)
-			chunkTimes[i] <- timing$toc-timing$tic
-			cat('\r(s)')
-			saveRDS(parOutput,file.path(location.output,paste0('workUnit-',i,'.RDS')))
-			cat('\r   ')
-		}
-		cat('\r(l)')
-		for(l in 1:length(parOutput)){
-			logLike[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$logLike
-			like[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$like
-		}
-		cat('\r   ')
-		if(plotWhileRunning&&plotDatWhileRunning){
-			cat('\r(p)')
-			for(dat.i in 1:ncol(calDat)){
-				par(mfg = which(subPlotLocations==dat.i,arr.ind = T))
-				xlims <- c(min(as.numeric(rownames(calDat)))-0.5,
-									 max(as.numeric(rownames(calDat)))+0.5)
-				yrange <- range(calDat[[dat.i]],na.rm=T)
-				ylims <- c(yrange[1]-abs(diff(yrange))*yaxPad,
-									 yrange[2]+abs(diff(yrange))*yaxPad)
-				plot(rownames(calDat),calDat[[dat.i]],type='n',
-						 xaxt='n',yaxt='n',
-						 xaxs='i',yaxs='i',
-						 xlim=xlims,
-						 ylim=ylims)
-				for(l in 1:length(parOutput)){
-					lines(rownames(parOutput[[l]]$runDat),parOutput[[l]]$runDat[[dat.i]],
-								col=i)
-								# col=alpha(i,min(0.01,max(1,0.01*parOutput[[l]]$like/.Machine$double.eps))))
-				}
-				cat('\r   ')
-			}
-		}
-		rm(parOutput)
-	}
-	if(length(chunkTimes)==0){
-		cat('\r    all runs read, no calculation necessary.                                \n')
-	} else {
-		cat(sprintf('\r    runs completed average chunk time %i sec (%.2f r/s, %.2f r/s/thread), over all run time %i sec %s\n',
-								round(mean(chunkTimes,na.rm=T)),
-								length(cl)*chunkSizePerWorker/mean(chunkTimes,na.rm=T),
-								chunkSizePerWorker/mean(chunkTimes,na.rm=T),
-								round(sum(chunkTimes,na.rm=T)),
-								'                                                                             '))
-	}
+	clusterRunRetList <- clusterRunFridaForSamplePoints(samplePoints,chunkSizePerWorker,
+																											calDat=calDat,
+																											resSigma=resSigma,
+																											location.output,
+																											redoAllCalc,
+																											plotDatWhileRunning)
+	logLike <- clusterRunRetList$logLike
+	like <- clusterRunRetList$like
 	
 	### save Likelihoods and sample points ####
 	cat(sprintf('  Saving run data...'))
