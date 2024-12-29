@@ -97,8 +97,7 @@ runFridaParmsByIndex <- function(runid){
 			rownames(runDat) <- runDat$year
 			runDat <- runDat[,-1]
 			resDat <- calDat-runDat[1:nrow(calDat),]
-			logLike <- funLogLikelihood(resDat[complete.cases(resDat),],resSigma)
-			like <- exp(logLike)
+			logLike <- funLogLikelihood(resDat,resSigma)
 			# If the logLike is not NA but the run did not complete assign 
 			# lowest nonzero value. We use this when narrowing the parms space
 			if(is.na(runDat[[1]][nrow(runDat)])||like==0){
@@ -106,8 +105,7 @@ runFridaParmsByIndex <- function(runid){
 			}
 			retlist[[i]] <- (list(parmsIndex=as.numeric(row.names(samplePoints)[i]),
 														runDat=runDat,
-														logLike=logLike,
-														like=like))
+														logLike=logLike))
 		}
 	}
 	return(retlist)
@@ -274,7 +272,9 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 																					 location.output,
 																					 calDat,resSigma,
 																					 redoAllCalc=F,
-																					 plotDatWhileRunning=F){
+																					 plotDatWhileRunning=F,
+																					 plotPerChunk=T,
+																					 yaxPad=0.2){
 	cat('cluster run...\n')
 	dir.create(location.output,showWarnings = F,recursive = T)
 	numSample <- nrow(samplePoints)
@@ -299,9 +299,10 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 												'calDat','resSigma',
 												'runFridaParmsByIndex'))
 	# plot setup 
-	if(plotDatWhileRunning){
+	if(plotDatWhileRunning & !plotPerChunk){
 		subPlotLocations <- funPlotDat(calDat,calDat.impExtrValue,yaxPad = yaxPad,
-																	 shadowIncompleteYears=F)
+																	 shadowIncompleteYears=F,
+																	 yaxPad=yaxPad)
 	}
 	# running
 	cat(sprintf('  Run of %i runs split up into %i work units.\n',
@@ -317,9 +318,11 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 		if(!exists('parOutput')){
 			cat(sprintf('\r(r) Running unit %i: samples %i to %i. ',
 									i, workUnitBoundaries[i],workUnitBoundaries[i+1]-1))
+			if((workUnitBoundaries[i]-1)>0){
+				cat(sprintf('So far: Complete runs %i (%.1f%%)',
+										completeRunsSoFar,100*completeRunsSoFar/(workUnitBoundaries[i]-1)))
+			}
 			if(length(chunkTimes>1)){
-				cat(sprintf('So far: Complete runs rate %.2f%%'),
-						completeRunsSoFar/(workUnitBoundaries[i+1]-1))
 				cat(sprintf(', time per unit %i s (%.2f r/s, %.2f r/s/thread), expect completion in %i sec',
 										round(mean(chunkTimes,na.rm=T)),
 										length(cl)*chunkSizePerWorker/mean(chunkTimes,na.rm=T),
@@ -354,8 +357,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 		cat('\r(l)')
 		for(l in 1:length(parOutput)){
 			logLike[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$logLike
-			like[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$like
-			if(is.na(parOutput[[l]]$runDat[[1]][nrow(parOutput[[l]]$runDat[[1]])])){
+			if(!is.na(parOutput[[l]]$runDat[[1]][length(parOutput[[l]]$runDat[[1]])])){
 				completeRunsSoFar <- completeRunsSoFar + 1
 			}
 		}
@@ -377,23 +379,33 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 				for(l in 1:length(parOutput)){
 					lines(rownames(parOutput[[l]]$runDat),parOutput[[l]]$runDat[[dat.i]],
 								col=i)
-					# col=alpha(i,min(0.01,max(1,0.01*parOutput[[l]]$like/.Machine$double.eps))))
+					# col=alpha(i,0.1))
 				}
 				cat('\r   ')
 			}
 		}
 		rm(parOutput)
 	}
+	if(plotDatWhileRunning){
+		cat(sprintf('  Saving figure...'))
+		dev.print(png,width=5*ncol(subPlotLocations),
+							height=5*(nrow(subPlotLocations)-1)+5/4,
+							unit='cm',res=150,
+							file.path(location.output,'likelihoodWeightedModelRuns.png'))
+		cat('done\n')
+	}
 	if(length(chunkTimes)==0){
-		cat('\r    all runs read, no calculation necessary.                                \n')
+		cat(sprintf('\r    all runs read, no calculation necessary. Complete runs %i (%.1f%%)                           \n',
+								completeRunsSoFar,100*completeRunsSoFar/numSample))
 	} else {
-		cat(sprintf('\r    runs completed average chunk time %i sec (%.2f r/s, %.2f r/s/thread), over all run time %i sec %s\n',
+		cat(sprintf('\r    complete runs %i (%.2f%%), average chunk time %i sec (%.2f r/s, %.2f r/s/thread), over all run time %i sec %s\n',
+								completeRunsSoFar,100*completeRunsSoFar/numSample,
 								round(mean(chunkTimes,na.rm=T)),
 								length(cl)*chunkSizePerWorker/mean(chunkTimes,na.rm=T),
 								chunkSizePerWorker/mean(chunkTimes,na.rm=T),
 								round(sum(chunkTimes,na.rm=T)),
 								'                                                                             '))
 	}
-	return(list(logLike=logLike,like=like))
+	return(loglike)
 }
 

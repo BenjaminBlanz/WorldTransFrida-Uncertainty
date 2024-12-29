@@ -96,7 +96,7 @@ responseTolerance <- 0.01
 frida_info <- read.csv('frida_info.csv')
 
 newMaxFound <- T
-# while(newMaxFound){
+while(newMaxFound){
 	cat('running fit procedure...')
 	# Optimisation of parameters (min neg log likelihood) is performed including
 	# the covariance properties. The evaluation of likelihood of each of the parameters
@@ -408,7 +408,6 @@ newMaxFound <- T
 	}
 	# Sample the Parmeter Space ####
 	# stop before legacy code that still needs to be ported
-	sampleParms <- prepareSampleParms()
 	parVect <- sampleParms$Value
 	names(parVect) <- rownames(sampleParms)
 	maxLLike <- -negLLike(parVect)
@@ -435,35 +434,14 @@ newMaxFound <- T
 																											plotDatWhileRunning=F)
 	logLikes <- clusterRunRetList$logLike
 	logLikes[logLikes==-Inf] <- -.Machine$double.xmax
-	likes <- clusterRunRetList$like
+	density(logLikes,main='Kernel density estimate of log likelihoods of sample points',
+					xlab='log likelihood')
+	abline(v=maxLLike)
+	mtext(3,1,'Vertical line is best guess of maximum likelihood')
 	
-	
-	stop()
-	
-	if(max(like.arr[maxInd,'llike'],likeMaxVals.max,na.rm = T) > -negLLike(parVect)){
-		parVect <- 
-		if(fitType=='sTime'){
-			jParVect <- c(like.arr[maxInd,1:3],
-										jParVect[4],
-										like.arr[maxInd,4:7],
-										jParVect[9:10])
-		} else if (fitType=='sTime2'||fitType=='sTime3'){
-			jParVect <- c(like.arr[maxInd,1:3],
-										jParVect[4],
-										like.arr[maxInd,4:5],
-										jParVect[7:8])
-		} else if (fitType=='nsplRa0b0'||fitType=='nsplBH'){
-			jParVect <- c(like.arr[maxInd,1:2],
-										jParVect[3])
-		} else if (fitType=='nsplRa0b0MR1'){
-			jParVect <- c(like.arr[maxInd,1],
-										like.arr[maxInd,2:3],
-										jParVect[4])
-		} else if (fitType=='nsplTVRa2b2MR1'){
-			jParVect <- c(like.arr[maxInd,1],
-										like.arr[maxInd,2:7],
-										jParVect[8])
-		}
+	maxInd <- which.max(loglikes, na.rm=T)
+	if(logLikes[maxInd] > maxLLike){
+		parVect <- samplePoints[maxInd,]
 		newMaxFound <- T
 		cat('Found greater likelihood pars in sampling, rerunning fit procedure\n')
 	} else if(runMaxLikeForAllSamples && n.sample.full!=n.sample.runMaxLikeForAllSamples){
@@ -475,4 +453,6 @@ newMaxFound <- T
 	} else {
 		newMaxFound <- F	
 	}
-# }
+	
+	stop()
+}

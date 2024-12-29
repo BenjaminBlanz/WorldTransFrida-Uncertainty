@@ -6,7 +6,11 @@ if(!exists('location.output')){
 }
 
 # do not stop and start the cluster, instead just reinitialise
-if(exists('cl')&&try(clusterEvalQ(cl,1+1)[[1]],silent=T)==2){
+Sys.sleep(1) # prevent race condition if the cluster was busy or sth.
+if(exists('cl')){
+	result <- try(clusterEvalQ(cl,1+1)[[1]],silent=T)
+}
+if(exists('cl')&&is.numeric(result)&&result==2){
 	gobble <- clusterApply(cl,workers,function(i){
 		workerID <<- i
 	})
