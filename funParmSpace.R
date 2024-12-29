@@ -279,4 +279,68 @@ funOrderOfMagnitude <- function(x){
 	return(floor(log10(abs(x))))
 }
 
+# sobol sequence ####
+generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
+																								restretchSamplePoints=F,
+																								ignoreExistingResults=F){
+	if(!ignoreExistingResults && file.exists(file.path(location.output,'samplePoints.RDS'))){
+		cat('Reading sampling points...')
+		samplePoints <- readRDS(file.path(location.output,'samplePoints.RDS'))
+		samplePoints.base <- readRDS(file.path(location.output,'samplePointsBase.RDS'))
+		cat('done\n')
+	} else {
+		cat('Generate sampling points using sobol sequence...')
+		# sobolSequence.points generates points on the unit interval for each var
+		# transformed, so vars are in rows samples in cols, makes the next steps easier
+		samplePoints.base <- sobolSequence.points(nrow(sampleParms),31,numSample) 
+		if(sum(duplicated(samplePoints.base))>0){
+			stop('Not enough unique sample points. Check the sobol generation\n')
+		}
+		samplePoints <- funStretchSamplePoints(samplePoints.base,sampleParms,restretchSamplePoints)
+		# samplePoints <- rbind(samplePoints, t(sampleParms$Value))
+		saveRDS(samplePoints,file.path(location.output,'samplePoints.RDS'))
+		saveRDS(samplePoints.base,file.path(location.output,'samplePointsBase.RDS'))
+		cat('done\n')
+		if('Climate Units.selected climate case'%in%sampleParms$Variable){
+			samplePoints[,'Climate Units.selected climate case'] <- round('Climate Units.selected climate case')
+		}
+	}
+	return(samplePoints)
+}
 
+
+# funStretchSamplePoints ####
+funStretchSamplePoints <- function(samplePoints,sampleParms,restretchSamplePoints=F){
+	samplePoints <- t(samplePoints)
+	if(!restretchSamplePoints){
+		# Substract the min and multiply by max-min to strecth the unit interval to the
+		# actual sampling range.
+		samplePointsStretched <- samplePoints*(sampleParms$Max-sampleParms$Min) + sampleParms$Min
+		# plot(samplePointsStretched[1,],samplePointsStretched[2,])
+		# abline(v=sampleParms$Value[1],h=sampleParms$Value[2],col='red')
+		samplePoints <- samplePointsStretched
+		rm(samplePointsStretched)
+	} else {
+		# stretch the sample points to be left and right of the mean centre value of the
+		# description file
+		lowIdc <- samplePoints<0.5
+		highIdc <- samplePoints>=0.5
+		samplePointsLow <- samplePointsHigh <- samplePoints
+		samplePointsLow[highIdc] <- NA
+		samplePointsLow <- samplePointsLow*2*(sampleParms$Value-sampleParms$Min) + sampleParms$Min
+		samplePointsHigh[lowIdc] <- NA
+		samplePointsHigh <- (samplePoints-0.5)*2*(sampleParms$Max-sampleParms$Value) + sampleParms$Value
+		samplePointsReStretched <- samplePoints
+		samplePointsReStretched[lowIdc] <- samplePointsLow[lowIdc]
+		samplePointsReStretched[highIdc] <- samplePointsHigh[highIdc]
+		# plot(samplePointsReStretched[1,],samplePointsReStretched[2,])
+		# abline(v=sampleParms$Value[1],h=sampleParms$Value[2],col='red')
+		samplePoints <- samplePointsReStretched
+		rm(samplePointsHigh,samplePointsLow,samplePointsReStretched,lowIdc,highIdc)
+	}
+	# back to vars in cols and samples in rows
+	samplePoints<- t(samplePoints)
+	rownames(samplePoints) <- 1:nrow(samplePoints)
+	colnames(samplePoints) <- sampleParms[,1]
+	return(samplePoints)
+}
