@@ -316,6 +316,21 @@ newMaxFound <- T
 		colnames(notDeterminedBorders) <- c('Min','Max')
 		borderLogLikeError <- notDeterminedBorders
 		border.coefs <- notDeterminedBorders
+		
+		manualBorders <- read.csv('frida_external_ranges.csv')
+		if(nrow(manualBorders)>0){
+			for(r.i in 1:nrow(manualBorders)){
+				sp.i <- which(sampleParms$Variable==manualBorders$Variable[r.i])
+				if(!is.na(manualBorders$Min[r.i])){
+					border.coefs[sp.i,'Min'] <- manualBorders$Min[r.i]
+					notDeterminedBorders[sp.i,'Min'] <- FALSE
+				}
+				if(!is.na(manualBorders$Max[r.i])){
+					border.coefs[sp.i,'Max'] <- manualBorders$Max[r.i]
+					notDeterminedBorders[sp.i,'Max'] <- FALSE
+				}
+			}
+		}
 		for(direction in c('Min','Max')){
 			cat(sprintf('  determining %s par values...',tolower(direction)))
 			clusterExport(cl,list('calDat','treatVarsAsIndep'))
@@ -351,10 +366,14 @@ newMaxFound <- T
 				}
 			}
 			cat('\nsaving...')
-			sampleParms[[direction]] <- border.coefs[,direction]
+			if(direction=='Min'){
+				sampleParms[[direction]] <- pmax(border.coefs[,direction],parBounds[,'Min'])
+			} else {
+				sampleParms[[direction]] <- pmin(border.coefs[,direction],parBounds[,'Max'])
+			}
 			sampleParms[[paste0(direction,'BorderLogLikeError')]] <- borderLogLikeError[,direction] 
 			sampleParms[[paste0(direction,'NotDeterminedBorder')]] <- notDeterminedBorders[,direction]
-			sampleParms[[paste0(direction,'BoundByAuthors')]] <- border.coefs[,direction]==parBounds[,if(direction=='Min'){1}else{2}]
+			sampleParms[[paste0(direction,'BoundByAuthors')]] <- border.coefs[,direction]==parBounds[,direction]
 			write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
 			saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
 			cat('done\n')	
