@@ -352,7 +352,6 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			cat('\r   ')
 		}
 		cat('\r(l)')
-		chun
 		for(l in 1:length(parOutput)){
 			logLike[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$logLike
 			like[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$like
