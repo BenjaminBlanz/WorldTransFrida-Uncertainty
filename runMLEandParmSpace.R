@@ -452,10 +452,8 @@ while(newMaxFound){
 		newMaxFound <- T
 		cat('Found greater likelihood pars in sampling, rerunning fit procedure\n')
 	} else if(runMaxLikeForAllSamples && n.sample.full!=n.sample.runMaxLikeForAllSamples){
-		runMaxLikeForAllSamples <- F
 		cat('No greater likelihood found in per sample opt, now rerunning with full samples\n')
 	} else if(runMaxLikeForAllSamples){
-		runMaxLikeForAllSamples <- F
 		cat('No greater likelihood found in per sample opt, now rerunning for fit likelihood\n')
 	} else {
 		newMaxFound <- F	
