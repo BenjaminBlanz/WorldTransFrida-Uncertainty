@@ -109,7 +109,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 					# likeAtMax-likeAtMaxOld > tol &&
 					iter <= maxiter){
 			# find root
-			if(max){
+			if(max){ # Maximizing
 				if(!is.null(bounds)){
 					if(par.val>=bounds[parIdx,2]){
 						return(bounds[parIdx,2])
@@ -117,8 +117,9 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 					root.range <- c(par.val,bounds[parIdx,2])
 				} else {
 					root.range <- c(par.val,par.val+abs(par.val)*10)
+					bound <- bounds[parIdx,2]
 				}
-			} else {
+			} else { # Minimizing
 				if(!is.null(bounds)){
 					if(par.val<=bounds[parIdx,1]){
 						return(bounds[parIdx,1])
@@ -126,6 +127,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 					root.range <- c(bounds[parIdx,1],par.val)
 				} else {
 					root.range <- c(par.val-abs(par.val)*10,par.val)
+					bound <- bounds[parIdx,1]
 				}
 			}
 			#if there is no sign change between the endpoints of root.range, use secant's
@@ -144,6 +146,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 													parIdx=parIdx,
 													lpdensEps=lpdensEps,
 													doWarn = F,
+													bound = bound,
 													trace=trace,
 													niter=niter,...)
 				if(max){
@@ -209,7 +212,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 }
 
 
-secant <- function(fun, x0, x1, tol=1e-07, niter=1e4, doWarn=T, trace=0,...){
+secant <- function(fun, x0, x1, tol=1e-07, niter=1e4, doWarn=T, trace=0, bound=sign(x1-x0)*Inf,...){
 	for ( i in 1:niter ) {
 		# cat(sprintf('x0=%10.2e x1=%10.2e',x0,x1))
 		x2 <- x1-fun(x1,...)*(x1-x0)/(fun(x1,...)-fun(x0,...))
@@ -220,7 +223,7 @@ secant <- function(fun, x0, x1, tol=1e-07, niter=1e4, doWarn=T, trace=0,...){
 			return(sign(x1)*Inf)
 		}
 		# cat(sprintf(' x2=%10.2e\n',x2))
-		if (abs(fun(x2,...)) < tol){
+		if (abs(fun(x2,...)) < tol || abs(x2)>abs(bound)){
 			return(x2)
 		}
 		x0 <- x1
