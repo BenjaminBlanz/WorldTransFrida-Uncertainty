@@ -23,11 +23,6 @@ if(treatVarsAsIndep&&
 } else {
 	stop('Missing covariance matrix file. Run runInitialiseData.R first.\n')
 }
-resSigma.names <- array(paste('s',
-															rep(1:nrow(resSigma),ncol(resSigma)),
-															rep(1:nrow(resSigma),each=nrow(resSigma)),
-															sep='_'),
-												dim=dim(resSigma))
 # read calibration data
 if(file.exists(file.path(location.output,'calDat.RDS'))){
 	calDat.lst <- readRDS(file.path(location.output,'calDat.RDS'))
@@ -38,6 +33,11 @@ if(file.exists(file.path(location.output,'calDat.RDS'))){
 } else {
 	stop('Missing calDat file. Run runInitialiseData.R first.\n')
 }
+resSigma.names <- array(paste('s',
+															rep(colnames(calDat),ncol(resSigma)),
+															rep(colnames(calDat),each=nrow(resSigma)),
+															sep='_X_'),
+												dim=dim(resSigma))
 
 # specify sampling parameters ####
 # reads frida_info.csv and outputs the SampleParms
@@ -293,14 +293,16 @@ newMaxFound <- T
 		## for testing
 		# test.i <- 1
 		# #min bound
-		# findDensValBorder(test.i,
-		# 									parVect=parVect,lpdensEps=lpdensEps,
-		# 									ceterisParibusPars=treatVarsAsIndep,
-		# 									tol=rangeTol,max=F,idcToMod=idcToMod,
-		# 									parscale=parscale.parvect,
-		# 									bounds=parBounds,
-		# 									trace = 9,
-		# 									niter=1e2)
+		# for(test.i in 1:nrow(sampleParms)){
+		# 	findDensValBorder(test.i,
+		# 										parVect=parVect,lpdensEps=lpdensEps,
+		# 										ceterisParibusPars=treatVarsAsIndep,
+		# 										tol=rangeTol,max=F,idcToMod=idcToMod,
+		# 										parscale=parscale.parvect,
+		# 										bounds=parBounds,
+		# 										trace = 9,
+		# 										niter=1e2)
+		# }
 		# #max bound
 		# findDensValBorder(test.i,
 		# 									parVect=parVect,lpdensEps=lpdensEps,
@@ -317,14 +319,15 @@ newMaxFound <- T
 		for(direction in c('Min','Max')){
 			cat(sprintf('  determining %s par values...',tolower(direction)))
 			clusterExport(cl,list('calDat','treatVarsAsIndep'))
-			border.coefs[,direction] <- unlist(parLapplyLB(cl,which(notDeterminedBorders[,direction]),findDensValBorder,
-																			parVect=parVect,lpdensEps=lpdensEps,
-																			ceterisParibusPars=treatVarsAsIndep,
-																			tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
-																			parscale=parscale.parvect,
-																			bounds=parBounds,
-																			niter=1e2,# set niter so that the errors at least in the indep case are small
-																			workerStagger = T)) 
+			border.coefs[which(notDeterminedBorders[,direction]),direction] <- 
+				unlist(parLapplyLB(cl,which(notDeterminedBorders[,direction]),findDensValBorder,
+													 parVect=parVect,lpdensEps=lpdensEps,
+													 ceterisParibusPars=treatVarsAsIndep,
+													 tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
+													 parscale=parscale.parvect,
+													 bounds=parBounds,
+													 niter=1e2,# set niter so that the errors at least in the indep case are small
+													 workerStagger = T)) 
 			names(border.coefs[,direction]) <- names(parVect)
 			# fallback values in case borders could not be determined:
 			notDeterminedBorders[,direction] <- (is.infinite(border.coefs[,direction])+(parVect==border.coefs[,direction]))>=1
@@ -350,7 +353,7 @@ newMaxFound <- T
 			cat('\nsaving...')
 			sampleParms[[paste0(direction,'BorderLogLikeError')]] <- borderLogLikeError[,direction] 
 			sampleParms[[paste0(direction,'NotDeterminedBorder')]] <- notDeterminedBorders[,direction]
-			sampleParms[[paste0(direction,'BoundByAuthors')]] <- border.coefs==parBounds[,if(direction=='Min'){1}else{2}]
+			sampleParms[[paste0(direction,'BoundByAuthors')]] <- border.coefs[,direction]==parBounds[,if(direction=='Min'){1}else{2}]
 			write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
 			saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
 			cat('done\n')	
