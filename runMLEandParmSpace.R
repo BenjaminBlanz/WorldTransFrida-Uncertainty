@@ -102,7 +102,7 @@ newMaxFound <- T
 iterationNewMax <-0
 while(newMaxFound){
 	iterationNewMax <- iterationNewMax+1
-	cat('running fit procedure...')
+	cat(sprintf('running everything iteration %i...\n',iterationNewMax))
 	# Optimisation of parameters (min neg log likelihood) is performed including
 	# the covariance properties. The evaluation of likelihood of each of the parameters
 	# for the uncertainty representation is performed with covariance matrix fixed to the
