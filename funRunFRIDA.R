@@ -103,9 +103,17 @@ runFridaParmsByIndex <- function(runid){
 			if(is.na(runDat[[1]][nrow(runDat)])||logLike==-Inf){
 				logLike <- -.Machine$double.xmax+sum(!is.na(runDat[[1]]))*.Machine$double.eps
 			}
-			retlist[[i]] <- (list(parmsIndex=as.numeric(row.names(samplePoints)[i]),
-														runDat=runDat,
-														logLike=logLike))
+			suppressWarnings(parmsIndex<-as.numeric(row.names(samplePoints)[i]))
+			if(is.na(parmsIndex)){
+				retlist[[i]] <- (list(parmsName=row.names(samplePoints)[i],
+															parmsIndex=i,
+															runDat=runDat,
+															logLike=logLike))
+			} else {
+				retlist[[i]] <- (list(parmsIndex=parmsIndex,
+															runDat=runDat,
+															logLike=logLike))
+			}
 		}
 	}
 	return(retlist)
