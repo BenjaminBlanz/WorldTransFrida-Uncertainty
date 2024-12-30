@@ -292,12 +292,12 @@ while(newMaxFound){
 		}
 		if(!ignoreParBounds){
 			parBounds <- frida_info[idcOfSampleParmsInFridaInfo,c('Min','Max')]
-			colnames(parBounds) <- c('Min','Max')
 		} else {
 			parBounds <- array(c(rep(-.Machine$double.xmax,length(parVect)),rep(.Machine$double.xmax,length(parVect))),
 												 dim=c(length(parVect),2))
 		}
 		rownames(parBounds) <- sampleParms$Variable
+		colnames(parBounds) <- c('Min','Max')
 		## for testing
 		# test.i <- 1
 		# #min bound
