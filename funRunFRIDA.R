@@ -61,7 +61,7 @@ writeFRIDAInput <- function(variables,values){
 	if(disk.free(location.frida)< 2e4){
 		stop('less than 20mib in frida location\n')
 	}
-	parmValues <- data.frame(Variable=variables,Value=values)
+	parmValues <- data.frame(Variable=unlist(variables),Value=unlist(values))
 	write.table(parmValues,file = file.path(location.frida,'Data',name.fridaInputFile),
 							row.names = F,col.names = F,sep=',')
 }
@@ -88,7 +88,7 @@ runFridaParmsByIndex <- function(runid){
 	retlist <- vector(mode = "list", length = length(runid))
 	for(i in runid){
 		if(i <= nrow(samplePoints)){
-			writeFRIDAInput(sampleParms$Variable,samplePoints[i,])
+			writeFRIDAInput(colnames(samplePoints),samplePoints[i,])
 			system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
 									 file.path(location.frida,'FRIDA.stmx')),
 						 ignore.stdout = T,ignore.stderr = T,wait = T)
@@ -96,7 +96,7 @@ runFridaParmsByIndex <- function(runid){
 			colnames(runDat) <- cleanNames(colnames(runDat))
 			rownames(runDat) <- runDat$year
 			runDat <- runDat[,-1]
-			resDat <- calDat-runDat[1:nrow(calDat),]
+			resDat <- calDat-runDat[1:nrow(calDat),colnames(calDat)]
 			logLike <- funLogLikelihood(resDat,resSigma)
 			# If the logLike is not NA but the run did not complete assign 
 			# lowest nonzero value. We use this when narrowing the parms space
@@ -331,13 +331,13 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 	chunkTimes <- c()
 	completeRunsSoFar <- 0
 	i <- 0
-	while(i<length(workUnitBoundaries)){
+	while(i<(length(workUnitBoundaries)-1)){
 		i <- i+1
 		if(!redoAllCalc && file.exists(file.path(location.output,paste0('workUnit-',i,'.RDS')))){
 			cat(sprintf('\r(r) Using existing unit %i',i))
 			tryCatch({parOutput <- readRDS(file.path(location.output,paste0('workUnit-',i,'.RDS')))},
 							 error = function(e){},warning=function(w){})
-			if(length(parOutput)>length(chunkSizePerWorker*numWorkers)){
+			if(length(parOutput)>(workUnitBoundaries[i+1]-workUnitBoundaries[i])){
 				lastChunkSize <- length(parOutput)
 				cat(sprintf(', existing output has different chunkSize (%i rather than %i), resorting remaining work',
 										lastChunkSize,
@@ -399,7 +399,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			}
 		}
 		cat('\r   ')
-		if(plotDatWhileRunning){
+		if(plotDatWhileRunning&&!plotDatPerChunWhileRunning){
 			cat('\r(p)')
 			for(dat.i in 1:ncol(calDat)){
 				par(mfg = which(subPlotLocations==dat.i,arr.ind = T))
@@ -460,8 +460,9 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 		}
 		rm(parOutput)
 	}
-	if(plotDatWhileRunning){
+	if(plotDatWhileRunning&!plotDatPerChunWhileRunning){
 		cat(sprintf('  Saving figure...'))
+		plotCape <- capabilities()
 		if(!(plotCape['X11']|plotCape['aqua'])){
 			dev.off()
 		} else{
@@ -486,4 +487,37 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 	}
 	return(logLike)
 }
+
+loadClusterRuns <- function(location.output){
+	runFilesList <- list.files(location.output,pattern = 'workUnit-[0-9]+\\.RDS')
+	retList <- c()
+	for(f.i in 1:length(runFilesList)){
+		parOutput <- readRDS(file.path(location.output,paste0('workUnit-',f.i,'.RDS')))
+		retList <- c(retList,parOutput)
+	}
+	return(retList)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
