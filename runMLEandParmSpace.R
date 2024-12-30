@@ -438,7 +438,7 @@ while(newMaxFound){
 	if(plotWhileRunning){
 		plotCape <- capabilities()
 		if(!(plotCape['X11']|plotCape['aqua'])){
-			pdf(file.path(location.output,paste0('logLikesDensity-',iterationNewMax,'.pdf')),
+			pdf(file.path(location.output,'detectedParmSpace',paste0('logLikesDensity-',iterationNewMax,'.pdf')),
 					width=10,	height=10)
 		}
 		histDat <- hist(logLikes,plot=F)
@@ -458,7 +458,7 @@ while(newMaxFound){
 			dev.print(pdf,width=10,
 								height=10,
 								unit='cm',res=150,
-								file.path(location.output,paste0('logLikesDensity-',iterationNewMax,'.pdf')))
+								file.path(location.output,'detectedParmSpace',paste0('logLikesDensity-',iterationNewMax,'.pdf')))
 		}
 	}
 	
