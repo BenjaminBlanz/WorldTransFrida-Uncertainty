@@ -17,7 +17,7 @@ jnegLLikelihood.f <- function(jParVect){
 	if(sum(colnames(calDat)!=colnames(runDat))>0){
 		stop('missmatch in colnames(calDat)==colnames(runDat)\n')
 	}
-	resDat <- calDat-runDat[1:nrow(calDat),]
+	resDat <- calDat-runDat[1:nrow(calDat),colnames(calDat)]
 	if(!treatVarsAsIndep){
 		calDatCompleteCases <- which(complete.cases(calDat))
 		resDat <- resDat[calDatCompleteCases]
@@ -37,7 +37,7 @@ negLLike <- function(parVect){
 	if(sum(colnames(calDat)!=colnames(runDat))>0){
 		stop('missmatch in colnames(calDat)==colnames(runDat)\n')
 	}
-	resDat <- calDat-runDat[1:nrow(calDat),]
+	resDat <- calDat-runDat[1:nrow(calDat),colnames(calDat)]
 	if(!treatVarsAsIndep){
 		calDatCompleteCases <- which(complete.cases(calDat))
 		resDat <- resDat[calDatCompleteCases]
