@@ -477,12 +477,12 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 		cat(sprintf('\r    all runs read, no calculation necessary. Complete runs %i (%.1f%%)                           \n',
 								completeRunsSoFar,100*completeRunsSoFar/numSample))
 	} else {
-		cat(sprintf('\r    complete runs %i (%.2f%%), average chunk time %i sec (%.2f r/s, %.2f r/s/thread), over all run time %i sec %s\n',
+		cat(sprintf('\r    complete runs %i (%.2f%%), average chunk time %i sec (%.2f r/s, %.2f r/s/thread), over all run time %s %s\n',
 								completeRunsSoFar,100*completeRunsSoFar/numSample,
 								round(mean(chunkTimes,na.rm=T)),
 								length(cl)*chunkSizePerWorker/mean(chunkTimes,na.rm=T),
 								chunkSizePerWorker/mean(chunkTimes,na.rm=T),
-								round(sum(chunkTimes,na.rm=T)),
+								dseconds(round(sum(chunkTimes,na.rm=T))),
 								'                                                                             '))
 	}
 	return(logLike)
