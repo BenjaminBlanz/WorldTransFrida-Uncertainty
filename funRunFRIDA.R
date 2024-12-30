@@ -143,11 +143,15 @@ runFridaDefaultParms <- function(){
 
 # runFRIDASpecParms ####
 runFRIDASpecParms <- function(parVect){
-	if(is.null(names(parVect))){
+	if(is.null(names(parVect))||length(parVect)==0){
 		stop('need names in parVect to write FRIDA input\n')
 	}
-	writeFRIDAInput(names(parVect),parVect)
-	system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
+	if(length(parVect)==0){
+		writeFRIDAInput(c(),c())
+	}else{
+		writeFRIDAInput(names(parVect),parVect)
+	}
+	system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',#'-s', #to output isdb
 							 file.path(location.frida,'FRIDA.stmx')),
 				 ignore.stdout = T,ignore.stderr = T,wait = T)
 	runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
