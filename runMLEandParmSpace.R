@@ -290,7 +290,12 @@ while(newMaxFound){
 		for(p.i in 1:nrow(sampleParms)){
 			idcOfSampleParmsInFridaInfo[p.i] <- which(frida_info$Variable==sampleParms$Variable[p.i])
 		}
-		parBounds <- frida_info[idcOfSampleParmsInFridaInfo,c('Min','Max')]
+		if(!ignoreParBounds){
+			parBounds <- frida_info[idcOfSampleParmsInFridaInfo,c('Min','Max')]
+		} else {
+			parBounds <- array(c(rep(-.Machine$double.xmax,length(parVect)),rep(.Machine$double.xmax,length(parVect))),
+												 dim=c(length(parVect),2))
+		}
 		rownames(parBounds) <- sampleParms$Variable
 		## for testing
 		# test.i <- 1
@@ -433,7 +438,9 @@ while(newMaxFound){
 																						 resSigma=resSigma,
 																						 location.output=file.path(location.output,'detectedParmSpace'),
 																						 redoAllCalc=redoAllCalc,
-																						 plotDatWhileRunning=F)
+																						 plotDatWhileRunning=F,
+																						 plotDatPerChunWhileRunning=plotDatPerChunWhileRunning,
+																						 baseLL=-baseNegLL)
 	logLikes[logLikes==-Inf] <- -.Machine$double.xmax
 	if(plotWhileRunning){
 		plotCape <- capabilities()

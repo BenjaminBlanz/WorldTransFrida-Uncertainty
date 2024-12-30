@@ -273,8 +273,10 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 																					 calDat,resSigma,
 																					 redoAllCalc=F,
 																					 plotDatWhileRunning=F,
+																					 plotDatPerChunWhileRunning=F,
 																					 plotPerChunk=T,
-																					 yaxPad=0.2){
+																					 yaxPad=0.2,
+																					 baseLL=-29567.06){
 	cat('cluster run...\n')
 	dir.create(location.output,showWarnings = F,recursive = T)
 	numSample <- nrow(samplePoints)
@@ -298,24 +300,33 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 												'runFridaParmsByIndex'))
 	# plot setup 
 	if(plotDatWhileRunning & !plotPerChunk){
+		if(!(plotCape['X11']|plotCape['aqua'])){
+			ncols <- ncol(calDat)
+			sqrtNcols <- sqrt(ncols)
+			plotCols <- round(sqrtNcols)
+			plotRows <- ceiling(sqrtNcols)
+			png(file.path(location.output,'likelihoodWeightedModelRuns.png'),
+					width=5*plotCols,
+					height=5*plotRows+5/4,
+					unit='cm',res=150)
+		}
 		subPlotLocations <- funPlotDat(calDat,calDat.impExtrValue,yaxPad = yaxPad,
-																	 shadowIncompleteYears=F,
-																	 yaxPad=yaxPad)
+																	 shadowIncompleteYears=F)
 	}
 	# running
-	cat(sprintf('  Run of %i runs split up into %i work units.\n',
-							numSample,length(workUnitBoundaries)-1))
+	cat(sprintf('  Run of %i runs split up into %i work units of size %i (%i per worker).\n',
+							numSample,length(workUnitBoundaries)-1,chunkSizePerWorker*numWorkers,chunkSizePerWorker))
 	chunkTimes <- c()
 	completeRunsSoFar <- 0
-	i <- 1
-	while(i<length(workUnitBoundaries))
+	i <- 0
+	while(i<length(workUnitBoundaries)){
 		i <- i+1
 		if(!redoAllCalc && file.exists(file.path(location.output,paste0('workUnit-',i,'.RDS')))){
-			cat(sprintf('\r    Reading existing unit %i',i))
+			cat(sprintf('\r(r) Using existing unit %i',i))
 			tryCatch({parOutput <- readRDS(file.path(location.output,paste0('workUnit-',i,'.RDS')))},
 							 error = function(e){},warning=function(w){})
-			if(nrow(parOutput)>length(chunkSizePerWorker*numWorkers)){
-				lastChunkSize <- nrow(parOutput)
+			if(length(parOutput)>length(chunkSizePerWorker*numWorkers)){
+				lastChunkSize <- length(parOutput)
 				cat(sprintf(', existing output has different chunkSize (%i rather than %i), resorting remaining work',
 										lastChunkSize,
 										chunkSizePerWorker*numWorkers))
@@ -327,7 +338,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 				}
 				workUnitBoundaries[length(workUnitBoundaries)] <- numSample+1
 			}
-		} 
+		}
 		if(!exists('parOutput')){
 			cat(sprintf('\r(r) Running unit %i: samples %i to %i. ',
 									i, workUnitBoundaries[i],workUnitBoundaries[i+1]-1))
@@ -336,11 +347,12 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 										completeRunsSoFar,100*completeRunsSoFar/(workUnitBoundaries[i]-1)))
 			}
 			if(length(chunkTimes>1)){
-				cat(sprintf(', time per unit %i s (%.2f r/s, %.2f r/s/thread), expect completion in %i sec',
+				cat(sprintf(', time per unit %i s (%.2f r/s, %.2f r/s/thread), expect completion in %s',
 										round(mean(chunkTimes,na.rm=T)),
 										length(cl)*chunkSizePerWorker/mean(chunkTimes,na.rm=T),
 										chunkSizePerWorker/mean(chunkTimes,na.rm=T),
-										round(mean(chunkTimes,na.rm=T))*(length(workUnitBoundaries)-i)))
+										if(exists('dseconds')){dseconds(round(mean(chunkTimes,na.rm=T))*(length(workUnitBoundaries)-i))} 
+										else{paste0(round(mean(chunkTimes,na.rm=T))*(length(workUnitBoundaries)-i),'s')}))
 			}
 			tic()
 			workUnit <- workUnitBoundaries[i]:(workUnitBoundaries[i+1]-1)
@@ -390,21 +402,62 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 						 xlim=xlims,
 						 ylim=ylims)
 				for(l in 1:length(parOutput)){
+					runLL <- parOutput[[l]]$logLike
 					lines(rownames(parOutput[[l]]$runDat),parOutput[[l]]$runDat[[dat.i]],
-								col=i)
-					# col=alpha(i,0.1))
+								col=adjustcolor(i,min(1,max(0.01,
+																						1/(abs(runLL-baseLL)+1)
+								))))
 				}
-				cat('\r   ')
 			}
+			cat('\r   ')
+		}
+		if(plotDatPerChunWhileRunning){
+			cat('\r(p)')
+			ncols <- ncol(calDat)
+			sqrtNcols <- sqrt(ncols)
+			plotCols <- round(sqrtNcols)
+			plotRows <- ceiling(sqrtNcols)
+			png(file.path(location.output,paste0('likelihoodWeightedModelRuns-Chunk-',i,'.png')),
+					width=5*plotCols,
+					height=5*plotRows+5/4,
+					unit='cm',res=150)
+			subPlotLocations.chk <- funPlotDat(calDat,calDat.impExtrValue,yaxPad = yaxPad,
+																				 shadowIncompleteYears=F)
+			for(dat.i in 1:ncol(calDat)){
+				par(mfg = which(subPlotLocations.chk==dat.i,arr.ind = T))
+				xlims <- c(min(as.numeric(rownames(calDat)))-0.5,
+									 max(as.numeric(rownames(calDat)))+0.5)
+				yrange <- range(calDat[[dat.i]],na.rm=T)
+				ylims <- c(yrange[1]-abs(diff(yrange))*yaxPad,
+									 yrange[2]+abs(diff(yrange))*yaxPad)
+				plot(rownames(calDat),calDat[[dat.i]],type='n',
+						 xaxt='n',yaxt='n',
+						 xaxs='i',yaxs='i',
+						 xlim=xlims,
+						 ylim=ylims)
+				for(l in 1:length(parOutput)){
+					runLL <- parOutput[[l]]$logLike
+					lines(rownames(parOutput[[l]]$runDat),parOutput[[l]]$runDat[[dat.i]],
+								col=adjustcolor(i,min(1,max(0.01,
+																						1/(abs(runLL-baseLL)+1)
+																						))))
+				}
+			}
+			dev.off()
+			cat('\r   ')
 		}
 		rm(parOutput)
 	}
 	if(plotDatWhileRunning){
 		cat(sprintf('  Saving figure...'))
-		dev.print(png,width=5*ncol(subPlotLocations),
-							height=5*(nrow(subPlotLocations)-1)+5/4,
-							unit='cm',res=150,
-							file.path(location.output,'likelihoodWeightedModelRuns.png'))
+		if(!(plotCape['X11']|plotCape['aqua'])){
+			dev.off()
+		} else{
+			dev.print(png,width=5*ncol(subPlotLocations),
+								height=5*(nrow(subPlotLocations)-1)+5/4,
+								unit='cm',res=150,
+								file.path(location.output,'likelihoodWeightedModelRuns.png'))
+		}
 		cat('done\n')
 	}
 	if(length(chunkTimes)==0){

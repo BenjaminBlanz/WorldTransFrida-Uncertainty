@@ -19,8 +19,9 @@ clusterType <- 'psock'
 tmpfsDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork')
 
 #plotting related things
-plotWhileRunning <- T
+plotWhileRunning <- F
 plotDatWhileRunning <- F
+plotDatPerChunWhileRunning <- F
 whatToPlot <- tolower('GDP_Real_GDP_in_2021c')
 # padding for data plots y axis in share of the data range
 yaxPad <- 0.4
@@ -28,7 +29,7 @@ yaxPad <- 0.4
 # sampling the parameters ####
 
 # number of samples for the sobol sequence across all dimensions
-numSample <- 5e3
+numSample <- 5e5
 # by default sobol sequence covers the entire range between min and max with 
 # equal density.
 # However we might want to ensure that there are similar number of points above and 
@@ -64,6 +65,7 @@ treatVarsAsIndep <- T
 # The parm range will be either increased or decreased to make this happen in each
 # parameter.
 likeCutoffRatio <- 100
+ignoreParBounds <- TRUE
 # should we skip the parameter maximum likelihood estimation and use the default
 # frida pars
 if(!exists('skipParMLE')){
@@ -82,7 +84,9 @@ name.fridaExportVarsFile <- 'varsForExport.txt'
 name.fridaInputFile <- 'uncertainty_analysis_paramter_values.csv'
 name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
 location.output <- file.path('workOutput',paste0('NumSample-',numSample,
-																								 '-chunkSizePerWorker-',chunkSizePerWorker))
+																								 '-chunkSizePerWorker-',chunkSizePerWorker,
+																								 '-likeCutoffRatio-',likeCutoffRatio,
+																								 '-ignoreParBounds-',ignoreParBounds))
 location.output.base <- location.output
 dir.create(file.path(location.output),recursive = T,showWarnings = F)
 
