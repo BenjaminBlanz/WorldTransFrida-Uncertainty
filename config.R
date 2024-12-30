@@ -29,7 +29,7 @@ yaxPad <- 0.4
 # sampling the parameters ####
 
 # number of samples for the sobol sequence across all dimensions
-numSample <- 5e5
+numSample <- 5e4
 # by default sobol sequence covers the entire range between min and max with 
 # equal density.
 # However we might want to ensure that there are similar number of points above and 
