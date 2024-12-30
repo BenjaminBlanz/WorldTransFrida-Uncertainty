@@ -14,3 +14,7 @@ test*
 workOutput
 workerDirs
 .Rproj.user
+frida_info_with_new_min_coefs.csv
+minCoefs.csv
+parscale.csv
+sampleParmsParscaleRanged.csv
