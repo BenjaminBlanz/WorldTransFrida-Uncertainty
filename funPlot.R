@@ -148,7 +148,7 @@ funPlotDat <- function(calDat,calDat.impExtrValue=NULL,defDat=NULL,yaxPad=0.04,
 
 
 # funPlotParRanges ####
-funPlotParRangesLikelihoods <- function(sampleParms,sampleParms.orig,
+funPlotParRangesLikelihoods <- function(sampleParms,sampleParms.orig=NULL,
 																				samplePoints=NULL,like=NULL,yaxPad=0.04,
 																				savePlotFilePath=NULL){
 	if(is.null(samplePoints)){
@@ -158,10 +158,13 @@ funPlotParRangesLikelihoods <- function(sampleParms,sampleParms.orig,
 		samplePoints <- funStretchSamplePoints(samplePoints,sampleParms,F)
 		colnames(samplePoints) <- sampleParms[,1]
 	}
+	if(is.null(sampleParms.orig)){
+		sampleParms.orig <- sampleParms
+	}
 	if(is.null(like)){
 		like <- array(rep(1,nrow(samplePoints)),dim=c(nrow(samplePoints),nrow(sampleParms)))
 	}
-	like.range <- range(like)
+	like.range <- range(like,na.rm=T)
 	
 	sqrtNplots <- sqrt(nrow(sampleParms))
 	plotCols <- round(sqrtNplots)
@@ -176,6 +179,9 @@ funPlotParRangesLikelihoods <- function(sampleParms,sampleParms.orig,
 				 ylim = yrange)
 		axis(1,padj=-1,at = c(sampleParms.orig$Min[i]),hadj=0,cex.axis=0.8)
 		axis(1,padj=-1,at = c(sampleParms.orig$Max[i]),hadj=1,cex.axis=0.8)
+		text(mean(par('usr')[1:2]),par('usr')[4]+diff(par('usr')[3:4])*0.01,
+				 sampleParms$Variable[i],
+				 cex=0.8,xpd=T,adj=c(0.5,0))
 		abline(h=0,col='gray')
 		abline(v=c(sampleParms.orig$Min[i],sampleParms.orig$Max[i]),col='gray')
 		if(sampleParms.orig$Min[i]<sampleParms$Min[i]){
