@@ -1,26 +1,33 @@
-"","excludedName"
-"1","Sea Level.Initial water storage from water impoundment"
-"2","Employment.max firing percentage"
-"3","Employment.sensitivity of firing to profit discrepancy"
-"4","Employment.share of employment in agriculture slope"
-"5","Employment.time to fire from missed profits"
-"6","Finance.desired asset to liability ratio"
-"7","Finance.max risk premium increase rate"
-"8","Government.curvature effect of debt to GDP ratio on government spending"
-"9","Government.effect end effect of debt to GDP ratio on government spending"
-"10","Government.effect start effect of debt to GDP ratio on government spending"
-"11","Government.solvency support adjustment time"
-"12","Government.time to pay subsidies"
-"13","Sea level rise Impacts and Adaptation.Sensitivity of expected SLR to CO2 emissions"
-"14","Sea level rise Impacts and Adaptation.Sensitivity of expected SLR to T anomaly"
-"15","Coastal Assets.Effective flood height at which only half the investment would be made"
-"16","Coastal population.people flood damage elasticity"
-"17","Sea level rise adaptation.Average value of land in coastal zones in 1980"
-"18","Sea level rise adaptation.flood protection cost index baseline"
-"19","Sea level rise adaptation.flood protection cost index sensitivity to GDPpc"
-"20","Sea level rise adaptation.Fraction of dike construction cost for maintenance annually"
-"21","Sea level rise adaptation.Maximum fraction of coastal GDP spent for flood protection annually"
-"22","Sea level rise adaptation.reference opportunity cost rate"
-"23","Sea level rise adaptation.reference protection cost"
-"24","Sea level rise adaptation.Time to increase flood protection height"
-"25","Sea level rise costs and impacts.Not depreciated fraction of assets at time of retreat"
+,excludedName
+1,Sea Level.Initial water storage from water impoundment
+2,Employment.max firing percentage
+3,Employment.sensitivity of firing to profit discrepancy
+4,Employment.share of employment in agriculture slope
+5,Employment.time to fire from missed profits
+6,Finance.desired asset to liability ratio
+7,Finance.max risk premium increase rate
+8,Government.curvature effect of debt to GDP ratio on government spending
+9,Government.effect end effect of debt to GDP ratio on government spending
+10,Government.effect start effect of debt to GDP ratio on government spending
+11,Government.solvency support adjustment time
+12,Government.time to pay subsidies
+13,Sea level rise Impacts and Adaptation.Sensitivity of expected SLR to CO2 emissions
+14,Sea level rise Impacts and Adaptation.Sensitivity of expected SLR to T anomaly
+15,Coastal Assets.Effective flood height at which only half the investment would be made
+16,Coastal population.people flood damage elasticity
+17,Sea level rise adaptation.Average value of land in coastal zones in 1980
+18,Sea level rise adaptation.flood protection cost index baseline
+19,Sea level rise adaptation.flood protection cost index sensitivity to GDPpc
+20,Sea level rise adaptation.Fraction of dike construction cost for maintenance annually
+21,Sea level rise adaptation.Maximum fraction of coastal GDP spent for flood protection annually
+22,Sea level rise adaptation.reference opportunity cost rate
+23,Sea level rise adaptation.reference protection cost
+24,Sea level rise adaptation.Time to increase flood protection height
+25,Sea level rise costs and impacts.Not depreciated fraction of assets at time of retreat
+26,Circular Flow.initial firms checking accounts
+27,Circular Flow.initial owner savings
+28,Circular Flow.initial worker savings
+29,Finance.initial bad loans
+30,Finance.initial bank investment
+31,Finance.initial good loans
+32,Finance.Initial safe assets
