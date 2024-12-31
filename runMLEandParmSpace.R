@@ -383,13 +383,13 @@ while(newMaxFound){
 			if(treatVarsAsIndep){
 				cat(sprintf('Checking for likelihood at %s failures...\n',tolower(direction)))
 				for(rangeCheck.i in 1:length(parVect)){
-					cat(sprintf('\r%4i %80s',rangeCheck.i,names(parVect[rangeCheck.i])))
+					cat(sprintf('\r%4i %100s',rangeCheck.i,names(parVect[rangeCheck.i])))
 					parVectMinCheck.i <- parVect
 					parVectMinCheck.i[rangeCheck.i] <- border.coefs[,direction][rangeCheck.i]
 					lLike <- -negLLike(parVectMinCheck.i)
 					borderLogLikeError[rangeCheck.i,direction] <- lLike-lpdensEps
 					if(abs(lLike-lpdensEps) >= rangeTol*10){
-						cat(sprintf('\r%4i %100s %+10s\n',rangeCheck.i,names(parVect[rangeCheck.i]),lLike-lpdensEps))
+						cat(sprintf('\r%4i %100s %+12.3e\n',rangeCheck.i,names(parVect[rangeCheck.i]),lLike-lpdensEps))
 					}
 				}
 				cat('\n')
