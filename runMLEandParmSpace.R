@@ -115,11 +115,11 @@ while(newMaxFound){
 	
 	if(!forceParBounds){
 		if(!redoAllCalc&&file.exists(file.path(location.output,'sampleParmsParscaleRanged.RDS'))){
+			cat('loading existing sampleParmsParscaleRanged\n')
 			sampleParms <- readRDS(file.path(location.output,'sampleParmsParscaleRanged.RDS'))
 		} else {
 			# determine parscale ####
 			cat('Determining parscales...\n')
-			
 			iterations <- 0
 			parallelParscale <- T
 			useOrdersOfMagGuesses <- T
@@ -283,153 +283,153 @@ while(newMaxFound){
 					stop('failed optimization\n')
 				}
 			}
-		}
-		
-		# coef range ####
-		# par bounds
-		idcOfSampleParmsInFridaInfo <- c()
-		for(p.i in 1:nrow(sampleParms)){
-			idcOfSampleParmsInFridaInfo[p.i] <- which(frida_info$Variable==sampleParms$Variable[p.i])
-		}
-		parBounds <- frida_info[idcOfSampleParmsInFridaInfo,c('Min','Max')]
-		lpdensEps <- -negLLike(parVect) - log(likeCutoffRatio)
-		notDeterminedBorders <- array(TRUE,dim=c(length(parVect),2))
-		colnames(notDeterminedBorders) <- c('Min','Max')
-		borderLogLikeError <- notDeterminedBorders
-		border.coefs <- notDeterminedBorders
-		if(forceParBounds){
-			cat('Forcing coefs sample range to be equal tovalues frida_info\n')
-			border.coefs <- sampleParms[,c('Min','Max')]
-		} else {
-			# minimize and maximize each parameter with others free, until density is 
-			# equal to pdensEps
-			cat('determining coef sample range...\n')
-			# boundary value in log likelihood
-			idcToMod <- 1:length(parVect)
-			if(ignoreParBounds){
-				parBounds <- array(c(rep(-.Machine$double.xmax,length(parVect)),rep(.Machine$double.xmax,length(parVect))),
-													 dim=c(length(parVect),2))
-			}
-			rownames(parBounds) <- sampleParms$Variable
-			colnames(parBounds) <- c('Min','Max')
-			## for testing
-			# test.i <- 1
-			# #min bound
-			# for(test.i in 1:nrow(sampleParms)){
-			# 	findDensValBorder(test.i,
-			# 										parVect=parVect,lpdensEps=lpdensEps,
-			# 										ceterisParibusPars=treatVarsAsIndep,
-			# 										tol=rangeTol,max=F,idcToMod=idcToMod,
-			# 										parscale=parscale.parvect,
-			# 										bounds=parBounds,
-			# 										trace = 9,
-			# 										niter=1e2)
-			# }
-			# #max bound
-			# findDensValBorder(test.i,
-			# 									parVect=parVect,lpdensEps=lpdensEps,
-			# 									ceterisParibusPars=treatVarsAsIndep,
-			# 									tol=rangeTol,max=T,idcToMod=idcToMod,
-			# 									parscale=parscale.parvect,
-			# 									bounds=parBounds,
-			# 									trace = 9,
-			# 									niter=1e2)
 			
-			manualBorders <- read.csv('frida_external_ranges.csv')
-			if(nrow(manualBorders)>0){
-				for(r.i in 1:nrow(manualBorders)){
-					sp.i <- which(sampleParms$Variable==manualBorders$Variable[r.i])
-					if(!is.na(manualBorders$Min[r.i])){
-						border.coefs[sp.i,'Min'] <- manualBorders$Min[r.i]
-						notDeterminedBorders[sp.i,'Min'] <- FALSE
+			# coef range ####
+			# par bounds
+			idcOfSampleParmsInFridaInfo <- c()
+			for(p.i in 1:nrow(sampleParms)){
+				idcOfSampleParmsInFridaInfo[p.i] <- which(frida_info$Variable==sampleParms$Variable[p.i])
+			}
+			parBounds <- frida_info[idcOfSampleParmsInFridaInfo,c('Min','Max')]
+			lpdensEps <- -negLLike(parVect) - log(likeCutoffRatio)
+			notDeterminedBorders <- array(TRUE,dim=c(length(parVect),2))
+			colnames(notDeterminedBorders) <- c('Min','Max')
+			borderLogLikeError <- notDeterminedBorders
+			border.coefs <- notDeterminedBorders
+			if(forceParBounds){
+				cat('Forcing coefs sample range to be equal tovalues frida_info\n')
+				border.coefs <- sampleParms[,c('Min','Max')]
+			} else {
+				# minimize and maximize each parameter with others free, until density is 
+				# equal to pdensEps
+				cat('determining coef sample range...\n')
+				# boundary value in log likelihood
+				idcToMod <- 1:length(parVect)
+				if(ignoreParBounds){
+					parBounds <- array(c(rep(-.Machine$double.xmax,length(parVect)),rep(.Machine$double.xmax,length(parVect))),
+														 dim=c(length(parVect),2))
+				}
+				rownames(parBounds) <- sampleParms$Variable
+				colnames(parBounds) <- c('Min','Max')
+				## for testing
+				# test.i <- 1
+				# #min bound
+				# for(test.i in 1:nrow(sampleParms)){
+				# 	findDensValBorder(test.i,
+				# 										parVect=parVect,lpdensEps=lpdensEps,
+				# 										ceterisParibusPars=treatVarsAsIndep,
+				# 										tol=rangeTol,max=F,idcToMod=idcToMod,
+				# 										parscale=parscale.parvect,
+				# 										bounds=parBounds,
+				# 										trace = 9,
+				# 										niter=1e2)
+				# }
+				# #max bound
+				# findDensValBorder(test.i,
+				# 									parVect=parVect,lpdensEps=lpdensEps,
+				# 									ceterisParibusPars=treatVarsAsIndep,
+				# 									tol=rangeTol,max=T,idcToMod=idcToMod,
+				# 									parscale=parscale.parvect,
+				# 									bounds=parBounds,
+				# 									trace = 9,
+				# 									niter=1e2)
+				
+				manualBorders <- read.csv('frida_external_ranges.csv')
+				if(nrow(manualBorders)>0){
+					for(r.i in 1:nrow(manualBorders)){
+						sp.i <- which(sampleParms$Variable==manualBorders$Variable[r.i])
+						if(!is.na(manualBorders$Min[r.i])){
+							border.coefs[sp.i,'Min'] <- manualBorders$Min[r.i]
+							notDeterminedBorders[sp.i,'Min'] <- FALSE
+						}
+						if(!is.na(manualBorders$Max[r.i])){
+							border.coefs[sp.i,'Max'] <- manualBorders$Max[r.i]
+							notDeterminedBorders[sp.i,'Max'] <- FALSE
+						}
 					}
-					if(!is.na(manualBorders$Max[r.i])){
-						border.coefs[sp.i,'Max'] <- manualBorders$Max[r.i]
-						notDeterminedBorders[sp.i,'Max'] <- FALSE
+				}
+				for(direction in c('Min','Max')){
+					cat(sprintf('  determining %s par values...',tolower(direction)))
+					clusterExport(cl,list('calDat','treatVarsAsIndep'))
+					border.coefs[which(notDeterminedBorders[,direction]),direction] <- 
+						unlist(parLapplyLB(cl,which(notDeterminedBorders[,direction]),findDensValBorder,
+															 parVect=parVect,lpdensEps=lpdensEps,
+															 ceterisParibusPars=treatVarsAsIndep,
+															 tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
+															 parscale=parscale.parvect,
+															 bounds=parBounds,
+															 niter=1e3,# set niter so that the errors at least in the indep case are small
+															 workerStagger = T)) 
+					names(border.coefs[,direction]) <- names(parVect)
+					# fallback values in case borders could not be determined:
+					notDeterminedBorders[,direction] <- (is.infinite(border.coefs[,direction])+(parVect==border.coefs[,direction]))>=1
+					border.coefs[,direction][notDeterminedBorders[,direction]] <- sampleParms[[direction]][notDeterminedBorders[,direction]]
+					cat(sprintf('done. %i failures\n',sum(notDeterminedBorders[,direction])))
+					write.csv(notDeterminedBorders,file.path(location.output,'notDeterminedBorders.csv'))
+					# check that the min val actually has the desired like
+					# this check only works for the independent case, as we do not retain the information
+					# what the values of the other parameters where during range finding
+					
+					cat('\nsaving...')
+					if(direction=='Min'){
+						sampleParms[[direction]] <- pmax(border.coefs[,direction],parBounds[,'Min'])
+					} else {
+						sampleParms[[direction]] <- pmin(border.coefs[,direction],parBounds[,'Max'])
 					}
+					write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
+					saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
+					cat('done\n')	
 				}
 			}
 			for(direction in c('Min','Max')){
-				cat(sprintf('  determining %s par values...',tolower(direction)))
-				clusterExport(cl,list('calDat','treatVarsAsIndep'))
-				border.coefs[which(notDeterminedBorders[,direction]),direction] <- 
-					unlist(parLapplyLB(cl,which(notDeterminedBorders[,direction]),findDensValBorder,
-														 parVect=parVect,lpdensEps=lpdensEps,
-														 ceterisParibusPars=treatVarsAsIndep,
-														 tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
-														 parscale=parscale.parvect,
-														 bounds=parBounds,
-														 niter=1e3,# set niter so that the errors at least in the indep case are small
-														 workerStagger = T)) 
-				names(border.coefs[,direction]) <- names(parVect)
-				# fallback values in case borders could not be determined:
-				notDeterminedBorders[,direction] <- (is.infinite(border.coefs[,direction])+(parVect==border.coefs[,direction]))>=1
-				border.coefs[,direction][notDeterminedBorders[,direction]] <- sampleParms[[direction]][notDeterminedBorders[,direction]]
-				cat(sprintf('done. %i failures\n',sum(notDeterminedBorders[,direction])))
-				write.csv(notDeterminedBorders,file.path(location.output,'notDeterminedBorders.csv'))
-				# check that the min val actually has the desired like
-				# this check only works for the independent case, as we do not retain the information
-				# what the values of the other parameters where during range finding
-				
-				cat('\nsaving...')
-				if(direction=='Min'){
-					sampleParms[[direction]] <- pmax(border.coefs[,direction],parBounds[,'Min'])
-				} else {
-					sampleParms[[direction]] <- pmin(border.coefs[,direction],parBounds[,'Max'])
+				if(treatVarsAsIndep){
+					cat(sprintf('Checking for likelihood at %s failures...\n',tolower(direction)))
+					for(rangeCheck.i in 1:length(parVect)){
+						cat(sprintf('\r%4i %100s',rangeCheck.i,names(parVect[rangeCheck.i])))
+						parVectMinCheck.i <- parVect
+						parVectMinCheck.i[rangeCheck.i] <- border.coefs[,direction][rangeCheck.i]
+						lLike <- -negLLike(parVectMinCheck.i)
+						borderLogLikeError[rangeCheck.i,direction] <- lLike-lpdensEps
+						if(abs(lLike-lpdensEps) >= rangeTol*10){
+							cat(sprintf('\r%4i %100s %+12.3e\n',rangeCheck.i,names(parVect[rangeCheck.i]),lLike-lpdensEps))
+						}
+					}
+					cat('\n')
 				}
+				sampleParms[[paste0(direction,'NotDeterminedBorder')]] <- notDeterminedBorders[,direction]
+				sampleParms[[paste0(direction,'BorderLogLikeError')]] <- borderLogLikeError[,direction] 
+				sampleParms[[paste0(direction,'BoundByAuthors')]] <- sampleParms[[direction]]==parBounds[,direction]
 				write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
 				saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
-				cat('done\n')	
 			}
-		}
-		for(direction in c('Min','Max')){
-			if(treatVarsAsIndep){
-				cat(sprintf('Checking for likelihood at %s failures...\n',tolower(direction)))
-				for(rangeCheck.i in 1:length(parVect)){
-					cat(sprintf('\r%4i %100s',rangeCheck.i,names(parVect[rangeCheck.i])))
-					parVectMinCheck.i <- parVect
-					parVectMinCheck.i[rangeCheck.i] <- border.coefs[,direction][rangeCheck.i]
-					lLike <- -negLLike(parVectMinCheck.i)
-					borderLogLikeError[rangeCheck.i,direction] <- lLike-lpdensEps
-					if(abs(lLike-lpdensEps) >= rangeTol*10){
-						cat(sprintf('\r%4i %100s %+12.3e\n',rangeCheck.i,names(parVect[rangeCheck.i]),lLike-lpdensEps))
-					}
-				}
-				cat('\n')
+			
+			# write to frida_info like file for comparison to input
+			frida_info.toModify <- read.csv('frida_info.csv')
+			frida_info.toModify$includedInSampleParms <- frida_info.toModify$Variable %in% sampleParms$Variable
+			idcOfSampleParmsInFridaInfo <- c()
+			for(p.i in 1:nrow(sampleParms)){
+				idcOfSampleParmsInFridaInfo[p.i] <- which(frida_info.toModify$Variable==sampleParms$Variable[p.i])
 			}
-			sampleParms[[paste0(direction,'NotDeterminedBorder')]] <- notDeterminedBorders[,direction]
-			sampleParms[[paste0(direction,'BorderLogLikeError')]] <- borderLogLikeError[,direction] 
-			sampleParms[[paste0(direction,'BoundByAuthors')]] <- sampleParms[[direction]]==parBounds[,direction]
-			write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
-			saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
+			frida_info.toModify$newMin <- NA
+			frida_info.toModify$newMin[idcOfSampleParmsInFridaInfo] <- sampleParms$Min
+			frida_info.toModify$newMax <- NA
+			frida_info.toModify$newMax[idcOfSampleParmsInFridaInfo] <- sampleParms$Max
+			frida_info.toModify$llikeErrorAtNewMin <- NA
+			frida_info.toModify$llikeErrorAtNewMin[idcOfSampleParmsInFridaInfo] <- sampleParms$MinBorderLogLikeError
+			frida_info.toModify$llikeErrorAtNewMax <- NA
+			frida_info.toModify$llikeErrorAtNewMax[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxBorderLogLikeError
+			frida_info.toModify$MinBoundByAuthors <- NA
+			frida_info.toModify$MinBoundByAuthors[idcOfSampleParmsInFridaInfo] <- sampleParms$MinBoundByAuthors
+			frida_info.toModify$MaxBoundByAuthors <- NA
+			frida_info.toModify$MaxBoundByAuthors[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxBoundByAuthors
+			frida_info.toModify$minNotDetermined <- NA
+			frida_info.toModify$minNotDetermined[idcOfSampleParmsInFridaInfo] <- sampleParms$MinNotDeterminedBorder
+			frida_info.toModify$maxNotDetermined <- NA
+			frida_info.toModify$maxNotDetermined[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxNotDeterminedBorder
+			write.csv(frida_info.toModify,file.path(location.output,'frida_info_ranged.csv'))
+			
+			# TODO: kick out some more parameters?
 		}
-		
-		# write to frida_info like file for comparison to input
-		frida_info.toModify <- read.csv('frida_info.csv')
-		frida_info.toModify$includedInSampleParms <- frida_info.toModify$Variable %in% sampleParms$Variable
-		idcOfSampleParmsInFridaInfo <- c()
-		for(p.i in 1:nrow(sampleParms)){
-			idcOfSampleParmsInFridaInfo[p.i] <- which(frida_info.toModify$Variable==sampleParms$Variable[p.i])
-		}
-		frida_info.toModify$newMin <- NA
-		frida_info.toModify$newMin[idcOfSampleParmsInFridaInfo] <- sampleParms$Min
-		frida_info.toModify$newMax <- NA
-		frida_info.toModify$newMax[idcOfSampleParmsInFridaInfo] <- sampleParms$Max
-		frida_info.toModify$llikeErrorAtNewMin <- NA
-		frida_info.toModify$llikeErrorAtNewMin[idcOfSampleParmsInFridaInfo] <- sampleParms$MinBorderLogLikeError
-		frida_info.toModify$llikeErrorAtNewMax <- NA
-		frida_info.toModify$llikeErrorAtNewMax[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxBorderLogLikeError
-		frida_info.toModify$MinBoundByAuthors <- NA
-		frida_info.toModify$MinBoundByAuthors[idcOfSampleParmsInFridaInfo] <- sampleParms$MinBoundByAuthors
-		frida_info.toModify$MaxBoundByAuthors <- NA
-		frida_info.toModify$MaxBoundByAuthors[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxBoundByAuthors
-		frida_info.toModify$minNotDetermined <- NA
-		frida_info.toModify$minNotDetermined[idcOfSampleParmsInFridaInfo] <- sampleParms$MinNotDeterminedBorder
-		frida_info.toModify$maxNotDetermined <- NA
-		frida_info.toModify$maxNotDetermined[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxNotDeterminedBorder
-		write.csv(frida_info.toModify,file.path(location.output,'frida_info_ranged.csv'))
-		
-		# TODO: kick out some more parameters?
 	}
 	# Sample the Parmeter Space ####
 	# stop before legacy code that still needs to be ported
