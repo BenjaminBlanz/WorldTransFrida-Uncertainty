@@ -46,8 +46,11 @@ resSigma.names <- array(paste('s',
 # reads frida_info.csv and outputs the SampleParms
 # also removes parms we will not sample
 # and complains about invalid lines in frida_info.csv
-excludedParmsForBeingIntegers <- c('Climate Units.selected climate case')
-sampleParms.orig <- sampleParms <- prepareSampleParms(excludeNames=excludedParmsForBeingIntegers)
+integerParms <- data.frame(Variable=c('Climate Units.selected climate case'),
+													 Value=c(23),
+													 Min=c(1),
+													 Max=c(100))
+sampleParms.orig <- sampleParms <- prepareSampleParms(excludeNames=integerParms$Variable)
 saveRDS(sampleParms,file.path(location.output,'sampleParms.RDS'))
 
 
@@ -436,14 +439,18 @@ while(newMaxFound){
 	if(-baseNegLL!=maxLLike){stop('call ghostbusters\n')}
 	
 	## sample points ####
+	# add the integer parms back
+	sampleParms <- prepareSampleParms(sampleParms = sampleParms,integerParms = integerParms)
 	samplePoints <- generateSobolSequenceForSampleParms(sampleParms,numSample,
 																											restretchSamplePoints,
-																											ignoreExistingResults = redoAllCalc)
+																											ignoreExistingResults = redoAllCalc,
+																											integerParms = integerParms)
 	if(ncol(samplePoints) != nrow(sampleParms)){
 		cat('Invalid sample points regenerating\n')
 		samplePoints <- generateSobolSequenceForSampleParms(sampleParms,numSample,
 																												restretchSamplePoints,
-																												ignoreExistingResults = T)
+																												ignoreExistingResults = T,
+																												integerParms = integerParms)
 	}
 	samplePoints.orig <- samplePoints
 	
