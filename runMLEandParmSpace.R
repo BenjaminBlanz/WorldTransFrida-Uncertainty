@@ -443,7 +443,7 @@ while(newMaxFound){
 																											restretchSamplePoints,
 																											ignoreExistingResults = redoAllCalc,
 																											integerParms = integerParms)
-	if(ncol(samplePoints) != nrow(sampleParms)){
+	if(ncol(samplePoints) != nrow(sampleParms) || nrow(samplePoints)!=numSample){
 		cat('Invalid sample points regenerating\n')
 		samplePoints <- generateSobolSequenceForSampleParms(sampleParms,numSample,
 																												restretchSamplePoints,
