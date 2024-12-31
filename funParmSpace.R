@@ -247,6 +247,19 @@ secant <- function(fun, x0, x1, tol=1e-07, niter=1e4, doWarn=T, trace=0,
 	return(x2)
 }
 
+
+rangeCheckFun <- function(rangeCheck.i,parVect,border.coefs,lpdensEps){
+	cat(sprintf('\r%4i %100s',rangeCheck.i,names(parVect[rangeCheck.i])))
+	parVectMinCheck.i <- parVect
+	parVectMinCheck.i[rangeCheck.i] <- border.coefs[rangeCheck.i]
+	lLike <- -negLLike(parVectMinCheck.i)
+	borderLogLikeError <- lLike-lpdensEps
+	if(abs(lLike-lpdensEps) >= rangeTol*10){
+		cat(sprintf('\r%4i %100s %+12.6f\n',rangeCheck.i,names(parVect[rangeCheck.i]),lLike-lpdensEps))
+	}
+	return(borderLogLikeError)
+}
+
 # requires baseNegLL in the global env
 orderOfMagNegLLErrorFun <- function(delta,par.i){
 	jParVect.i <- jParVect
