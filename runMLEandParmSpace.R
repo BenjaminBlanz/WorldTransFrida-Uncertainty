@@ -51,8 +51,6 @@ integerParms <- data.frame(Variable=c('Climate Units.selected climate case'),
 													 Min=c(1),
 													 Max=c(100))
 sampleParms.orig <- sampleParms <- prepareSampleParms(excludeNames=integerParms$Variable)
-saveRDS(sampleParms,file.path(location.output,'sampleParms.RDS'))
-
 
 # mle and like ####
 # Optimisation of parameters (min neg log likelihood) is performed including
@@ -391,7 +389,7 @@ while(newMaxFound){
 						lLike <- -negLLike(parVectMinCheck.i)
 						borderLogLikeError[rangeCheck.i,direction] <- lLike-lpdensEps
 						if(abs(lLike-lpdensEps) >= rangeTol*10){
-							cat(sprintf('\r%4i %100s %+12.3e\n',rangeCheck.i,names(parVect[rangeCheck.i]),lLike-lpdensEps))
+							cat(sprintf('\r%4i %100s %+12.6f\n',rangeCheck.i,names(parVect[rangeCheck.i]),lLike-lpdensEps))
 						}
 					}
 					cat('\n')
@@ -453,6 +451,7 @@ while(newMaxFound){
 																												integerParms = integerParms)
 	}
 	samplePoints.orig <- samplePoints
+	write.csv(samplePoints,file.path(location.output,'samplePoints.csv'))
 	
 	## evaluate sample points ####	
 	logLikes <- clusterRunFridaForSamplePoints(samplePoints,chunkSizePerWorker,
