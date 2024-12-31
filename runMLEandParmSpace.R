@@ -46,7 +46,7 @@ resSigma.names <- array(paste('s',
 # reads frida_info.csv and outputs the SampleParms
 # also removes parms we will not sample
 # and complains about invalid lines in frida_info.csv
-integerParms <- data.frame(Variable=c('Climate Units.selected climate case'),
+integerParms <- data.frame(Variable=c('Climate Units.selected climate case[1]'),
 													 Value=c(23),
 													 Min=c(1),
 													 Max=c(100))
@@ -297,7 +297,7 @@ while(newMaxFound){
 	if(forceParBounds){
 		cat('Forcing coefs sample range to be equal tovalues frida_info\n')
 		border.coefs <- sampleParms[,c('Min','Max')]
-	} else {
+	} else if (!file.exists(file.path(location.output,'sampleParmsParscaleRanged.RDS'))) {
 		# minimize and maximize each parameter with others free, until density is 
 		# equal to pdensEps
 		cat('determining coef sample range...\n')
@@ -332,20 +332,6 @@ while(newMaxFound){
 		# 									trace = 9,
 		# 									niter=1e2)
 		
-		manualBorders <- read.csv('frida_external_ranges.csv')
-		if(nrow(manualBorders)>0){
-			for(r.i in 1:nrow(manualBorders)){
-				sp.i <- which(sampleParms$Variable==manualBorders$Variable[r.i])
-				if(!is.na(manualBorders$Min[r.i])){
-					border.coefs[sp.i,'Min'] <- manualBorders$Min[r.i]
-					notDeterminedBorders[sp.i,'Min'] <- FALSE
-				}
-				if(!is.na(manualBorders$Max[r.i])){
-					border.coefs[sp.i,'Max'] <- manualBorders$Max[r.i]
-					notDeterminedBorders[sp.i,'Max'] <- FALSE
-				}
-			}
-		}
 		for(direction in c('Min','Max')){
 			cat(sprintf('  determining %s par values...',tolower(direction)))
 			clusterExport(cl,list('calDat','treatVarsAsIndep'))
@@ -379,14 +365,35 @@ while(newMaxFound){
 			cat('done\n')	
 		}
 	}
+	# read manual borders
+	manualBorders <- read.csv('frida_external_ranges.csv')
+	cat(sprintf('applying manual ranges for %i parameters\n',nrow(manualBorders)))
+	if(nrow(manualBorders)>0){
+		for(r.i in 1:nrow(manualBorders)){
+			sp.i <- which(sampleParms$Variable==manualBorders$Variable[r.i])
+			if(!is.na(manualBorders$Min[r.i])){
+				sampleParms$Min[sp.i] <- border.coefs[sp.i,'Min'] <- manualBorders$Min[r.i]
+				notDeterminedBorders[sp.i,'Min'] <- FALSE
+			}
+			if(!is.na(manualBorders$Max[r.i])){
+				sampleParms$Max[sp.i] <- border.coefs[sp.i,'Max'] <- manualBorders$Max[r.i]
+				notDeterminedBorders[sp.i,'Max'] <- FALSE
+			}
+		}
+	}
+	write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
+	saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
+	cat('done\n')	
+	
+	parVect <- sampleParms$Value
+	names(parVect) <- sampleParms$Variable
 	for(direction in c('Min','Max')){
 		if(treatVarsAsIndep){
-			cat(sprintf('Checking for likelihood at %s failures...\n',tolower(direction)))
+			cat(sprintf('Checking for likelihood at %s failures...',tolower(direction)))
 			borderLogLikeError[,direction] <- unlist(parLapplyLB(cl,1:length(parVect),rangeCheckFun,
 																													 parVect=parVect,
 																													 border.coefs=border.coefs[,direction],
 																													 lpdensEps=lpdensEps))
-			cat('\n')
 		}
 		sampleParms[[paste0(direction,'NotDeterminedBorder')]] <- notDeterminedBorders[,direction]
 		sampleParms[[paste0(direction,'BorderLogLikeError')]] <- borderLogLikeError[,direction] 
@@ -399,6 +406,7 @@ while(newMaxFound){
 		}
 		write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
 		saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
+		cat('done\n')	
 	}
 	
 	# write to frida_info like file for comparison to input
@@ -431,17 +439,19 @@ while(newMaxFound){
 	write.csv(frida_info.toModify,file.path(location.output,'frida_info_ranged.csv'))
 	
 	# Kick out parameters with errors in the range determination and kickParmsErrorRangeDet was true
-	sampleParms <- sampleParms[-which(sampleParms$MinKickParmsErrorRangeDet),]
-	sampleParms <- sampleParms[-which(sampleParms$MaxKickParmsErrorRangeDet),]
-	write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
-	saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
-	cat(sprintf('Kicked out %i parameters for errors in range determination',
-							sum(sampleParms$MinKickParmsErrorRangeDet||sampleParms$MaxKickParmsErrorRangeDet)))
+	if(kickParmsErrorRangeDet){
+		sampleParms <- sampleParms[-which(sampleParms$MinKickParmsErrorRangeDet),]
+		sampleParms <- sampleParms[-which(sampleParms$MaxKickParmsErrorRangeDet),]
+		write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
+		saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
+		cat(sprintf('Kicked out %i parameters for errors in range determination',
+								sum(sampleParms$MinKickParmsErrorRangeDet||sampleParms$MaxKickParmsErrorRangeDet)))
+	}
 	
 	# Sample the Parmeter Space ####
 	# stop before legacy code that still needs to be ported
 	parVect <- sampleParms$Value
-	names(parVect) <- rownames(sampleParms)
+	names(parVect) <- sampleParms$Variable
 	maxLLike <- -negLLike(parVect)
 	if(-baseNegLL!=maxLLike){stop('call ghostbusters\n')}
 	
