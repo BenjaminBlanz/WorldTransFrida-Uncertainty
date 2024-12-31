@@ -102,6 +102,9 @@ runFridaParmsByIndex <- function(runid){
 	retlist <- vector(mode = "list", length = length(runid))
 	for(i in runid){
 		if(i <= nrow(samplePoints)){
+			sink(file.path(location.frida,'lastRun.txt'))
+			cat(row.names(samplePoints)[i],'\n')
+			sink()
 			writeFRIDAInput(colnames(samplePoints),samplePoints[i,])
 			system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
 									 file.path(location.frida,'FRIDA.stmx')),
