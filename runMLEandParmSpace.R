@@ -50,7 +50,8 @@ integerParms <- data.frame(Variable=c('Climate Units.selected climate case[1]'),
 													 Value=c(23),
 													 Min=c(1),
 													 Max=c(100))
-sampleParms.orig <- sampleParms <- prepareSampleParms(excludeNames=integerParms$Variable)
+excludedParmsForBeingIntegers <- integerParms$Variable
+sampleParms.orig <- sampleParms <- prepareSampleParms(excludeNames=excludedParmsForBeingIntegers)
 
 # mle and like ####
 # Optimisation of parameters (min neg log likelihood) is performed including
