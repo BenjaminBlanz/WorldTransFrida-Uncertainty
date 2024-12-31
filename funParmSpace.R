@@ -253,6 +253,9 @@ rangeCheckFun <- function(rangeCheck.i,parVect,border.coefs,lpdensEps){
 	parVectMinCheck.i <- parVect
 	parVectMinCheck.i[rangeCheck.i] <- border.coefs[rangeCheck.i]
 	lLike <- -negLLike(parVectMinCheck.i)
+	if(is.null(lLike)){
+		lLike<-NA
+	}
 	borderLogLikeError <- lLike-lpdensEps
 	if(abs(lLike-lpdensEps) >= rangeTol*10){
 		cat(sprintf('\r%4i %100s %+12.6f\n',rangeCheck.i,names(parVect[rangeCheck.i]),lLike-lpdensEps))
