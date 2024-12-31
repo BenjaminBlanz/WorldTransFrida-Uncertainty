@@ -29,7 +29,7 @@ yaxPad <- 0.4
 # sampling the parameters ####
 
 # number of samples for the sobol sequence across all dimensions
-numSample <- 5e4
+numSample <- 1e4
 # by default sobol sequence covers the entire range between min and max with 
 # equal density.
 # However we might want to ensure that there are similar number of points above and 
@@ -64,16 +64,20 @@ treatVarsAsIndep <- T
 # parms.
 # The parm range will be either increased or decreased to make this happen in each
 # parameter.
-likeCutoffRatio <- 1000
+likeCutoffRatio <- 200
 # tolerance for the search of the likelihood border
 rangeTol <- 1e-14
+kickParmsErrorRangeDet <- TRUE
+kickParmsErrorRangeDet.tolerance <- 1e-7
+# further overrides
 ignoreParBounds <- FALSE
 forceParBounds <- FALSE
 # should we skip the parameter maximum likelihood estimation and use the default
-# frida pars
+# frida pars as MLE
 if(!exists('skipParMLE')){
 	skipParMLE <- T
 }
+
 
 # locations and names ####
 # location of frida/stella for running
@@ -90,7 +94,8 @@ location.output <- file.path('workOutput',paste0('NumSample-',numSample,
 																								 '-chunkSizePerWorker-',chunkSizePerWorker,
 																								 '-likeCutoffRatio-',likeCutoffRatio,
 																								 '-ignoreParBounds-',ignoreParBounds,
-																								 '-forceParBounds-',forceParBounds))
+																								 '-forceParBounds-',forceParBounds,
+																								 '-kickParmsErrorRangeDet-',kickParmsErrorRangeDet))
 location.output.base <- location.output
 dir.create(file.path(location.output),recursive = T,showWarnings = F)
 
