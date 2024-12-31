@@ -5,24 +5,29 @@
 suppressPackageStartupMessages(require(Rmpfr)) # use to calculate the likelihood from loglikelihood
 
 # prepareSampleParms ####
-prepareSampleParms <- function(excludeNames=c()){
+prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NULL){
 	cat('Specify sampling parameters...')
-	# read in the parameters in frida that have ranges defined
-	frida_info <- read.csv("frida_info.csv")
-	columnsThatAreFlags <- c(2,3,4,5,6,7,8,9,10)
-	# select the parameters to be sampled
-	sampleParms <- frida_info[rowSums(frida_info[,columnsThatAreFlags])>0 &
-															frida_info$No.Sensi==0 &
-															frida_info$Policy==0,
-														-columnsThatAreFlags]
-	invalidLines <- which(!((sampleParms$Max-sampleParms$Min)>0 &
-														sampleParms$Min <= sampleParms$Value &
-														sampleParms$Value <= sampleParms$Max))
-	suppressWarnings(file.remove('frida_info_errorCases.csv'))
-	if(length(invalidLines)>0){
-		cat('invalid lines detected, see frida_info_errorCases.csv...')
+	if(is.null(sampleParms)){
+		cat('reading frida_info...')
+		# read in the parameters in frida that have ranges defined
+		frida_info <- read.csv("frida_info.csv")
+		columnsThatAreFlags <- c(2,3,4,5,6,7,8,9,10)
+		# select the parameters to be sampled
+		sampleParms <- frida_info[rowSums(frida_info[,columnsThatAreFlags])>0 &
+																frida_info$No.Sensi==0 &
+																frida_info$Policy==0,
+															-columnsThatAreFlags]
+		invalidLines <- which(!((sampleParms$Max-sampleParms$Min)>0 &
+															sampleParms$Min <= sampleParms$Value &
+															sampleParms$Value <= sampleParms$Max))
+		suppressWarnings(file.remove('frida_info_errorCases.csv'))
+		if(length(invalidLines)>0){
+			cat('invalid lines detected, see frida_info_errorCases.csv...')
+		}
+		write.csv(sampleParms[invalidLines,],'frida_info_errorCases.csv')
+	} else {
+		invalidLines <- c()
 	}
-	write.csv(sampleParms[invalidLines,],'frida_info_errorCases.csv')
 	# deal with manually excluded items
 	if(!redoAllCalc && file.exists('parExclusionList.csv') && file.size('parExclusionList.csv')>0){
 		manParExclusionList <- read.csv('parExclusionList.csv')
@@ -31,18 +36,27 @@ prepareSampleParms <- function(excludeNames=c()){
 	# deal with excluded Names
 	excludedIdc <- which(sampleParms$Variable %in% excludeNames)
 	if(length(c(invalidLines,excludedIdc))>0){
+		cat('excluding invalid and excluded parms...')
 		excludeIdc <- unique(c(invalidLines,excludedIdc))
 		sampleParms <- sampleParms[-excludedIdc,]
 	}
-	# add the climate case
-	if(!'Climate Units.selected climate case'%in%excludeNames){
-		newIdx <- nrow(sampleParms)+1
-		sampleParms[newIdx,c('Variable')] <- 'Climate Units.selected climate case'
-		sampleParms[newIdx,c('Value','Min','Max')] <- 
-			c(23,0.5,100.5-.Machine$double.eps)
-		sampleParmsRowNames <- rownames(sampleParms)
-		sampleParmsRowNames[newIdx] <- as.character(as.numeric(sampleParmsRowNames[newIdx-1])+1)
-		rownames(sampleParms) <- sampleParmsRowNames
+	# add the integer vars e.g. climate case
+	if(!is.null(integerParms)){
+		cat('adding integer parms...')
+		for(p.i in 1:nrow(integerParms)){
+			if(!integerParms$Variable[p.i]%in%excludeNames && !integerParms$Variable[p.i]%in%sampleParms$Variable){
+				newIdx <- nrow(sampleParms)+1
+				sampleParms[newIdx,c('Variable')] <- integerParms$Variable[p.i]# e.g. 'Climate Units.selected climate case'
+				sampleParms[newIdx,c('Value','Min','Max')] <- 
+					c(integerParms$Value[p.i],
+						integerParms$Min[p.i]-0.5+.Machine$double.eps,
+						integerParms$Max[p.i]+0.5-.Machine$double.eps)
+					# c(23,0.5,100.5-.Machine$double.eps) # for 'Climate Units.selected climate case'
+				sampleParmsRowNames <- rownames(sampleParms)
+				sampleParmsRowNames[newIdx] <- as.character(as.numeric(sampleParmsRowNames[newIdx-1])+1)
+				rownames(sampleParms) <- sampleParmsRowNames
+			}
+		}
 	}
 	cat('done\n')
 	return(sampleParms)
@@ -288,13 +302,15 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 																					 plotDatPerChunWhileRunning=F,
 																					 plotPerChunk=T,
 																					 yaxPad=0.2,
-																					 baseLL=-29567.06){
+																					 baseLL=-29567.06,
+																					 skipRunJustRead=F,
+																					 numWorkers=length(cl),
+																					 calDat.impExtrValue=NULL){
 	cat('cluster run...\n')
 	dir.create(location.output,showWarnings = F,recursive = T)
 	numSample <- nrow(samplePoints)
 	logLike <- rep(NA,numSample)
 	names(logLike) <- 1:numSample
-	numWorkers <- length(cl)
 	workUnitBoundaries <- seq(1,numSample,chunkSizePerWorker*numWorkers)
 	# in case the chunkSize is not a perfect divisor of the numSample, add numSample as the 
 	# final boundary
@@ -306,10 +322,12 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 	
 	# initialise  cluster
 	baseWD <- getwd()
-	clusterExport(cl,list('location.output','baseWD','sampleParms',
-												'chunkSizePerWorker','runFridaParmsBySamplePoints',
-												'calDat','resSigma',
-												'runFridaParmsByIndex'))
+	if(!skipRunJustRead){
+		clusterExport(cl,list('location.output','baseWD','sampleParms',
+													'chunkSizePerWorker','runFridaParmsBySamplePoints',
+													'calDat','resSigma',
+													'runFridaParmsByIndex'))
+	}
 	# plot setup 
 	if(plotDatWhileRunning & !plotPerChunk){
 		if(!(plotCape['X11']|plotCape['aqua'])){
@@ -352,6 +370,9 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			}
 		}
 		if(!exists('parOutput')){
+			if(!skipRunJustRead){
+				stop('Missing run files.\n')
+			}
 			cat(sprintf('\r(r) Running unit %i: samples %i to %i. ',
 									i, workUnitBoundaries[i],workUnitBoundaries[i+1]-1))
 			if((workUnitBoundaries[i]-1)>0){
