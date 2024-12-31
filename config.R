@@ -29,7 +29,7 @@ yaxPad <- 0.4
 # sampling the parameters ####
 
 # number of samples for the sobol sequence across all dimensions
-numSample <- 1e4
+numSample <- 1e3
 # by default sobol sequence covers the entire range between min and max with 
 # equal density.
 # However we might want to ensure that there are similar number of points above and 
@@ -64,7 +64,7 @@ treatVarsAsIndep <- T
 # parms.
 # The parm range will be either increased or decreased to make this happen in each
 # parameter.
-likeCutoffRatio <- 200
+likeCutoffRatio <- 10
 # tolerance for the search of the likelihood border
 rangeTol <- 1e-14
 kickParmsErrorRangeDet <- TRUE
