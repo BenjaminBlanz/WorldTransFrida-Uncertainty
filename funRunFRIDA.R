@@ -114,7 +114,7 @@ runFridaParmsByIndex <- function(runid){
 			logLike <- funLogLikelihood(resDat,resSigma)
 			# If the logLike is not NA but the run did not complete assign 
 			# lowest nonzero value. We use this when narrowing the parms space
-			if(is.na(runDat[[1]][nrow(runDat)])||logLike==-Inf){
+			if(is.na(runDat[[1]][nrow(calDat)])||logLike==-Inf){
 				logLike <- -.Machine$double.xmax+sum(!is.na(runDat[[1]]))*.Machine$double.eps
 			}
 			suppressWarnings(parmsIndex<-as.numeric(row.names(samplePoints)[i]))
@@ -305,7 +305,8 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 																					 baseLL=-29567.06,
 																					 skipRunJustRead=F,
 																					 numWorkers=length(cl),
-																					 calDat.impExtrValue=NULL){
+																					 calDat.impExtrValue=NULL,
+																					 plotMinAlpha = 0.01){
 	cat('cluster run...\n')
 	dir.create(location.output,showWarnings = F,recursive = T)
 	numSample <- nrow(samplePoints)
@@ -437,7 +438,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 				for(l in 1:length(parOutput)){
 					runLL <- parOutput[[l]]$logLike
 					lines(rownames(parOutput[[l]]$runDat),parOutput[[l]]$runDat[[dat.i]],
-								col=adjustcolor(i,min(1,max(0.01,
+								col=adjustcolor(i,min(1,max(plotMinAlpha,
 																						1/(abs(runLL-baseLL)+1)
 								))))
 				}
@@ -471,7 +472,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 				for(l in 1:length(parOutput)){
 					runLL <- parOutput[[l]]$logLike
 					lines(rownames(parOutput[[l]]$runDat),parOutput[[l]]$runDat[[dat.i]],
-								col=adjustcolor(i,min(1,max(0.01,
+								col=adjustcolor(1,min(1,max(plotMinAlpha,
 																						1/(abs(runLL-baseLL)+1)
 																						))))
 				}
