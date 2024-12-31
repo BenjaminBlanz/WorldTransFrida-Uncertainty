@@ -29,7 +29,7 @@ yaxPad <- 0.4
 # sampling the parameters ####
 
 # number of samples for the sobol sequence across all dimensions
-numSample <- 1e5
+numSample <- 5e4
 # by default sobol sequence covers the entire range between min and max with 
 # equal density.
 # However we might want to ensure that there are similar number of points above and 
@@ -68,7 +68,7 @@ likeCutoffRatio <- 1000
 # tolerance for the search of the likelihood border
 rangeTol <- 1e-14
 ignoreParBounds <- FALSE
-forceParBounds <- T
+forceParBounds <- FALSE
 # should we skip the parameter maximum likelihood estimation and use the default
 # frida pars
 if(!exists('skipParMLE')){
