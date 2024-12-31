@@ -2,3 +2,5 @@
 Finance.sensitivity of effect of sta on failure rate[1],0.3,0.85
 Finance.max change in bank investment as fraction of normal,0.55,0.73
 Finance.bank expectation formation time,2.2,3
+Finance.sensitivity of defaults to changes in risky interest,0,13
+Finance.exponential effect of interest on defaults,8,15
