@@ -370,7 +370,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			}
 		}
 		if(!exists('parOutput')){
-			if(!skipRunJustRead){
+			if(skipRunJustRead){
 				stop('Missing run files.\n')
 			}
 			cat(sprintf('\r(r) Running unit %i: samples %i to %i. ',
