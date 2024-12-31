@@ -22,7 +22,7 @@ Climate Risk Perception.time to perceive temperature anomaly,0,0,0,0,0,1,0,0,0,2
 Climate Risk Perception.time to report climate information,0,0,0,0,0,1,0,0,0,8.45054017051046,1,10
 Behavioral Choices.switch animal products fraction policy,0,0,0,0,0,0,0,1,0,0,0,1
 Behavioral Choices.switch aquatic animal products fraction policy,0,0,0,0,0,0,0,1,0,0,0,1
-Behavioral Choices.switch energy demand policy,0,0,0,0,0,0,0,1,0,0,0,1
+Behavioral Choices.switch energy demand policy,0,0,0,0,0,0,1,1,0,0,0,1
 Behavioral Choices.switch food demand policy,0,0,0,0,0,0,0,1,0,0,0,1
 Climate.switch behavioral impact,0,0,0,0,0,0,1,0,0,1,0,1
 Climate.switch demography damage,0,0,0,0,0,0,1,0,0,1,0,1
@@ -875,195 +875,195 @@ Sea level rise adaptation.reference protection cost,0,0,0,0,1,0,0,0,0,0.00602,0.
 Sea level rise adaptation.Time to increase flood protection height,0,0,0,0,0,1,0,0,0,10,5,25
 Sea level rise costs and impacts.Not depreciated fraction of assets at time of retreat,0,0,0,0,0,1,0,0,0,0.1,0,0.2
 energy demand.CDD linear coefficient,0,0,1,0,1,0,0,0,0,287.84696037,230,330
-energy demand.effect of GDP on per person use of energy alpha,0,0,0,0,0,1,0,0,0,0.47,0.235,0.47
-energy demand.effect of GDP on per person use of energy beta,0,0,0,0,0,1,0,0,0,0.836832290828595,0,2
+energy demand.effect of GDP on per person use of energy alpha,0,0,0,0,0,1,1,0,0,0.47,0.235,0.47
+energy demand.effect of GDP on per person use of energy beta,0,0,0,0,0,1,1,0,0,0.836832290828595,0,2
 energy demand.energy use per CDD,0,0,1,0,1,0,0,0,0,0.000875,0.000875,0.01
 energy demand.Energy use per HDD,0,0,1,0,1,0,0,0,0,0.002,0.0001,0.01
 energy demand.HDD exponential coefficient,0,0,1,0,1,0,0,0,0,-0.232561095,-0.5,-0.01
-energy demand.normal per person use of energy,0,0,0,0,0,1,0,0,0,7.5,6.5,7.5
-energy investments.adaptive energy investments differntiating factor,0,0,0,0,0,1,0,0,0,-7.16119449319558,-15,0
-energy investments.adaptive energy investments integrating factor,0,0,0,0,0,1,0,0,0,-3,-7,0
-energy investments.adaptive energy investments proportional factor,0,0,0,0,0,1,0,0,0,-30,-50,0
-energy investments.baseline energy investments,0,0,0,0,0,1,0,0,0,857228400873.641,100000000000,1000000000000
-"energy investments.historical cost adjustment[Coal fuel extraction, 1]",0,0,0,0,0,1,0,0,0,1.03182639996729,0.01,6
-"energy investments.historical cost adjustment[Coal fuel extraction, 2]",0,0,0,0,0,1,0,0,0,0.411013278076705,0.01,6
-"energy investments.historical cost adjustment[Coal fuel extraction, 3]",0,0,0,0,0,1,0,0,0,1.35499734230099,0.01,6
-"energy investments.historical cost adjustment[Coal fuel extraction, 4]",0,0,0,0,0,1,0,0,0,2.24654974118007,0.01,6
-"energy investments.historical cost adjustment[Coal fuel extraction, 5]",0,0,0,0,0,1,0,0,0,0.903079139062742,0.01,6
-"energy investments.historical cost adjustment[Coal fuel extraction, 6]",0,0,0,0,0,1,0,0,0,0.883520941673724,0.01,6
-"energy investments.historical cost adjustment[Coal fuel extraction, 7]",0,0,0,0,0,1,0,0,0,0.705933761613417,0.01,6
-"energy investments.historical cost adjustment[Coal fuel extraction, 8]",0,0,0,0,0,1,0,0,0,1.26758780287594,0.01,6
-"energy investments.historical cost adjustment[Coal fuel extraction, 9]",0,0,0,0,0,1,0,0,0,1.06656235542764,0.01,6
-"energy investments.historical cost adjustment[Coal energy conversion, 1]",0,0,0,0,0,1,0,0,0,0.462606149331934,0.01,6
-"energy investments.historical cost adjustment[Coal energy conversion, 2]",0,0,0,0,0,1,0,0,0,0.15641731011234,0.01,6
-"energy investments.historical cost adjustment[Coal energy conversion, 3]",0,0,0,0,0,1,0,0,0,0.509484960140968,0.01,6
-"energy investments.historical cost adjustment[Coal energy conversion, 4]",0,0,0,0,0,1,0,0,0,0.608640604381689,0.01,6
-"energy investments.historical cost adjustment[Coal energy conversion, 5]",0,0,0,0,0,1,0,0,0,0.298363230604727,0.01,6
-"energy investments.historical cost adjustment[Coal energy conversion, 6]",0,0,0,0,0,1,0,0,0,0.16046277800617,0.01,6
-"energy investments.historical cost adjustment[Coal energy conversion, 7]",0,0,0,0,0,1,0,0,0,0.252018593441725,0.01,6
-"energy investments.historical cost adjustment[Coal energy conversion, 8]",0,0,0,0,0,1,0,0,0,0.416089741988227,0.01,6
-"energy investments.historical cost adjustment[Coal energy conversion, 9]",0,0,0,0,0,1,0,0,0,0.395634178478145,0.01,6
-"energy investments.historical cost adjustment[Oil fuel extraction, 1]",0,0,0,0,0,1,0,0,0,0.08,0.01,6
-"energy investments.historical cost adjustment[Oil fuel extraction, 2]",0,0,0,0,0,1,0,0,0,0.0631447818118235,0.01,6
-"energy investments.historical cost adjustment[Oil fuel extraction, 3]",0,0,0,0,0,1,0,0,0,0.0832899695083518,0.01,6
-"energy investments.historical cost adjustment[Oil fuel extraction, 4]",0,0,0,0,0,1,0,0,0,0.0811803846769153,0.01,6
-"energy investments.historical cost adjustment[Oil fuel extraction, 5]",0,0,0,0,0,1,0,0,0,0.0871103735629449,0.01,6
-"energy investments.historical cost adjustment[Oil fuel extraction, 6]",0,0,0,0,0,1,0,0,0,0.0788140812679224,0.01,6
-"energy investments.historical cost adjustment[Oil fuel extraction, 7]",0,0,0,0,0,1,0,0,0,0.0848239154051217,0.01,6
-"energy investments.historical cost adjustment[Oil fuel extraction, 8]",0,0,0,0,0,1,0,0,0,0.0948915618379132,0.01,6
-"energy investments.historical cost adjustment[Oil fuel extraction, 9]",0,0,0,0,0,1,0,0,0,0.116576196209823,0.01,6
-"energy investments.historical cost adjustment[Oil energy conversion, 1]",0,0,0,0,0,1,0,0,0,0.25,0.01,6
-"energy investments.historical cost adjustment[Oil energy conversion, 2]",0,0,0,0,0,1,0,0,0,0.082246260208623,0.01,6
-"energy investments.historical cost adjustment[Oil energy conversion, 3]",0,0,0,0,0,1,0,0,0,0.308600364731014,0.01,6
-"energy investments.historical cost adjustment[Oil energy conversion, 4]",0,0,0,0,0,1,0,0,0,0.329544255589911,0.01,6
-"energy investments.historical cost adjustment[Oil energy conversion, 5]",0,0,0,0,0,1,0,0,0,0.198137176233781,0.01,6
-"energy investments.historical cost adjustment[Oil energy conversion, 6]",0,0,0,0,0,1,0,0,0,0.143651989372607,0.01,6
-"energy investments.historical cost adjustment[Oil energy conversion, 7]",0,0,0,0,0,1,0,0,0,0.109870383254787,0.01,6
-"energy investments.historical cost adjustment[Oil energy conversion, 8]",0,0,0,0,0,1,0,0,0,0.135399061457095,0.01,6
-"energy investments.historical cost adjustment[Oil energy conversion, 9]",0,0,0,0,0,1,0,0,0,0.145584260397014,0.01,6
-"energy investments.historical cost adjustment[Gas fuel extraction, 1]",0,0,0,0,0,1,0,0,0,0.306789184301203,0.01,6
-"energy investments.historical cost adjustment[Gas fuel extraction, 2]",0,0,0,0,0,1,0,0,0,0.125206238934051,0.01,6
-"energy investments.historical cost adjustment[Gas fuel extraction, 3]",0,0,0,0,0,1,0,0,0,0.317261585007743,0.01,6
-"energy investments.historical cost adjustment[Gas fuel extraction, 4]",0,0,0,0,0,1,0,0,0,0.51627865725358,0.01,6
-"energy investments.historical cost adjustment[Gas fuel extraction, 5]",0,0,0,0,0,1,0,0,0,0.295503741378641,0.01,6
-"energy investments.historical cost adjustment[Gas fuel extraction, 6]",0,0,0,0,0,1,0,0,0,0.247967288328749,0.01,6
-"energy investments.historical cost adjustment[Gas fuel extraction, 7]",0,0,0,0,0,1,0,0,0,0.246917880445067,0.01,6
-"energy investments.historical cost adjustment[Gas fuel extraction, 8]",0,0,0,0,0,1,0,0,0,0.300532748741577,0.01,6
-"energy investments.historical cost adjustment[Gas fuel extraction, 9]",0,0,0,0,0,1,0,0,0,0.354420997875602,0.01,6
-"energy investments.historical cost adjustment[Gas energy conversion, 1]",0,0,0,0,0,1,0,0,0,0.217387943500359,0.01,6
-"energy investments.historical cost adjustment[Gas energy conversion, 2]",0,0,0,0,0,1,0,0,0,0.0830660852563276,0.01,6
-"energy investments.historical cost adjustment[Gas energy conversion, 3]",0,0,0,0,0,1,0,0,0,0.244762190658124,0.01,6
-"energy investments.historical cost adjustment[Gas energy conversion, 4]",0,0,0,0,0,1,0,0,0,0.510978720364552,0.01,6
-"energy investments.historical cost adjustment[Gas energy conversion, 5]",0,0,0,0,0,1,0,0,0,0.0818126062819203,0.01,6
-"energy investments.historical cost adjustment[Gas energy conversion, 6]",0,0,0,0,0,1,0,0,0,0.149353338128107,0.01,6
-"energy investments.historical cost adjustment[Gas energy conversion, 7]",0,0,0,0,0,1,0,0,0,0.144485076045946,0.01,6
-"energy investments.historical cost adjustment[Gas energy conversion, 8]",0,0,0,0,0,1,0,0,0,0.188451446070731,0.01,6
-"energy investments.historical cost adjustment[Gas energy conversion, 9]",0,0,0,0,0,1,0,0,0,0.254064440915985,0.01,6
-"energy investments.historical cost adjustment[Solar and Wind, 1]",0,0,0,0,0,1,0,0,0,0.483160329942946,0.01,6
-"energy investments.historical cost adjustment[Solar and Wind, 2]",0,0,0,0,0,1,0,0,0,0.48427323099357,0.01,6
-"energy investments.historical cost adjustment[Solar and Wind, 3]",0,0,0,0,0,1,0,0,0,1.03432713584854,0.01,6
-"energy investments.historical cost adjustment[Solar and Wind, 4]",0,0,0,0,0,1,0,0,0,0.447055436374411,0.01,6
-"energy investments.historical cost adjustment[Solar and Wind, 5]",0,0,0,0,0,1,0,0,0,0.152920516448904,0.01,6
-"energy investments.historical cost adjustment[Solar and Wind, 6]",0,0,0,0,0,1,0,0,0,0.117753731835763,0.01,6
-"energy investments.historical cost adjustment[Solar and Wind, 7]",0,0,0,0,0,1,0,0,0,0.0885764864827472,0.01,6
-"energy investments.historical cost adjustment[Solar and Wind, 8]",0,0,0,0,0,1,0,0,0,0.125892901224737,0.01,6
-"energy investments.historical cost adjustment[Solar and Wind, 9]",0,0,0,0,0,1,0,0,0,0.088172814481905,0.01,6
-"energy investments.historical cost adjustment[Hydropower, 1]",0,0,0,0,0,1,0,0,0,1.23552401351051,0.01,6
-"energy investments.historical cost adjustment[Hydropower, 2]",0,0,0,0,0,1,0,0,0,0.294365386428212,0.01,6
-"energy investments.historical cost adjustment[Hydropower, 3]",0,0,0,0,0,1,0,0,0,1.42483682860833,0.01,6
-"energy investments.historical cost adjustment[Hydropower, 4]",0,0,0,0,0,1,0,0,0,2.92788478064123,0.01,6
-"energy investments.historical cost adjustment[Hydropower, 5]",0,0,0,0,0,1,0,0,0,0.919496745734629,0.01,6
-"energy investments.historical cost adjustment[Hydropower, 6]",0,0,0,0,0,1,0,0,0,0.416399557375146,0.01,6
-"energy investments.historical cost adjustment[Hydropower, 7]",0,0,0,0,0,1,0,0,0,0.323800093657265,0.01,6
-"energy investments.historical cost adjustment[Hydropower, 8]",0,0,0,0,0,1,0,0,0,0.368592038515488,0.01,6
-"energy investments.historical cost adjustment[Hydropower, 9]",0,0,0,0,0,1,0,0,0,0.37778446436346,0.01,6
-"energy investments.historical cost adjustment[Other, 1]",0,0,0,0,0,1,0,0,0,0.591854841456433,0.01,6
-"energy investments.historical cost adjustment[Other, 2]",0,0,0,0,0,1,0,0,0,0.366516926932816,0.01,6
-"energy investments.historical cost adjustment[Other, 3]",0,0,0,0,0,1,0,0,0,0.850059911944079,0.01,6
-"energy investments.historical cost adjustment[Other, 4]",0,0,0,0,0,1,0,0,0,2.92611206206516,0.01,6
-"energy investments.historical cost adjustment[Other, 5]",0,0,0,0,0,1,0,0,0,0.693792259463251,0.01,6
-"energy investments.historical cost adjustment[Other, 6]",0,0,0,0,0,1,0,0,0,0.457377000728142,0.01,6
-"energy investments.historical cost adjustment[Other, 7]",0,0,0,0,0,1,0,0,0,0.380384516467479,0.01,6
-"energy investments.historical cost adjustment[Other, 8]",0,0,0,0,0,1,0,0,0,0.544896989147429,0.01,6
-"energy investments.historical cost adjustment[Other, 9]",0,0,0,0,0,1,0,0,0,0.526616997703634,0.01,6
-"energy investments.historical cost adjustment[Nuclear, 1]",0,0,0,0,0,1,0,0,0,0.849651954516884,0.01,6
-"energy investments.historical cost adjustment[Nuclear, 2]",0,0,0,0,0,1,0,0,0,0.222113481988137,0.01,6
-"energy investments.historical cost adjustment[Nuclear, 3]",0,0,0,0,0,1,0,0,0,1.28968027925542,0.01,6
-"energy investments.historical cost adjustment[Nuclear, 4]",0,0,0,0,0,1,0,0,0,2.67523457864792,0.01,6
-"energy investments.historical cost adjustment[Nuclear, 5]",0,0,0,0,0,1,0,0,0,0.616765955324353,0.01,6
-"energy investments.historical cost adjustment[Nuclear, 6]",0,0,0,0,0,1,0,0,0,0.277556081976935,0.01,6
-"energy investments.historical cost adjustment[Nuclear, 7]",0,0,0,0,0,1,0,0,0,0.209895747492842,0.01,6
-"energy investments.historical cost adjustment[Nuclear, 8]",0,0,0,0,0,1,0,0,0,0.232814267565246,0.01,6
-"energy investments.historical cost adjustment[Nuclear, 9]",0,0,0,0,0,1,0,0,0,0.237882303072467,0.01,6
-"energy investments.historical cost adjustment[Bio, 1]",0,0,0,0,0,1,0,0,0,0.60965492507349,0.01,6
-"energy investments.historical cost adjustment[Bio, 2]",0,0,0,0,0,1,0,0,0,0.111618780580821,0.01,6
-"energy investments.historical cost adjustment[Bio, 3]",0,0,0,0,0,1,0,0,0,0.691374566756469,0.01,6
-"energy investments.historical cost adjustment[Bio, 4]",0,0,0,0,0,1,0,0,0,2.99407383582991,0.01,6
-"energy investments.historical cost adjustment[Bio, 5]",0,0,0,0,0,1,0,0,0,0.617416839462124,0.01,6
-"energy investments.historical cost adjustment[Bio, 6]",0,0,0,0,0,1,0,0,0,0.342950229479712,0.01,6
-"energy investments.historical cost adjustment[Bio, 7]",0,0,0,0,0,1,0,0,0,0.341810045342304,0.01,6
-"energy investments.historical cost adjustment[Bio, 8]",0,0,0,0,0,1,0,0,0,0.527813512409802,0.01,6
-"energy investments.historical cost adjustment[Bio, 9]",0,0,0,0,0,1,0,0,0,0.519900626520621,0.01,6
-energy investments.initial relative supply missmatch,0,0,0,0,0,1,0,0,0,0.1,-0.5,0.5
-energy investments.Relative Energy Supply Mismatch Buffer,0,0,0,0,0,1,0,0,0,0.01,0,0.05
+energy demand.normal per person use of energy,0,0,0,0,0,1,1,0,0,7.5,6.5,7.5
+energy investments.adaptive energy investments differntiating factor,0,0,0,0,0,1,1,0,0,-7.16119449319558,-15,0
+energy investments.adaptive energy investments integrating factor,0,0,0,0,0,1,1,0,0,-3,-7,0
+energy investments.adaptive energy investments proportional factor,0,0,0,0,0,1,1,0,0,-30,-50,0
+energy investments.baseline energy investments,0,0,0,0,0,1,1,0,0,857228400873.641,100000000000,1000000000000
+energy investments.historical cost adjustment[Coal fuel extraction, 1],0,0,0,0,0,1,1,0,0,1.03182639996729,0.000001,2000
+energy investments.historical cost adjustment[Coal fuel extraction, 2],0,0,0,0,0,1,1,0,0,0.411013278076705,0.000001,2000
+energy investments.historical cost adjustment[Coal fuel extraction, 3],0,0,0,0,0,1,1,0,0,1.35499734230099,0.000001,2000
+energy investments.historical cost adjustment[Coal fuel extraction, 4],0,0,0,0,0,1,1,0,0,2.24654974118007,0.000001,2000
+energy investments.historical cost adjustment[Coal fuel extraction, 5],0,0,0,0,0,1,1,0,0,0.903079139062742,0.000001,2000
+energy investments.historical cost adjustment[Coal fuel extraction, 6],0,0,0,0,0,1,1,0,0,0.883520941673724,0.000001,2000
+energy investments.historical cost adjustment[Coal fuel extraction, 7],0,0,0,0,0,1,1,0,0,0.705933761613417,0.000001,2000
+energy investments.historical cost adjustment[Coal fuel extraction, 8],0,0,0,0,0,1,1,0,0,1.26758780287594,0.000001,2000
+energy investments.historical cost adjustment[Coal fuel extraction, 9],0,0,0,0,0,1,1,0,0,1.06656235542764,0.000001,2000
+energy investments.historical cost adjustment[Coal energy conversion, 1],0,0,0,0,0,1,1,0,0,0.462606149331934,0.000001,2000
+energy investments.historical cost adjustment[Coal energy conversion, 2],0,0,0,0,0,1,1,0,0,0.15641731011234,0.000001,2000
+energy investments.historical cost adjustment[Coal energy conversion, 3],0,0,0,0,0,1,1,0,0,0.509484960140968,0.000001,2000
+energy investments.historical cost adjustment[Coal energy conversion, 4],0,0,0,0,0,1,1,0,0,0.608640604381689,0.000001,2000
+energy investments.historical cost adjustment[Coal energy conversion, 5],0,0,0,0,0,1,1,0,0,0.298363230604727,0.000001,2000
+energy investments.historical cost adjustment[Coal energy conversion, 6],0,0,0,0,0,1,1,0,0,0.16046277800617,0.000001,2000
+energy investments.historical cost adjustment[Coal energy conversion, 7],0,0,0,0,0,1,1,0,0,0.252018593441725,0.000001,2000
+energy investments.historical cost adjustment[Coal energy conversion, 8],0,0,0,0,0,1,1,0,0,0.416089741988227,0.000001,2000
+energy investments.historical cost adjustment[Coal energy conversion, 9],0,0,0,0,0,1,1,0,0,0.395634178478145,0.000001,2000
+energy investments.historical cost adjustment[Oil fuel extraction, 1],0,0,0,0,0,1,1,0,0,0.08,0.000001,2000
+energy investments.historical cost adjustment[Oil fuel extraction, 2],0,0,0,0,0,1,1,0,0,0.0631447818118235,0.000001,2000
+energy investments.historical cost adjustment[Oil fuel extraction, 3],0,0,0,0,0,1,1,0,0,0.0832899695083518,0.000001,2000
+energy investments.historical cost adjustment[Oil fuel extraction, 4],0,0,0,0,0,1,1,0,0,0.0811803846769153,0.000001,2000
+energy investments.historical cost adjustment[Oil fuel extraction, 5],0,0,0,0,0,1,1,0,0,0.0871103735629449,0.000001,2000
+energy investments.historical cost adjustment[Oil fuel extraction, 6],0,0,0,0,0,1,1,0,0,0.0788140812679224,0.000001,2000
+energy investments.historical cost adjustment[Oil fuel extraction, 7],0,0,0,0,0,1,1,0,0,0.0848239154051217,0.000001,2000
+energy investments.historical cost adjustment[Oil fuel extraction, 8],0,0,0,0,0,1,1,0,0,0.0948915618379132,0.000001,2000
+energy investments.historical cost adjustment[Oil fuel extraction, 9],0,0,0,0,0,1,1,0,0,0.116576196209823,0.000001,2000
+energy investments.historical cost adjustment[Oil energy conversion, 1],0,0,0,0,0,1,1,0,0,0.25,0.000001,2000
+energy investments.historical cost adjustment[Oil energy conversion, 2],0,0,0,0,0,1,1,0,0,0.082246260208623,0.000001,2000
+energy investments.historical cost adjustment[Oil energy conversion, 3],0,0,0,0,0,1,1,0,0,0.308600364731014,0.000001,2000
+energy investments.historical cost adjustment[Oil energy conversion, 4],0,0,0,0,0,1,1,0,0,0.329544255589911,0.000001,2000
+energy investments.historical cost adjustment[Oil energy conversion, 5],0,0,0,0,0,1,1,0,0,0.198137176233781,0.000001,2000
+energy investments.historical cost adjustment[Oil energy conversion, 6],0,0,0,0,0,1,1,0,0,0.143651989372607,0.000001,2000
+energy investments.historical cost adjustment[Oil energy conversion, 7],0,0,0,0,0,1,1,0,0,0.109870383254787,0.000001,2000
+energy investments.historical cost adjustment[Oil energy conversion, 8],0,0,0,0,0,1,1,0,0,0.135399061457095,0.000001,2000
+energy investments.historical cost adjustment[Oil energy conversion, 9],0,0,0,0,0,1,1,0,0,0.145584260397014,0.000001,2000
+energy investments.historical cost adjustment[Gas fuel extraction, 1],0,0,0,0,0,1,1,0,0,0.306789184301203,0.000001,2000
+energy investments.historical cost adjustment[Gas fuel extraction, 2],0,0,0,0,0,1,1,0,0,0.125206238934051,0.000001,2000
+energy investments.historical cost adjustment[Gas fuel extraction, 3],0,0,0,0,0,1,1,0,0,0.317261585007743,0.000001,2000
+energy investments.historical cost adjustment[Gas fuel extraction, 4],0,0,0,0,0,1,1,0,0,0.51627865725358,0.000001,2000
+energy investments.historical cost adjustment[Gas fuel extraction, 5],0,0,0,0,0,1,1,0,0,0.295503741378641,0.000001,2000
+energy investments.historical cost adjustment[Gas fuel extraction, 6],0,0,0,0,0,1,1,0,0,0.247967288328749,0.000001,2000
+energy investments.historical cost adjustment[Gas fuel extraction, 7],0,0,0,0,0,1,1,0,0,0.246917880445067,0.000001,2000
+energy investments.historical cost adjustment[Gas fuel extraction, 8],0,0,0,0,0,1,1,0,0,0.300532748741577,0.000001,2000
+energy investments.historical cost adjustment[Gas fuel extraction, 9],0,0,0,0,0,1,1,0,0,0.354420997875602,0.000001,2000
+energy investments.historical cost adjustment[Gas energy conversion, 1],0,0,0,0,0,1,1,0,0,0.217387943500359,0.000001,2000
+energy investments.historical cost adjustment[Gas energy conversion, 2],0,0,0,0,0,1,1,0,0,0.0830660852563276,0.000001,2000
+energy investments.historical cost adjustment[Gas energy conversion, 3],0,0,0,0,0,1,1,0,0,0.244762190658124,0.000001,2000
+energy investments.historical cost adjustment[Gas energy conversion, 4],0,0,0,0,0,1,1,0,0,0.510978720364552,0.000001,2000
+energy investments.historical cost adjustment[Gas energy conversion, 5],0,0,0,0,0,1,1,0,0,0.0818126062819203,0.000001,2000
+energy investments.historical cost adjustment[Gas energy conversion, 6],0,0,0,0,0,1,1,0,0,0.149353338128107,0.000001,2000
+energy investments.historical cost adjustment[Gas energy conversion, 7],0,0,0,0,0,1,1,0,0,0.144485076045946,0.000001,2000
+energy investments.historical cost adjustment[Gas energy conversion, 8],0,0,0,0,0,1,1,0,0,0.188451446070731,0.000001,2000
+energy investments.historical cost adjustment[Gas energy conversion, 9],0,0,0,0,0,1,1,0,0,0.254064440915985,0.000001,2000
+energy investments.historical cost adjustment[Solar and Wind, 1],0,0,0,0,0,1,1,0,0,0.483160329942946,0.000001,2000
+energy investments.historical cost adjustment[Solar and Wind, 2],0,0,0,0,0,1,1,0,0,0.48427323099357,0.000001,2000
+energy investments.historical cost adjustment[Solar and Wind, 3],0,0,0,0,0,1,1,0,0,1.03432713584854,0.000001,2000
+energy investments.historical cost adjustment[Solar and Wind, 4],0,0,0,0,0,1,1,0,0,0.447055436374411,0.000001,2000
+energy investments.historical cost adjustment[Solar and Wind, 5],0,0,0,0,0,1,1,0,0,0.152920516448904,0.000001,2000
+energy investments.historical cost adjustment[Solar and Wind, 6],0,0,0,0,0,1,1,0,0,0.117753731835763,0.000001,2000
+energy investments.historical cost adjustment[Solar and Wind, 7],0,0,0,0,0,1,1,0,0,0.0885764864827472,0.000001,2000
+energy investments.historical cost adjustment[Solar and Wind, 8],0,0,0,0,0,1,1,0,0,0.125892901224737,0.000001,2000
+energy investments.historical cost adjustment[Solar and Wind, 9],0,0,0,0,0,1,1,0,0,0.088172814481905,0.000001,2000
+energy investments.historical cost adjustment[Hydropower, 1],0,0,0,0,0,1,1,0,0,1.23552401351051,0.000001,2000
+energy investments.historical cost adjustment[Hydropower, 2],0,0,0,0,0,1,1,0,0,0.294365386428212,0.000001,2000
+energy investments.historical cost adjustment[Hydropower, 3],0,0,0,0,0,1,1,0,0,1.42483682860833,0.000001,2000
+energy investments.historical cost adjustment[Hydropower, 4],0,0,0,0,0,1,1,0,0,2.92788478064123,0.000001,2000
+energy investments.historical cost adjustment[Hydropower, 5],0,0,0,0,0,1,1,0,0,0.919496745734629,0.000001,2000
+energy investments.historical cost adjustment[Hydropower, 6],0,0,0,0,0,1,1,0,0,0.416399557375146,0.000001,2000
+energy investments.historical cost adjustment[Hydropower, 7],0,0,0,0,0,1,1,0,0,0.323800093657265,0.000001,2000
+energy investments.historical cost adjustment[Hydropower, 8],0,0,0,0,0,1,1,0,0,0.368592038515488,0.000001,2000
+energy investments.historical cost adjustment[Hydropower, 9],0,0,0,0,0,1,1,0,0,0.37778446436346,0.000001,2000
+energy investments.historical cost adjustment[Other, 1],0,0,0,0,0,1,1,0,0,0.591854841456433,0.000001,2000
+energy investments.historical cost adjustment[Other, 2],0,0,0,0,0,1,1,0,0,0.366516926932816,0.000001,2000
+energy investments.historical cost adjustment[Other, 3],0,0,0,0,0,1,1,0,0,0.850059911944079,0.000001,2000
+energy investments.historical cost adjustment[Other, 4],0,0,0,0,0,1,1,0,0,2.92611206206516,0.000001,2000
+energy investments.historical cost adjustment[Other, 5],0,0,0,0,0,1,1,0,0,0.693792259463251,0.000001,2000
+energy investments.historical cost adjustment[Other, 6],0,0,0,0,0,1,1,0,0,0.457377000728142,0.000001,2000
+energy investments.historical cost adjustment[Other, 7],0,0,0,0,0,1,1,0,0,0.380384516467479,0.000001,2000
+energy investments.historical cost adjustment[Other, 8],0,0,0,0,0,1,1,0,0,0.544896989147429,0.000001,2000
+energy investments.historical cost adjustment[Other, 9],0,0,0,0,0,1,1,0,0,0.526616997703634,0.000001,2000
+energy investments.historical cost adjustment[Nuclear, 1],0,0,0,0,0,1,1,0,0,0.849651954516884,0.000001,2000
+energy investments.historical cost adjustment[Nuclear, 2],0,0,0,0,0,1,1,0,0,0.222113481988137,0.000001,2000
+energy investments.historical cost adjustment[Nuclear, 3],0,0,0,0,0,1,1,0,0,1.28968027925542,0.000001,2000
+energy investments.historical cost adjustment[Nuclear, 4],0,0,0,0,0,1,1,0,0,2.67523457864792,0.000001,2000
+energy investments.historical cost adjustment[Nuclear, 5],0,0,0,0,0,1,1,0,0,0.616765955324353,0.000001,2000
+energy investments.historical cost adjustment[Nuclear, 6],0,0,0,0,0,1,1,0,0,0.277556081976935,0.000001,2000
+energy investments.historical cost adjustment[Nuclear, 7],0,0,0,0,0,1,1,0,0,0.209895747492842,0.000001,2000
+energy investments.historical cost adjustment[Nuclear, 8],0,0,0,0,0,1,1,0,0,0.232814267565246,0.000001,2000
+energy investments.historical cost adjustment[Nuclear, 9],0,0,0,0,0,1,1,0,0,0.237882303072467,0.000001,2000
+energy investments.historical cost adjustment[Bio, 1],0,0,0,0,0,1,1,0,0,0.60965492507349,0.000001,2000
+energy investments.historical cost adjustment[Bio, 2],0,0,0,0,0,1,1,0,0,0.111618780580821,0.000001,2000
+energy investments.historical cost adjustment[Bio, 3],0,0,0,0,0,1,1,0,0,0.691374566756469,0.000001,2000
+energy investments.historical cost adjustment[Bio, 4],0,0,0,0,0,1,1,0,0,2.99407383582991,0.000001,2000
+energy investments.historical cost adjustment[Bio, 5],0,0,0,0,0,1,1,0,0,0.617416839462124,0.000001,2000
+energy investments.historical cost adjustment[Bio, 6],0,0,0,0,0,1,1,0,0,0.342950229479712,0.000001,2000
+energy investments.historical cost adjustment[Bio, 7],0,0,0,0,0,1,1,0,0,0.341810045342304,0.000001,2000
+energy investments.historical cost adjustment[Bio, 8],0,0,0,0,0,1,1,0,0,0.527813512409802,0.000001,2000
+energy investments.historical cost adjustment[Bio, 9],0,0,0,0,0,1,1,0,0,0.519900626520621,0.000001,2000
+energy investments.initial relative supply missmatch,0,0,0,0,0,1,1,0,0,0.1,-0.5,0.5
+energy investments.Relative Energy Supply Mismatch Buffer,0,0,0,0,0,1,1,0,0,0.01,0,0.05
 energy investments.shape,0,0,0,0,0,1,1,0,0,1,1,3
-Damages.Exponent of Capital Damage Function,0,0,0,0,0,1,0,0,0,2,1,3
-Damages.Slope of Capital Damage Function,0,0,0,0,0,1,0,0,0,0.00713869179990239,0,2
+Damages.Exponent of Capital Damage Function,0,0,1,0,0,1,0,0,0,2,1,3
+Damages.Slope of Capital Damage Function,0,0,1,0,0,1,0,0,0,0.00713869179990239,0,2
 efficiency reduction in power plants.effect of STA on hydropower energy capacity efficiency quadratic,0,0,1,0,1,0,0,0,0,-0.24704396,-0.573951,-0.213884
 efficiency reduction in power plants.effect of STA on hydropower energy capacity efficiency slope,0,0,1,0,1,0,0,0,0,-0.53155579,-1.19866,-0.5
-fossil energy coal.carbon intensity in btu,0,0,0,0,0,1,0,0,0,0.025398539651913,0.01,0.03
-fossil energy coal.Fossil Energy Capital Scaling Parameter,0,0,0,0,0,1,0,0,0,0.6,0.2,2
-fossil energy coal.initial fossil energy capital,0,0,0,0,0,1,0,0,0,550000000000,1000000000,5000000000000
-fossil energy coal.initial fossil extraction knowledge,0,0,0,0,0,1,0,0,0,100.62801075018,90,160
-fossil energy coal.initial fossil fuel extraction capital,0,0,0,0,0,1,0,0,0,1160000000000,1000000000,50000000000000
-fossil energy coal.Primary Fossil Energy Scaling Parameter,0,0,0,0,0,1,0,0,0,1.8904838057499,0.1,3
-fossil energy coal.productivity per extractionknowledge,0,0,0,0,0,1,0,0,0,0.00177120414219463,0.0001,0.003
-fossil energy coal.TFP in 1980,0,0,0,0,0,1,0,0,0,0.148,0.12,0.4
-fossil energy coal.TFP Max,1,0,0,0,0,1,0,0,0,0.185,0.1,0.4
-fossil energy coal.TFP Max Ramp Year,0,0,0,0,0,1,0,0,0,2020,2000,2200
-fossil energy coal.TFP Ramp Speed,0,0,0,0,0,1,0,0,0,0.097,0,1
-fossil energy coal.TFP Slope Start,0,0,0,0,0,1,0,0,0,1980.08990139598,1980,2010
-fossil energy gas.carbon intensity in btu,0,0,0,0,0,1,0,0,0,0.0156655503172815,0.01,0.03
-fossil energy gas.Fossil Energy Capital Scaling Parameter,0,0,0,0,0,1,0,0,0,0.451289120233549,0.001,2
-fossil energy gas.initial fossil energy capital,0,0,0,0,0,1,0,0,0,400000000000,1000000000,5000000000000
-fossil energy gas.initial fossil extraction knowledge,0,0,0,0,0,1,0,0,0,127.05822244485,90,160
-fossil energy gas.initial fossil fuel extraction capital,0,0,0,0,0,1,0,0,0,1988520830978.01,1000000000,50000000000000
-fossil energy gas.Primary Fossil Energy Scaling Parameter,0,0,0,0,0,1,0,0,0,1.12013244009994,0.001,2
-fossil energy gas.productivity per extractionknowledge,0,0,0,0,0,1,0,0,0,0.000340426522970275,0.0001,0.003
-fossil energy gas.TFP in 1980,0,0,0,0,0,1,0,0,0,0.241551022597929,0.12,0.4
-fossil energy gas.TFP Max,1,0,0,0,0,1,0,0,0,0.295,0.1,0.4
-fossil energy gas.TFP Max Ramp Year,0,0,0,0,0,1,0,0,0,2013.5943006936,2000,2200
-fossil energy gas.TFP Ramp Speed,0,0,0,0,0,1,0,0,0,0.139893371386549,0,1
-fossil energy gas.TFP Slope Start,0,0,0,0,0,1,0,0,0,1980.10137291122,1980,2010
-fossil energy oil.carbon intensity in btu,0,0,0,0,0,1,0,0,0,0.019446984722055,0.01,0.03
-fossil energy oil.Fossil Energy Capital Scaling Parameter,0,0,0,0,0,1,0,0,0,0.6,0.001,2
-fossil energy oil.initial fossil energy capital,0,0,0,0,0,1,0,0,0,1000000000000,1000000000,5000000000000
-fossil energy oil.initial fossil extraction knowledge,0,0,0,0,0,1,0,0,0,151.117578870786,90,160
-fossil energy oil.initial fossil fuel extraction capital,0,0,0,0,0,1,0,0,0,8318356306450,1000000000,50000000000000
-fossil energy oil.Primary Fossil Energy Scaling Parameter,0,0,0,0,0,1,0,0,0,1.99999958734975,0.001,2.99999958734975
-fossil energy oil.productivity per extractionknowledge,0,0,0,0,0,1,0,0,0,0.000209715322232346,0.0001,0.003
-fossil energy oil.TFP in 1980,0,0,0,0,0,1,0,0,0,0.141258869457008,0.12,0.4
-fossil energy oil.TFP Max,1,0,0,0,0,1,0,0,0,0.17,0.1,0.4
-fossil energy oil.TFP Max Ramp Year,0,0,0,0,0,1,0,0,0,2017.33847855222,2000,2200
-fossil energy oil.TFP Ramp Speed,0,0,0,0,0,1,0,0,0,0.0976371503131552,0,1
-fossil energy oil.TFP Slope Start,0,0,0,0,0,1,0,0,0,1983.31840997973,1980,2010
-nuclear energy.baseline nuclear energy capacity efficiency,0,0,0,0,0,1,0,0,0,7.5,6.5,8.5
-nuclear energy.Ceiling of Nuclear Installation Costs,0,0,0,0,0,1,0,0,0,6000,5000,10000
-nuclear energy.Floor of Nuclear Installation Costs,0,0,0,0,0,1,0,0,0,2108.20854100359,1000,5000
-nuclear energy.Initial Nuclear Capacity,0,0,0,0,0,1,0,0,0,97.5591716556717,50,150
-nuclear energy.Intercept Nuclear Installation Costs,0,0,0,0,0,1,0,0,0,-2690,-50000,50000
-nuclear energy.Slope of Nuclear Installation Costs,0,0,0,0,0,1,0,0,0,280.4,-1000,1000
-bio fuel energy.bio fuel primary energy content,0,0,0,0,0,1,0,0,0,2.02106814875483E-05,0.000001,0.0001
-bio fuel energy.Floor Costs,0,0,0,0,0,1,0,0,0,14817700.9860935,1000000,1000000000
-bio fuel energy.Initial biofuel production Capacity,0,0,0,0,0,1,0,0,0,5,0.001,10
-bio fuel energy.Initial Installation Costs,0,0,0,0,0,1,0,0,0,1177719565.64476,100000000,100000000000
-bio fuel energy.Learning Rate,1,0,0,0,0,1,0,0,0,0.0446576738196583,0.01,0.4
-bio fuel energy.PCal per Mt of fuel,0,0,0,0,1,0,0,0,0,4,3,5
-bio fuel energy.relative carbon intensity of biofuels to petroleum fuels,0,0,0,0,1,0,0,0,0,0.65,0.45,0.85
-bio fuel energy.stepping on toes parameter,1,0,0,0,0,1,0,0,0,0.402774716236313,0.1,0.5
-hydropower energy.Base Hydropower Installation Costs,0,0,0,0,0,1,0,0,0,100.335633411328,10,5000
-hydropower energy.baseline hydropower energy capacity efficiency,0,0,0,0,0,1,0,0,0,3.8457342676995,2,5
-hydropower energy.Initial Hydropower Capacity,0,0,0,0,0,1,0,0,0,478.776803701607,250,550
-hydropower energy.Slope of Hydropower Installation Costs wrt Capacity,0,0,0,0,0,1,0,0,0,1.63415093676841E-06,0.0000001,0.0001
-other energy.Floor of Other Installation Costs,0,0,0,0,0,1,0,0,0,949.698778788993,100,10000
-other energy.Initial Other Capacity,0,0,0,0,0,1,0,0,0,8.83829724631003,0.0001,15
-other energy.Initial Other Installation Costs,0,0,0,0,0,1,0,0,0,1999.96729277803,500,10000
-other energy.Learning Rate,1,0,0,0,0,1,0,0,0,0.0780908876868298,0.01,0.4
-other energy.Other Energy Capacity Efficiency,0,0,0,0,0,1,0,0,0,5.92790244874951,3,10
-other energy.stepping on toes parameter,1,0,0,0,0,1,0,0,0,0.443900376583671,0.1,0.5
-wind and solar energy.Initial Renewable Energy Installation Costs,0,0,0,0,0,1,0,0,0,4498.06716252767,100,100000
-wind and solar energy.Renewable Energy Floor Costs,0,0,0,0,0,1,0,0,0,138,1,500
-wind and solar energy.Renewable Energy Learning Rate,1,0,0,0,0,1,0,0,0,0.104592378256239,0.05,0.4
-wind and solar energy.sensitivity of renewable floor costs to grid storage needs,0,0,0,0,0,1,0,0,0,5.5,2,10
-wind and solar energy.sensitivity of renewable floor costs to grid storage needs non linear part,0,0,0,0,0,1,0,0,0,-5.25,-46,-3
-wind and solar energy.stepping on toes parameter in renewable energy sector,1,0,0,0,0,1,0,0,0,0.499920680455662,0.1,0.5
-wind and solar energy.Wind and Solar Energy Full Load Hours,0,0,0,0,1,0,0,0,0,1776.49905654678,1650,1850
+fossil energy coal.carbon intensity in btu,0,0,0,0,0,1,1,0,0,0.025398539651913,0.01,0.03
+fossil energy coal.Fossil Energy Capital Scaling Parameter,0,0,0,0,0,1,1,0,0,0.6,0.2,2
+fossil energy coal.initial fossil energy capital,0,0,0,0,0,1,1,0,0,550000000000,1000000000,5000000000000
+fossil energy coal.initial fossil extraction knowledge,0,0,0,0,0,1,1,0,0,100.62801075018,90,160
+fossil energy coal.initial fossil fuel extraction capital,0,0,0,0,0,1,1,0,0,1160000000000,1000000000,50000000000000
+fossil energy coal.Primary Fossil Energy Scaling Parameter,0,0,0,0,0,1,1,0,0,1.8904838057499,0.1,3
+fossil energy coal.productivity per extractionknowledge,0,0,0,0,0,1,1,0,0,0.00177120414219463,0.0001,0.003
+fossil energy coal.TFP in 1980,0,0,0,0,0,1,1,0,0,0.148,0.12,0.4
+fossil energy coal.TFP Max,1,0,0,0,0,1,1,0,0,0.185,0.1,0.4
+fossil energy coal.TFP Max Ramp Year,0,0,0,0,0,1,1,0,0,2020,2000,2200
+fossil energy coal.TFP Ramp Speed,0,0,0,0,0,1,1,0,0,0.097,0,1
+fossil energy coal.TFP Slope Start,0,0,0,0,0,1,1,0,0,1980.08990139598,1980,2010
+fossil energy gas.carbon intensity in btu,0,0,0,0,0,1,1,0,0,0.0156655503172815,0.01,0.03
+fossil energy gas.Fossil Energy Capital Scaling Parameter,0,0,0,0,0,1,1,0,0,0.451289120233549,0.001,2
+fossil energy gas.initial fossil energy capital,0,0,0,0,0,1,1,0,0,400000000000,1000000000,5000000000000
+fossil energy gas.initial fossil extraction knowledge,0,0,0,0,0,1,1,0,0,127.05822244485,90,160
+fossil energy gas.initial fossil fuel extraction capital,0,0,0,0,0,1,1,0,0,1988520830978.01,1000000000,50000000000000
+fossil energy gas.Primary Fossil Energy Scaling Parameter,0,0,0,0,0,1,1,0,0,1.12013244009994,0.001,2
+fossil energy gas.productivity per extractionknowledge,0,0,0,0,0,1,1,0,0,0.000340426522970275,0.0001,0.003
+fossil energy gas.TFP in 1980,0,0,0,0,0,1,1,0,0,0.241551022597929,0.12,0.4
+fossil energy gas.TFP Max,1,0,0,0,0,1,1,0,0,0.295,0.1,0.4
+fossil energy gas.TFP Max Ramp Year,0,0,0,0,0,1,1,0,0,2013.5943006936,2000,2200
+fossil energy gas.TFP Ramp Speed,0,0,0,0,0,1,1,0,0,0.139893371386549,0,1
+fossil energy gas.TFP Slope Start,0,0,0,0,0,1,1,0,0,1980.10137291122,1980,2010
+fossil energy oil.carbon intensity in btu,0,0,0,0,0,1,1,0,0,0.019446984722055,0.01,0.03
+fossil energy oil.Fossil Energy Capital Scaling Parameter,0,0,0,0,0,1,1,0,0,0.6,0.001,2
+fossil energy oil.initial fossil energy capital,0,0,0,0,0,1,1,0,0,1000000000000,1000000000,5000000000000
+fossil energy oil.initial fossil extraction knowledge,0,0,0,0,0,1,1,0,0,151.117578870786,90,160
+fossil energy oil.initial fossil fuel extraction capital,0,0,0,0,0,1,1,0,0,8318356306450,1000000000,50000000000000
+fossil energy oil.Primary Fossil Energy Scaling Parameter,0,0,0,0,0,1,1,0,0,1.99999958734975,0.001,2.99999958734975
+fossil energy oil.productivity per extractionknowledge,0,0,0,0,0,1,1,0,0,0.000209715322232346,0.0001,0.003
+fossil energy oil.TFP in 1980,0,0,0,0,0,1,1,0,0,0.141258869457008,0.12,0.4
+fossil energy oil.TFP Max,1,0,0,0,0,1,1,0,0,0.17,0.1,0.4
+fossil energy oil.TFP Max Ramp Year,0,0,0,0,0,1,1,0,0,2017.33847855222,2000,2200
+fossil energy oil.TFP Ramp Speed,0,0,0,0,0,1,1,0,0,0.0976371503131552,0,1
+fossil energy oil.TFP Slope Start,0,0,0,0,0,1,1,0,0,1983.31840997973,1980,2010
+nuclear energy.baseline nuclear energy capacity efficiency,0,0,0,0,0,1,1,0,0,7.5,6.5,8.5
+nuclear energy.Ceiling of Nuclear Installation Costs,0,0,0,0,0,1,1,0,0,6000,5000,10000
+nuclear energy.Floor of Nuclear Installation Costs,0,0,0,0,0,1,1,0,0,2108.20854100359,1000,5000
+nuclear energy.Initial Nuclear Capacity,0,0,0,0,0,1,1,0,0,97.5591716556717,50,150
+nuclear energy.Intercept Nuclear Installation Costs,0,0,0,0,0,1,1,0,0,-2690,-50000,50000
+nuclear energy.Slope of Nuclear Installation Costs,0,0,0,0,0,1,1,0,0,280.4,-1000,1000
+bio fuel energy.bio fuel primary energy content,0,0,0,0,0,1,1,0,0,0.0000202106814875483,0.000001,0.0001
+bio fuel energy.Floor Costs,0,0,0,0,0,1,1,0,0,14817700.9860935,1000000,1000000000
+bio fuel energy.Initial biofuel production Capacity,0,0,0,0,0,1,1,0,0,5,0.001,10
+bio fuel energy.Initial Installation Costs,0,0,0,0,0,1,1,0,0,1177719565.64476,100000000,100000000000
+bio fuel energy.Learning Rate,1,0,0,0,0,1,1,0,0,0.0446576738196583,0.01,0.4
+bio fuel energy.PCal per Mt of fuel,0,0,0,0,1,0,1,0,0,4,3,5
+bio fuel energy.relative carbon intensity of biofuels to petroleum fuels,0,0,0,0,1,0,1,0,0,0.65,0.45,0.85
+bio fuel energy.stepping on toes parameter,1,0,0,0,0,1,1,0,0,0.402774716236313,0.1,0.5
+hydropower energy.Base Hydropower Installation Costs,0,0,0,0,0,1,1,0,0,100.335633411328,10,5000
+hydropower energy.baseline hydropower energy capacity efficiency,0,0,0,0,0,1,1,0,0,3.8457342676995,2,5
+hydropower energy.Initial Hydropower Capacity,0,0,0,0,0,1,1,0,0,478.776803701607,250,550
+hydropower energy.Slope of Hydropower Installation Costs wrt Capacity,0,0,0,0,0,1,1,0,0,0.00000163415093676841,1e-7,0.0001
+other energy.Floor of Other Installation Costs,0,0,0,0,0,1,1,0,0,949.698778788993,100,10000
+other energy.Initial Other Capacity,0,0,0,0,0,1,1,0,0,8.83829724631003,0.0001,15
+other energy.Initial Other Installation Costs,0,0,0,0,0,1,1,0,0,1999.96729277803,500,10000
+other energy.Learning Rate,1,0,0,0,0,1,1,0,0,0.0780908876868298,0.01,0.4
+other energy.Other Energy Capacity Efficiency,0,0,0,0,0,1,1,0,0,5.92790244874951,3,10
+other energy.stepping on toes parameter,1,0,0,0,0,1,1,0,0,0.443900376583671,0.1,0.5
+wind and solar energy.Initial Renewable Energy Installation Costs,0,0,0,0,0,1,1,0,0,4498.06716252767,100,100000
+wind and solar energy.Renewable Energy Floor Costs,0,0,0,0,0,1,1,0,0,138,1,500
+wind and solar energy.Renewable Energy Learning Rate,1,0,0,0,0,1,1,0,0,0.104592378256239,0.05,0.4
+wind and solar energy.sensitivity of renewable floor costs to grid storage needs,0,0,0,0,0,1,1,0,0,5.5,2,10
+wind and solar energy.sensitivity of renewable floor costs to grid storage needs non linear part,0,0,0,0,0,1,1,0,0,-5.25,-46,-3
+wind and solar energy.stepping on toes parameter in renewable energy sector,1,0,0,0,0,1,1,0,0,0.499920680455662,0.1,0.5
+wind and solar energy.Wind and Solar Energy Full Load Hours,0,0,0,0,1,0,1,0,0,1776.49905654678,1650,1850
 Government Regulations.government debt to GDP ratio target,0,0,0,0,0,0,0,1,0,1.2,0.5,2
 Government Regulations.inflation goal policy,0,0,0,0,0,0,0,1,0,0.02,0,0.06
 Government Regulations.max change per year in inflation,0,0,0,0,0,0,0,1,0,0.001,0.0001,0.02
 Government Regulations.max change per year in unemployment,0,0,0,0,0,0,0,1,0,0.001,0.0001,0.02
 Government Regulations.minimum percentage of taxes spent by government,0,0,0,0,0,0,0,1,0,0.9,0.5,1
-Government Regulations.Moratorium on fossil energy year,0,0,0,0,0,0,0,1,0,2130,2070,2130
+Government Regulations.Moratorium on fossil energy year,0,0,0,0,0,0,1,1,0,2130,2070,2130
 Government Regulations.profit tax rate policy,0,0,0,0,0,0,0,1,0,0.332,0,1
 Government Regulations.switch animal product efficiency policy,0,0,0,0,0,0,0,1,0,0,0,1
 Government Regulations.switch irrigation fraction policy,0,0,0,0,0,0,0,1,0,0,0,1
@@ -1097,7 +1097,7 @@ Crop.normal harvest index for food crops,0,0,0,0,0,1,0,0,0,0.449975438362196,0.4
 Crop.rel change in crop productivity intercept,0,0,0,0,1,0,0,0,0,-235.8,-239.948,-231.652
 Crop.sensitivity of effect of crop residue production on field fraction,0,0,0,0,0,1,0,0,0,0.559285998582094,0,0.75
 Crop.sensitivity of effect of crop yield on harvest index,0,0,0,0,0,1,0,0,0,0.0991496769388762,0.05,0.1
-Crop.soil carbon crop yield parameter,0,0,0,0,0,1,0,0,0,0.00403003233337647,0.00000001,0.2
+Crop.soil carbon crop yield parameter,0,0,0,0,0,1,0,0,0,0.00403003233337647,1e-8,0.2
 Crop.tolerance of the cap on harvest index and residue on field fraction,0,0,0,0,0,1,0,0,0,0.05,0.03,0.08
 Crop.UNIT GtC per PCal crop,0,0,0,0,1,0,0,0,1,0.000220559,0.000220559,0.00027385
 Food Demand.animal product demand per person 1980,0,0,0,0,0,1,1,0,0,0.147979444396838,0,1
@@ -1168,3 +1168,4 @@ Concrete.TIME TO ADJUST DESIRED FLOOR AREA,1,0,0,0,0,1,0,0,0,3.94347304975288,2,
 Concrete.TIME TO ADJUST DESIRED INFRASTRUCTURE AREA,1,0,0,0,0,1,0,0,0,5.1383825712853,1,10
 Concrete.UFA alpha,1,0,0,0,0,1,0,0,0,25.2572561601996,1,45
 Concrete.UFA intercept,1,0,0,0,0,1,0,0,0,-200.729776361609,-300,-50
+
