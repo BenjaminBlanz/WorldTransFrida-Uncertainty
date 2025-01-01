@@ -445,7 +445,7 @@ while(newMaxFound){
 		sampleParms <- sampleParms[-which(sampleParms$MaxKickParmsErrorRangeDet),]
 		write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
 		saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
-		cat(sprintf('Kicked out %i parameters for errors in range determination',
+		cat(sprintf('Kicked out %i parameters for errors in range determination\n',
 								sum(sampleParms$MinKickParmsErrorRangeDet|sampleParms$MaxKickParmsErrorRangeDet)))
 	}
 	
