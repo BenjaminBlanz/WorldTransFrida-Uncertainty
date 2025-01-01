@@ -274,18 +274,25 @@ funValidRange <- function(x){
 # 		logretval
 # 	else exp(logretval)
 # }
-funLogLikelihood <- function(resid,covmat){
+funLogLikelihood <- function(resid,covmat,treatVarsAsIndep=.GlobalEnv$treatVarsAsIndep){
 	if(treatVarsAsIndep){
-		resid[is.na(resid)] <- 0
-	}
-	if(nrow(resid)==0||sum(is.na(resid))>0){
-		return(-Inf)
-	}	else {
-		logLike <- sum(mvtnorm::dmvnorm(resid,rep(0,ncol(resid)),covmat,log=T,checkSymmetry = F))
-		if(is.na(logLike)){
+		perVarLogLike <- rep(NA,ncol(resid))
+		for(i in 1:ncol(resid)){
+			perVarLogLike[i] <- sum(dnorm(resid[!is.na(resid[,i]),i], 0, sqrt(covmat[i,i]),log = T))
+			# treat all non observed values as likely as the average observed one
+			# perVarLogLike[i] <- perVarLogLike[i]+sum(is.na(resid[,i]))*perVarLogLike[i]/sum(!is.na(resid[,i]))
+		}
+		return(sum(perVarLogLike))
+	} else {
+		if(nrow(resid)==0||sum(is.na(resid))>0){
 			return(-Inf)
-		} else {
-			return(logLike)
+		}	else {
+			logLike <- sum(mvtnorm::dmvnorm(resid,rep(0,ncol(resid)),covmat,log=T,checkSymmetry = F))
+			if(is.na(logLike)){
+				return(-Inf)
+			} else {
+				return(logLike)
+			}
 		}
 	}
 }
@@ -309,7 +316,8 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 																					 skipRunJustRead=F,
 																					 numWorkers=length(cl),
 																					 calDat.impExtrValue=NULL,
-																					 plotMinAlpha = 0.01){
+																					 plotMinAlpha = 0.01,
+																					 plotBaseName = 'runs-'){
 	cat('cluster run...\n')
 	dir.create(location.output,showWarnings = F,recursive = T)
 	numSample <- nrow(samplePoints)
@@ -339,7 +347,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			sqrtNcols <- sqrt(ncols)
 			plotCols <- round(sqrtNcols)
 			plotRows <- ceiling(sqrtNcols)
-			png(file.path(location.output,'likelihoodWeightedModelRuns.png'),
+			png(file.path(location.output,paste0(plotBaseName,'all.png')),
 					width=5*plotCols,
 					height=5*plotRows+5/4,
 					unit='cm',res=150)
@@ -454,7 +462,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			sqrtNcols <- sqrt(ncols)
 			plotCols <- round(sqrtNcols)
 			plotRows <- ceiling(sqrtNcols)
-			png(file.path(location.output,paste0('likelihoodWeightedModelRuns-Chunk-',i,'.png')),
+			png(file.path(location.output,paste0(plotBaseName,'-Chunk-',i,'.png')),
 					width=5*plotCols,
 					height=5*plotRows+5/4,
 					unit='cm',res=150)
@@ -494,7 +502,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			dev.print(png,width=5*ncol(subPlotLocations),
 								height=5*(nrow(subPlotLocations)-1)+5/4,
 								unit='cm',res=150,
-								file.path(location.output,'likelihoodWeightedModelRuns.png'))
+								file.path(location.output,paste0(plotBaseName,'all.png')))
 		}
 		cat('done\n')
 	}
