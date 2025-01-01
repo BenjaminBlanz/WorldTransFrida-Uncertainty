@@ -446,7 +446,7 @@ while(newMaxFound){
 		write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
 		saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
 		cat(sprintf('Kicked out %i parameters for errors in range determination',
-								sum(sampleParms$MinKickParmsErrorRangeDet||sampleParms$MaxKickParmsErrorRangeDet)))
+								sum(sampleParms$MinKickParmsErrorRangeDet|sampleParms$MaxKickParmsErrorRangeDet)))
 	}
 	
 	# Sample the Parmeter Space ####
