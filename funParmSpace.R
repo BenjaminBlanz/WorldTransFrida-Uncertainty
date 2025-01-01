@@ -18,12 +18,6 @@ jnegLLikelihood.f <- function(jParVect){
 		stop('not all calDat columns in runDat\n')
 	}
 	resDat <- calDat-runDat[1:nrow(calDat),colnames(calDat)]
-	if(!treatVarsAsIndep){
-		calDatCompleteCases <- which(complete.cases(calDat))
-		resDat <- resDat[calDatCompleteCases]
-	} else {
-		resDat[is.na(resDat)] <- 0
-	}
 	lLikelihood <- funLogLikelihood(resDat,resSigma)
 	# If the logLike is not NA but the run did not complete assign 
 	# lowest value. We use this when narrowing the parms space
@@ -38,12 +32,6 @@ negLLike <- function(parVect){
 		stop('not all calDat columns in runDat\n')
 	}
 	resDat <- calDat-runDat[1:nrow(calDat),colnames(calDat)]
-	if(!treatVarsAsIndep){
-		calDatCompleteCases <- which(complete.cases(calDat))
-		resDat <- resDat[calDatCompleteCases]
-	} else {
-		resDat[is.na(resDat)] <- 0
-	}
 	lLikelihood <- funLogLikelihood(resDat,resSigma)
 	# If the logLike is not NA but the run did not complete assign 
 	# lowest value. We use this when narrowing the parms space
