@@ -441,8 +441,12 @@ while(newMaxFound){
 	
 	# Kick out parameters with errors in the range determination and kickParmsErrorRangeDet was true
 	if(kickParmsErrorRangeDet){
-		sampleParms <- sampleParms[-which(sampleParms$MinKickParmsErrorRangeDet),]
-		sampleParms <- sampleParms[-which(sampleParms$MaxKickParmsErrorRangeDet),]
+		if(length(which(sampleParms$MinKickParmsErrorRangeDet))>0){
+			sampleParms <- sampleParms[-which(sampleParms$MinKickParmsErrorRangeDet),]
+		}
+		if(length(which(sampleParms$MaxKickParmsErrorRangeDet))>0){
+			sampleParms <- sampleParms[-which(sampleParms$MaxKickParmsErrorRangeDet),]
+		}
 		write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
 		saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
 		cat(sprintf('Kicked out %i parameters for errors in range determination\n',
@@ -450,7 +454,6 @@ while(newMaxFound){
 	}
 	
 	# Sample the Parmeter Space ####
-	# stop before legacy code that still needs to be ported
 	parVect <- sampleParms$Value
 	names(parVect) <- sampleParms$Variable
 	maxLLike <- -negLLike(parVect)
