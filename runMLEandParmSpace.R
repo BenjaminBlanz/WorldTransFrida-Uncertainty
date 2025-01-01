@@ -117,6 +117,9 @@ while(newMaxFound){
 	} else if(!redoAllCalc&&file.exists(file.path(location.output,'sampleParmsParscaleRanged.RDS'))){
 		cat('loading existing sampleParmsParscaleRanged\n')
 		sampleParms <- readRDS(file.path(location.output,'sampleParmsParscaleRanged.RDS'))
+		parVect <- sampleParms$Value
+		names(parVect) <- sampleParms$Variable 
+		jParVect <- c(parVect,resSigmaVect)
 	} else {
 		# determine parscale ####
 		cat('Determining parscales...\n')
@@ -292,8 +295,6 @@ while(newMaxFound){
 	lpdensEps <- -negLLike(parVect) - log(likeCutoffRatio)
 	notDeterminedBorders <- array(TRUE,dim=c(length(parVect),2))
 	colnames(notDeterminedBorders) <- c('Min','Max')
-	borderLogLikeError <- array(Inf,dim=c(length(parVect),2))
-	colnames(borderLogLikeError) <- c('Min','Max')
 	border.coefs <- notDeterminedBorders
 	if(forceParBounds){
 		cat('Forcing coefs sample range to be equal tovalues frida_info\n')
@@ -386,6 +387,9 @@ while(newMaxFound){
 	saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
 	cat('done\n')	
 	
+	# check for errors at the borders
+	borderLogLikeError <- array(Inf,dim=c(length(parVect),2))
+	colnames(borderLogLikeError) <- c('Min','Max')
 	parVect <- sampleParms$Value
 	names(parVect) <- sampleParms$Variable
 	for(direction in c('Min','Max')){
