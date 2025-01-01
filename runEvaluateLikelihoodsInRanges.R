@@ -16,11 +16,13 @@ if(length(runFilesList)==0){
 cat('reading sampleParms...')
 sampleParms <- readRDS(file.path(location.output,'sampleParmsParscaleRanged.RDS'))
 cat('done\nreading samplePoints...')
-samplePoints <- readRDS(file.path(location.output,'samplePoints.RDS'))
+samplePoints <- as.data.frame(readRDS(file.path(location.output,'samplePoints.RDS')))
 if(nrow(samplePoints)!=numSample){
 	stop('Number of sample points and numSample do not match\n')
 }
 cat('done\n')
+
+# log like ####
 cat('reading log likelihoods...\n')
 logLike <- rep(NA,numSample)
 completeRunsSoFar <- 0
@@ -38,16 +40,18 @@ for(f.i in 1:length(runFilesList)){
 cat(sprintf('\r read %i files, collected %i sample log likes, %i runs in data where complete\n',
 						length(runFilesList),numSample,completeRunsSoFar))
 
+
+samplePoints$logLike <- logLike
+samplePoints.logLikeSorted <- sort_by(samplePoints,samplePoints$logLike)
+
 parVect <- sampleParms$Value
 names(parVect) <- sampleParms$Variable
 baseLogLike <- -negLLike(parVect)
 
 logLike.badRM <- logLike
-logLike.badRM[logLike.badRM <= -.Machine$double.xmax+.Machine$double.eps*nrow(calDat)] <- NA
+logLike.badRM[logLike.badRM <= -.Machine$double.xmax+.Machine$double.eps*(1+nrow(calDat))] <- NA
 hist(logLike.badRM,xlim=c(min(logLike.badRM,na.rm=T),baseLogLike))
 abline(v=baseLogLike,col='red')
-
-
 
 # plot log like ####
 sqrtNplots <- sqrt(nrow(sampleParms))
@@ -55,18 +59,39 @@ plotCols <- round(sqrtNplots)
 plotRows <- ceiling(sqrtNplots)
 png(file.path(location.output,'parameterLogLikelihoods.png'),
 		width=plotCols*10,height=plotRows*10,res=150,units='cm')
-funPlotParRangesLikelihoods(sampleParms,samplePoints=samplePoints,like=logLike.badRM)
+funPlotParRangesLikelihoods(sampleParms,samplePoints=samplePoints,like=logLike.badRM,
+														baseLike = baseLogLike)#,ylim=range(logLike))
 dev.off()
 
 # calculate prob ###
-like <- exp(mpfr(logLike,64))
+like <- exp(mpfr(logLike,32)) * mpfr(10,32)^13629
 likeSum <- sum(like)
+prob <- like/likeSum
+# assuming each samplePoint has the same weight in the distribution
 prob <- as.double(like/likeSum)
-rm(like)
-rm(likeSum)
 
-# plot prob ####
-png(file.path(location.output,'parameterLogLikelihoods.png'),
-		width=plotCols*10,height=plotRows*10,res=150,units='cm')
-funPlotParRangesLikelihoods(sampleParms,samplePoints=samplePoints,like=prob)
-dev.off()
+samplePoints$like <- like
+samplePoints$prob <- prob
+
+# 
+# # plot prob ####
+# png(file.path(location.output,'parameterLogLikelihoods.png'),
+# 		width=plotCols*10,height=plotRows*10,res=150,units='cm')
+# funPlotParRangesLikelihoods(sampleParms,samplePoints=samplePoints,like=prob)
+# dev.off()
+
+
+par.i <- 1
+samplePoints.sorted <- sort_by(samplePoints,samplePoints[[par.i]])
+ecdf.byPar <- list()
+ecdf.byPar[[colnames(samplePoints.sorted)[par.i]]] 
+ecdf.par.i <- data.frame(parValue=samplePoints.sorted[[par.i]])
+colnames(ecdf.par.i)[1] <- colnames(samplePoints.sorted)[par.i]
+ecdf.par.i$cdf <- NA
+ecdf.par.i$cdf[1] <- samplePoints.sorted$prob[1]
+for(r.i in 2:nrow(samplePoints.sorted)){
+	ecdf.par.i$cdf[r.i] <- 
+		samplePoints.sorted$prob[r.i] + 
+		ecdf.par.i$cdf[r.i-1]
+}
+										

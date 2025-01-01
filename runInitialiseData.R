@@ -111,7 +111,7 @@ if(file.exists('varExclusionList.csv')&&file.size('varExclusionList.csv')>0){
 }
 
 # exclude vars ####
-# do not exclude from obs, only resid below
+# do not exclude from zero var in obs, only resid below
 if(F){
 	doneExcluding <- F
 	while(!doneExcluding){

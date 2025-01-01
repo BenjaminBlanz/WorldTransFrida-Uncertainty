@@ -25,6 +25,20 @@ plotDatPerChunWhileRunning <- F
 whatToPlot <- tolower('GDP_Real_GDP_in_2021c')
 # padding for data plots y axis in share of the data range
 yaxPad <- 0.4
+# pretty plots
+location.plots <- 'figures'
+plotWidth <- 20
+plotHeight <- 20
+plotUnit <- 'cm'
+plotRes <- 150
+plotWeightTypes <- c('equaly','linearly','logCutoff')#,'likelihood') #options are equal, linear, logCutoff, likelihood
+CIsToPlot <- c(0,0.5,0.95)
+CIsToPlot.lty <- c('solid','longdash','dotted')#,'dotdash','dotted')
+CIsToPlot.lwd <- c(3,1,1)
+CIsToPlot.lcol <- c(1,1,1)
+CIsToPlot.col <- c(NA,gray(0.7),gray(0.8))
+
+calDat.col <- 'red'
 
 # sampling the parameters ####
 

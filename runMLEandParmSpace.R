@@ -3,9 +3,6 @@ source('initialise.R')
 
 # config ####
 cat('Config...')
-if(redoAllCalc){
-	source('runInitialiseData.R')
-}
 source('config.R')
 source('runInitialiseData.R')
 continue <- readline(paste0('Output location created. Move any files to be used here\n',
@@ -442,8 +439,14 @@ while(newMaxFound){
 	frida_info.toModify$MaxKickedParmsErrorRangeDet <- NA
 	frida_info.toModify$MaxKickedParmsErrorRangeDet[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxKickParmsErrorRangeDet
 	write.csv(frida_info.toModify,file.path(location.output,'frida_info_ranged.csv'))
-	
+
+	stop()	
 	# Kick out parameters with errors in the range determination and kickParmsErrorRangeDet was true
+	cat(sprintf('Kicking out %i parameters for errors in range determination\n',
+							sum(sampleParms$MinKickParmsErrorRangeDet|sampleParms$MaxKickParmsErrorRangeDet)))
+	if(sum(sampleParms$MinKickParmsErrorRangeDet|sampleParms$MaxKickParmsErrorRangeDet)==nrow(sampleParms)){
+		stop('would kick out all parms\n')
+	}
 	if(kickParmsErrorRangeDet){
 		if(length(which(sampleParms$MinKickParmsErrorRangeDet))>0){
 			sampleParms <- sampleParms[-which(sampleParms$MinKickParmsErrorRangeDet),]
@@ -453,8 +456,6 @@ while(newMaxFound){
 		}
 		write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
 		saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
-		cat(sprintf('Kicked out %i parameters for errors in range determination\n',
-								sum(sampleParms$MinKickParmsErrorRangeDet|sampleParms$MaxKickParmsErrorRangeDet)))
 	}
 	
 	# Sample the Parmeter Space ####
