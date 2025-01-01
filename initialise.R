@@ -6,7 +6,6 @@ suppressPackageStartupMessages({
 	library(lubridate) # deals with times
 })
 
-source('config.R')
 source('funRunFRIDA.R')
 source('funPlot.R')
 source('funParmSpace.R')
