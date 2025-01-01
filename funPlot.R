@@ -41,8 +41,10 @@ funPlotDat <- function(calDat,calDat.impExtrValue=NULL,defDat=NULL,yaxPad=0.04,
 		# abline(h=0)
 		axis(1,pos=1)
 		if(i == 1){
-			mtext(sprintf(paste('Gray areas do not have complete cases.',
-													ifelse(highlightConstrainingVars,
+			mtext(sprintf(paste(ifelse(!shadowIncompleteYears,
+																 'Gray areas do not have complete cases.',
+																 ''),
+													ifelse(highlightConstrainingVars&!shadowIncompleteYears,
 																 'Red lines highlight the vars which most limit the complete cases window.',
 																 ''),
 													ifelse(!noImpExtrValues,
@@ -51,7 +53,10 @@ funPlotDat <- function(calDat,calDat.impExtrValue=NULL,defDat=NULL,yaxPad=0.04,
 													ifelse(!is.null(defDat),
 																 'Blue line is prior model calibration.',
 																 ''),
-													'Complete cases: %i'),nrow(calDat)-length(incompleteIdc)),
+													ifelse(!shadowIncompleteYears,
+																 'Complete cases: %i',
+																 ''))
+										,nrow(calDat)-length(incompleteIdc)),
 						3,line = -4,adj=0,cex=0.8)
 		}
 		par(mar=oldMar)
@@ -150,7 +155,8 @@ funPlotDat <- function(calDat,calDat.impExtrValue=NULL,defDat=NULL,yaxPad=0.04,
 # funPlotParRanges ####
 funPlotParRangesLikelihoods <- function(sampleParms,sampleParms.orig=NULL,
 																				samplePoints=NULL,like=NULL,yaxPad=0.04,
-																				savePlotFilePath=NULL){
+																				savePlotFilePath=NULL,baseLike=NULL,
+																				includeZeroYVal=FALSE,logY=F,ylim=NULL){
 	if(is.null(samplePoints)){
 		samplePointBase <- seq(0,1,length.out=10)
 		samplePoints <- array(rep(samplePointBase,nrow(sampleParms)),
@@ -164,36 +170,56 @@ funPlotParRangesLikelihoods <- function(sampleParms,sampleParms.orig=NULL,
 	if(is.null(like)){
 		like <- array(rep(1,nrow(samplePoints)),dim=c(nrow(samplePoints),nrow(sampleParms)))
 	}
-	like.range <- range(like,na.rm=T)
+	if(is.null(baseLike)){
+		baseLike <- max(like,na.rm=T)
+	}
+	like.range <- range(c(like,baseLike),na.rm=T)
 	
 	sqrtNplots <- sqrt(nrow(sampleParms))
 	plotCols <- round(sqrtNplots)
 	plotRows <- ceiling(sqrtNplots)
-	par(mfrow=c(plotRows,plotCols),mar=c(1,0.5,0,0.5),mgp=c(1,0.5,0))
+	par(mfrow=c(plotRows,plotCols),mar=c(1,0.5,1,0.5),mgp=c(1,0.5,0))
 	for(i in 1:nrow(sampleParms)){
-		yrange <- c(0,like.range[2]+like.range[1])
-		plot(0,0,type='n',
+		if(!is.null(ylim)){
+			yrange <- ylim
+		} else {
+			if(includeZeroYVal){
+				yrange <- c(0,like.range[2])
+			}else{
+				yrange <- like.range
+			}
+		}
+		if(logY){
+			yrange <- yrange-like.range[1]+1
+			like <- like-like.range[1]
+			baseLike <- baseLike-like.range[1]
+		}
+		plot(1,1,type='n',
 				 axes=F,
 				 xaxs='r',xlab='',ylab='',
+				 log=if(logY){'y'}else{''},
 				 xlim = c(sampleParms.orig$Min[i],sampleParms.orig$Max[i]),
 				 ylim = yrange)
 		axis(1,padj=-1,at = c(sampleParms.orig$Min[i]),hadj=0,cex.axis=0.8)
 		axis(1,padj=-1,at = c(sampleParms.orig$Max[i]),hadj=1,cex.axis=0.8)
-		text(mean(par('usr')[1:2]),par('usr')[4]+diff(par('usr')[3:4])*0.01,
-				 sampleParms$Variable[i],
-				 cex=0.8,xpd=T,adj=c(0.5,0))
-		abline(h=0,col='gray')
+		box(col='gray')
 		abline(v=c(sampleParms.orig$Min[i],sampleParms.orig$Max[i]),col='gray')
+		axis(1,padj=-1,at = sampleParms$Value[i],labels = '',hadj=0,cex.axis=0.8,col='blue')
+		axis(1,padj=-1,at = sampleParms.orig$Value[i],labels = '',hadj=0,cex.axis=0.8,col='red')
 		if(sampleParms.orig$Min[i]<sampleParms$Min[i]){
 			abline(v=sampleParms$Min[i],lty=2,col='red')
 		}
 		if(sampleParms$Max[i]<sampleParms.orig$Max[i]){
 			abline(v=sampleParms$Max[i],lty=2,col='red')
 		}
-		points(samplePoints[,i],like,pch=20,cex=0.1)
+		points(samplePoints[which(!is.na(like)),i],like[which(!is.na(like))],pch=20,cex=0.5)
+		points(sampleParms$Value[i],baseLike,pch=20,cex=1,col='red')
 		# add label specifying var indext to top left
+		text(mean(par('usr')[1:2]),par('usr')[4]+diff(par('usr')[3:4])*0.01,
+				 sampleParms$Variable[i],
+				 cex=0.8,xpd=T,adj=c(0.5,0))
 		text(sampleParms.orig$Min[i],
-				 yrange[2]+abs(diff(yrange))*yaxPad,i,adj=c(0,1))
+				 yrange[2]+abs(diff(yrange))*yaxPad,i,adj=c(0,1),col='red')
 	}
 	if(!is.null(savePlotFilePath)){
 		dev.print(png,width=5*plotCols,height=5*plotRows,unit='cm',res=150,
