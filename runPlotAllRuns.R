@@ -29,7 +29,15 @@ cat('done\n')
 
 # plot vars ####
 defRun <- runFridaDefaultParms()
-yearsToPlot <- rownames(defRun)
+yearsToPlot.lst <- list()
+for (y.i in 1:length(yearsToPlot.names)){
+	if(yearsToPlot.names[y.i] == 'allYears'){
+		yearsToPlot.lst[[y.i]] <- rownames(defRun)
+	} else {
+		startEndYears <- as.numeric(StrSplit(yearsToPlot.names[y.i],split = '-'))
+		yearsToPlot.lst[[y.i]] <- as.character(startEndYears[1]:startEndYears[2])
+	}
+}
 varsToPlot.lst <- list()
 workUnitBoundaries <- seq(1,nrow(calDat)+1,5)
 for(i in 1:(length(workUnitBoundaries)-1)){
@@ -38,13 +46,10 @@ for(i in 1:(length(workUnitBoundaries)-1)){
 
 for(plotWeightType in plotWeightTypes){
 	# weighting ####
-	cat('')
-	if(plotWeightType=='likelihood'){
-		samplePoints$plotWeight <- exp(logLike)
-	} else if(plotWeightType == 'logCutoff'){
-		# somewhat wrong likelihood weighting
+	cat(sprintf('Plotting %s weighted\n',plotWeightType))
+	if(!exists('logLike')&&plotWeightType %in% c('likelihood','logCutoff','linearly')){
 		# log like ####
-		cat('reading log likelihoods...\n')
+		cat(' reading log likelihoods...\n')
 		logLike <- rep(NA,numSample)
 		completeRunsSoFar <- 0
 		for(f.i in 1:length(runFilesList)){
@@ -61,103 +66,179 @@ for(plotWeightType in plotWeightTypes){
 		cat(sprintf('\r read %i files, collected %i sample log likes, %i runs in data where complete\n',
 								length(runFilesList),numSample,completeRunsSoFar))
 		samplePoints$logLike <- logLike
-		logLike.ecdf <- ecdf(logLike)
+		logLike.ecdf <- ecdf(logLike)	
+	}
+	
+	if(plotWeightType=='likelihood'){
+		samplePoints$plotWeight <- exp(logLike)
+	} else if(plotWeightType == 'logCutoff'){
+		# somewhat wrong likelihood weighting
 		samplePoints$plotWeight <- logLike.ecdf(logLike)
 	} else if(plotWeightType == 'equaly'){
 		# equal weighting
-		samplePoints$plotWeight <- rep(1,length(logLike))
+		samplePoints$plotWeight <- rep(1,nrow(samplePoints))
 	} else if(plotWeightType == 'linearly'){
 		samplePoints$plotWeight <- order(logLike)/nrow(samplePoints)
 	} else {
 		stop('unknown plotWeightType\n'	)
 	}
+	
 	for(vars.i in 1:length(varsToPlot.lst)){
 		varsToPlot <- varsToPlot.lst[[vars.i]]
 		# collect time series ####
-		cat(sprintf('reading %i vars...\n',length(varsToPlot)))
-		cat(paste0(varsToPlot,collapse='\n'))
+		cat(sprintf(' reading %i vars: %i to %i of %i total vars...\n   ',
+								length(varsToPlot),workUnitBoundaries[vars.i],workUnitBoundaries[vars.i+1]-1,nrow(calDat)))
+		cat(paste0(varsToPlot,collapse='\n   '))
 		cat('\n')
 		# dimensions time in rows, run IDs in columns,  variables to read
-		runsData <- array(NA,dim=c(length(yearsToPlot),nrow(samplePoints),length(varsToPlot)))
-		dimnames(runsData) <- list(yearsToPlot,1:nrow(samplePoints),varsToPlot)
+		# read all the years, selectively plot later
+		runsData <- array(NA,dim=c(nrow(defRun),nrow(samplePoints),length(varsToPlot)))
+		dimnames(runsData) <- list(rownames(defRun),1:nrow(samplePoints),varsToPlot)
 		for(f.i in 1:length(runFilesList)){
-			cat(sprintf('\r chunk %i of %i',f.i,length(runFilesList)))
+			cat(sprintf('\r  reading chunk %i of %i',f.i,length(runFilesList)))
 			parOutput <- readRDS(file.path(location.output,'detectedParmSpace',paste0('workUnit-',f.i,'.RDS')))
 			for(l in 1:length(parOutput)){
 				runsData[,parOutput[[l]]$parmsIndex,] <- unlist(parOutput[[l]]$runDat[,varsToPlot])
 			}
 			rm(parOutput)
 		}
-		cat('done\n')
+		cat('\r reading done                                                            \n')
 		
 		# CI plots ####
-		location.plots.ci <- file.path(location.output,location.plots,plotWeightType,'CI-plots')
-		dir.create(location.plots.ci,F,T)
-		for(var.i in 1:length(varsToPlot)){
-			cat(sprintf('Plotting %s\n',varsToPlot[var.i]))
-			## calculate the  CIs ####
-			cat('  calculating CI bourders...')
-			CIsToPlot <- sort(CIsToPlot)
-			ciBoundQs <- unique(c(rev((1-CIsToPlot)/2),1-(1-CIsToPlot)/2))
-			ciBoundQs.lty <- c(rev(CIsToPlot.lty),CIsToPlot.lty[-1])
-			ciBoundQs.lwd <- c(rev(CIsToPlot.lwd),CIsToPlot.lwd[-1])
-			ciBoundQs.lcol <- c(rev(CIsToPlot.lcol),CIsToPlot.lcol[-1])
-			medianQIdx <- length(CIsToPlot)+1
-			ciBounds <- array(NA,dim=c(length(yearsToPlot),length(ciBoundQs)))
-			colnames(ciBounds) <- ciBoundQs
-			rownames(ciBounds) <- yearsToPlot																		
-			for(year.i in 1:length(yearsToPlot)){
-				ciBounds[year.i,] <- Quantile(runsData[year.i,,var.i],
-																			weights = samplePoints$plotWeight,
-																			probs = ciBoundQs,
-																			na.rm = T)
-			}
-			cat('done\n')
-			## draw ####
-			cat('  drawing...')
-			png(file.path(location.plots.ci,paste(varsToPlot[var.i],plotWeightType,'weighted',sep='-')),
-					width = plotWidth,height = plotHeight,units = plotUnit,res = plotRes)
-			varsForExport.cleanNames.orig <- cleanNames(varsForExport.cleanNames.orig)
-			varName <- varsForExport.fridaNames.orig[which(varsForExport.cleanNames.orig==varsToPlot[var.i])]
-			plot(yearsToPlot,ciBounds[,medianQIdx],
-					 ylim=range(ciBounds[,c(2,length(ciBoundQs)-1)]),
-					 type='n',
-					 xlab='year',
-					 ylab=varName,
-					 xaxt='n',
-					 main=varName)
-			mtext(paste('Samples',plotWeightType,'weighted'),3,0.1)
-			axis(1,at=seq(as.numeric(yearsToPlot[1]),as.numeric(yearsToPlot[length(yearsToPlot)]),10))
-			legend('topleft',legend=c('median',paste0(CIsToPlot[-1]*100,'% CI'),'Data'),
-						 lty=c(CIsToPlot.lty,NA),lwd=c(CIsToPlot.lwd,NA),
-						 pch=c(rep(NA,length(CIsToPlot)),20), col = c(CIsToPlot.lcol,calDat.col))
-			for(ci.i in length(CIsToPlot.col):1){
-				if(CIsToPlot[ci.i]==0){
-					#skip
-				} else {
-					if((length(ciBoundQs)%%2)==0){
-						idxOfLowCiBounds1 <- length(ciBoundQs)/2
-						ciBound.low <- ciBounds[,idxOfLowCiBounds1-ci.i+1]
-						ciBound.high <- ciBounds[,idxOfLowCiBounds1+ci.i]
+		for(uncertaintyType in uncertaintiesToPlot){
+			cat(sprintf('Making plots with %s...\n',uncertaintyType))
+			for(var.i in 1:length(varsToPlot)){
+				cat(sprintf('  %i-%i: %s...',vars.i,var.i,varsToPlot[var.i]))
+				## calculate the  CIs ####
+				cat('CI borders...')
+				CIsToPlot <- sort(CIsToPlot)
+				ciBoundQs <- unique(c(rev((1-CIsToPlot)/2),1-(1-CIsToPlot)/2))
+				ciBoundQs.lty <- c(rev(CIsToPlot.lty),CIsToPlot.lty[-1])
+				ciBoundQs.lwd <- c(rev(CIsToPlot.lwd),CIsToPlot.lwd[-1])
+				ciBoundQs.lcol <- c(rev(CIsToPlot.lcol),CIsToPlot.lcol[-1])
+				medianQIdx <- length(CIsToPlot)+1
+				ciBounds <- array(NA,dim=c(nrow(defRun),length(ciBoundQs)))
+				means <- rep(NA,nrow(defRun))
+				names(means) <- rownames(ciBounds) <- rownames(defRun)
+				colnames(ciBounds) <- ciBoundQs
+				for(year.i in 1:nrow(defRun)){
+					if(uncertaintyType=='all uncertainty'||uncertaintyType=='fit uncertainty'){
+						means[year.i] <- weighted.mean(runsData[year.i,,var.i],
+																					 w = samplePoints$plotWeight,
+																					 na.rm=T)
+						ciBounds[year.i,] <- Quantile(runsData[year.i,,var.i],
+																					weights = samplePoints$plotWeight,
+																					probs = ciBoundQs,
+																					na.rm = T)
+					} else if (uncertaintyType=='noise uncertainty'){
+						means[year.i] <- defRun[year.i,varsToPlot[var.i]]
+						ciBounds[year.i,] <- defRun[year.i,varsToPlot[var.i]]
 					} else {
-						idxOfLowCiBounds1 <- length(ciBoundQs)/2
-						ciBound.low <- ciBounds[,idxOfLowCiBounds1-ci.i+1.5]
-						ciBound.high <- ciBounds[,idxOfLowCiBounds1+ci.i-.5]
+						stop('unkown uncertaintyType\n')
 					}
-					polygon(c(yearsToPlot,rev(yearsToPlot)),c(ciBound.low,rev(ciBound.high)),
-									col=CIsToPlot.col[ci.i],lty = 0)
+					if(uncertaintyType=='noise uncertainty'||uncertaintyType=='all uncertainty'){
+						if(treatVarsAsIndep){
+							ciBounds[year.i,] <- ciBounds[year.i,] + qnorm(ciBoundQs,mean = 0, sd=sqrt(resSigma[var.i,var.i]))
+						} else {
+							stop('Noise uncertainty not implemented yet for dependent vars\n')
+						}
+					}
+				}
+				cat('\n')
+				## draw ####
+				for(years.i in 1:length(yearsToPlot.lst)){
+					for(alsoPlotMean in alsoPlotMean.vals){
+						for(alsoPlotDefaultRun in alsoPlotDefaultRun.vals){
+							yearsToPlot <- yearsToPlot.lst[[years.i]]
+							cat(sprintf('   drawing %s %s mean %s default run...',
+													yearsToPlot.names[years.i],
+													ifelse(alsoPlotMean,'with','without'),
+													ifelse(alsoPlotDefaultRun,'with','without')))
+							location.plots.ci <- file.path(location.output,location.plots,'CI-plots',
+																						 paste0(plotWeightType,'Weighted'),
+																						 yearsToPlot.names[years.i],
+																						 paste(uncertaintyType,
+																						 			ifelse(alsoPlotMean,'withMean','withoutMean'),
+																						 			ifelse(alsoPlotDefaultRun,'withDefaultRun','withoutDefaultRun'),sep='-'))
+							dir.create(location.plots.ci,F,T)
+							png(file.path(location.plots.ci,paste(varsToPlot[var.i],plotWeightType,'weighted',sep='-')),
+									width = plotWidth,height = plotHeight,units = plotUnit,res = plotRes)
+							varsForExport.cleanNames.orig <- cleanNames(varsForExport.cleanNames.orig)
+							varName <- varsForExport.fridaNames.orig[which(varsForExport.cleanNames.orig==varsToPlot[var.i])]
+							par(mar=c(4.1,4.1,4.1,2.1))
+							plot(yearsToPlot,ciBounds[yearsToPlot,medianQIdx],
+									 ylim=range(c(ciBounds[yearsToPlot,c(2,length(ciBoundQs)-1)],calDat[yearsToPlot,var.i]),na.rm=T),
+									 xlim=range(as.numeric(yearsToPlot)),
+									 xaxs='i',
+									 type='n',
+									 xlab='year',
+									 ylab=varName,
+									 xaxt='n',
+									 main=varName)
+							mtext(paste('Samples',plotWeightType,'weighted. Ranges show ',uncertaintyType,'.'),3,0.5)
+							xax <- axis(1,at=seq(as.numeric(yearsToPlot[1]),as.numeric(yearsToPlot[length(yearsToPlot)]),10))
+							grid(nx=length(xax)-1)
+							legend.text=c(
+								if(alsoPlotMean&&uncertaintyType!='noise uncertainty'){'mean'},
+								if(alsoPlotDefaultRun){'frida default'},
+								'median',
+								paste0(CIsToPlot[-1]*100,'% CI'),
+								'Data')
+							legend.lty=c(
+								if(alsoPlotMean&&uncertaintyType!='noise uncertainty'){mean.lty},
+								if(alsoPlotDefaultRun){def.lty},
+								CIsToPlot.lty,
+								NA)
+							legend.lwd=c(
+								if(alsoPlotMean&&uncertaintyType!='noise uncertainty'){mean.lwd},
+								if(alsoPlotDefaultRun){def.lwd},
+								CIsToPlot.lwd,
+								NA)
+							legend.pch=c(rep(NA,length(CIsToPlot)+sum(c(alsoPlotMean&uncertaintyType!='noise uncertainty',alsoPlotDefaultRun))),20)
+							legend.col = c(
+								if(alsoPlotMean&&uncertaintyType!='noise uncertainty'){mean.col},
+								if(alsoPlotDefaultRun){def.col},
+								CIsToPlot.lcol,
+								calDat.col)
+							legend('topleft',legend.text,lty=legend.lty,lwd=legend.lwd,pch=legend.pch,col=legend.col)
+							for(ci.i in length(CIsToPlot.col):1){
+								if(CIsToPlot[ci.i]==0){
+									#skip
+								} else {
+									if((length(ciBoundQs)%%2)==0){
+										idxOfLowCiBounds1 <- length(ciBoundQs)/2
+										ciBound.low <- ciBounds[,idxOfLowCiBounds1-ci.i+1]
+										ciBound.high <- ciBounds[yearsToPlot,idxOfLowCiBounds1+ci.i]
+									} else {
+										idxOfLowCiBounds1 <- length(ciBoundQs)/2
+										ciBound.low <- ciBounds[yearsToPlot,idxOfLowCiBounds1-ci.i+1.5]
+										ciBound.high <- ciBounds[yearsToPlot,idxOfLowCiBounds1+ci.i-.5]
+									}
+									polygon(c(yearsToPlot,rev(yearsToPlot)),c(ciBound.low,rev(ciBound.high)),
+													col=CIsToPlot.col[ci.i],lty = 0)
+								}
+							}
+							for(q.i in 1:length(ciBoundQs)){
+								lines(yearsToPlot,ciBounds[yearsToPlot,q.i],
+											lty=ciBoundQs.lty[q.i],
+											lwd=ciBoundQs.lwd[q.i],
+											col=ciBoundQs.lcol[q.i])
+							}
+							if(alsoPlotMean){
+								lines(yearsToPlot,means[yearsToPlot],lty=mean.lty,lwd=mean.lwd,col=mean.col)
+							}
+							if(alsoPlotDefaultRun){
+								lines(yearsToPlot,defRun[yearsToPlot,var.i],lty=def.lty,lwd=def.lwd,col=def.col)
+							}
+							points(rownames(calDat),calDat[[varsToPlot[var.i]]],
+										 col='red',pch=20)
+							box()
+							dev.off()
+							cat('done\n')
+						}
+					}
 				}
 			}
-			for(q.i in 1:length(ciBoundQs)){
-				lines(yearsToPlot,ciBounds[,q.i],
-							lty=ciBoundQs.lty[q.i],
-							lwd=ciBoundQs.lwd[q.i],
-							col=ciBoundQs.lcol[q.i])
-			}
-			points(rownames(calDat),calDat[[varsToPlot[var.i]]],
-						 col='red',pch=20)
-			dev.off()
-			cat('done\n')
 		}
 		
 		rm(runsData)
