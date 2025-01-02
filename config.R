@@ -27,6 +27,16 @@ whatToPlot <- tolower('GDP_Real_GDP_in_2021c')
 yaxPad <- 0.4
 # pretty plots
 location.plots <- 'figures'
+yearsToPlot.names <- c('allYears','1980-2023')
+uncertaintiesToPlot <- c('all uncertainty','noise uncertainty','fit uncertainty')
+alsoPlotMean.vals <- c(TRUE,FALSE)
+mean.lty <- 'solid'
+mean.lwd <- 2
+mean.col <- 'blue'
+alsoPlotDefaultRun.vals <- c(TRUE,FALSE)
+def.lty <- 'solid'
+def.lwd <- 2
+def.col <- 'green'
 plotWidth <- 20
 plotHeight <- 20
 plotUnit <- 'cm'
