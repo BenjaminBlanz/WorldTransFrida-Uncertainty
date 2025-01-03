@@ -365,24 +365,28 @@ while(newMaxFound){
 		}
 	}
 	# read manual borders
-	manualBorders <- read.csv('frida_external_ranges.csv')
-	cat(sprintf('applying manual ranges for %i parameters\n',nrow(manualBorders)))
-	if(nrow(manualBorders)>0){
-		for(r.i in 1:nrow(manualBorders)){
-			sp.i <- which(sampleParms$Variable==manualBorders$Variable[r.i])
-			if(!is.na(manualBorders$Min[r.i])){
-				sampleParms$Min[sp.i] <- border.coefs[sp.i,'Min'] <- manualBorders$Min[r.i]
-				notDeterminedBorders[sp.i,'Min'] <- FALSE
-			}
-			if(!is.na(manualBorders$Max[r.i])){
-				sampleParms$Max[sp.i] <- border.coefs[sp.i,'Max'] <- manualBorders$Max[r.i]
-				notDeterminedBorders[sp.i,'Max'] <- FALSE
+	if(ignoreParBounds){
+		cat('Not reading manual ranges, as ignoreParBounds==TRUE\n')
+	} else {
+		manualBorders <- read.csv('frida_external_ranges.csv')
+		cat(sprintf('applying manual ranges for %i parameters\n',nrow(manualBorders)))
+		if(nrow(manualBorders)>0){
+			for(r.i in 1:nrow(manualBorders)){
+				sp.i <- which(sampleParms$Variable==manualBorders$Variable[r.i])
+				if(!is.na(manualBorders$Min[r.i])){
+					sampleParms$Min[sp.i] <- border.coefs[sp.i,'Min'] <- manualBorders$Min[r.i]
+					notDeterminedBorders[sp.i,'Min'] <- FALSE
+				}
+				if(!is.na(manualBorders$Max[r.i])){
+					sampleParms$Max[sp.i] <- border.coefs[sp.i,'Max'] <- manualBorders$Max[r.i]
+					notDeterminedBorders[sp.i,'Max'] <- FALSE
+				}
 			}
 		}
+		write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
+		saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
+		cat('done\n')
 	}
-	write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
-	saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
-	cat('done\n')	
 	
 	# check for errors at the borders
 	borderLogLikeError <- array(Inf,dim=c(length(parVect),2))
@@ -440,7 +444,6 @@ while(newMaxFound){
 	frida_info.toModify$MaxKickedParmsErrorRangeDet[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxKickParmsErrorRangeDet
 	write.csv(frida_info.toModify,file.path(location.output,'frida_info_ranged.csv'))
 
-	stop()	
 	# Kick out parameters with errors in the range determination and kickParmsErrorRangeDet was true
 	cat(sprintf('Kicking out %i parameters for errors in range determination\n',
 							sum(sampleParms$MinKickParmsErrorRangeDet|sampleParms$MaxKickParmsErrorRangeDet)))
