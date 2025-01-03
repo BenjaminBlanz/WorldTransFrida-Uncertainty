@@ -156,7 +156,8 @@ funPlotDat <- function(calDat,calDat.impExtrValue=NULL,defDat=NULL,yaxPad=0.04,
 funPlotParRangesLikelihoods <- function(sampleParms,sampleParms.orig=NULL,
 																				samplePoints=NULL,like=NULL,yaxPad=0.04,
 																				savePlotFilePath=NULL,baseLike=NULL,
-																				includeZeroYVal=FALSE,logY=F,ylim=NULL){
+																				includeZeroYVal=FALSE,logY=F,ylim=NULL,
+																				minLike=NULL){
 	if(is.null(samplePoints)){
 		samplePointBase <- seq(0,1,length.out=10)
 		samplePoints <- array(rep(samplePointBase,nrow(sampleParms)),
@@ -173,6 +174,9 @@ funPlotParRangesLikelihoods <- function(sampleParms,sampleParms.orig=NULL,
 	if(is.null(baseLike)){
 		baseLike <- max(like,na.rm=T)
 	}
+	if(is.null(minLike)){
+		minLike <- baseLike - abs(0.99*baseLike)
+	}
 	like.range <- range(c(like,baseLike),na.rm=T)
 	
 	sqrtNplots <- sqrt(nrow(sampleParms))
@@ -186,7 +190,7 @@ funPlotParRangesLikelihoods <- function(sampleParms,sampleParms.orig=NULL,
 			if(includeZeroYVal){
 				yrange <- c(0,like.range[2])
 			}else{
-				yrange <- like.range
+				yrange <- c(max(like.range[1],minLike),like.range[2])
 			}
 		}
 		if(logY){
