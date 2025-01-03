@@ -91,6 +91,7 @@ treatVarsAsIndep <- T
 likeCutoffRatio <- 200
 # tolerance for the search of the likelihood border
 rangeTol <- 1e-15
+checkBorderErrors <- FALSE
 kickParmsErrorRangeDet <- FALSE
 kickParmsErrorRangeDet.tolerance <- 1e-2
 # further overrides
