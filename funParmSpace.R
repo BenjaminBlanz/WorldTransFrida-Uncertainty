@@ -209,9 +209,12 @@ secant <- function(fun, x0, x1, tol=1e-07, niter=1e4, doWarn=T, trace=0,
 	}
 	for ( i in 1:niter ) {
 		# cat(sprintf('x0=%10.2e x1=%10.2e',x0,x1))
-		x2 <- x1-fun(x1,...)*(x1-x0)/(fun(x1,...)-fun(x0,...))
+		f0 <- fun(x0,...)
+		f1 <- fun(x1,...)
+		x2 <- x1-f1*(x1-x0)/(f1-f0)
 		if(trace>0){
-			cat('secant x2: ',x2,'\n')
+			cat(sprintf('secant x0: %10f f0: %10f x1: %10f f1: %10f  x2: %10f\n',
+									x0,f0,x1,f1,x2))
 		}
 		if(is.infinite(x2)||is.nan(x2)){
 			return(bound)
