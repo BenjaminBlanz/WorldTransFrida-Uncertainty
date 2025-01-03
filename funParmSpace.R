@@ -322,7 +322,7 @@ generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 		samplePoints <- funStretchSamplePoints(samplePoints.base,sampleParms,restretchSamplePoints)
 		# samplePoints <- rbind(samplePoints, t(sampleParms$Value))
 		if(!is.null(integerParms)){
-			cat('rounding integer parms')
+			cat('rounding integer parms...')
 			for(p.i in 1:nrow(integerParms)){
 				if(integerParms$Variable[p.i]%in%sampleParms$Variable){
 					samplePoints[,integerParms$Variable[p.i]] <- round(samplePoints[,integerParms$Variable[p.i]])

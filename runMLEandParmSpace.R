@@ -382,7 +382,7 @@ while(newMaxFound){
 		cat('Not reading manual ranges, as ignoreParBounds==TRUE\n')
 	} else {
 		manualBorders <- read.csv('frida_external_ranges.csv')
-		cat(sprintf('applying manual ranges for %i parameters\n',nrow(manualBorders)))
+		cat(sprintf('applying manual ranges for %i parameters...',nrow(manualBorders)))
 		if(nrow(manualBorders)>0){
 			for(r.i in 1:nrow(manualBorders)){
 				sp.i <- which(sampleParms$Variable==manualBorders$Variable[r.i])
@@ -423,6 +423,7 @@ while(newMaxFound){
 			} else {
 				sampleParms[[paste0(direction,'KickParmsErrorRangeDet')]] <- FALSE
 			}
+			cat('done\n')	
 		}
 	} else {
 		for(direction in c('Min','Max')){
@@ -434,7 +435,7 @@ while(newMaxFound){
 	}
 	write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
 	saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
-	cat('done\n')	
+	
 	
 	# write to frida_info like file for comparison to input
 	frida_info.toModify <- read.csv('frida_info.csv')
