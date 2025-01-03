@@ -1,4 +1,3 @@
-library('DescTools',quietly = T)
 source('initialise.R')
 source('config.R')
 source('runInitialiseData.R')
