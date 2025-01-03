@@ -364,6 +364,19 @@ while(newMaxFound){
 			cat('done\n')	
 		}
 	}
+	# make borders symmetric
+	if(symmetricRanges%in%c('Max','Min')){
+		cat('Symmetrifying parameter ranges\n')
+		if(symmetricRanges=='Max'){
+			sampleParms$distance <- pmax(sampleParms$Value-sampleParms$Min,
+																	 sampleParms$Max-sampleParms$Value)
+		} else {
+			sampleParms$distance <- pmin(sampleParms$Value-sampleParms$Min,
+																	 sampleParms$Max-sampleParms$Value)
+		}
+		sampleParms$Max <- sampleParms$Value+sampleParms$distance
+		sampleParms$Min <- sampleParms$Value-sampleParms$distance
+	}
 	# read manual borders
 	if(ignoreParBounds){
 		cat('Not reading manual ranges, as ignoreParBounds==TRUE\n')
@@ -387,42 +400,41 @@ while(newMaxFound){
 		saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
 		cat('done\n')
 	}
-	
-	# make borders symmetric
-	if(symmetricRanges){
-		cat('Symmetrifying parameter ranges\n')
-		sampleParms$distance <- pmax(sampleParms$Value-sampleParms$Min,
-																 sampleParms$Max-sampleParms$Value)
-		sampleParms$Max <- sampleParms$Value+sampleParms$distance
-		sampleParms$Min <- sampleParms$Value-sampleParms$distance
-	}
-	
 	# check for errors at the borders
-	borderLogLikeError <- array(Inf,dim=c(length(parVect),2))
-	colnames(borderLogLikeError) <- c('Min','Max')
-	parVect <- sampleParms$Value
-	names(parVect) <- sampleParms$Variable
-	for(direction in c('Min','Max')){
-		if(treatVarsAsIndep){
-			cat(sprintf('Checking for likelihood at %s failures...',tolower(direction)))
-			borderLogLikeError[,direction] <- unlist(parLapplyLB(cl,1:length(parVect),rangeCheckFun,
-																													 parVect=parVect,
-																													 border.coefs=border.coefs[,direction],
-																													 lpdensEps=lpdensEps))
+	if(checkBorderErrors || kickParmsErrorRangeDet){
+		borderLogLikeError <- array(NA,dim=c(length(parVect),2))
+		colnames(borderLogLikeError) <- c('Min','Max')
+		parVect <- sampleParms$Value
+		names(parVect) <- sampleParms$Variable
+		for(direction in c('Min','Max')){
+			if(treatVarsAsIndep){
+				cat(sprintf('Checking for likelihood at %s failures...',tolower(direction)))
+				borderLogLikeError[,direction] <- unlist(parLapplyLB(cl,1:length(parVect),rangeCheckFun,
+																														 parVect=parVect,
+																														 border.coefs=border.coefs[,direction],
+																														 lpdensEps=lpdensEps))
+			}
+			sampleParms[[paste0(direction,'NotDeterminedBorder')]] <- notDeterminedBorders[,direction]
+			sampleParms[[paste0(direction,'BorderLogLikeError')]] <- borderLogLikeError[,direction] 
+			sampleParms[[paste0(direction,'BoundByAuthors')]] <- sampleParms[[direction]]==parBounds[,direction]
+			if(kickParmsErrorRangeDet){
+				sampleParms[[paste0(direction,'KickParmsErrorRangeDet')]] <- 
+					abs(borderLogLikeError[,direction]) > kickParmsErrorRangeDet.tolerance
+			} else {
+				sampleParms[[paste0(direction,'KickParmsErrorRangeDet')]] <- FALSE
+			}
 		}
-		sampleParms[[paste0(direction,'NotDeterminedBorder')]] <- notDeterminedBorders[,direction]
-		sampleParms[[paste0(direction,'BorderLogLikeError')]] <- borderLogLikeError[,direction] 
-		sampleParms[[paste0(direction,'BoundByAuthors')]] <- sampleParms[[direction]]==parBounds[,direction]
-		if(kickParmsErrorRangeDet){
-			sampleParms[[paste0(direction,'KickParmsErrorRangeDet')]] <- 
-				abs(borderLogLikeError[,direction]) > kickParmsErrorRangeDet.tolerance
-		} else {
+	} else {
+		for(direction in c('Min','Max')){
+			sampleParms[[paste0(direction,'NotDeterminedBorder')]] <- notDeterminedBorders[,direction]
+			sampleParms[[paste0(direction,'BorderLogLikeError')]] <- NA
 			sampleParms[[paste0(direction,'KickParmsErrorRangeDet')]] <- FALSE
+			sampleParms[[paste0(direction,'BoundByAuthors')]] <- sampleParms[[direction]]==parBounds[,direction]
 		}
-		write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
-		saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
-		cat('done\n')	
 	}
+	write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
+	saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
+	cat('done\n')	
 	
 	# write to frida_info like file for comparison to input
 	frida_info.toModify <- read.csv('frida_info.csv')

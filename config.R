@@ -53,7 +53,7 @@ calDat.col <- 'red'
 # sampling the parameters ####
 
 # number of samples for the sobol sequence across all dimensions
-numSample <- 1400
+numSample <- 1439
 # by default sobol sequence covers the entire range between min and max with 
 # equal density.
 # However we might want to ensure that there are similar number of points above and 
@@ -97,7 +97,10 @@ kickParmsErrorRangeDet.tolerance <- 1e-2
 ignoreParBounds <- FALSE
 forceParBounds <- FALSE
 # should we make the parameter range be symmetric
-symmetricRanges <- TRUE
+# can specify 'Min' or 'Max' to decide if the larger or smaller of the ranges of 
+# the parameter should be used to decide the new range. Any other value deactivates this
+# feature.
+symmetricRanges <- 'Min'
 # should we skip the parameter maximum likelihood estimation and use the default
 # frida pars as MLE
 if(!exists('skipParMLE')){
