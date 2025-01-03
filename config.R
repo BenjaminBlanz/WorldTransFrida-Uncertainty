@@ -53,7 +53,7 @@ calDat.col <- 'red'
 # sampling the parameters ####
 
 # number of samples for the sobol sequence across all dimensions
-numSample <- 1e5+1
+numSample <- 1400
 # by default sobol sequence covers the entire range between min and max with 
 # equal density.
 # However we might want to ensure that there are similar number of points above and 
@@ -90,12 +90,14 @@ treatVarsAsIndep <- T
 # parameter.
 likeCutoffRatio <- 200
 # tolerance for the search of the likelihood border
-rangeTol <- 1e-14
+rangeTol <- 1e-15
 kickParmsErrorRangeDet <- FALSE
-kickParmsErrorRangeDet.tolerance <- 1e-7
+kickParmsErrorRangeDet.tolerance <- 1e-2
 # further overrides
 ignoreParBounds <- FALSE
 forceParBounds <- FALSE
+# should we make the parameter range be symmetric
+symmetricRanges <- TRUE
 # should we skip the parameter maximum likelihood estimation and use the default
 # frida pars as MLE
 if(!exists('skipParMLE')){
@@ -119,9 +121,16 @@ location.output <- file.path('workOutput',paste0('NumSample-',numSample,
 																								 '-likeCutoffRatio-',likeCutoffRatio,
 																								 '-ignoreParBounds-',ignoreParBounds,
 																								 '-forceParBounds-',forceParBounds,
-																								 '-kickParmsErrorRangeDet-',kickParmsErrorRangeDet))
+																								 '-kickParmsErrorRangeDet-',kickParmsErrorRangeDet,
+																								 '-symmetricRanges-',symmetricRanges))
 location.output.base <- location.output
-dir.create(file.path(location.output),recursive = T,showWarnings = F)
+cat(sprintf('Output folder: %s\n',location.output))
+if(file.exists(location.output)){
+	cat('  exists\n')
+} else {
+	dir.create(file.path(location.output),recursive = T,showWarnings = F)
+	cat('  created\n')
+}
 
 # save the config to the output folder
 file.copy('config.R',location.output,overwrite = T)

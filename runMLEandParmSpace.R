@@ -388,6 +388,15 @@ while(newMaxFound){
 		cat('done\n')
 	}
 	
+	# make borders symmetric
+	if(symmetricRanges){
+		cat('Symmetrifying parameter ranges\n')
+		sampleParms$distance <- pmax(sampleParms$Value-sampleParms$Min,
+																 sampleParms$Max-sampleParms$Value)
+		sampleParms$Max <- sampleParms$Value+sampleParms$distance
+		sampleParms$Min <- sampleParms$Value-sampleParms$distance
+	}
+	
 	# check for errors at the borders
 	borderLogLikeError <- array(Inf,dim=c(length(parVect),2))
 	colnames(borderLogLikeError) <- c('Min','Max')
@@ -445,12 +454,12 @@ while(newMaxFound){
 	write.csv(frida_info.toModify,file.path(location.output,'frida_info_ranged.csv'))
 
 	# Kick out parameters with errors in the range determination and kickParmsErrorRangeDet was true
-	cat(sprintf('Kicking out %i parameters for errors in range determination\n',
-							sum(sampleParms$MinKickParmsErrorRangeDet|sampleParms$MaxKickParmsErrorRangeDet)))
-	if(sum(sampleParms$MinKickParmsErrorRangeDet|sampleParms$MaxKickParmsErrorRangeDet)==nrow(sampleParms)){
-		stop('would kick out all parms\n')
-	}
 	if(kickParmsErrorRangeDet){
+		cat(sprintf('Kicking out %i parameters for errors in range determination\n',
+								sum(sampleParms$MinKickParmsErrorRangeDet|sampleParms$MaxKickParmsErrorRangeDet)))
+		if(sum(sampleParms$MinKickParmsErrorRangeDet|sampleParms$MaxKickParmsErrorRangeDet)==nrow(sampleParms)){
+			stop('would kick out all parms\n')
+		}
 		if(length(which(sampleParms$MinKickParmsErrorRangeDet))>0){
 			sampleParms <- sampleParms[-which(sampleParms$MinKickParmsErrorRangeDet),]
 		}
