@@ -161,6 +161,18 @@ for(plotWeightType in plotWeightTypes){
 							}
 						}
 					}
+					## save data ####
+					plotData <- list()
+					plotData$variable <- varsToPlot[var.i]
+					plotData$years <- rownames(defRun)
+					plotData$ciBoundQs <- ciBoundQs
+					plotData$ciBounds <- ciBounds
+					plotData$uncertaintyType <- uncertaintyType
+					plotData$means <- means
+					plotData$defaultRun <- defRun
+					saveRDS(plotData,file.path(location.output,location.plots,'CI-plots',
+																		 paste0(plotWeightType,'Weighted'),'plotData',
+																		 paste0(paste(varsToPlot[var.i],plotWeightType,'weighted',sep='-'),'.RDS')))
 					## draw ####
 					cat('drawing...')
 					for(years.i in 1:length(yearsToPlot.lst)){
