@@ -170,6 +170,8 @@ for(plotWeightType in plotWeightTypes){
 					plotData$uncertaintyType <- uncertaintyType
 					plotData$means <- means
 					plotData$defaultRun <- defRun
+					dir.create(file.path(location.output,location.plots,'CI-plots',
+															 paste0(plotWeightType,'Weighted'),'plotData'),F,T)
 					saveRDS(plotData,file.path(location.output,location.plots,'CI-plots',
 																		 paste0(plotWeightType,'Weighted'),'plotData',
 																		 paste0(paste(varsToPlot[var.i],plotWeightType,'weighted',sep='-'),'.RDS')))
