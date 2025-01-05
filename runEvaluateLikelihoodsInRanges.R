@@ -1,5 +1,6 @@
 source('initialise.R')
 source('config.R')
+source('runInitialiseData.R')
 cat(sprintf('Reading from %s\n',location.output))
 calDat <- readRDS(file.path(location.output,'calDat.RDS'))$calDat
 resSigma <- readRDS(file.path(location.output,'sigma-indepParms.RDS'))
@@ -43,7 +44,6 @@ cat(sprintf('\r read %i files, collected %i sample log likes, %i runs in data wh
 
 
 samplePoints$logLike <- logLike
-samplePoints.logLikeSorted <- sort_by(samplePoints,samplePoints$logLike)
 
 parVect <- sampleParms$Value
 names(parVect) <- sampleParms$Variable
@@ -52,6 +52,8 @@ baseLogLike <- -negLLike(parVect)
 logLike.badRM <- logLike
 logLike.badRM[logLike.badRM <= -.Machine$double.xmax+.Machine$double.eps*(1+nrow(calDat))] <- NA
 cat(sprintf('%i bad log likelihoods\n',sum(is.na(logLike.badRM))))
+png(file.path(location.output,'logLikeHist.png'),
+		width=10,height=10,res=150,units='cm')
 hist(logLike.badRM,xlim=c(min(logLike.badRM,na.rm=T),baseLogLike))
 abline(v=baseLogLike,col='red')
 
@@ -62,7 +64,7 @@ plotRows <- ceiling(sqrtNplots)
 png(file.path(location.output,'parameterLogLikelihoods.png'),
 		width=plotCols*10,height=plotRows*10,res=150,units='cm')
 funPlotParRangesLikelihoods(sampleParms,samplePoints=samplePoints,like=logLike.badRM,
-														baseLike = baseLogLike)#,ylim=range(logLike))
+														baseLike = baseLogLike,minLike = baseLogLike-abs(0.999*baseLogLike))#,ylim=range(logLike))
 dev.off()
 
 # calculate prob ###
@@ -70,7 +72,7 @@ logLikeShifted <- log(.Machine$double.xmax)+logLike/max(logLike,na.rm=T)
 like <- exp(mpfr(logLikeShifted,32))
 likeSum <- sum(like)
 prob <- like/likeSum
-# assuming each samplePoint has the same weight in the distribution
+# assuming each samplePoint Likelihood has the same weight in the distribution
 prob <- as.double(like/likeSum)
 
 samplePoints$like <- like
