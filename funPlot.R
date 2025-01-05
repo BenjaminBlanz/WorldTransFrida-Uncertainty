@@ -185,7 +185,7 @@ funPlotParRangesLikelihoods <- function(sampleParms,sampleParms.orig=NULL,
 	par(mfrow=c(plotRows,plotCols),mar=c(1,0.5,1,0.5),mgp=c(1,0.5,0))
 	cat('\n')
 	for(i in 1:nrow(sampleParms)){
-		cat(sprintf('\r Plotting parm %i% of %i',i,nrow(sampleParms)))
+		cat(sprintf('\r Plotting parm %i of %i',i,nrow(sampleParms)))
 		if(!is.null(ylim)){
 			yrange <- ylim
 		} else {
