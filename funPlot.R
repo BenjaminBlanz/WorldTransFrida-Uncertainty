@@ -205,7 +205,7 @@ funPlotParRangesLikelihoods <- function(sampleParms,sampleParms.orig=NULL,
 				 xaxs='r',xlab='',ylab='',
 				 log=if(logY){'y'}else{''},
 				 xlim = c(sampleParms.orig$Min[i],sampleParms.orig$Max[i]),
-				 xaxs = 'i'
+				 xaxs = 'i',
 				 ylim = yrange)
 		axis(1,padj=-1,at = c(sampleParms.orig$Min[i]),hadj=0,cex.axis=0.8)
 		axis(1,padj=-1,at = c(sampleParms.orig$Max[i]),hadj=1,cex.axis=0.8)
