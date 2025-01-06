@@ -22,6 +22,13 @@ samplePoints <- as.data.frame(readRDS(file.path(location.output,'samplePoints.RD
 if(nrow(samplePoints)!=numSample){
 	stop('Number of sample points and numSample do not match\n')
 }
+if(ncol(samplePoints)!=nrow(sampleParms)){
+	integerParms <- read.csv('frida_integer_parms.csv')
+	if(sum(integerParms$Variable%in%colnames(samplePoints) &&
+									!integerParms$Variable%in%sampleParms$Variable)>0){
+		sampleParms <- prepareSampleParms(sampleParms=sampleParms,integerParms = integerParms)
+	}
+}
 cat('done\n')
 
 # log like ####
@@ -57,7 +64,7 @@ png(file.path(location.output,'logLikeHist.png'),
 hist(logLike.badRM,xlim=c(min(logLike.badRM,na.rm=T),baseLogLike))
 abline(v=baseLogLike,col='red')
 
-# plot log like ####
+# plot log like accross all parms ####
 sqrtNplots <- sqrt(nrow(sampleParms))
 plotCols <- round(sqrtNplots)
 plotRows <- ceiling(sqrtNplots)
@@ -67,36 +74,71 @@ funPlotParRangesLikelihoods(sampleParms,samplePoints=samplePoints,like=logLike.b
 														baseLike = baseLogLike,minLike = baseLogLike-abs(0.999*baseLogLike))#,ylim=range(logLike))
 dev.off()
 
-# calculate prob ###
-logLikeShifted <- log(.Machine$double.xmax)+logLike/max(logLike,na.rm=T)
-like <- exp(mpfr(logLikeShifted,32))
-likeSum <- sum(like)
-prob <- like/likeSum
-# assuming each samplePoint Likelihood has the same weight in the distribution
-prob <- as.double(like/likeSum)
 
-samplePoints$like <- like
-samplePoints$prob <- prob
-
-# 
-# plot prob ####
-png(file.path(location.output,'parameterLogLikelihoods.png'),
-		width=plotCols*10,height=plotRows*10,res=150,units='cm')
-funPlotParRangesLikelihoods(sampleParms,samplePoints=samplePoints,like=prob)
-dev.off()
-
-
-# par.i <- 1
-# samplePoints.sorted <- sort_by(samplePoints,samplePoints[[par.i]])
-# ecdf.byPar <- list()
-# ecdf.byPar[[colnames(samplePoints.sorted)[par.i]]] 
-# ecdf.par.i <- data.frame(parValue=samplePoints.sorted[[par.i]])
-# colnames(ecdf.par.i)[1] <- colnames(samplePoints.sorted)[par.i]
-# ecdf.par.i$cdf <- NA
-# ecdf.par.i$cdf[1] <- samplePoints.sorted$prob[1]
-# for(r.i in 2:nrow(samplePoints.sorted)){
-# 	ecdf.par.i$cdf[r.i] <- 
-# 		samplePoints.sorted$prob[r.i] + 
-# 		ecdf.par.i$cdf[r.i-1]
-# }
-										
+# experiments ####
+if(F){ # experiments
+	
+	# log like ceteris paribusish ####
+	dim(samplePoints)
+	dim(sampleParms)
+	par.i <- 1
+	parTol <- (sampleParms$Max-sampleParms$Min)*0.1
+	samplePointsOnlyVaryPari.idc <- which(colSums(t(samplePoints[,-par.i])>=(sampleParms$Value[-par.i]-parTol[-par.i]))==(nrow(samplePoints)-1) & 
+																					t(samplePoints[1:10,-par.i])<(sampleParms$Value[-par.i])+parTol[-par.i])
+	samplePointsOnlyVarPari <- samplePoints[samplePointsOnlyVaryPari.idc,]
+	funPlotParRangesLikelihoodsI(par.i,sampleParms,sampleParms,samplePointsOnlyVarPari,
+															 logLike[samplePointsOnlyVaryPari.idc])
+	
+	# calculate prob ###
+	range(logLike)
+	like <- (exp(logLike-max(logLike)+log(.Machine$double.xmax)))
+	funPlotParRangesLikelihoodsI(1,sampleParms,sampleParms,
+															 samplePoints,logLike,yaxPad=0.04,
+															 outputFilePath=NULL,
+															 outputFileName='parameterLogLikelihoods.png',
+															 NULL,
+															 includeZeroYVal=FALSE,logY=F,ylim=NULL,
+															 like.range=NULL,
+															 minLike=NULL, parallelPlot = F,
+															 plotWidth = 10,
+															 plotHight = 10,
+															 plotRes = 150,
+															 plotUnits = 'cm')
+	
+	
+	rangeLogLike <- range(logLike,na.rm=T)
+	logLikeCompressed <- (logLike-rangeLogLike[1])/(rangeLogLike[2]-rangeLogLike[1])
+	like <- exp(logLikeCompressed)^(1/(rangeLogLike[2]-rangeLogLike[1]))
+	hist(logLikeShifted)
+	logLikeShifted <- logLike/max(logLike,na.rm=T)
+	like <- exp(logLikeShifted)
+	likeSum <- sum(like)
+	prob <- like/likeSum
+	# assuming each samplePoint Likelihood has the same weight in the distribution
+	prob <- as.double(like/likeSum)
+	
+	samplePoints$like <- like
+	samplePoints$prob <- prob
+	
+	# 
+	# plot prob ####
+	png(file.path(location.output,'parameterLogLikelihoods.png'),
+			width=plotCols*10,height=plotRows*10,res=150,units='cm')
+	funPlotParRangesLikelihoods(sampleParms,samplePoints=samplePoints,like=prob)
+	dev.off()
+	
+	
+	# par.i <- 1
+	# samplePoints.sorted <- sort_by(samplePoints,samplePoints[[par.i]])
+	# ecdf.byPar <- list()
+	# ecdf.byPar[[colnames(samplePoints.sorted)[par.i]]] 
+	# ecdf.par.i <- data.frame(parValue=samplePoints.sorted[[par.i]])
+	# colnames(ecdf.par.i)[1] <- colnames(samplePoints.sorted)[par.i]
+	# ecdf.par.i$cdf <- NA
+	# ecdf.par.i$cdf[1] <- samplePoints.sorted$prob[1]
+	# for(r.i in 2:nrow(samplePoints.sorted)){
+	# 	ecdf.par.i$cdf[r.i] <- 
+	# 		samplePoints.sorted$prob[r.i] + 
+	# 		ecdf.par.i$cdf[r.i-1]
+	# }
+}							
