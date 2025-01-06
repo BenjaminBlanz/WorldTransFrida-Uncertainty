@@ -137,9 +137,10 @@ for(plotWeightType in plotWeightTypes){
 					means[year.i] <- weighted.mean(runsData[year.i,,varsToPlot[var.i]],
 																				 w = samplePoints$plotWeight,
 																				 na.rm=T)
-					ciBounds[year.i,] <- weighted.quantile(x=runsData[year.i,,var.i],
-																				weights = samplePoints$plotWeight,
-																				probs = ciBoundQs)
+					ciBounds[year.i,] <- spatstat.univar::weighted.quantile(x=runsData[year.i,,var.i],
+																				w = samplePoints$plotWeight,
+																				probs = ciBoundQs,
+																				na.rm=T)
 				}
 				cat('\n    ')
 				means.store <- means
