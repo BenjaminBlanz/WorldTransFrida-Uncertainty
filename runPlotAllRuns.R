@@ -50,7 +50,7 @@ for(i in 1:(length(workUnitBoundaries)-1)){
 for(plotWeightType in plotWeightTypes){
 	# weighting ####
 	cat(sprintf('Plotting %s weighted\n',plotWeightType))
-	if(!exists('logLike')&&plotWeightType %in% c('likelihood','logCutoff','linearly')){
+	if(!exists('logLike')&&plotWeightType %in% c('likelihood','logCutoff','linearly','logLikelihood')){
 		# log like ####
 		cat(' reading log likelihoods...\n')
 		logLike <- rep(NA,numSample)
@@ -77,6 +77,10 @@ for(plotWeightType in plotWeightTypes){
 	} else if(plotWeightType == 'logCutoff'){
 		# somewhat wrong likelihood weighting
 		samplePoints$plotWeight <- logLike.ecdf(logLike)
+	} else if(plotWeightType == 'logLikelihood'){
+		# somewhat wrong likelihood weighting
+		rangeLogLike <- range(logLike,na.rm=T)
+		samplePoints$plotWeight <- (logLike-rangeLogLike[1])/(rangeLogLike[2]-rangeLogLike[1])
 	} else if(plotWeightType == 'equaly'){
 		# equal weighting
 		samplePoints$plotWeight <- rep(1,nrow(samplePoints))
@@ -85,14 +89,14 @@ for(plotWeightType in plotWeightTypes){
 	} else {
 		stop('unknown plotWeightType\n'	)
 	}
-	
+	samplePoints$plotWeight[is.na(samplePoints$plotWeight)] <- 0
 	location.progress <- file.path(location.output,location.plots,'CI-plots',
 																 paste0(plotWeightType,'Weighted'),'plotProgress')
 	dir.create(location.progress,F,T)
 	for(vars.i in 1:length(varsToPlot.lst)){
 		varsToPlot <- varsToPlot.lst[[vars.i]]
 		if(sum(file.exists(file.path(location.progress,varsToPlot)))==length(varsToPlot)){
-			cat(sprintf(' vars %i to %i have been completed already (according to plotProgress files)',
+			cat(sprintf('\r vars %i to %i have been completed already (according to plotProgress files)',
 									workUnitBoundaries[vars.i],workUnitBoundaries[vars.i+1]-1))
 		} else {
 			# collect time series ####
@@ -133,10 +137,9 @@ for(plotWeightType in plotWeightTypes){
 					means[year.i] <- weighted.mean(runsData[year.i,,varsToPlot[var.i]],
 																				 w = samplePoints$plotWeight,
 																				 na.rm=T)
-					ciBounds[year.i,] <- Quantile(runsData[year.i,,var.i],
+					ciBounds[year.i,] <- weighted.quantile(x=runsData[year.i,,var.i],
 																				weights = samplePoints$plotWeight,
-																				probs = ciBoundQs,
-																				na.rm = T)
+																				probs = ciBoundQs)
 				}
 				cat('\n    ')
 				means.store <- means
@@ -174,7 +177,7 @@ for(plotWeightType in plotWeightTypes){
 															 paste0(plotWeightType,'Weighted'),'plotData'),F,T)
 					saveRDS(plotData,file.path(location.output,location.plots,'CI-plots',
 																		 paste0(plotWeightType,'Weighted'),'plotData',
-																		 paste0(paste(varsToPlot[var.i],plotWeightType,'weighted',sep='-'),'.RDS')))
+																		 paste0(paste(varsToPlot[var.i],uncertaintyType,plotWeightType,'weighted',sep='-'),'.RDS')))
 					## draw ####
 					cat('drawing...')
 					for(years.i in 1:length(yearsToPlot.lst)){
@@ -278,6 +281,7 @@ for(plotWeightType in plotWeightTypes){
 			gc()
 		}
 	}
+	cat('done\n')
 }
 
 
