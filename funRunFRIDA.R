@@ -368,18 +368,20 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			cat(sprintf('\r(r) Using existing unit %i',i))
 			tryCatch({parOutput <- readRDS(file.path(location.output,paste0('workUnit-',i,'.RDS')))},
 							 error = function(e){},warning=function(w){})
-			if(length(parOutput)>(workUnitBoundaries[i+1]-workUnitBoundaries[i])){
-				lastChunkSize <- length(parOutput)
-				cat(sprintf(', existing output has different chunkSize (%i rather than %i), resorting remaining work',
-										lastChunkSize,
-										chunkSizePerWorker*numWorkers))
-				workUnitBoundaries[i+1] <- workUnitBoundaries[i]+lastChunkSize
-				workUnitBoundaries <- c(workUnitBoundaries[1:i],
-																seq(workUnitBoundaries[i+1],numSample,chunkSizePerWorker*numWorkers))
-				if(workUnitBoundaries[length(workUnitBoundaries)]!=numSample){
-					workUnitBoundaries <- c(workUnitBoundaries,numSample)
+			if(exists('parOutput')){
+				if(length(parOutput)>(workUnitBoundaries[i+1]-workUnitBoundaries[i])){
+					lastChunkSize <- length(parOutput)
+					cat(sprintf(', existing output has different chunkSize (%i rather than %i), resorting remaining work',
+											lastChunkSize,
+											chunkSizePerWorker*numWorkers))
+					workUnitBoundaries[i+1] <- workUnitBoundaries[i]+lastChunkSize
+					workUnitBoundaries <- c(workUnitBoundaries[1:i],
+																	seq(workUnitBoundaries[i+1],numSample,chunkSizePerWorker*numWorkers))
+					if(workUnitBoundaries[length(workUnitBoundaries)]!=numSample){
+						workUnitBoundaries <- c(workUnitBoundaries,numSample)
+					}
+					workUnitBoundaries[length(workUnitBoundaries)] <- numSample+1
 				}
-				workUnitBoundaries[length(workUnitBoundaries)] <- numSample+1
 			}
 		}
 		if(!exists('parOutput')){
