@@ -43,10 +43,7 @@ resSigma.names <- array(paste('s',
 # reads frida_info.csv and outputs the SampleParms
 # also removes parms we will not sample
 # and complains about invalid lines in frida_info.csv
-integerParms <- data.frame(Variable=c('Climate Units.selected climate case[1]'),
-													 Value=c(23),
-													 Min=c(1),
-													 Max=c(100))
+integerParms <- read.csv('frida_integer_parms.csv')
 excludedParmsForBeingIntegers <- integerParms$Variable
 sampleParms.orig <- sampleParms <- prepareSampleParms(excludeNames=excludedParmsForBeingIntegers)
 
@@ -283,7 +280,7 @@ while(newMaxFound){
 		}
 	}
 	# coef range ####
-	# par bounds
+	## par bounds ####
 	idcOfSampleParmsInFridaInfo <- c()
 	for(p.i in 1:nrow(sampleParms)){
 		idcOfSampleParmsInFridaInfo[p.i] <- which(frida_info$Variable==sampleParms$Variable[p.i])
@@ -331,6 +328,7 @@ while(newMaxFound){
 		# 									trace = 9,
 		# 									niter=1e2)
 		
+		## range find ####
 		for(direction in c('Min','Max')){
 			cat(sprintf('  determining %s par values...',tolower(direction)))
 			clusterExport(cl,list('calDat','treatVarsAsIndep'))
@@ -364,7 +362,7 @@ while(newMaxFound){
 			cat('done\n')	
 		}
 	}
-	# make borders symmetric
+	## make borders symmetric ####
 	if(symmetricRanges%in%c('Max','Min')){
 		cat('Symmetrifying parameter ranges\n')
 		if(symmetricRanges=='Max'){
@@ -374,10 +372,11 @@ while(newMaxFound){
 			sampleParms$distance <- pmin(sampleParms$Value-sampleParms$Min,
 																	 sampleParms$Max-sampleParms$Value)
 		}
-		sampleParms$Max <- sampleParms$Value+sampleParms$distance
-		sampleParms$Min <- sampleParms$Value-sampleParms$distance
+		# those that would have a distance of zero, we do not reassign
+		sampleParms$Max[sampleParms$distance!=0] <- sampleParms$Value[sampleParms$distance!=0]+sampleParms$distance[sampleParms$distance!=0]
+		sampleParms$Min[sampleParms$distance!=0] <- sampleParms$Value[sampleParms$distance!=0]-sampleParms$distance[sampleParms$distance!=0]
 	}
-	# read manual borders
+	## read manual borders ####
 	if(ignoreParBounds){
 		cat('Not reading manual ranges, as ignoreParBounds==TRUE\n')
 	} else {
@@ -400,7 +399,7 @@ while(newMaxFound){
 		saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
 		cat('done\n')
 	}
-	# check for errors at the borders
+	## check for errors at the borders ####
 	if(checkBorderErrors || kickParmsErrorRangeDet){
 		borderLogLikeError <- array(NA,dim=c(length(parVect),2))
 		colnames(borderLogLikeError) <- c('Min','Max')
@@ -503,8 +502,11 @@ while(newMaxFound){
 																												ignoreExistingResults = T,
 																												integerParms = integerParms)
 	}
-	samplePoints.orig <- samplePoints
-	write.csv(samplePoints,file.path(location.output,'samplePoints.csv'))
+	
+	write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
+	saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
+	saveRDS(samplePoints,file.path(location.output,'samplePoints.RDS'))
+	# write.csv(samplePoints,file.path(location.output,'samplePoints.csv'))
 	
 	## evaluate sample points ####	
 	logLikes <- clusterRunFridaForSamplePoints(samplePoints,chunkSizePerWorker,
