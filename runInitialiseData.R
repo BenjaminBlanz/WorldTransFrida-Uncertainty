@@ -13,6 +13,10 @@ if(!exists('runFridaDefaultParms')){
 	stop('run initialise.R first\n')
 }
 
+# test that FRIDA runs ####
+test <- runFridaDefaultParms(silent=F)
+continue <- readline('Verify there are no errors in the above.\n  Enter for all clear, Ctrl+C for abort\n')
+
 # read calib data ####
 cat('reading calibration data ...')
 calDat.orig <- read.csv(file.path(location.frida,'Data','Calibration Data.csv'), header=FALSE,
