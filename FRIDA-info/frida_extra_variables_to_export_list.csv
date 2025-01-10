@@ -1,109 +1,109 @@
-,FRIDA Module,FRIDA Name,FRIDA FQN,Unit
-,,,CO2 Forcing.Atmospheric CO2 growth GtC,GtC/Year
-,,,Emissions.CO2 Emissions from Food and Land Use GtC,GtC/Year
-,,,Emissions.CO2 Emissions from Other GtC,GtC/Year
-,,,Emissions.land carbon sink,GtC/Year
-,,,Emissions.Realized CO2 Emissions from Energy GtC,GtC/Year
-,,,Emissions.Total CO2 Emissions GtC,GtC/Year
-,,,Ocean.Air sea co2 flux,GtC/Year
-Atmospheric CO2 concentration,CO2 Forcing,Atmospheric CO2 concentration,CO2 Forcing.Atmospheric CO2 concentration,ppm
-Surface temperature anomaly,Energy Balance Model,Surface Temperature Anomaly,Energy Balance Model.Surface Temperature Anomaly,deg C
-sea level anomaly,Sea Level Rise,Total global SLR,Sea Level Rise.Total global SLR,metre
-mean surface ocean pH (Cold and Warm surface ocean pH are the required FRIDA variables),Ocean Carbon,Warm surface ocean pH,Ocean Carbon.Warm surface ocean pH,dmnl
-,Ocean Carbon,Cold surface ocean pH,Ocean Carbon.Cold surface ocean pH,dmnl
-perceived climate risk,Climate Risk Perception,perceived climate risk,Climate Risk Perception.perceived climate risk,dmnl
-vegetal food product demand per person per day,Food Demand,vegetal product demand per person per day,Food Demand.vegetal product demand per person per day,kcal/person/day
-animal food product demand per day,Food Demand,animal product demand per person per day,Food Demand.animal product demand per person per day,kcal/person/day
-desired demand from personal norm (kcal/person/day),Animal Products Demand,desired demand from personal norm,Animal Products Demand.desired demand from personal norm,kcal/person/day
-desired demand from descriptive norm (kcal/person/day),Animal Products Demand,desired demand from descriptive norm,Animal Products Demand.desired demand from descriptive norm,kcal/person/day
-desired demand from accessibility (kcal/person/day),Animal Products Demand,desired demand from accessibility ,Animal Products Demand.desired demand from accessibility ,kcal/person/day
-average daily demand (kcal/person/day),Animal Products Demand,Average Daily Demand Per Capita,Animal Products Demand.Average Daily Demand Per Capita,kcal/person/day
-Area of crop land,Land Use,Cropland,Land Use.Cropland,Mha
-are of mature forest,Land Use,Mature Forest,Land Use.Mature Forest,Mha
-area of young forest,Land Use,Young Forest,Land Use.Young Forest,Mha
-area of grassland,Land Use,Grassland,Land Use.Grassland,Mha
-area of degraded land,Land Use,Degraded Land,Land Use.Degraded Land,Mha
-net primary production from mature forest (GtC/year),Forest,mature forest net primary production,Forest.mature forest net primary production,GtC/Year
-net primary production from young forest (GtC/year),Forest,young forest net primary production,Forest.young forest net primary production,GtC/Year
-net primary production from cropland (GtC/year),Crop,cropland net primary production,Crop.cropland net primary production,GtC/Year
-net primary production from grassland (GtC/year),Grass,grassland net primary production,Grass.grassland net primary production,GtC/Year
-,Terrestrial Carbon Balance,Annual carbon uptake in peatlands,Terrestrial Carbon Balance.Annual carbon uptake in peatlands,GtC/Year
-,degraded land soil carbon,degraded land litter,degraded land soil carbon.degraded land litter,GtC/Year
-Terrestrial net primary production,Terrestrial Carbon Balance,Terrestrial net primary production ,Terrestrial Carbon Balance.Terrestrial net primary production ,GtC/Year
-crop production for vegetal products,Food Demand,crop demand for food,Food Demand.crop demand for food,PCal/year
-crop production for animal feed,Food Demand,feed production,Food Demand.feed production,PCal/year
-crop production for biofuel,Food Demand,crops for energy,Food Demand.crops for energy,PCal/year
-crop production for seed and lost,Food Demand,Crops used for Seed or Lost,Food Demand.Crops used for Seed or Lost,PCal/year
-Total Crop Production,Crop,Crop Production,Crop.Crop Production,PCal/year
-water use for agriculture,Freshwater,agricultural water withdrawal,Freshwater.agricultural water withdrawal,m^3/year
-water use other,Freshwater,non agricultural water withdrawl,Freshwater.non agricultural water withdrawl,m^3/year
-fertilizer manure,Land Nutrients,manure fertilizer use,Land Nutrients.manure fertilizer use,MtN/year
-fertilizer man-made,Land Nutrients,man made fertilizer use,Land Nutrients.man made fertilizer use,MtN/year
-Energy module,,,,
-energy output from coal (Twh/year),fossil energy coal,Secondary Fossil Energy Output,fossil energy coal.Secondary Fossil Energy Output,TWh/Years
-energy output from oil (Twh/year),fossil energy oil,Secondary Fossil Energy Output,fossil energy oil.Secondary Fossil Energy Output,TWh/Years
-energy output from gas (Twh/year),fossil energy gas,Secondary Fossil Energy Output,fossil energy gas.Secondary Fossil Energy Output,TWh/Years
-energy output from hydro (Twh/year),hydropower energy,Hydropower Energy Output,hydropower energy.Hydropower Energy Output,TWh/Years
-energy output from solar and wind (Twh/year),wind and solar energy,Wind and Solar Energy Output,wind and solar energy.Wind and Solar Energy Output,TWh/Years
-energy output from nuclear (Twh/year),nuclear energy,Nuclear Energy Output,nuclear energy.Nuclear Energy Output,TWh/Years
-energy output from biofuel (Twh/year),bio fuel energy,bio fuel secondary energy output,bio fuel energy.bio fuel secondary energy output,TWh/Years
-energy output from other (Twh/year),other energy,Other Energy Output,other energy.Other Energy Output,TWh/Years
-energy output from fossil,fossil energy,Secondary Fossil Energy Output,fossil energy.Secondary Fossil Energy Output,TWh/Years
-Energy output from rewneables,renewable energy,Renewable Energy Output,renewable energy.Renewable Energy Output,TWh/Years
-energy investment to coal extraction (2021-dollars/year),energy investments,Coal Gross Investments in Fossil Fuel Extraction Capital,energy investments.Coal Gross Investments in Fossil Fuel Extraction Capital,2021c$/Year
-energy investment to oil extraction (2021-dollars/year),energy investments,Oil Gross Investments in Fossil Fuel Extraction Capital,energy investments.Oil Gross Investments in Fossil Fuel Extraction Capital,2021c$/Year
-energy investment to gas extraction (2021-dollars/year),energy investments,Gas Gross Investments in Fossil Fuel Extraction Capital,energy investments.Gas Gross Investments in Fossil Fuel Extraction Capital,2021c$/Year
-energy investment to coal conversion to energy (2021-dollars/year),energy investments,Coal Gross Investments in Fossil Energy Capital,energy investments.Coal Gross Investments in Fossil Energy Capital,2021c$/Year
-energy investment to oil conversion to energy (2021-dollars/year),energy investments,Oil Gross Investments in Fossil Energy Capital,energy investments.Oil Gross Investments in Fossil Energy Capital,2021c$/Year
-energy investment to gas conversion to energy (2021-dollars/year),energy investments,Gas Gross Investments in Fossil Energy Capital,energy investments.Gas Gross Investments in Fossil Energy Capital,2021c$/Year
-energy investment to solar and wind,energy investments,Gross Investments in Solar and Wind Energy Capacity,energy investments.Gross Investments in Solar and Wind Energy Capacity,2021c$/Year
-energy investment to hydro,energy investments,Gross Investments in Hydropower Energy capacity,energy investments.Gross Investments in Hydropower Energy capacity,2021c$/Year
-energy investment to nuclear,energy investments,Investments in Nuclear Capacity,energy investments.Investments in Nuclear Capacity,2021c$/Year
-energy investment to biofuel,energy investments,Gross Investments in Biofuel Capacity,energy investments.Gross Investments in Biofuel Capacity,2021c$/Year
-energy investment to other,energy investments,Gross Investments in Other Capacity,energy investments.Gross Investments in Other Capacity,2021c$/Year
-Energy investment into fossil,energy investments,Investments in Fossil Energy,energy investments.Investments in Fossil Energy,2021c$/Year
-Energy investment into non-fossil,energy investments,Gross Investments in Renewables,energy investments.Gross Investments in Renewables,2021c$/Year
-Economy module,,,,
-global GDP (2021-dollars/year,GDP,Real GDP in 2021c$,GDP.Real GDP in 2021c$,2021c$/Year
-inflation rate (%/year),Inflation,Inflation Rate,Inflation.Inflation Rate,1/Year
-productivity (all production factors),Employment,Productivity,Employment.Productivity,dmnl
-unemployment rate (%),Employment,unemployment rate,Employment.unemployment rate,dmnl
-worker share of net income (%),Circular Flow,worker share of net income,Circular Flow.worker share of net income,%
-Resources module,,,,
-yearly concrete production (million tonnes per year),Concrete,total yearly concrete use,Concrete.total yearly concrete use,Mtonne/year
-in use concrete stock (million tonnes),Concrete,In use concrete stock,Concrete.In use concrete stock,Mtonne
-Demography module,,,,
-population,Demographics,Population,Demographics.Population,Mp
-demographics.Aged 0 years,Demographics,Aged 0 years,Demographics.Aged 0 years,Mp
-‘demographics.Aged 1 to 20 years,Demographics,Aged 1 to 20 years,Demographics.Aged 1 to 20 years,Mp
-demographics.Aged 20 to 40 years,Demographics,Aged 20 to 40 years,Demographics.Aged 20 to 40 years,Mp
-demographics.Aged 40 to 60 years,Demographics,Aged 40 to 60 years,Demographics.Aged 40 to 60 years,Mp
-demographics.Aged 60 to 65 years,Demographics,Aged 60 to 65 years,Demographics.Aged 60 to 65 years,Mp
-demographics.Aged 65 to 75 years,Demographics,Aged 65 to 75 years,Demographics.Aged 65 to 75 years,Mp
-demographics.Aged over 75 years,Demographics,Aged over 75 years,Demographics.Aged over 75 years,Mp
-Carbon budget,,,,
-carbon emissions from land use change (CO2-flux (GtC/year),Emissions,CO2 Emissions from Food and Land Use GtC ,Emissions.CO2 Emissions from Food and Land Use GtC ,GtC/Year
-carbon emissions from fossil fuels (CO2-flux (GtC/year),Emissions,Realized CO2 Emissions from Energy GtC,Emissions.Realized CO2 Emissions from Energy GtC,GtC/Year
-carbon emissions from concrete (CO2-flux (GtC/year),Emissions,CO2 Emissions from Other GtC,Emissions.CO2 Emissions from Other GtC,GtC/Year
-carbon uptake in land (CO2-flux (GtC/year),,,Emissions.land carbon sink,GtC/Year
-carbon uptake in ocean (CO2-flux (GtC/year),,,Ocean.Air sea co2 flux,GtC/Year
-carbon uptake in atmosphere (CO2-flux (GtC/year),,,CO2 Forcing.Atmospheric CO2 growth GtC,GtC/Year
-carbon captured (GtC/year),CCS,Storing CO2,CCS.Storing CO2,MtCO2/Year
-Income Cycle,,,,
-Owner profit not from banks (after tax) (2021-dollars / year),Circular Flow,non bank profits in 2021c$,Circular Flow.non bank profits in 2021c$,2021c$/year
-Owner profits from banks (after tax),Circular Flow,bank profits in 2021c$,Circular Flow.bank profits in 2021c$,2021c$/year
-Owner rent income (after tax),Circular Flow,rent in in 2021c$,Circular Flow.rent in in 2021c$,2021c$/year
-Owner income savings interest,Circular Flow,owner savings interest in 2021c$,Circular Flow.owner savings interest in 2021c$,2021c$/year
-Worker income government transfers,Circular Flow,transfers in 2021c$,Circular Flow.transfers in 2021c$,2021c$/year
-Worker income wages (after tax),Circular Flow,wages in 2021c$,Circular Flow.wages in 2021c$,2021c$/year
-Worker income savings interest,Circular Flow,worker savings interest in 2021c$,Circular Flow.worker savings interest in 2021c$,2021c$/year
-"Government income, profit taxes",Circular Flow,profit tax in 2021c$,Circular Flow.profit tax in 2021c$,2021c$/year
-"Government income, rent taxes",Circular Flow,rent tax in 2021c$,Circular Flow.rent tax in 2021c$,2021c$/year
-"government income, wage taxes",Circular Flow,wage tax in 2021c$,Circular Flow.wage tax in 2021c$,2021c$/year
-Owner consumption,GDP,owner consumption in 2021c$,GDP.owner consumption in 2021c$,2021c$/year
-Worker income excl. government transfers,GDP,worker consumption excluding transfers in 2021c$,GDP.worker consumption excluding transfers in 2021c$,2021c$/year
-"government consumption, climate repairs",Government,government spending because of climate in 2021c$,Government.government spending because of climate in 2021c$,2021c$/year
-"Government consumption, not climate repairs",Government,government spending without climate impact in 2021c$,Government.government spending without climate impact in 2021c$,2021c$/year
-government transfers,GDP,government transfers in 2021c$,GDP.government transfers in 2021c$,2021c$/year
-government investments,GDP,public investment in 2021c$,GDP.public investment in 2021c$,2021c$/year
-private investments.,GDP,private investment in in 2021c$,GDP.private investment in in 2021c$,2021c$/year
+,FRIDA Module,FRIDA Name,Index,FRIDA FQN,Unit
+From Lennart,CO2 Forcing,Atmospheric CO2 growth GtC,[1],CO2 Forcing.Atmospheric CO2 growth GtC[1],GtC/Year
+From Lennart,Emissions,CO2 Emissions from Food and Land Use GtC,[1],Emissions.CO2 Emissions from Food and Land Use GtC[1],GtC/Year
+From Lennart,Emissions,CO2 Emissions from Other GtC,[1],Emissions.CO2 Emissions from Other GtC[1],GtC/Year
+From Lennart,Emissions,land carbon sink,[1],Emissions.land carbon sink[1],GtC/Year
+From Lennart,Emissions,Realized CO2 Emissions from Energy GtC,[1],Emissions.Realized CO2 Emissions from Energy GtC[1],GtC/Year
+From Lennart,Emissions,Total CO2 Emissions GtC,[1],Emissions.Total CO2 Emissions GtC[1],GtC/Year
+From Lennart,Ocean,Air sea co2 flux,[1],Ocean.Air sea co2 flux[1],GtC/Year
+Atmospheric CO2 concentration,CO2 Forcing,Atmospheric CO2 concentration,[1],CO2 Forcing.Atmospheric CO2 concentration[1],ppm
+Surface temperature anomaly,Energy Balance Model,Surface Temperature Anomaly,[1],Energy Balance Model.Surface Temperature Anomaly[1],deg C
+sea level anomaly,Sea Level,Total global SLR,[1],Sea Level.Total global SLR[1],metre
+mean surface ocean pH (Cold and Warm surface ocean pH are the required FRIDA variables),Ocean,Warm surface ocean pH,[1],Ocean.Warm surface ocean pH[1],dmnl
+,Ocean,Cold surface ocean pH,[1],Ocean.Cold surface ocean pH[1],dmnl
+perceived climate risk,Climate Risk Perception,perceived climate risk,[1],Climate Risk Perception.perceived climate risk[1],dmnl
+vegetal food product demand per person per day,Food Demand,vegetal product demand per person per day,[1],Food Demand.vegetal product demand per person per day[1],kcal/person/day
+animal food product demand per day,Food Demand,animal product demand per person per day,[1],Food Demand.animal product demand per person per day[1],kcal/person/day
+desired demand from personal norm (kcal/person/day),Animal Products Demand,desired demand from personal norm,[1],Animal Products Demand.desired demand from personal norm[1],kcal/person/day
+desired demand from descriptive norm (kcal/person/day),Animal Products Demand,desired demand from descriptive norm,[1],Animal Products Demand.desired demand from descriptive norm[1],kcal/person/day
+desired demand from accessibility (kcal/person/day),Animal Products Demand,desired demand from accessibility ,[1],Animal Products Demand.desired demand from accessibility [1],kcal/person/day
+average daily demand (kcal/person/day),Animal Products Demand,Average Daily Demand Per Capita,[1],Animal Products Demand.Average Daily Demand Per Capita[1],kcal/person/day
+Area of crop land,Land Use,Cropland,[1],Land Use.Cropland[1],Mha
+are of mature forest,Land Use,Mature Forest,[1],Land Use.Mature Forest[1],Mha
+area of young forest,Land Use,Young Forest,[1],Land Use.Young Forest[1],Mha
+area of grassland,Land Use,Grassland,[1],Land Use.Grassland[1],Mha
+area of degraded land,Land Use,Degraded Land,[1],Land Use.Degraded Land[1],Mha
+net primary production from mature forest (GtC/year),Forest,mature forest net primary production,[1],Forest.mature forest net primary production[1],GtC/Year
+net primary production from young forest (GtC/year),Forest,young forest net primary production,[1],Forest.young forest net primary production[1],GtC/Year
+net primary production from cropland (GtC/year),Crop,cropland net primary production,[1],Crop.cropland net primary production[1],GtC/Year
+net primary production from grassland (GtC/year),Grass,grassland net primary production,[1],Grass.grassland net primary production[1],GtC/Year
+net primary production from peatlands,Terrestrial Carbon Balance,Annual carbon uptake in peatlands,[1],Terrestrial Carbon Balance.Annual carbon uptake in peatlands[1],GtC/Year
+net primary production from degraded land soil carbon,degraded land soil carbon,degraded land litter,[1],degraded land soil carbon.degraded land litter[1],GtC/Year
+Terrestrial net primary production,Terrestrial Carbon Balance,Terrestrial net primary production ,[1],Terrestrial Carbon Balance.Terrestrial net primary production [1],GtC/Year
+crop production for vegetal products,Food Demand,crop demand for food,[1],Food Demand.crop demand for food[1],PCal/year
+crop production for animal feed,Food Demand,feed production,[1],Food Demand.feed production[1],PCal/year
+crop production for biofuel,Food Demand,crops for energy,[1],Food Demand.crops for energy[1],PCal/year
+crop production for seed and lost,Food Demand,Crops used for Seed or Lost,[1],Food Demand.Crops used for Seed or Lost[1],PCal/year
+Total Crop Production,Crop,Crop Production,[1],Crop.Crop Production[1],PCal/year
+water use for agriculture,Freshwater,agricultural water withdrawal,[1],Freshwater.agricultural water withdrawal[1],m^3/year
+water use other,Freshwater,non agricultural water withdrawl,[1],Freshwater.non agricultural water withdrawl[1],m^3/year
+fertilizer manure,Land Nutrients,manure fertilizer use,[1],Land Nutrients.manure fertilizer use[1],MtN/year
+fertilizer man-made,Land Nutrients,man made fertilizer use,[1],Land Nutrients.man made fertilizer use[1],MtN/year
+Energy module,,,,,
+energy output from coal (Twh/year),fossil energy coal,Secondary Fossil Energy Output,[1],fossil energy coal.Secondary Fossil Energy Output[1],TWh/Years
+energy output from oil (Twh/year),fossil energy oil,Secondary Fossil Energy Output,[1],fossil energy oil.Secondary Fossil Energy Output[1],TWh/Years
+energy output from gas (Twh/year),fossil energy gas,Secondary Fossil Energy Output,[1],fossil energy gas.Secondary Fossil Energy Output[1],TWh/Years
+energy output from hydro (Twh/year),hydropower energy,Hydropower Energy Output,[1],hydropower energy.Hydropower Energy Output[1],TWh/Years
+energy output from solar and wind (Twh/year),wind and solar energy,Wind and Solar Energy Output,[1],wind and solar energy.Wind and Solar Energy Output[1],TWh/Years
+energy output from nuclear (Twh/year),nuclear energy,Nuclear Energy Output,[1],nuclear energy.Nuclear Energy Output[1],TWh/Years
+energy output from biofuel (Twh/year),bio fuel energy,bio fuel secondary energy output,[1],bio fuel energy.bio fuel secondary energy output[1],TWh/Years
+energy output from other (Twh/year),other energy,Other Energy Output,[1],other energy.Other Energy Output[1],TWh/Years
+energy output from fossil,fossil energy,Secondary Fossil Energy Output,[1],fossil energy.Secondary Fossil Energy Output[1],TWh/Years
+Energy output from rewneables,renewable energy,Renewable Energy Output,[1],renewable energy.Renewable Energy Output[1],TWh/Years
+energy investment to coal extraction (2021-dollars/year),energy investments,Coal Gross Investments in Fossil Fuel Extraction Capital,[1],energy investments.Coal Gross Investments in Fossil Fuel Extraction Capital[1],2021c$/Year
+energy investment to oil extraction (2021-dollars/year),energy investments,Oil Gross Investments in Fossil Fuel Extraction Capital,[1],energy investments.Oil Gross Investments in Fossil Fuel Extraction Capital[1],2021c$/Year
+energy investment to gas extraction (2021-dollars/year),energy investments,Gas Gross Investments in Fossil Fuel Extraction Capital,[1],energy investments.Gas Gross Investments in Fossil Fuel Extraction Capital[1],2021c$/Year
+energy investment to coal conversion to energy (2021-dollars/year),energy investments,Coal Gross Investments in Fossil Energy Capital,[1],energy investments.Coal Gross Investments in Fossil Energy Capital[1],2021c$/Year
+energy investment to oil conversion to energy (2021-dollars/year),energy investments,Oil Gross Investments in Fossil Energy Capital,[1],energy investments.Oil Gross Investments in Fossil Energy Capital[1],2021c$/Year
+energy investment to gas conversion to energy (2021-dollars/year),energy investments,Gas Gross Investments in Fossil Energy Capital,[1],energy investments.Gas Gross Investments in Fossil Energy Capital[1],2021c$/Year
+energy investment to solar and wind,energy investments,Gross Investments in Solar and Wind Energy Capacity,[1],energy investments.Gross Investments in Solar and Wind Energy Capacity[1],2021c$/Year
+energy investment to hydro,energy investments,Gross Investments in Hydropower Energy capacity,[1],energy investments.Gross Investments in Hydropower Energy capacity[1],2021c$/Year
+energy investment to nuclear,energy investments,Investments in Nuclear Capacity,[1],energy investments.Investments in Nuclear Capacity[1],2021c$/Year
+energy investment to biofuel,energy investments,Gross Investments in Biofuel Capacity,[1],energy investments.Gross Investments in Biofuel Capacity[1],2021c$/Year
+energy investment to other,energy investments,Gross Investments in Other Capacity,[1],energy investments.Gross Investments in Other Capacity[1],2021c$/Year
+Energy investment into fossil,energy investments,Investments in Fossil Energy,[1],energy investments.Investments in Fossil Energy[1],2021c$/Year
+Energy investment into non-fossil,energy investments,Gross Investments in Renewables,[1],energy investments.Gross Investments in Renewables[1],2021c$/Year
+Economy module,,,,,
+global GDP (2021-dollars/year,GDP,Real GDP in 2021c$,[1],GDP.Real GDP in 2021c$[1],2021c$/Year
+inflation rate (%/year),Inflation,Inflation Rate,[1],Inflation.Inflation Rate[1],1/Year
+productivity (all production factors),Employment,Productivity,[1],Employment.Productivity[1],dmnl
+unemployment rate (%),Employment,unemployment rate,[1],Employment.unemployment rate[1],dmnl
+worker share of net income (%),Circular Flow,worker share of net income,[1],Circular Flow.worker share of net income[1],%
+Resources module,,,,,
+yearly concrete production (million tonnes per year),Concrete,total yearly concrete use,[1],Concrete.total yearly concrete use[1],Mtonne/year
+in use concrete stock (million tonnes),Concrete,In use concrete stock,[1],Concrete.In use concrete stock[1],Mtonne
+Demography module,,,,,
+population,Demographics,Population,[1],Demographics.Population[1],Mp
+demographics.Aged 0 years,Demographics,Aged 0 years,[1],Demographics.Aged 0 years[1],Mp
+‘demographics.Aged 1 to 20 years,Demographics,Aged 1 to 20 years,[1],Demographics.Aged 1 to 20 years[1],Mp
+demographics.Aged 20 to 40 years,Demographics,Aged 20 to 40 years,[1],Demographics.Aged 20 to 40 years[1],Mp
+demographics.Aged 40 to 60 years,Demographics,Aged 40 to 60 years,[1],Demographics.Aged 40 to 60 years[1],Mp
+demographics.Aged 60 to 65 years,Demographics,Aged 60 to 65 years,[1],Demographics.Aged 60 to 65 years[1],Mp
+demographics.Aged 65 to 75 years,Demographics,Aged 65 to 75 years,[1],Demographics.Aged 65 to 75 years[1],Mp
+demographics.Aged over 75 years,Demographics,Aged over 75 years,[1],Demographics.Aged over 75 years[1],Mp
+Carbon budget,,,,,
+carbon emissions from land use change (CO2-flux (GtC/year),Emissions,CO2 Emissions from Food and Land Use GtC ,[1],Emissions.CO2 Emissions from Food and Land Use GtC [1],GtC/Year
+carbon emissions from fossil fuels (CO2-flux (GtC/year),Emissions,Realized CO2 Emissions from Energy GtC,[1],Emissions.Realized CO2 Emissions from Energy GtC[1],GtC/Year
+carbon emissions from concrete (CO2-flux (GtC/year),Emissions,CO2 Emissions from Other GtC,[1],Emissions.CO2 Emissions from Other GtC[1],GtC/Year
+carbon uptake in land (CO2-flux (GtC/year),Emissions,land carbon sink,[1],Emissions.land carbon sink[1],GtC/Year
+carbon uptake in ocean (CO2-flux (GtC/year),Ocean,Air sea co2 flux,[1],Ocean.Air sea co2 flux[1],GtC/Year
+carbon uptake in atmosphere (CO2-flux (GtC/year),CO2 Forcing,Atmospheric CO2 growth GtC,[1],CO2 Forcing.Atmospheric CO2 growth GtC[1],GtC/Year
+carbon captured (GtC/year),CCS,Storing CO2,[1],CCS.Storing CO2[1],MtCO2/Year
+Income Cycle,,,,,
+Owner profit not from banks (after tax) (2021-dollars / year),Circular Flow,non bank profits in 2021c$,[1],Circular Flow.non bank profits in 2021c$[1],2021c$/year
+Owner profits from banks (after tax),Circular Flow,bank profits in 2021c$,[1],Circular Flow.bank profits in 2021c$[1],2021c$/year
+Owner rent income (after tax),Circular Flow,rent in in 2021c$,[1],Circular Flow.rent in in 2021c$[1],2021c$/year
+Owner income savings interest,Circular Flow,owner savings interest in 2021c$,[1],Circular Flow.owner savings interest in 2021c$[1],2021c$/year
+Worker income government transfers,Circular Flow,transfers in 2021c$,[1],Circular Flow.transfers in 2021c$[1],2021c$/year
+Worker income wages (after tax),Circular Flow,wages in 2021c$,[1],Circular Flow.wages in 2021c$[1],2021c$/year
+Worker income savings interest,Circular Flow,worker savings interest in 2021c$,[1],Circular Flow.worker savings interest in 2021c$[1],2021c$/year
+"Government income, profit taxes",Circular Flow,profit tax in 2021c$,[1],Circular Flow.profit tax in 2021c$[1],2021c$/year
+"Government income, rent taxes",Circular Flow,rent tax in 2021c$,[1],Circular Flow.rent tax in 2021c$[1],2021c$/year
+"government income, wage taxes",Circular Flow,wage tax in 2021c$,[1],Circular Flow.wage tax in 2021c$[1],2021c$/year
+Owner consumption,GDP,owner consumption in 2021c$,[1],GDP.owner consumption in 2021c$[1],2021c$/year
+Worker income excl. government transfers,GDP,worker consumption excluding transfers in 2021c$,[1],GDP.worker consumption excluding transfers in 2021c$[1],2021c$/year
+"government consumption, climate repairs",Government,government spending because of climate in 2021c$,[1],Government.government spending because of climate in 2021c$[1],2021c$/year
+"Government consumption, not climate repairs",Government,government spending without climate impact in 2021c$,[1],Government.government spending without climate impact in 2021c$[1],2021c$/year
+government transfers,GDP,government transfers in 2021c$,[1],GDP.government transfers in 2021c$[1],2021c$/year
+government investments,GDP,public investment in 2021c$,[1],GDP.public investment in 2021c$[1],2021c$/year
+private investments.,GDP,private investment in in 2021c$,[1],GDP.private investment in in 2021c$[1],2021c$/year
