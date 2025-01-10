@@ -1,4 +1,3 @@
-library(spatstat.explore,quietly=T,warn.conflicts = F) # used for the quantile.density function
 source('initialise.R')
 
 # config ####

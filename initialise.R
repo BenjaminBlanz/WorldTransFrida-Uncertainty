@@ -5,6 +5,7 @@ suppressPackageStartupMessages({
 	library(SobolSequence) # generates multidimensional sobol sequences
 	library(lubridate) # deals with times
 	library(cNORM) # wighted quantiles
+	library(spatstat.explore,quietly=T,warn.conflicts = F) # used for the quantile.density function
 })
 
 source('funRunFRIDA.R')
