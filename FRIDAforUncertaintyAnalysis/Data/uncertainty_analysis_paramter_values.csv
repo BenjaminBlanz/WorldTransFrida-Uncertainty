@@ -873,9 +873,17 @@
 "Sea level rise adaptation.reference protection cost",0.00602
 "Sea level rise adaptation.Time to increase flood protection height",10
 "Sea level rise costs and impacts.Not depreciated fraction of assets at time of retreat",0.1
+"energy demand.CDD linear coefficient",287.84696037
 "energy demand.effect of GDP on per person use of energy alpha",0.47
 "energy demand.effect of GDP on per person use of energy beta",0.836832290828595
+"energy demand.energy use per CDD",0.000875
+"energy demand.Energy use per HDD",0.002
+"energy demand.HDD exponential coefficient",-0.232561095
 "energy demand.normal per person use of energy",7.5
+"energy investments.adaptive energy investments differntiating factor",-7.16119449319558
+"energy investments.adaptive energy investments integrating factor",-3
+"energy investments.adaptive energy investments proportional factor",-30
+"energy investments.baseline energy investments",857228400873.641
 "energy investments.historical cost adjustment[Coal fuel extraction, 1]",1.03182639996729
 "energy investments.historical cost adjustment[Coal fuel extraction, 2]",0.411013278076705
 "energy investments.historical cost adjustment[Coal fuel extraction, 3]",1.35499734230099
@@ -975,12 +983,19 @@
 "energy investments.historical cost adjustment[Bio, 7]",0.341810045342304
 "energy investments.historical cost adjustment[Bio, 8]",0.527813512409802
 "energy investments.historical cost adjustment[Bio, 9]",0.519900626520621
+"energy investments.initial relative supply missmatch",0.1
+"energy investments.Relative Energy Supply Mismatch Buffer",0.01
 "energy investments.shape",1
+"Damages.Exponent of Capital Damage Function",2
 "Damages.Slope of Capital Damage Function",0.00713869179990239
+"efficiency reduction in power plants.effect of STA on hydropower energy capacity efficiency quadratic",-0.24704396
+"efficiency reduction in power plants.effect of STA on hydropower energy capacity efficiency slope",-0.53155579
 "fossil energy coal.carbon intensity in btu",0.025398539651913
+"fossil energy coal.Fossil Energy Capital Scaling Parameter",0.6
 "fossil energy coal.initial fossil energy capital",5.5e+11
 "fossil energy coal.initial fossil extraction knowledge",100.62801075018
 "fossil energy coal.initial fossil fuel extraction capital",1.16e+12
+"fossil energy coal.Primary Fossil Energy Scaling Parameter",1.8904838057499
 "fossil energy coal.productivity per extractionknowledge",0.00177120414219463
 "fossil energy coal.TFP in 1980",0.148
 "fossil energy coal.TFP Max",0.185
@@ -988,9 +1003,11 @@
 "fossil energy coal.TFP Ramp Speed",0.097
 "fossil energy coal.TFP Slope Start",1980.08990139598
 "fossil energy gas.carbon intensity in btu",0.0156655503172815
+"fossil energy gas.Fossil Energy Capital Scaling Parameter",0.451289120233549
 "fossil energy gas.initial fossil energy capital",4e+11
 "fossil energy gas.initial fossil extraction knowledge",127.05822244485
 "fossil energy gas.initial fossil fuel extraction capital",1988520830978.01
+"fossil energy gas.Primary Fossil Energy Scaling Parameter",1.12013244009994
 "fossil energy gas.productivity per extractionknowledge",0.000340426522970275
 "fossil energy gas.TFP in 1980",0.241551022597929
 "fossil energy gas.TFP Max",0.295
@@ -998,29 +1015,40 @@
 "fossil energy gas.TFP Ramp Speed",0.139893371386549
 "fossil energy gas.TFP Slope Start",1980.10137291122
 "fossil energy oil.carbon intensity in btu",0.019446984722055
+"fossil energy oil.Fossil Energy Capital Scaling Parameter",0.6
 "fossil energy oil.initial fossil energy capital",1e+12
 "fossil energy oil.initial fossil extraction knowledge",151.117578870786
 "fossil energy oil.initial fossil fuel extraction capital",8318356306450
+"fossil energy oil.Primary Fossil Energy Scaling Parameter",1.99999958734975
 "fossil energy oil.productivity per extractionknowledge",0.000209715322232346
 "fossil energy oil.TFP in 1980",0.141258869457008
 "fossil energy oil.TFP Max",0.17
 "fossil energy oil.TFP Max Ramp Year",2017.33847855222
 "fossil energy oil.TFP Ramp Speed",0.0976371503131552
 "fossil energy oil.TFP Slope Start",1983.31840997973
+"nuclear energy.baseline nuclear energy capacity efficiency",7.5
 "nuclear energy.Ceiling of Nuclear Installation Costs",6000
 "nuclear energy.Floor of Nuclear Installation Costs",2108.20854100359
+"nuclear energy.Initial Nuclear Capacity",97.5591716556717
 "nuclear energy.Intercept Nuclear Installation Costs",-2690
 "nuclear energy.Slope of Nuclear Installation Costs",280.4
 "bio fuel energy.bio fuel primary energy content",2.02106814875483e-05
 "bio fuel energy.Floor Costs",14817700.9860935
+"bio fuel energy.Initial biofuel production Capacity",5
 "bio fuel energy.Initial Installation Costs",1177719565.64476
 "bio fuel energy.Learning Rate",0.0446576738196583
+"bio fuel energy.PCal per Mt of fuel",4
+"bio fuel energy.relative carbon intensity of biofuels to petroleum fuels",0.65
 "bio fuel energy.stepping on toes parameter",0.402774716236313
 "hydropower energy.Base Hydropower Installation Costs",100.335633411328
+"hydropower energy.baseline hydropower energy capacity efficiency",3.8457342676995
+"hydropower energy.Initial Hydropower Capacity",478.776803701607
 "hydropower energy.Slope of Hydropower Installation Costs wrt Capacity",1.63415093676841e-06
 "other energy.Floor of Other Installation Costs",949.698778788993
+"other energy.Initial Other Capacity",8.83829724631003
 "other energy.Initial Other Installation Costs",1999.96729277803
 "other energy.Learning Rate",0.0780908876868298
+"other energy.Other Energy Capacity Efficiency",5.92790244874951
 "other energy.stepping on toes parameter",0.443900376583671
 "wind and solar energy.Initial Renewable Energy Installation Costs",4498.06716252767
 "wind and solar energy.Renewable Energy Floor Costs",138
@@ -1028,6 +1056,7 @@
 "wind and solar energy.sensitivity of renewable floor costs to grid storage needs",5.5
 "wind and solar energy.sensitivity of renewable floor costs to grid storage needs non linear part",-5.25
 "wind and solar energy.stepping on toes parameter in renewable energy sector",0.499920680455662
+"wind and solar energy.Wind and Solar Energy Full Load Hours",1776.49905654678
 "Government Regulations.government debt to GDP ratio target",1.2
 "Government Regulations.inflation goal policy",0.02
 "Government Regulations.max change per year in inflation",0.001
@@ -1129,15 +1158,6 @@
 "Concrete.INFRA BETA",-34.7999180884332
 "Concrete.INFRA GAMMA",6.01537251853227
 "Concrete.INIT CONCRETE IN NEW BUILDINGS",20000.6694269533
-"Concrete.INIT CONCRETE IN NEW INFRASTRUCTURE",6502.54623003724
-"Concrete.INIT CONCRETE IN OLD BUILDINGS",50963.6563089793
-"Concrete.INIT CONCRETE IN OLD INFRASTRUCTURE",12294.8402422716
-"Concrete.INTERCEPT",165310
-"Concrete.NORMAL CONCRETE DETERIORATION RATE",0.0158950991238031
-"Concrete.TIME TO ADJUST DESIRED FLOOR AREA",3.94347304975288
-"Concrete.TIME TO ADJUST DESIRED INFRASTRUCTURE AREA",5.1383825712853
-"Concrete.UFA alpha",25.2572561601996
-"Concrete.UFA intercept",-200.729776361609
 "Concrete.INIT CONCRETE IN NEW INFRASTRUCTURE",6502.54623003724
 "Concrete.INIT CONCRETE IN OLD BUILDINGS",50963.6563089793
 "Concrete.INIT CONCRETE IN OLD INFRASTRUCTURE",12294.8402422716
