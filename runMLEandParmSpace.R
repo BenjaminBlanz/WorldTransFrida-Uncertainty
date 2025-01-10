@@ -372,8 +372,13 @@ while(newMaxFound){
 																	 sampleParms$Max-sampleParms$Value)
 		}
 		# those that would have a distance of zero, we do not reassign
-		sampleParms$Max[sampleParms$distance!=0] <- sampleParms$Value[sampleParms$distance!=0]+sampleParms$distance[sampleParms$distance!=0]
-		sampleParms$Min[sampleParms$distance!=0] <- sampleParms$Value[sampleParms$distance!=0]-sampleParms$distance[sampleParms$distance!=0]
+		if(allowAssymetricToAvoidZeroRanges){
+			sampleParms$Max[sampleParms$distance!=0] <- sampleParms$Value[sampleParms$distance!=0]+sampleParms$distance[sampleParms$distance!=0]
+			sampleParms$Min[sampleParms$distance!=0] <- sampleParms$Value[sampleParms$distance!=0]-sampleParms$distance[sampleParms$distance!=0]
+		} else {
+			sampleParms$Max <- sampleParms$Value+sampleParms$distance
+			sampleParms$Min <- sampleParms$Value-sampleParms$distance
+		}
 	}
 	## read manual borders ####
 	if(ignoreParBounds){

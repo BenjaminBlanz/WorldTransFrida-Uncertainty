@@ -101,6 +101,7 @@ forceParBounds <- FALSE
 # the parameter should be used to decide the new range. Any other value deactivates this
 # feature.
 symmetricRanges <- 'Min'
+allowAssymetricToAvoidZeroRanges <- FALSE
 # should we skip the parameter maximum likelihood estimation and use the default
 # frida pars as MLE
 if(!exists('skipParMLE')){
