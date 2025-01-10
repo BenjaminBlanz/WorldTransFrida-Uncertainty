@@ -1,7 +1,7 @@
 # redo all calculations instead of using stored values
 redoAllCalc <- F
 
-# parallel things
+# parallel ####
 if(!exists('numWorkers')){
 	numWorkers <- parallel::detectCores()
 }
@@ -18,7 +18,8 @@ clusterType <- 'psock'
 # /dev/shm is not executable on some distros use /run/user
 tmpfsDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork')
 
-#plotting related things
+#plotting ####
+#related things
 plotWhileRunning <- F
 plotDatWhileRunning <- F
 plotDatPerChunWhileRunning <- F
@@ -27,9 +28,9 @@ whatToPlot <- tolower('GDP_Real_GDP_in_2021c')
 yaxPad <- 0.4
 # pretty plots
 location.plots <- 'figures'
-yearsToPlot.names <- c('allYears','1980-2023')
+yearsToPlot.names <- c('allYears')#,'1980-2023')
 uncertaintiesToPlot <- c('all uncertainty','noise uncertainty','fit uncertainty')
-alsoPlotMean.vals <- c(TRUE,FALSE)
+alsoPlotMean.vals <- c(FALSE)
 mean.lty <- 'solid'
 mean.lwd <- 2
 mean.col <- 'blue'
@@ -41,7 +42,7 @@ plotWidth <- 20
 plotHeight <- 20
 plotUnit <- 'cm'
 plotRes <- 150
-plotWeightTypes <- c('equaly')#,'linearly','logCutoff')#,'likelihood') #options are equal, linear, logCutoff, likelihood
+plotWeightTypes <- c('equaly','logLikelihood')#,'linearly','logCutoff')#,'likelihood') #options are equal, linear, logCutoff, likelihood
 CIsToPlot <- c(0,0.5,0.95)
 CIsToPlot.lty <- c('solid','longdash','dotted')#,'dotdash','dotted')
 CIsToPlot.lwd <- c(3,1,1)
@@ -50,10 +51,9 @@ CIsToPlot.col <- c(NA,gray(0.7,0.5),gray(0.8,0.5))
 
 calDat.col <- 'red'
 
-# sampling the parameters ####
-
+# sampling ####
 # number of samples for the sobol sequence across all dimensions
-numSample <- 1439
+numSample <- 5e5
 # by default sobol sequence covers the entire range between min and max with 
 # equal density.
 # However we might want to ensure that there are similar number of points above and 
@@ -78,8 +78,7 @@ imputeMissingVars <- F
 # 'q##'    quadratic extrapolation using the first/last ##% of observations
 extrapolateMissingVarMethod <- 'n'
 
-# calculating the likelihoods ####
-
+# parameger ranges ####
 # do we assume or pretend we assume that all residuals are independent.
 # I.e. the cov matrix is a diagonal withe the per variable variance on the diagonal
 treatVarsAsIndep <- T
@@ -108,6 +107,9 @@ if(!exists('skipParMLE')){
 	skipParMLE <- T
 }
 
+# FRIDA config ####
+climateFeedbacksOn <- TRUE
+policyFileName <- 'policy_EMB.csv'
 
 # locations and names ####
 # location of frida/stella for running
@@ -116,10 +118,15 @@ location.stella<- './Stella_Simulator_Linux'
 # location frida/stella is stored while the above is located in tmpfs
 location.frida.storage <- './FRIDAforUncertaintyAnalysis-store'
 location.stella.storage <- './Stella_Simulator_Linux-store'
+# FRIDA config
+location.frida.configs <- './FRIDA-configs'
 
 name.fridaExportVarsFile <- 'varsForExport.txt'
 name.fridaInputFile <- 'uncertainty_analysis_paramter_values.csv'
 name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
+
+
+# execute config ####
 location.output <- file.path('workOutput',paste0('NumSample-',numSample,
 																								 '-chunkSizePerWorker-',chunkSizePerWorker,
 																								 '-likeCutoffRatio-',likeCutoffRatio,
@@ -128,6 +135,7 @@ location.output <- file.path('workOutput',paste0('NumSample-',numSample,
 																								 '-kickParmsErrorRangeDet-',kickParmsErrorRangeDet,
 																								 '-symmetricRanges-',symmetricRanges))
 location.output.base <- location.output
+
 cat(sprintf('Output folder: %s\n',location.output))
 if(file.exists(location.output)){
 	cat('  exists\n')
@@ -135,7 +143,14 @@ if(file.exists(location.output)){
 	dir.create(file.path(location.output),recursive = T,showWarnings = F)
 	cat('  created\n')
 }
-
 # save the config to the output folder
 file.copy('config.R',location.output,overwrite = T)
+# copy slected policy file and climate feedbacks config to frida
+cat(sprintf('Copying %s and %s to the frida directory.\n',
+						ifelse(climateFeedbacksOn,'ClimateFeedback_On.csv','ClimateFeedback_Off.csv'),
+						policyFileName))
+file.copy(file.path(location.frida.configs,ifelse(climateFeedbacksOn,'ClimateFeedback_On.csv','ClimateFeedback_Off.csv')),
+					file.path(location.frida,'data','climateFeedbackSwitches.csv'),T,T)
+file.copy(file.path(location.frida.configs,policyFileName),
+					file.path(location.frida,'data','policyParameters.csv'),T,T)
 
