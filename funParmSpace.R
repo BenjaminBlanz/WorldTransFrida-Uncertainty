@@ -203,11 +203,11 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 
 
 secant <- function(fun, x0, x1, tol=1e-07, niter=1e4, doWarn=T, trace=0,
-									 bound=NULL,...){
+									 bound=NULL,hasToBePositive=FALSE,...){
 	if(is.null(bound)){
 		bound <- sign(x1-x0)*Inf
 	}
-	for ( i in 1:niter ) {
+	for ( i in 1:niter ){
 		# cat(sprintf('x0=%10.2e x1=%10.2e',x0,x1))
 		f0 <- fun(x0,...)
 		f1 <- fun(x1,...)
@@ -215,6 +215,9 @@ secant <- function(fun, x0, x1, tol=1e-07, niter=1e4, doWarn=T, trace=0,
 		if(trace>0){
 			cat(sprintf('secant x0: %10f f0: %10f x1: %10f f1: %10f  x2: %10f\n',
 									x0,f0,x1,f1,x2))
+		}
+		if(hasToBePositive && x2 < 0){
+			return(NA)
 		}
 		if(is.infinite(x2)||is.nan(x2)){
 			return(bound)
@@ -278,14 +281,16 @@ funFindParScale <- function(par.i,niter=100,useOrdersOfMagGuesses=F){
 		ordersOfMagDeltRes[ord.i] <- secant(orderOfMagNegLLErrorFun,x0=0,
 																				x1=10^ordersOfMag[ord.i],
 																				niter=niter,
-																				doWarn=F,tol=1e-2,par.i=par.i)
+																				doWarn=F,tol=1e-2,par.i=par.i,
+																				hasToBePositive=T)
 		ordersOfMagNegLLResp[ord.i] <- orderOfMagNegLLErrorFun(ordersOfMagDeltRes[ord.i],par.i)
-		if(!is.nan(ordersOfMagNegLLResp[ord.i])&&
+		if(!is.na(ordersOfMagNegLLResp[ord.i])&&!is.nan(ordersOfMagNegLLResp[ord.i])&&
 			 abs(ordersOfMagNegLLResp[ord.i])<responseTolerance){
 			break
 		}
 	}
-	if(length(ordersOfMagDeltRes)==0){
+	if(sum(is.na(ordersOfMagDeltRes))==length(ordersOfMagDeltRes) ||
+		 length(ordersOfMagDeltRes)==0){
 		cat(sprintf('\r%4i %-50s ... %+e                     \n',
 								par.i,substr(names(jParVect)[par.i],1,50),NA))
 		return(NA)
