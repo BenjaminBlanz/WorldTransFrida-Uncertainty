@@ -4,7 +4,7 @@ suppressPackageStartupMessages({
 	library(tictoc) # simple timing measurements
 	library(SobolSequence) # generates multidimensional sobol sequences
 	library(lubridate) # deals with times
-	library(DescTools) # for weighted quantiles (Quantile)
+	library(cNORM) # wighted quantiles
 })
 
 source('funRunFRIDA.R')
