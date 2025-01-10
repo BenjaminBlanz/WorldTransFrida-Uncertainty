@@ -55,6 +55,15 @@ source('clusterHelp.R')
 varsForExport.fridaNames <- c(varsForExport.fridaNames,parNames)
 writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 
+
+## run id ####
+samplePoints <- samplePoints[1,]
+parVect <- samplePoints[1,]
+runDat.singleThread <- list()
+runDat.singleThread[[1]] <- list()
+runDat.singleThread[[1]]$runDat <- runFRIDASpecParms(parVect)
+runDat.singleThread[[1]]$logLike <- 1
+
 ## run single ####
 tic()
 runDat.singleThread <- runFridaParmsBySamplePoints()
@@ -64,19 +73,24 @@ cat(sprintf('%.2f r/s, %i runs in %s',
 						nrow(samplePoints),dseconds(round(timing$toc-timing$tic,digits=1))))
 
 ### plot ####
-baseLL <- runDats[[1]]$logLike
+baseLL <- runDat.singleThread[[1]]$logLike
 dat.is <- c(1,132)
 par(mfrow=c(1,2))
 for(dat.i in dat.is){
 	yrange <- c(NA,NA)
-	for(l in 1:nrow(samplePoints)){
-		yrange[1] <- min(yrange[1],runDat.singleThread[[l]]$runDat[[dat.i]],na.rm=T)
-		yrange[2] <- max(yrange[2],runDat.singleThread[[l]]$runDat[[dat.i]],na.rm=T)
+	if(!is.null(nrow(samplePoints))){
+		for(l in 1:nrow(samplePoints)){
+			yrange[1] <- min(yrange[1],runDat.singleThread[[l]]$runDat[[dat.i]],na.rm=T)
+			yrange[2] <- max(yrange[2],runDat.singleThread[[l]]$runDat[[dat.i]],na.rm=T)
+		}
+	} else {
+		yrange[1] <- min(yrange[1],runDat.singleThread[[1]]$runDat[[dat.i]],na.rm=T)
+		yrange[2] <- max(yrange[2],runDat.singleThread[[1]]$runDat[[dat.i]],na.rm=T)
 	}
 	plot(rownames(calDat),calDat[[dat.i]],
 			 xlab='year',ylab=colnames(calDat)[dat.i],
 			 ylim=yrange,pch='.',cex=3)
-	for(l in 1:nrow(samplePoints)){
+	for(l in 1:ifelse(!is.null(nrow(samplePoints)),nrow(samplePoints),1)){
 		runLL <- runDat.singleThread[[l]]$logLike
 		lines(rownames(runDat.singleThread[[l]]$runDat),runDat.singleThread[[l]]$runDat[[dat.i]],
 					col=1
