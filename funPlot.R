@@ -155,9 +155,15 @@ funPlotDat <- function(calDat,calDat.impExtrValue=NULL,defDat=NULL,yaxPad=0.04,
 # funPlotParRanges ####
 funPlotParRangesLikelihoods <- function(sampleParms,sampleParms.orig=NULL,
 																				samplePoints=NULL,like=NULL,yaxPad=0.04,
-																				savePlotFilePath=NULL,baseLike=NULL,
+																				outputFilePath=NULL,
+																				outputFileName='parameterLogLikelihoods.png',
+																				baseLike=NULL,
 																				includeZeroYVal=FALSE,logY=F,ylim=NULL,
-																				minLike=NULL){
+																				minLike=NULL, parallelPlot = F,
+																				plotWidth = 10,
+																				plotHight = 10,
+																				plotRes = 150,
+																				plotUnits = 'cm'){
 	if(is.null(samplePoints)){
 		samplePointBase <- seq(0,1,length.out=10)
 		samplePoints <- array(rep(samplePointBase,nrow(sampleParms)),
@@ -182,55 +188,130 @@ funPlotParRangesLikelihoods <- function(sampleParms,sampleParms.orig=NULL,
 	sqrtNplots <- sqrt(nrow(sampleParms))
 	plotCols <- round(sqrtNplots)
 	plotRows <- ceiling(sqrtNplots)
-	par(mfrow=c(plotRows,plotCols),mar=c(1,0.5,1,0.5),mgp=c(1,0.5,0))
-	cat('\n')
-	for(i in 1:nrow(sampleParms)){
-		cat(sprintf('\r Plotting parm %i of %i',i,nrow(sampleParms)))
-		if(!is.null(ylim)){
-			yrange <- ylim
-		} else {
-			if(includeZeroYVal){
-				yrange <- c(0,like.range[2])
-			}else{
-				yrange <- c(max(like.range[1],minLike),like.range[2])
-			}
+	if(parallelPlot){
+		if(!is.null(savePlotFilePath)) {
+			stop('Parallel plotting requires a file path.\n')
 		}
-		if(logY){
-			yrange <- yrange-like.range[1]+1
-			like <- like-like.range[1]
-			baseLike <- baseLike-like.range[1]
+		if(is.null(cl)){
+			stop('Parallel plotting requirs a cluster')
 		}
-		plot(1,1,type='n',
-				 axes=F,
-				 xaxs='r',xlab='',ylab='',
-				 log=if(logY){'y'}else{''},
-				 xlim = c(sampleParms.orig$Min[i],sampleParms.orig$Max[i]),
-				 xaxs = 'i',
-				 ylim = yrange)
-		axis(1,padj=-1,at = c(sampleParms.orig$Min[i]),hadj=0,cex.axis=0.8)
-		axis(1,padj=-1,at = c(sampleParms.orig$Max[i]),hadj=1,cex.axis=0.8)
-		box(col='gray')
-		abline(v=c(sampleParms.orig$Min[i],sampleParms.orig$Max[i]),col='gray')
-		axis(1,padj=-1,at = sampleParms$Value[i],labels = '',hadj=0,cex.axis=0.8,col='blue')
-		axis(1,padj=-1,at = sampleParms.orig$Value[i],labels = '',hadj=0,cex.axis=0.8,col='red')
-		if(sampleParms.orig$Min[i]<sampleParms$Min[i]){
-			abline(v=sampleParms$Min[i],lty=2,col='red')
+		cl.local <- makeForkCluster(detectCores())
+		parLapply(cl,funPlotParRangesLikelihoodsI,
+							sampleParms=sampleParms,sampleParms.orig=sampleParms.orig,
+							samplePoints=samplePoints,like=like,yaxPad=yaxPad,
+							outputFilePath=outputFilePath,
+							outputFileName=outputFileName,
+							baseLike=baseLike,
+							includeZeroYVal=includeZeroYVal,logY=logY,ylim=ylim,
+							like.range=like.range,
+							minLike=minLike, parallelPlot=parallelPlot,
+							plotWidth=plotWidth,
+							plotHight=plotHight,
+							plotRes=plotRes,
+							plotUnits=plotUnits)
+	} else {
+		if(!is.null(outputFilePath)){
+			outputFileName <- tools::file_path_sans_ext(outputFileName)
+			png(file.path(savePlotFilePathName,paste0(outputFileName,'.png')),
+					width=plotCols*plotWidth,
+					height=plotRows*plotHight,
+					res=plotRes,units=plotUnits)
 		}
-		if(sampleParms$Max[i]<sampleParms.orig$Max[i]){
-			abline(v=sampleParms$Max[i],lty=2,col='red')
+		par(mfrow=c(plotRows,plotCols),mar=c(1,0.5,1,0.5),mgp=c(1,0.5,0))
+		cat('\n')
+		for(i in 1:nrow(sampleParms)){
+			funPlotParRangesLikelihoodsI(i,sampleParms,sampleParms.orig,
+																	 samplePoints,like,yaxPad,
+																	 outputFilePath=NULL,
+																	 outputFileName,
+																	 baseLike,
+																	 includeZeroYVal,logY,ylim,
+																	 like.range,
+																	 minLike, parallelPlot,
+																	 plotWidth,
+																	 plotHight,
+																	 plotRes,
+																	 plotUnits)
 		}
-		points(samplePoints[which(!is.na(like)),i],like[which(!is.na(like))],pch=20,cex=0.5)
-		points(sampleParms$Value[i],baseLike,pch=20,cex=1,col='red')
-		# add label specifying var indext to top left
-		text(mean(par('usr')[1:2]),par('usr')[4]+diff(par('usr')[3:4])*0.01,
-				 sampleParms$Variable[i],
-				 cex=0.8,xpd=T,adj=c(0.5,0))
-		text(sampleParms.orig$Min[i],
-				 yrange[2]+abs(diff(yrange))*yaxPad,i,adj=c(0,1),col='red')
-	}
-	if(!is.null(savePlotFilePath)){
-		dev.print(png,width=5*plotCols,height=5*plotRows,unit='cm',res=150,
-							savePlotFilePath)
+		if(!is.null(savePlotFilePath)){
+			dev.off()
+		}
 	}
 	cat(sprintf('\r Plotted %i parms.               ',nrow(sampleParms)))
+}
+
+funPlotParRangesLikelihoodsI <- function(i,sampleParms,sampleParms.orig,
+																				 samplePoints,like,yaxPad=0.04,
+																				 outputFilePath=NULL,
+																				 outputFileName='parameterLogLikelihoods.png',
+																				 baseLike=NA,
+																				 includeZeroYVal=FALSE,logY=F,ylim=NULL,
+																				 like.range=NULL,
+																				 minLike=NULL, parallelPlot = F,
+																				 plotWidth = 10,
+																				 plotHight = 10,
+																				 plotRes = 150,
+																				 plotUnits = 'cm'){
+	cat(sprintf('\r Plotting parm %i of %i',i,nrow(sampleParms)))
+	if(!is.null(outputFilePath)){
+		dir.create(file.path(outputFilePath,outputFileName),F,T)
+		outputFileName <- tools::file_path_sans_ext(outputFileName)
+		if(parallelPlot){
+			outputFile <- file.path(outputFilePath,outputFileName,
+															paste0(sampleParms$Variable[i],'.png'))
+		}else{
+			outputFile <- file.path(outputFilePath,paste0(outputFileName,'.png'))
+		}
+		png(outputFile,
+				width=plotWidth,
+				height=plotHight,
+				res=plotRes,units=plotUnits)
+	}
+	if(is.null(like.range)){
+		like.range <- range(c(like,baseLike),na.rm=T)
+	}
+	if(is.null(minLike)){
+		minLike <- min(like,na.rm=T)
+	}
+	if(!is.null(ylim)){
+		yrange <- ylim
+	} else {
+		if(includeZeroYVal){
+			yrange <- c(0,like.range[2])
+		}else{
+			yrange <- c(max(like.range[1],minLike),like.range[2])
+		}
+	}
+	if(logY){
+		yrange <- yrange-like.range[1]+1
+		like <- like-like.range[1]
+		baseLike <- baseLike-like.range[1]
+	}
+	plot(1,1,type='n',
+			 axes=F,
+			 xaxs='r',xlab='',ylab='',
+			 log=if(logY){'y'}else{''},
+			 xlim = c(sampleParms.orig$Min[i],sampleParms.orig$Max[i]),
+			 xaxs = 'i',
+			 ylim = yrange)
+	axis(1,padj=-1,at = c(sampleParms.orig$Min[i]),hadj=0,cex.axis=0.8)
+	axis(1,padj=-1,at = c(sampleParms.orig$Max[i]),hadj=1,cex.axis=0.8)
+	box(col='gray')
+	abline(v=c(sampleParms.orig$Min[i],sampleParms.orig$Max[i]),col='gray')
+	axis(1,padj=-1,at = sampleParms$Value[i],labels = '',hadj=0,cex.axis=0.8,col='blue')
+	axis(1,padj=-1,at = sampleParms.orig$Value[i],labels = '',hadj=0,cex.axis=0.8,col='red')
+	if(sampleParms.orig$Min[i]<sampleParms$Min[i]){
+		abline(v=sampleParms$Min[i],lty=2,col='red')
+	}
+	if(sampleParms$Max[i]<sampleParms.orig$Max[i]){
+		abline(v=sampleParms$Max[i],lty=2,col='red')
+	}
+	points(samplePoints[which(!is.na(like)),i],like[which(!is.na(like))],pch=20,cex=0.5)
+	points(sampleParms$Value[i],baseLike,pch=20,cex=1,col='red')
+	# add label specifying var indext to top left
+	text(mean(par('usr')[1:2]),par('usr')[4]+diff(par('usr')[3:4])*0.01,
+			 sampleParms$Variable[i],
+			 cex=0.8,xpd=T,adj=c(0.5,0))
+	text(sampleParms.orig$Min[i],
+			 yrange[2]+abs(diff(yrange))*yaxPad,i,adj=c(0,1),col='red')
 }
