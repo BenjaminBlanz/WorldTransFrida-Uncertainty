@@ -48,7 +48,7 @@ numSample <- nrow(samplePoints.sample)
 
 baseNegLL <- -defLogLike
 
-# frida_info <- read.csv("frida_info.csv")
+# frida_info <- read.csv(file.path(location.frida.info,name.frida_info))
 # parVect <- frida_info$Value
 # names(parVect) <- frida_info$Variable
 # negLLike(parVect)

@@ -10,7 +10,7 @@ prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NU
 	if(is.null(sampleParms)){
 		cat('reading frida_info...')
 		# read in the parameters in frida that have ranges defined
-		frida_info <- read.csv("frida_info.csv")
+		frida_info <- read.csv(file.path(location.frida.info,name.frida_info))
 		columnsThatAreFlags <- c(2,3,4,5,6,7,8,9,10)
 		# select the parameters to be sampled
 		sampleParms <- frida_info[rowSums(frida_info[,columnsThatAreFlags])>0 &
@@ -29,8 +29,8 @@ prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NU
 		invalidLines <- c()
 	}
 	# deal with manually excluded items
-	if(!redoAllCalc && file.exists('parExclusionList.csv') && file.size('parExclusionList.csv')>0){
-		manParExclusionList <- read.csv('parExclusionList.csv')
+	if(!redoAllCalc && file.exists(file.path(location.frida.info,name.frida_parameter_exclusion_list)) && file.size(file.path(location.frida.info,name.frida_parameter_exclusion_list))>0){
+		manParExclusionList <- read.csv(file.path(location.frida.info,name.frida_parameter_exclusion_list))
 		excludeNames <- unique(c(excludeNames,manParExclusionList$excludedName))
 	}
 	# deal with excluded Names
@@ -152,7 +152,7 @@ runFridaParmsBySamplePoints <- function(saveOutPutDontReturn=FALSE,workUnit=NULL
 # Uses location.frida, and name.fridaInputFile
 # from the global environment
 runFridaDefaultParms <- function(silent=T){
-	frida_info <- read.csv("frida_info.csv")
+	frida_info <- read.csv(file.path(location.frida.info,name.frida_info))
 	parVect <- frida_info$Value
 	names(parVect) <- frida_info$Variable
 	return(runFRIDASpecParms(parVect,silent))

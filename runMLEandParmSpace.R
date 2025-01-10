@@ -42,7 +42,7 @@ resSigma.names <- array(paste('s',
 # reads frida_info.csv and outputs the SampleParms
 # also removes parms we will not sample
 # and complains about invalid lines in frida_info.csv
-integerParms <- read.csv('frida_integer_parms.csv')
+integerParms <- read.csv(file.path(location.frida.info,name.frida_integer_parms))
 excludedParmsForBeingIntegers <- integerParms$Variable
 sampleParms.orig <- sampleParms <- prepareSampleParms(excludeNames=excludedParmsForBeingIntegers)
 
@@ -91,7 +91,7 @@ ordersOfMag <- seq(ordersOfMagLimits[1],ordersOfMagLimits[2])
 responseTolerance <- 0.01
 
 #
-frida_info <- read.csv('frida_info.csv')
+frida_info <- read.csv(file.path(location.frida.info,name.frida_info))
 
 newMaxFound <- T
 iterationNewMax <-0
@@ -178,13 +178,13 @@ while(newMaxFound){
 			cat(paste(excludeParmNames,collapse='\n'))
 			cat('\n')
 			sampleParms <- prepareSampleParms(excludeNames = c(excludeParmNames,excludedParmsForBeingIntegers))
-			if(file.exists('parExclusionList.csv')&&file.size('parExclusionList.csv')>0){
-				oldExclusionList <- read.csv('parExclusionList.csv')
+			if(file.exists(file.path(location.frida.info,name.frida_parameter_exclusion_list))&&file.size(file.path(location.frida.info,name.frida_parameter_exclusion_list))>0){
+				oldExclusionList <- read.csv(file.path(location.frida.info,name.frida_parameter_exclusion_list))
 				exclusionList <- data.frame(excludedName=unique(c(oldExclusionList$excludedName,excludeParmNames)))
 			} else {
 				exclusionList <- data.frame(excludedName=excludeParmNames)
 			}
-			write.csv(exclusionList,'parExclusionList.csv')
+			write.csv(exclusionList,file.path(location.frida.info,name.frida_parameter_exclusion_list))
 			parVect <- sampleParms$Value
 			names(parVect) <- sampleParms$Variable 
 			jParVect <- c(parVect,resSigmaVect)
@@ -379,7 +379,7 @@ while(newMaxFound){
 	if(ignoreParBounds){
 		cat('Not reading manual ranges, as ignoreParBounds==TRUE\n')
 	} else {
-		manualBorders <- read.csv('frida_external_ranges.csv')
+		manualBorders <- read.csv(file.path(location.frida.info,name.frida_external_ranges))
 		cat(sprintf('applying manual ranges for %i parameters...',nrow(manualBorders)))
 		if(nrow(manualBorders)>0){
 			for(r.i in 1:nrow(manualBorders)){
@@ -436,7 +436,7 @@ while(newMaxFound){
 	
 	
 	# write to frida_info like file for comparison to input
-	frida_info.toModify <- read.csv('frida_info.csv')
+	frida_info.toModify <- read.csv(file.path(location.frida.info,name.frida_info))
 	frida_info.toModify$includedInSampleParms <- frida_info.toModify$Variable %in% sampleParms$Variable
 	idcOfSampleParmsInFridaInfo <- c()
 	for(p.i in 1:nrow(sampleParms)){
@@ -506,6 +506,11 @@ while(newMaxFound){
 	saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
 	saveRDS(samplePoints,file.path(location.output,'samplePoints.RDS'))
 	# write.csv(samplePoints,file.path(location.output,'samplePoints.csv'))
+	
+	
+	## write export spec ####
+	extraVarNamesForExport <- read.csv('extraVarInclusionList.csv')
+	writeFRIDAExportSpec
 	
 	## evaluate sample points ####	
 	logLikes <- clusterRunFridaForSamplePoints(samplePoints,chunkSizePerWorker,

@@ -69,7 +69,7 @@ if(exists('cl')&&is.numeric(result)&&result==2){
 		Sys.sleep(workerID*0.1) # stagger the file copying to not DOS the server
 		file.copy(file.path(baseWD,location.frida),getwd(),recursive=T)
 		file.copy(file.path(baseWD,location.stella),getwd(),recursive=T)
-		file.copy(file.path(baseWD,'frida_info.csv'),getwd())
+		file.copy(file.path(baseWD,location.frida.info,name.frida_info),getwd())
 	})
 	
 	# copy extra vars if present (for restarting the cluster during testing)

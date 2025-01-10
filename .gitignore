@@ -19,3 +19,5 @@ minCoefs.csv
 parscale.csv
 sampleParmsParscaleRanged.csv
 .~lock*
+frida_info old.csv
+samples*ForBilly.csv

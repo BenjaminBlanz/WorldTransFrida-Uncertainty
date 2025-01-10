@@ -36,7 +36,7 @@ if(file.exists(file.path(location.output,'sampleParms.RDS'))){
 } else {
 	cat('Specify sampling parameters...')
 	# read in the parameters in frida that have ranges defined
-	frida_info <- read.csv("frida_info.csv")
+	frida_info <- read.csv(file.path(location.frida.info,name.frida_info))
 	columnsThatAreFlags <- c(2,3,4,5,6,7,8,9,10)
 	# select the parameters to be sampled
 	sampleParms <- frida_info[rowSums(frida_info[,columnsThatAreFlags])>0 &

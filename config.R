@@ -119,8 +119,23 @@ location.stella<- './Stella_Simulator_Linux'
 location.frida.storage <- './FRIDAforUncertaintyAnalysis-store'
 location.stella.storage <- './Stella_Simulator_Linux-store'
 # FRIDA config
+# location for setting parameters for FRIDA
+# e.g. turnig climate feedbacks on or off
+# or policy
 location.frida.configs <- './FRIDA-configs'
+# location for files used to set up parameter ranges,
+# variables to use/not use
+# export preferences etc
+location.frida.info <- './FRIDA-info'
+name.frida_external_ranges <-'frida_external_ranges.csv'
+name.frida_info <- 'frida_info.csv'
+name.frida_integer_parms <- 'frida_integer_parms.csv'
+name.frida_parameter_exclusion_list <- 'frida_parameter_exclusion_list.csv'
+# list of variables to exclude from the likelihood calculations
+name.frida_variable_exclusion_list <- 'frida_variable_exclusion_list.csv'
+name.frida_extra_variables_to_export_list <- 'frida_extra_variables_to_export_list.csv'
 
+# names of files written to the FRIDA Data directory for the running and export
 name.fridaExportVarsFile <- 'varsForExport.txt'
 name.fridaInputFile <- 'uncertainty_analysis_paramter_values.csv'
 name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
@@ -150,7 +165,7 @@ cat(sprintf('Copying %s and %s to the frida directory.\n',
 						ifelse(climateFeedbacksOn,'ClimateFeedback_On.csv','ClimateFeedback_Off.csv'),
 						policyFileName))
 file.copy(file.path(location.frida.configs,ifelse(climateFeedbacksOn,'ClimateFeedback_On.csv','ClimateFeedback_Off.csv')),
-					file.path(location.frida,'data','climateFeedbackSwitches.csv'),T,T)
+					file.path(location.frida,'Data','climateFeedbackSwitches.csv'),T)
 file.copy(file.path(location.frida.configs,policyFileName),
-					file.path(location.frida,'data','policyParameters.csv'),T,T)
+					file.path(location.frida,'Data','policyParameters.csv'),T)
 
