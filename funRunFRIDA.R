@@ -98,7 +98,7 @@ disk.free <- function(path = getwd()) {
 #   sampleParms,samplePoints,location.frida, and name.fridaInputFile
 # If retNegLogLike also uses from global env:
 # 	calDat,resSigma
-runFridaParmsByIndex <- function(runid){
+runFridaParmsByIndex <- function(runid,silent=T){
 	retlist <- vector(mode = "list", length = length(runid))
 	for(i in runid){
 		if(i <= nrow(samplePoints)){
@@ -108,7 +108,7 @@ runFridaParmsByIndex <- function(runid){
 			writeFRIDAInput(colnames(samplePoints),samplePoints[i,])
 			system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
 									 file.path(location.frida,'FRIDA.stmx')),
-						 ignore.stdout = T,ignore.stderr = T,wait = T)
+						 ignore.stdout = silent,ignore.stderr = silent,wait = T)
 			runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
 			colnames(runDat) <- cleanNames(colnames(runDat))
 			rownames(runDat) <- runDat$year
@@ -151,15 +151,15 @@ runFridaParmsBySamplePoints <- function(saveOutPutDontReturn=FALSE,workUnit=NULL
 # runFridaDefaultParms ####
 # Uses location.frida, and name.fridaInputFile
 # from the global environment
-runFridaDefaultParms <- function(){
+runFridaDefaultParms <- function(silent=T){
 	frida_info <- read.csv("frida_info.csv")
 	parVect <- frida_info$Value
 	names(parVect) <- frida_info$Variable
-	return(runFRIDASpecParms(parVect))
+	return(runFRIDASpecParms(parVect,silent))
 }
 
 # runFRIDASpecParms ####
-runFRIDASpecParms <- function(parVect){
+runFRIDASpecParms <- function(parVect,silent=T){
 	if(is.null(names(parVect))||length(parVect)==0){
 		stop('need names in parVect to write FRIDA input\n')
 	}
@@ -170,7 +170,7 @@ runFRIDASpecParms <- function(parVect){
 	}
 	system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',#'-s', #to output isdb
 							 file.path(location.frida,'FRIDA.stmx')),
-				 ignore.stdout = T,ignore.stderr = T,wait = T)
+				 ignore.stdout = silent,ignore.stderr = silent,wait = T)
 	runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
 	colnames(runDat) <- cleanNames(colnames(runDat))
 	rownames(runDat) <- runDat$year
