@@ -372,6 +372,8 @@ while(newMaxFound){
 																	 sampleParms$Max-sampleParms$Value)
 		}
 		# those that would have a distance of zero, we do not reassign
+		sampleParms$MaxAfterDet <- sampleParms$Max
+		sampleParms$MinAfterDet <- sampleParms$Min
 		if(allowAssymetricToAvoidZeroRanges){
 			sampleParms$Max[sampleParms$distance!=0] <- sampleParms$Value[sampleParms$distance!=0]+sampleParms$distance[sampleParms$distance!=0]
 			sampleParms$Min[sampleParms$distance!=0] <- sampleParms$Value[sampleParms$distance!=0]-sampleParms$distance[sampleParms$distance!=0]
@@ -451,6 +453,10 @@ while(newMaxFound){
 	frida_info.toModify$newMin[idcOfSampleParmsInFridaInfo] <- sampleParms$Min
 	frida_info.toModify$newMax <- NA
 	frida_info.toModify$newMax[idcOfSampleParmsInFridaInfo] <- sampleParms$Max
+	frida_info.toModify$beforeSymMin <- NA
+	frida_info.toModify$beforeSymMin[idcOfSampleParmsInFridaInfo] <- sampleParms$MinAfterDet
+	frida_info.toModify$beforeSymMax <- NA
+	frida_info.toModify$beforeSymMax[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxAfterDet
 	frida_info.toModify$llikeErrorAtNewMin <- NA
 	frida_info.toModify$llikeErrorAtNewMin[idcOfSampleParmsInFridaInfo] <- sampleParms$MinBorderLogLikeError
 	frida_info.toModify$llikeErrorAtNewMax <- NA
@@ -514,8 +520,10 @@ while(newMaxFound){
 	
 	
 	## write export spec ####
-	extraVarNamesForExport <- read.csv('extraVarInclusionList.csv')
-	writeFRIDAExportSpec
+	extraVarNamesForExport <- read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN
+	extraVarNamesForExport <- extraVarNamesForExport[nchar(extraVarNamesForExport)>4]
+	writeFRIDAExportSpec(varsForExport.fridaNames = unique(c(varsForExport.fridaNames.orig,extraVarNamesForExport)),
+											 location.frida)
 	
 	## evaluate sample points ####	
 	logLikes <- clusterRunFridaForSamplePoints(samplePoints,chunkSizePerWorker,
