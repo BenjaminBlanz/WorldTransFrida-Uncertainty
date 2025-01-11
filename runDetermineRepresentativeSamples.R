@@ -9,7 +9,6 @@
 
 source('config.R')
 source('runInitialiseData.R')
-CIsToPlot <- c(0,0.5,0.95)
 varsToRead <- colnames(calDat)
 
 cat('reading sampleParms...')
@@ -30,19 +29,19 @@ if(length(runFilesList)==0){
 # collect time series ####
 defRun <- runFridaDefaultParms()
 yearsToRead <- rownames(defRun)
-varsToRead.lst <- list()
-workUnitBoundaries <- seq(1,ncol(calDat)+1,100000000)
-workUnitBoundaries <- c(workUnitBoundaries,ncol(calDat)+1)
-for(i in 1:(length(workUnitBoundaries)-1)){
-	varsToRead.lst[[i]] <- colnames(calDat)[workUnitBoundaries[i]:(workUnitBoundaries[i+1]-1)]
-}
-vars.i <- 1
-cat(sprintf('Reading %i vars: %i to %i of %i total vars...\n   ',
-						length(varsToRead),workUnitBoundaries[vars.i],workUnitBoundaries[vars.i+1]-1,ncol(calDat)))
-cat(paste0(varsToRead,collapse='\n   '))
-cat('\n')
+# varsToRead.lst <- list()
+# workUnitBoundaries <- seq(1,ncol(calDat)+1,100000000)
+# workUnitBoundaries <- c(workUnitBoundaries,ncol(calDat)+1)
+# for(i in 1:(length(workUnitBoundaries)-1)){
+# 	varsToRead.lst[[i]] <- colnames(calDat)[workUnitBoundaries[i]:(workUnitBoundaries[i+1]-1)]
+# }
+# vars.i <- 1
+# cat(sprintf('Reading %i vars: %i to %i of %i total vars...\n   ',
+# 						length(varsToRead),workUnitBoundaries[vars.i],workUnitBoundaries[vars.i+1]-1,ncol(calDat)))
+# cat(paste0(varsToRead,collapse='\n   '))
+# cat('\n')
 # dimensions time in rows, run IDs in columns,  variables to read
-# read all the years, selectively plot later
+varsToRead <- subSampleTargetVars
 runsData <- array(NA,dim=c(nrow(defRun),nrow(samplePoints),length(varsToRead)))
 dimnames(runsData) <- list(rownames(defRun),1:nrow(samplePoints),varsToRead)
 for(f.i in 1:length(runFilesList)){
@@ -96,12 +95,13 @@ if(plotWeightType=='likelihood'){
 medians <- array(NA,dim=c(nrow(defRun),length(varsToRead)))
 for(var.i in 1:length(varsToRead)){
 	for(year.i in 1:nrow(defRun)){
-		medians[year.i,var.i] <- Quantile(runsData[year.i,,var.i],
-																			 weights = samplePoints$plotWeight,
-																			 probs = 0.5,
-																			 na.rm = T)
+		medians[year.i,var.i] <- weighted.quantile(runsData[year.i,,var.i],
+																							 w = samplePoints$plotWeight,
+																							 probs = 0.5,
+																							 na.rm = T)
 	}
 }
+
 # variances ####
 if(!treatVarsAsIndep){
 	stop('need to think about this for dependent vars\n')
@@ -117,33 +117,60 @@ for(var.i in 1:length(varsToRead)){
 }
 rm(errors)
 
-# quantile likelihood ###
-# per sample log likelihood for each quantile
-ciBoundQs <- unique(c(rev((1-CIsToPlot)/2),1-(1-CIsToPlot)/2))
-ciLogLikes <- array(0,dim=c(length(ciBoundQs),length(varsToPlot),nrow(samplePoints)))
-for(q.i in 1:length(ciBoundQs)){
+# quantile min SSEs ###
+parMinSSEFun <- function(p.i){
+	minSSEidc <- rep(NA,length(subSample.TargetVars))
 	for(var.i in 1:length(varsToRead)){
-		ciBounds <- c()
+		ciBounds <- rep(NA,nrow(defRun))
 		errors <- array(NA,dim=c(nrow(defRun),nrow(samplePoints)))
+		SSEs <- rep(NA,nrow(samplePoints))
 		for(year.i in 1:nrow(defRun)){
-			ciBounds[year.i] <- Quantile(runsData[year.i,,var.i],
-																		weights = samplePoints$plotWeight,
-																		probs = ciBoundQs[q.i],
-																		na.rm = T)
-			errors[year.i,] <- runsData[year.i,,var.i] - medians[,var.i]
+			ciBounds[year.i] <- weighted.quantile(runsData[year.i,,var.i],
+																						w = samplePoints$plotWeight,
+																						probs = subSample.Ps[p.i],
+																						na.rm = T)
+			errors[year.i,] <- runsData[year.i,,var.i] - ciBounds[year.i]
 		}
 		for(sample.i in 1:nrow(samplePoints)){
-			# ciLogLikes[q.i,var.i,sample.i] <- sum(pnorm(errors[,sample.i],
-			# 								 mean = medians[,var.i]-ciBounds,sd = stdDevs[var.i],log=T))
-			ciLogLikes[q.i,var.i,sample.i] <- sum(samplePoints$plotWeight[sample.i] * (pnorm(errors[,sample.i],
-											 mean = medians[,var.i]-ciBounds,sd = stdDevs[var.i])-ciBoundQs[q.i])^2)
+			SSEs[sample.i] <- sum(samplePoints$plotWeight[sample.i] *
+															(errors[,sample.i])^2)
+		}
+		minSSEidc[var.i] <- which.min(SSEs)		
+	}
+	return(minSSEidc)
+}
+minicl <- makeForkCluster(3)
+minSSEidc.lst <- parLapply(minicl,1:subSample.NumSamplePerVar,parMinSSEFun)
+stopCluster(minicl)
+minSSEidc <- array(NA,dim=c(subSample.NumSamplePerVar,length(subSample.TargetVars)))
+for(p.i in 1:subSample.NumSamplePerVar){
+	minSSEidc[p.i,] <- minSSEidc.lst[[p.i]]
+}
+cat('\n    ')
+
+repSample <- samplePoints[as.vector(minSSEidc),]
+colnames(repSample) <- gsub('\\[1\\]','',colnames(repSample))
+repSample <- repSample[,-which(colnames(repSample)=='plotWeight')]
+write.table(repSample,file.path(location.output,'uncertainty_parameters.csv'),
+						append = F,sep = ',',row.names = F)
+
+# plot ####
+sqrtNumPlots <- sqrt(length(subSample.TargetVars))
+plotCols <- round(sqrtNumPlots)
+plotRows <- ceiling(sqrtNumPlots)
+par(mfrow=c(plotRows,plotCols))
+for(var.i in 1:length(subSample.TargetVars)){
+	plot(rownames(defRun),defRun[,subSample.TargetVars[var.i]],ylim=range(runsData[,minSSEidc[,var.i],var.i]),
+			 type='n',xlab='year',ylab=subSample.TargetVars[var.i])
+	for(var.ii in 1:length(subSample.TargetVars)){
+		for(p.i in 1:subSample.NumSamplePerVar){
+			lines(rownames(defRun),runsData[,minSSEidc[p.i,var.ii],var.i],
+						col=adjustcolor(hsv(var.ii/length(subSample.TargetVars),1,0.25+p.i/(subSample.NumSamplePerVar*3)),
+														alpha.f=0.5),
+						lwd=3)
 		}
 	}
 }
-cat('\n    ')
-means.store <- means
-ciBounds.store <- ciBounds
-
 
 # the likelihood for the quantiles is the likelihood that the errors are from 
 # a distribution with the variance at median and a mean of the difference between the
@@ -156,15 +183,13 @@ if(F){
 	}
 	lines(rownames(defRun),medians[,var.i],col='red',lwd=3)
 	lines(rownames(defRun),ciBounds,col='blue',lwd=3)
-	lines(rownames(defRun),runsData[,which.min(ciLogLikes[q.i,var.i,]),var.i],col='purple',lwd=3)
+	lines(rownames(defRun),runsData[,minSSEidc[p.i,var.i],var.i],col='purple',lwd=3)
+	
 	plot(rownames(defRun),rownames(defRun),type='n',ylim=c(-3,3))
 	for(i in 1:100){
 		lines(rownames(defRun),errors[,i])
 	}
-	lines(rownames(defRun),medians[,var.i]-ciBounds,col='red',lwd=3)
-	idc <- which.min(ciLogLikes[q.i,var.i,1:100])
-	lines(rownames(defRun),runsData[,idc,var.i]-ciBounds,col='purple',lwd=3)
-	
-	lines(rownames(defRun),runsData[,sample.i,var.i]-ciBounds,col='green',lwd=4)
+	abline(h=0,col='red',lwd=3)
+	# lines(rownames(defRun),medians[,var.i]-ciBounds,col='red',lwd=3)
+	lines(rownames(defRun),runsData[,minSSEidc[p.i,var.i],var.i]-ciBounds,col='purple',lwd=3)
 }
-
