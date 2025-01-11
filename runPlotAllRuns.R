@@ -1,7 +1,5 @@
 source('initialise.R')
 source('config.R')
-source('runInitialiseData.R')
-source('setupTMPFS.R')
 cat(sprintf('processing the results in\n %s\n',
 						file.path(location.output,'detectedParmSpace')))
 calDat <- readRDS(file.path(location.output,'calDat.RDS'))$calDat
