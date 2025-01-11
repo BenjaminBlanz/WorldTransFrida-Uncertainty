@@ -36,6 +36,13 @@ if(exists('cl')&&is.numeric(result)&&result==2){
 	gobble <- clusterEvalQ(cl,source(file.path(baseWD,'funRunFRIDA.R')))
 	gobble <- clusterEvalQ(cl,source(file.path(baseWD,'funPlot.R')))
 	gobble <- clusterEvalQ(cl,source(file.path(baseWD,'funParmSpace.R')))
+	# copy over the model and simulator
+	gobble <- clusterApply(cl,workers,function(i){
+		Sys.sleep(workerID*0.1) # stagger the file copying to not DOS the server
+		file.copy(file.path(baseWD,location.frida),getwd(),recursive=T,overwrite = T)
+		file.copy(file.path(baseWD,location.stella),getwd(),recursive=T,overwrite = T)
+		file.copy(file.path(baseWD,location.frida.info,name.frida_info),getwd(),overwrite = T)
+	})
 } else {
 	# cluster setup ####
 	cat('cluster setup...')
@@ -67,9 +74,9 @@ if(exists('cl')&&is.numeric(result)&&result==2){
 	# copy over the model and simulator
 	gobble <- clusterApply(cl,workers,function(i){
 		Sys.sleep(workerID*0.1) # stagger the file copying to not DOS the server
-		file.copy(file.path(baseWD,location.frida),getwd(),recursive=T)
-		file.copy(file.path(baseWD,location.stella),getwd(),recursive=T)
-		file.copy(file.path(baseWD,location.frida.info,name.frida_info),getwd())
+		file.copy(file.path(baseWD,location.frida),getwd(),recursive=T,overwrite = T)
+		file.copy(file.path(baseWD,location.stella),getwd(),recursive=T,overwrite = T)
+		file.copy(file.path(baseWD,location.frida.info,name.frida_info),getwd(),overwrite = T)
 	})
 	
 	# copy extra vars if present (for restarting the cluster during testing)

@@ -529,6 +529,7 @@ while(newMaxFound){
 	extraVarNamesForExport <- extraVarNamesForExport[nchar(extraVarNamesForExport)>4]
 	writeFRIDAExportSpec(varsForExport.fridaNames = unique(c(varsForExport.fridaNames.orig,extraVarNamesForExport)),
 											 location.frida)
+	source('clusterHelp.R') #make sure the workers also get the updated export spec
 	
 	## evaluate sample points ####	
 	logLikes <- clusterRunFridaForSamplePoints(samplePoints,chunkSizePerWorker,
