@@ -87,7 +87,7 @@ treatVarsAsIndep <- T
 # parms.
 # The parm range will be either increased or decreased to make this happen in each
 # parameter.
-likeCutoffRatio <- 200
+likeCutoffRatio <- 1000
 # tolerance for the search of the likelihood border
 rangeTol <- 1e-15
 checkBorderErrors <- FALSE
@@ -107,6 +107,14 @@ allowAssymetricToAvoidZeroRanges <- FALSE
 if(!exists('skipParMLE')){
 	skipParMLE <- T
 }
+
+# representative subsample ####
+subSample.NumSamplePerVar <- 11
+subSample.Ps <- seq(0.5/subSample.NumSamplePerVar,1-0.5/subSample.NumSamplePerVar,
+									 length.out=subSample.NumSamplePerVar)
+subSample.TargetVars <- c('energy_balance_model_surface_temperature_anomaly',
+												 'demographics_real_gdp_per_person')
+subSample.sampleJointly <- FALSE
 
 # FRIDA config ####
 climateFeedbacksOn <- TRUE
@@ -143,13 +151,16 @@ name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
 
 
 # execute config ####
-location.output <- file.path('workOutput',paste0('NumSample-',numSample,
-																								 '-chunkSizePerWorker-',chunkSizePerWorker,
-																								 '-likeCutoffRatio-',likeCutoffRatio,
-																								 '-ignoreParBounds-',ignoreParBounds,
-																								 '-forceParBounds-',forceParBounds,
-																								 '-kickParmsErrorRangeDet-',kickParmsErrorRangeDet,
-																								 '-symmetricRanges-',symmetricRanges))
+location.output <- file.path('workOutput',paste0('N-',numSample,
+																								 '-ChS-',chunkSizePerWorker,
+																								 '-LCR-',likeCutoffRatio,
+																								 '-IgB-',ignoreParBounds,
+																								 '-FrB-',forceParBounds,
+																								 '-KcE-',kickParmsErrorRangeDet,
+																								 '-Sym-',symmetricRanges,
+																								 '-AAZ-',allowAssymetricToAvoidZeroRanges,
+																								 '-CFB-',climateFeedbacksOn,
+																								 '-Pol-',policyFileName))
 location.output.base <- location.output
 
 cat(sprintf('Output folder: %s\n',location.output))
