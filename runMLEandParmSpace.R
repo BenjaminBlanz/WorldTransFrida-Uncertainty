@@ -110,6 +110,7 @@ while(newMaxFound){
 	} else if(!redoAllCalc&&file.exists(file.path(location.output,'sampleParmsParscaleRanged.RDS'))){
 		cat('loading existing sampleParmsParscaleRanged\n')
 		sampleParms <- readRDS(file.path(location.output,'sampleParmsParscaleRanged.RDS'))
+		sampleParms <- prepareSampleParms(excludeNames=excludedParmsForBeingIntegers,sampleParms = sampleParms)
 		parVect <- sampleParms$Value
 		names(parVect) <- sampleParms$Variable 
 		jParVect <- c(parVect,resSigmaVect)
@@ -281,8 +282,12 @@ while(newMaxFound){
 	# coef range ####
 	## par bounds ####
 	idcOfSampleParmsInFridaInfo <- c()
+	fi.i <- 0
 	for(p.i in 1:nrow(sampleParms)){
-		idcOfSampleParmsInFridaInfo[p.i] <- which(frida_info$Variable==sampleParms$Variable[p.i])
+		if(length(which(frida_info$Variable==sampleParms$Variable[p.i]))>0){
+			fi.i <- fi.i+1
+			idcOfSampleParmsInFridaInfo[fi.i] <- which(frida_info$Variable==sampleParms$Variable[p.i])
+		}
 	}
 	parBounds <- frida_info[idcOfSampleParmsInFridaInfo,c('Min','Max')]
 	lpdensEps <- -negLLike(parVect) - log(likeCutoffRatio)
