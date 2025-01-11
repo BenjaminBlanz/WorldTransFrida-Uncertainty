@@ -160,7 +160,7 @@ location.output <- file.path('workOutput',paste0('N-',numSample,
 																								 '-Sym-',symmetricRanges,
 																								 '-AAZ-',allowAssymetricToAvoidZeroRanges,
 																								 '-CFB-',climateFeedbacksOn,
-																								 '-Pol-',policyFileName))
+																								 '-Pol-',tools::file_path_sans_ext(policyFileName)))
 location.output.base <- location.output
 
 cat(sprintf('Output folder: %s\n',location.output))
