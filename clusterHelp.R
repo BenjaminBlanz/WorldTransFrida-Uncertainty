@@ -19,7 +19,6 @@ if(exists('cl')&&is.numeric(result)&&result==2){
 		workerID <<- i
 	})
 	gobble <- clusterExport(cl,list('baseWD','workDirBasename'))
-	gobble <- clusterEvalQ(cl,source(file.path(baseWD,'initialise.R')))
 	gobble <- clusterEvalQ(cl,source(file.path(baseWD,'config.R')))
 	if(exists('sampleParms')){clusterExport(cl,list('sampleParms'))}
 	if(exists('calDat')){clusterExport(cl,list('calDat'))}
