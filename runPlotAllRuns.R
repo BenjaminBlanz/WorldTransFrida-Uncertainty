@@ -2,7 +2,10 @@ source('initialise.R')
 source('config.R')
 cat(sprintf('processing the results in\n %s\n',
 						file.path(location.output,'detectedParmSpace')))
-calDat <- readRDS(file.path(location.output,'calDat.RDS'))$calDat
+# calDat <- readRDS(file.path(location.output,'calDat.RDS'))$calDat
+calDat <- read.csv(file.path(location.output,'Calibratio_Data_Cleaned_and_Transposed.csv'))
+rownames(calDat) <- calDat[,1]
+calDat <- calDat[,-1]
 resSigma <- readRDS(file.path(location.output,'sigma-indepParms.RDS'))
 colnames(resSigma) <- rownames(resSigma) <- colnames(calDat)
 
@@ -36,11 +39,15 @@ for (y.i in 1:length(yearsToPlot.names)){
 		yearsToPlot.lst[[y.i]] <- as.character(startEndYears[1]:startEndYears[2])
 	}
 }
+
+allVarNames <- read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN
+allVarNames <- allVarNames[nchar(allVarNames)>4]
+allVarNames <- unique(c(colnames(calDat),allVarNames))
 varsToPlot.lst <- list()
 workUnitBoundaries <- seq(1,ncol(calDat)+1,5)
 workUnitBoundaries <- c(workUnitBoundaries,ncol(calDat)+1)
 for(i in 1:(length(workUnitBoundaries)-1)){
-	varsToPlot.lst[[i]] <- colnames(calDat)[workUnitBoundaries[i]:(workUnitBoundaries[i+1]-1)]
+	varsToPlot.lst[[i]] <- allVarNames(calDat)[workUnitBoundaries[i]:(workUnitBoundaries[i+1]-1)]
 }
 # varsToPlot.lst <- rev(varsToPlot.lst)
 
@@ -99,7 +106,7 @@ for(plotWeightType in plotWeightTypes){
 		} else {
 			# collect time series ####
 			cat(sprintf('Reading %i vars: %i to %i of %i total vars...\n   ',
-									length(varsToPlot),workUnitBoundaries[vars.i],workUnitBoundaries[vars.i+1]-1,ncol(calDat)))
+									length(varsToPlot),workUnitBoundaries[vars.i],workUnitBoundaries[vars.i+1]-1,length(allVarNames)))
 			cat(paste0(varsToPlot,collapse='\n   '))
 			cat('\n')
 			# dimensions time in rows, run IDs in columns,  variables to read
@@ -171,7 +178,8 @@ for(plotWeightType in plotWeightTypes){
 					plotData$ciBounds <- ciBounds
 					plotData$uncertaintyType <- uncertaintyType
 					plotData$means <- means
-					plotData$defaultRun <- defRun
+					plotData$defaultRun <- defRun[[varsToPlot[var.i]]]
+					plotData$calDat <- calDat[[varsToPlot[var.i]]]
 					dir.create(file.path(location.output,location.plots,'CI-plots',
 															 paste0(plotWeightType,'Weighted'),'plotData'),F,T)
 					saveRDS(plotData,file.path(location.output,location.plots,'CI-plots',
@@ -265,8 +273,10 @@ for(plotWeightType in plotWeightTypes){
 								if(alsoPlotDefaultRun){
 									lines(yearsToPlot,defRun[yearsToPlot,varsToPlot[var.i]],lty=def.lty,lwd=def.lwd,col=def.col)
 								}
-								points(rownames(calDat),calDat[[varsToPlot[var.i]]],
-											 col='red',pch=20)
+								if(!is.null(calDat[[varsToPlot[var.i]]])){
+									points(rownames(calDat),calDat[[varsToPlot[var.i]]],
+												 col=calDat.col,pch=20)
+								}
 								box()
 								dev.off()
 							}
