@@ -46,7 +46,7 @@ varsToPlot.lst <- list()
 workUnitBoundaries <- seq(1,ncol(calDat)+1,5)
 workUnitBoundaries <- c(workUnitBoundaries,ncol(calDat)+1)
 for(i in 1:(length(workUnitBoundaries)-1)){
-	varsToPlot.lst[[i]] <- allVarNames(calDat)[workUnitBoundaries[i]:(workUnitBoundaries[i+1]-1)]
+	varsToPlot.lst[[i]] <- allVarNames[workUnitBoundaries[i]:(workUnitBoundaries[i+1]-1)]
 }
 # varsToPlot.lst <- rev(varsToPlot.lst)
 
