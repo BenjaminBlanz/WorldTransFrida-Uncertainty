@@ -157,7 +157,8 @@ for(plotWeightType in plotWeightTypes){
 				ciBounds.store <- ciBounds
 				for(uncertaintyType in uncertaintiesToPlot){
 					cat(sprintf('%s...',uncertaintyType))
-					if(!varsToPlot[var.i] %in% rownames(resSigma)){
+					if(uncertaintyType %in% c('all uncertainty','noise uncertainty')
+						 && ! varsToPlot[var.i] %in% rownames(resSigma)){
 						cat('skip...')
 					} else {
 						for(year.i in 1:nrow(defRun)){
