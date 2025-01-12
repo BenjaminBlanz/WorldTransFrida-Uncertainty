@@ -41,7 +41,7 @@ for (y.i in 1:length(yearsToPlot.names)){
 
 allVarNames <- read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN
 allVarNames <- allVarNames[nchar(allVarNames)>4]
-allVarNames <- unique(c(varsForExport.fridaNames.orig,allVarNames))
+allVarNames <- cleanNames(unique(c(varsForExport.fridaNames.orig,allVarNames)))
 varsToPlot.lst <- list()
 workUnitBoundaries <- seq(1,ncol(calDat)+1,5)
 workUnitBoundaries <- c(workUnitBoundaries,ncol(calDat)+1)
