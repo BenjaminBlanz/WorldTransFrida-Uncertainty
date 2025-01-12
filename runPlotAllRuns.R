@@ -3,8 +3,8 @@ source('config.R')
 cat(sprintf('processing the results in\n %s\n',
 						file.path(location.output,'detectedParmSpace')))
 calDat <- readRDS(file.path(location.output,'calDat.RDS'))$calDat
-calDat.orig <- read.csv(file.path(location.output,'Calibratio_Data_Cleaned_and_Transposed.csv'))
-varsForExport.fridaNames.orig <- colnames(calDat.orig)[-1]
+calDat.orig <- read.csv(file.path(location.frida,'Data','Calibration Data.csv'))
+varsForExport.fridaNames.orig <- calDat.orig[,1]
 
 resSigma <- readRDS(file.path(location.output,'sigma-indepParms.RDS'))
 colnames(resSigma) <- rownames(resSigma) <- colnames(calDat)
@@ -18,6 +18,12 @@ if(length(runFilesList)==0){
 	stop('no run files to process\nHave you run runMLEandParmSpace?\n')
 }
 
+
+allVarNames <- read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN
+allVarNames <- allVarNames[nchar(allVarNames)>4]
+allVarNames.orig <- unique(c(varsForExport.fridaNames.orig,allVarNames))
+allVarNames <- cleanNames(allVarNames.orig)
+
 # read ####
 cat('reading sampleParms...')
 sampleParms <- readRDS(file.path(location.output,'sampleParmsParscaleRanged.RDS'))
@@ -29,6 +35,8 @@ if(nrow(samplePoints)!=numSample){
 cat('done\n')
 
 # plot vars ####
+writeFRIDAExportSpec(varsForExport.fridaNames = allVarNames.orig,
+										 location.frida)
 defRun <- runFridaDefaultParms()
 yearsToPlot.lst <- list()
 for (y.i in 1:length(yearsToPlot.names)){
@@ -40,10 +48,6 @@ for (y.i in 1:length(yearsToPlot.names)){
 	}
 }
 
-allVarNames <- read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN
-allVarNames <- allVarNames[nchar(allVarNames)>4]
-allVarNames.orig <- unique(c(varsForExport.fridaNames.orig,allVarNames))
-allVarNames <- cleanNames(allVarNames.orig)
 varsToPlot.lst <- list()
 workUnitBoundaries <- seq(1,ncol(calDat)+1,5)
 workUnitBoundaries <- c(workUnitBoundaries,ncol(calDat)+1)
