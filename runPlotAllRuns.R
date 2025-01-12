@@ -2,10 +2,9 @@ source('initialise.R')
 source('config.R')
 cat(sprintf('processing the results in\n %s\n',
 						file.path(location.output,'detectedParmSpace')))
-# calDat <- readRDS(file.path(location.output,'calDat.RDS'))$calDat
-calDat <- read.csv(file.path(location.output,'Calibratio_Data_Cleaned_and_Transposed.csv'))
-rownames(calDat) <- calDat[,1]
-calDat <- calDat[,-1]
+calDat <- readRDS(file.path(location.output,'calDat.RDS'))$calDat
+calDat.orig <- read.csv(file.path(location.output,'Calibratio_Data_Cleaned_and_Transposed.csv'))
+varsForExport.fridaNames.orig <- colnames(calDat.orig)[-1]
 resSigma <- readRDS(file.path(location.output,'sigma-indepParms.RDS'))
 colnames(resSigma) <- rownames(resSigma) <- colnames(calDat)
 
@@ -42,7 +41,7 @@ for (y.i in 1:length(yearsToPlot.names)){
 
 allVarNames <- read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN
 allVarNames <- allVarNames[nchar(allVarNames)>4]
-allVarNames <- unique(c(colnames(calDat),allVarNames))
+allVarNames <- unique(c(varsForExport.fridaNames.orig,allVarNames))
 varsToPlot.lst <- list()
 workUnitBoundaries <- seq(1,ncol(calDat)+1,5)
 workUnitBoundaries <- c(workUnitBoundaries,ncol(calDat)+1)
