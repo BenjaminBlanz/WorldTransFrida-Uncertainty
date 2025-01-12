@@ -5,6 +5,7 @@ cat(sprintf('processing the results in\n %s\n',
 calDat <- readRDS(file.path(location.output,'calDat.RDS'))$calDat
 calDat.orig <- read.csv(file.path(location.output,'Calibratio_Data_Cleaned_and_Transposed.csv'))
 varsForExport.fridaNames.orig <- colnames(calDat.orig)[-1]
+
 resSigma <- readRDS(file.path(location.output,'sigma-indepParms.RDS'))
 colnames(resSigma) <- rownames(resSigma) <- colnames(calDat)
 
@@ -41,7 +42,8 @@ for (y.i in 1:length(yearsToPlot.names)){
 
 allVarNames <- read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN
 allVarNames <- allVarNames[nchar(allVarNames)>4]
-allVarNames <- cleanNames(unique(c(varsForExport.fridaNames.orig,allVarNames)))
+allVarNames.orig <- unique(c(varsForExport.fridaNames.orig,allVarNames))
+allVarNames <- cleanNames(allVarNames.orig)
 varsToPlot.lst <- list()
 workUnitBoundaries <- seq(1,ncol(calDat)+1,5)
 workUnitBoundaries <- c(workUnitBoundaries,ncol(calDat)+1)
@@ -199,8 +201,7 @@ for(plotWeightType in plotWeightTypes){
 								dir.create(location.plots.ci,F,T)
 								png(file.path(location.plots.ci,paste0(paste(varsToPlot[var.i],plotWeightType,'weighted',sep='-'),'.png')),
 										width = plotWidth,height = plotHeight,units = plotUnit,res = plotRes)
-								varsForExport.cleanNames.orig <- cleanNames(varsForExport.cleanNames.orig)
-								varName <- varsForExport.fridaNames.orig[which(varsForExport.cleanNames.orig==varsToPlot[var.i])]
+								varName <- allVarNames.orig[which(allVarNames==varsToPlot[var.i])]
 								layout(matrix(c(2,1),nrow=2),heights = c(0.9,0.1))
 								par(mar=c(0,0,0,0))
 								plot(0,0,type='n',axes=F)
