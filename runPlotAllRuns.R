@@ -121,8 +121,15 @@ for(plotWeightType in plotWeightTypes){
 			for(f.i in 1:length(runFilesList)){
 				cat(sprintf('\r  reading chunk %i of %i',f.i,length(runFilesList)))
 				parOutput <- readRDS(file.path(location.output,'detectedParmSpace',paste0('workUnit-',f.i,'.RDS')))
+				goodIdc <- which(varsToPlot%in%colnames(parOutput[[1]]$runDat))
+				if(length(goodIdc)<length(varsToPlot)){
+					cat('removing missing vars from list\n')
+					cat(paste0(varsToPlot[! varsToPlot%in%colnames(parOutput[[1]]$runDat)],collapse='\n   '))
+					cat('\n')
+				}
+				varsToPlot <- varsToPlot[goodIdc]
 				for(l in 1:length(parOutput)){
-					runsData[,parOutput[[l]]$parmsIndex,] <- unlist(parOutput[[l]]$runDat[,varsToPlot])
+					runsData[,parOutput[[l]]$parmsIndex,goodIdc] <- unlist(parOutput[[l]]$runDat[,varsToPlot])
 				}
 				rm(parOutput)
 			}
