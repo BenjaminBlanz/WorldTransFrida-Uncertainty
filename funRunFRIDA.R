@@ -185,13 +185,13 @@ runFRIDASpecParms <- function(parVect,silent=T){
 # as we only have single run setups of frida
 cleanNames <- function(colNames){
 	gsub('time','year',
-		 gsub('\\$','',
 			 gsub('_$','',
-			 		 gsub('_1','',
-			 		 		 gsub('\\[1]','_',
-			 		 		 		 gsub('_+','_',
-			 		 		 		 		 gsub('[. ]','_',
-			 		 		 		 		 		 tolower(colNames))))))))
+			 		 gsub('\\$','',
+			 		 		 gsub('_1','',
+			 		 		 		 gsub('\\[1]','_',
+			 		 		 		 		 gsub('_+','_',
+			 		 		 		 		 		 gsub('[. ]','_',
+			 		 		 		 		 		 		 tolower(colNames))))))))
 }
 
 # idxOfVarName ####
