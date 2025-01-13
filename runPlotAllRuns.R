@@ -133,6 +133,7 @@ for(plotWeightType in plotWeightTypes){
 				}
 				rm(parOutput)
 			}
+			gc()
 			cat('\r  reading done                                                            \n')
 			
 			# CI plots ####
