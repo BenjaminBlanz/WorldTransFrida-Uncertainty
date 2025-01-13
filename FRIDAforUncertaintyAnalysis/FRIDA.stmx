@@ -84,7 +84,7 @@
 		</export>
 		<import enabled="false" frequency="on_demand" isee:overwrite="true" resource="r../Data/uncertainity_parameters.csv"/>
 		<import isee:overwrite="false" isee:timevarying="true" resource="r../Data/frida_input_data.csv"/>
-		<import isee:overwrite="true" orientation="horizontal" resource="r../Data/uncertainty_analysis_paramter_values.csv"/>
+		<import isee:overwrite="false" orientation="horizontal" resource="r../Data/uncertainty_analysis_paramter_values.csv"/>
 		<import isee:overwrite="false" orientation="horizontal" resource="r../Data/climateFeedbackSwitches.csv"/>
 		<import isee:overwrite="false" orientation="horizontal" resource="r../Data/policyParameters.csv"/>
 	</data>
