@@ -28,7 +28,8 @@ allVarNames <- cleanNames(allVarNames.orig)
 cat('reading sampleParms...')
 sampleParms <- readRDS(file.path(location.output,'sampleParmsParscaleRanged.RDS'))
 cat('done\nreading samplePoints...')
-samplePoints <- as.data.frame(readRDS(file.path(location.output,'samplePoints.RDS')))
+# samplePoints <- as.data.frame(readRDS(file.path(location.output,'samplePoints.RDS')))
+samplePoints <- data.frame(parValuesOmitted=rep(NA,numSample))
 if(nrow(samplePoints)!=numSample){
 	stop('Number of sample points and numSample do not match\n')
 }
