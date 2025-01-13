@@ -49,7 +49,7 @@ for (y.i in 1:length(yearsToPlot.names)){
 }
 
 varsToPlot.lst <- list()
-workUnitBoundaries <- seq(1,length(allVarNames.orig)+1,10)
+workUnitBoundaries <- seq(1,length(allVarNames.orig)+1,8)
 workUnitBoundaries <- c(workUnitBoundaries,length(allVarNames.orig)+1)
 for(i in 1:(length(workUnitBoundaries)-1)){
 	varsToPlot.lst[[i]] <- allVarNames[workUnitBoundaries[i]:(workUnitBoundaries[i+1]-1)]
