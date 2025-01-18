@@ -12,11 +12,6 @@ chunkSizePerWorker <- 100
 # FORK forks the currently running process, but with copy on write memory
 # sharing
 clusterType <- 'psock'
-# tmpfs location for the worker directories to not churn the hard drive
-# and be faster
-# alternative path to /dev/shm would be /run/user/####/ where #### is the uid
-# /dev/shm is not executable on some distros use /run/user
-tmpfsDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork')
 
 #plotting ####
 #related things
@@ -153,18 +148,26 @@ name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
 
 
 # execute config ####
-location.output <- file.path('workOutput',paste0('N-',numSample,
-																								 '-ChS-',chunkSizePerWorker,
-																								 '-LCR-',likeCutoffRatio,
-																								 '-IgB-',ignoreParBounds,
-																								 '-FrB-',forceParBounds,
-																								 '-KcE-',kickParmsErrorRangeDet,
-																								 '-Sym-',symmetricRanges,
-																								 '-AAZ-',allowAssymetricToAvoidZeroRanges,
-																								 '-CFB-',climateFeedbacksOn,
-																								 '-Pol-',tools::file_path_sans_ext(policyFileName),
-																								 '-CTO-',climateSTAOverride))
+name.output <- paste0('N-',numSample,
+											'-ChS-',chunkSizePerWorker,
+											'-LCR-',likeCutoffRatio,
+											'-IgB-',ignoreParBounds,
+											'-FrB-',forceParBounds,
+											'-KcE-',kickParmsErrorRangeDet,
+											'-Sym-',symmetricRanges,
+											'-AAZ-',allowAssymetricToAvoidZeroRanges,
+											'-CFB-',climateFeedbacksOn,
+											'-Pol-',tools::file_path_sans_ext(policyFileName),
+											'-CTO-',climateSTAOverride)
+location.output <- file.path('workOutput',name.output)
 location.output.base <- location.output
+# tmpfs location for the worker directories to not churn the hard drive
+# and be faster
+# alternative path to /dev/shm would be /run/user/####/ where #### is the uid
+# /dev/shm is not executable on some distros use /run/user
+tmpfsDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork/',name.output)
+
+
 
 cat(sprintf('Output folder: %s\n',location.output))
 if(file.exists(location.output)){
