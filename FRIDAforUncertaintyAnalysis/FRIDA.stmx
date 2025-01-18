@@ -87,6 +87,7 @@
 		<import isee:overwrite="false" orientation="horizontal" resource="r../Data/uncertainty_analysis_paramter_values.csv"/>
 		<import isee:overwrite="false" orientation="horizontal" resource="r../Data/climateFeedbackSwitches.csv"/>
 		<import isee:overwrite="false" orientation="horizontal" resource="r../Data/policyParameters.csv"/>
+		<import isee:overwrite="false" orientation="horizontal" resource="r../Data/ClimateSTAOverride.csv"/>
 	</data>
 	<isee:sensi_specs_list active_index="0">
 		<isee:sensi_specs name="Calibration Uncertainity" method="sobol_sequence" runs="1000">
@@ -4927,6 +4928,10 @@ Lorem ipsum dolor sit amet</text_box>
 			<isee:stories/>
 		</views>
 	</model>
+	<isee:user_controlled>
+		<ent name="Energy Balance Model.STA Override"/>
+		<ent name="Energy Balance Model.SWITCH STA Override"/>
+	</isee:user_controlled>
 	<macro name="INFLATION_IMPACT_GROWTH_RATE">
 		<eqn>trend in input</eqn>
 		<parm>input</parm>

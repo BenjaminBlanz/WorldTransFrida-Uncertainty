@@ -118,7 +118,9 @@ subSample.sampleJointly <- FALSE
 
 # FRIDA config ####
 climateFeedbacksOn <- TRUE
-policyFileName <- 'policy_EMB.csv'
+climateSTAOverride <- 'Off' #values are the suffixes of the corresponding files FRIDA-configs
+policyFileName <- 'policy_EMB.csv'#'policy_100DollarCarbonTax.csv' #'policy_EMB.csv'
+
 
 # locations and names ####
 # location of frida/stella for running
@@ -160,7 +162,8 @@ location.output <- file.path('workOutput',paste0('N-',numSample,
 																								 '-Sym-',symmetricRanges,
 																								 '-AAZ-',allowAssymetricToAvoidZeroRanges,
 																								 '-CFB-',climateFeedbacksOn,
-																								 '-Pol-',tools::file_path_sans_ext(policyFileName)))
+																								 '-Pol-',tools::file_path_sans_ext(policyFileName),
+																								 '-CTO-',climateSTAOverride))
 location.output.base <- location.output
 
 cat(sprintf('Output folder: %s\n',location.output))
@@ -173,11 +176,13 @@ if(file.exists(location.output)){
 # save the config to the output folder
 file.copy('config.R',location.output,overwrite = T)
 # copy slected policy file and climate feedbacks config to frida
-cat(sprintf('Copying %s and %s to the frida directory.\n',
+cat(sprintf('Copying %s, %s, and %s to the frida directory.\n',
 						ifelse(climateFeedbacksOn,'ClimateFeedback_On.csv','ClimateFeedback_Off.csv'),
-						policyFileName))
+						policyFileName,paste0('climateSTAOverride_',climateSTAOverride,'.csv')))
 file.copy(file.path(location.frida.configs,ifelse(climateFeedbacksOn,'ClimateFeedback_On.csv','ClimateFeedback_Off.csv')),
 					file.path(location.frida,'Data','climateFeedbackSwitches.csv'),T)
 file.copy(file.path(location.frida.configs,policyFileName),
 					file.path(location.frida,'Data','policyParameters.csv'),T)
+file.copy(file.path(location.frida.configs,paste0('climateSTAOverride_',climateSTAOverride,'.csv')),
+					file.path(location.frida,'Data','climateSTAOverride.csv'),T)
 
