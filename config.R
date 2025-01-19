@@ -186,6 +186,6 @@ file.copy(file.path(location.frida.configs,ifelse(climateFeedbacksOn,'ClimateFee
 					file.path(location.frida,'Data','climateFeedbackSwitches.csv'),T)
 file.copy(file.path(location.frida.configs,policyFileName),
 					file.path(location.frida,'Data','policyParameters.csv'),T)
-file.copy(file.path(location.frida.configs,paste0('climateSTAOverride_',climateSTAOverride,'.csv')),
+file.copy(file.path(location.frida.configs,paste0('ClimateSTAOverride_',climateSTAOverride,'.csv')),
 					file.path(location.frida,'Data','climateSTAOverride.csv'),T)
 
