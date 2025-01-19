@@ -5,7 +5,7 @@ if(!exists('cl')<0&&try(clusterEvalQ(cl,1+1)[[1]],silent=T)!=2){
 	}
 	# create the tmpfsDir and link to workerDirs
 	if(!file.exists(tmpfsDir)){
-		dir.create(tmpfsDir,recursive = F,showWarnings = F)
+		dir.create(tmpfsDir,recursive = T,showWarnings = F)
 	}
 	if(!file.exists('workerDirs')){
 		system(paste('ln -s',tmpfsDir,'workerDirs'))
