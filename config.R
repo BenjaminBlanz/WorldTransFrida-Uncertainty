@@ -12,11 +12,6 @@ chunkSizePerWorker <- 100
 # FORK forks the currently running process, but with copy on write memory
 # sharing
 clusterType <- 'psock'
-# tmpfs location for the worker directories to not churn the hard drive
-# and be faster
-# alternative path to /dev/shm would be /run/user/####/ where #### is the uid
-# /dev/shm is not executable on some distros use /run/user
-tmpfsDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork')
 
 #plotting ####
 #related things
@@ -118,7 +113,9 @@ subSample.sampleJointly <- FALSE
 
 # FRIDA config ####
 climateFeedbacksOn <- TRUE
-policyFileName <- 'policy_EMB.csv'
+climateSTAOverride <- 'Off' #values are the suffixes of the corresponding files FRIDA-configs
+policyFileName <- 'policy_EMB.csv'#'policy_100DollarCarbonTax.csv' #'policy_EMB.csv'
+
 
 # locations and names ####
 # location of frida/stella for running
@@ -151,17 +148,26 @@ name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
 
 
 # execute config ####
-location.output <- file.path('workOutput',paste0('N-',numSample,
-																								 '-ChS-',chunkSizePerWorker,
-																								 '-LCR-',likeCutoffRatio,
-																								 '-IgB-',ignoreParBounds,
-																								 '-FrB-',forceParBounds,
-																								 '-KcE-',kickParmsErrorRangeDet,
-																								 '-Sym-',symmetricRanges,
-																								 '-AAZ-',allowAssymetricToAvoidZeroRanges,
-																								 '-CFB-',climateFeedbacksOn,
-																								 '-Pol-',tools::file_path_sans_ext(policyFileName)))
+name.output <- paste0('N-',numSample,
+											'-ChS-',chunkSizePerWorker,
+											'-LCR-',likeCutoffRatio,
+											'-IgB-',ignoreParBounds,
+											'-FrB-',forceParBounds,
+											'-KcE-',kickParmsErrorRangeDet,
+											'-Sym-',symmetricRanges,
+											'-AAZ-',allowAssymetricToAvoidZeroRanges,
+											'-CFB-',climateFeedbacksOn,
+											'-Pol-',tools::file_path_sans_ext(policyFileName),
+											'-CTO-',climateSTAOverride)
+location.output <- file.path('workOutput',name.output)
 location.output.base <- location.output
+# tmpfs location for the worker directories to not churn the hard drive
+# and be faster
+# alternative path to /dev/shm would be /run/user/####/ where #### is the uid
+# /dev/shm is not executable on some distros use /run/user
+tmpfsDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork/',name.output)
+
+
 
 cat(sprintf('Output folder: %s\n',location.output))
 if(file.exists(location.output)){
@@ -173,11 +179,13 @@ if(file.exists(location.output)){
 # save the config to the output folder
 file.copy('config.R',location.output,overwrite = T)
 # copy slected policy file and climate feedbacks config to frida
-cat(sprintf('Copying %s and %s to the frida directory.\n',
+cat(sprintf('Copying %s, %s, and %s to the frida directory.\n',
 						ifelse(climateFeedbacksOn,'ClimateFeedback_On.csv','ClimateFeedback_Off.csv'),
-						policyFileName))
+						policyFileName,paste0('climateSTAOverride_',climateSTAOverride,'.csv')))
 file.copy(file.path(location.frida.configs,ifelse(climateFeedbacksOn,'ClimateFeedback_On.csv','ClimateFeedback_Off.csv')),
 					file.path(location.frida,'Data','climateFeedbackSwitches.csv'),T)
 file.copy(file.path(location.frida.configs,policyFileName),
 					file.path(location.frida,'Data','policyParameters.csv'),T)
+file.copy(file.path(location.frida.configs,paste0('ClimateSTAOverride_',climateSTAOverride,'.csv')),
+					file.path(location.frida,'Data','ClimateSTAOverride.csv'),T)
 
