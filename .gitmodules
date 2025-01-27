@@ -1,0 +1,3 @@
+[submodule "FRIDAforSLRpaper"]
+	path = FRIDAforSLRpaper
+	url = git@github.com:lnnrtrmm/WorldTransFRIDA.git
