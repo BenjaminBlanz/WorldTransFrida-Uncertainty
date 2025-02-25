@@ -3,6 +3,14 @@ source('initialise.R')
 # config ####
 cat('Config...')
 source('config.R')
+sink(file.path(location.output,'log.txt'),append=T)
+cat(paste0(
+	'\n###############################################################\n',
+	format(Sys.Date(), "%c"),
+	location.output,
+	'\n###############################################################\n'))
+sink()
+sink(file.path(location.output,'log.txt'),append=T,split=T)
 source('runInitialiseData.R')
 continue <- readline(paste0('Output location created. Move any files to be used here\n',
 														location.output,'\nHit ENTER when done.\n'))
