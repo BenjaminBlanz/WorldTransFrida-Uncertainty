@@ -48,7 +48,7 @@ calDat.col <- 'red'
 
 # sampling ####
 # number of samples for the sobol sequence across all dimensions
-numSample <- 5e5
+numSample <- 1e4
 # by default sobol sequence covers the entire range between min and max with 
 # equal density.
 # However we might want to ensure that there are similar number of points above and 
@@ -119,7 +119,7 @@ policyFileName <- 'policy_EMB.csv'#'policy_100DollarCarbonTax.csv' #'policy_EMB.
 
 # locations and names ####
 # location of frida/stella for running
-location.frida <- './FRIDAforUncertaintyAnalysis'
+location.frida <- './FRIDAforSLRpaper'
 location.stella<- './Stella_Simulator_Linux'
 # location frida/stella is stored while the above is located in tmpfs
 location.frida.storage <- './FRIDAforUncertaintyAnalysis-store'
@@ -165,7 +165,7 @@ location.output.base <- location.output
 # and be faster
 # alternative path to /dev/shm would be /run/user/####/ where #### is the uid
 # /dev/shm is not executable on some distros use /run/user
-tmpfsDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork/',name.output)
+tmpfsDir <- 'notTMPFS'
 
 
 
