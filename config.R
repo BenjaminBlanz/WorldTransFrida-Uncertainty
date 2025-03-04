@@ -24,7 +24,7 @@ yaxPad <- 0.4
 # pretty plots
 location.plots <- 'figures'
 yearsToPlot.names <- c('allYears')#,'1980-2023')
-uncertaintiesToPlot <- c('all uncertainty','noise uncertainty','fit uncertainty')
+uncertaintiesToPlot <- c('fit uncertainty')#,'noise uncertainty','all uncertainty')
 alsoPlotMean.vals <- c(FALSE)
 mean.lty <- 'solid'
 mean.lwd <- 2
@@ -37,9 +37,9 @@ plotWidth <- 20
 plotHeight <- 20
 plotUnit <- 'cm'
 plotRes <- 150
-plotWeightTypes <- c('equaly','logLikelihood')#,'linearly','logCutoff')#,'likelihood') #options are equal, linear, logCutoff, likelihood
-CIsToPlot <- c(0,0.5,0.95)
-CIsToPlot.lty <- c('solid','longdash','dotted')#,'dotdash','dotted')
+plotWeightTypes <- c('equaly')#,'logLikelihood')#,'linearly','logCutoff')#,'likelihood') #options are equal, linear, logCutoff, likelihood
+CIsToPlot <- c(0,0.67,0.95)
+CIsToPlot.lty <- c('solid','longdash','dottfited')#,'dotdash','dotted')
 CIsToPlot.lwd <- c(3,1,1)
 CIsToPlot.lcol <- c(1,1,1)
 CIsToPlot.col <- c(NA,gray(0.7,0.5),gray(0.8,0.5))
