@@ -1,6 +1,29 @@
-﻿Variable,Min,Max
+Variable,Min,Max
 Finance.sensitivity of effect of sta on failure rate[1],0.3,0.85
 Finance.max change in bank investment as fraction of normal,0.55,0.73
 Finance.bank expectation formation time,2.2,3
 Finance.sensitivity of defaults to changes in risky interest,0,13
 Finance.exponential effect of interest on defaults,8,15
+Sea level rise costs and impacts.Increase factor for costs of reactive retreat[1],3,5
+Sea level rise costs and impacts.Asset demolition cost factor[1],0.025,0.075
+Sea level rise costs and impacts.Mobile assets fraction[1],0.2,0.3
+Sea level rise costs and impacts.Asset relocation cost factor[1],0.05,0.15
+Sea level rise costs and impacts.Relative productivity loss of people being flooded[1],0.9,0.99
+Sea level rise costs and impacts.Not depreciated fraction of assets at time of retreat[1],0,0.2
+Coastal Assets.Maximum fraction of assets destroyed in a storm surge[1],0.2,0.4
+Coastal Assets.Proactive retreat time scale[1],5,25
+Coastal Assets.Fraction of storm damages that is repaired[1],0.75,1
+Coastal Assets.Fraction of assets that has to stay at the coast[1],0.2,0.8
+Coastal Assets.Coastal zone divestment threshold[1],0.9,1
+Coastal Assets.Effective flood height at which only half the investment would be made[1],0.5,3
+Coastal population.Fatality rate in flood events[1],0.005,0.02
+Sea level rise adaptation.reference protection cost[1],0.0062,0.00867
+Sea level rise adaptation.Fraction of dike construction cost for maintenance annually[1],0.015,0.03
+Sea level rise adaptation.reference opportunity cost rate[1],0.03,0.05
+Sea level rise adaptation.Maximum fraction of coastal GDP spent for flood protection annually[1],0.01,0.05
+Sea level rise adaptation.Time to increase flood protection height[1],5,25
+Sea level rise adaptation.Average value of land in coastal zones in 1980[1],0.004,0.006
+Sea level.scale factor for thermosteric SLR[1],0,1
+Sea level.scale factor mountain glaciers[1],0,1
+Sea level.scale factor Greenland ice sheet[1],0,1
+Sea level.scale factor Antarctic ice sheet[1],0,1
