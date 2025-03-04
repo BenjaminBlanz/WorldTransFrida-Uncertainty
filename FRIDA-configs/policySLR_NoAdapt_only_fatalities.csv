@@ -4,8 +4,8 @@ Government_Regulations.start_year,1980
 ﻿Government_Regulations.Retreat_as_SLR_adaptation_strategy,0
 ﻿Government_Regulations.Protection_as_SLR_adaptation_strategy,0
 ﻿Government_Regulations.No_SLR_adaptation_strategy,1
-Sea_level_rise_costs_and_impacts.Asset_damage_switch,0
-Sea_level_rise_costs_and_impacts.Fatalities_switch,0
-Sea_level_rise_costs_and_impacts.Productivity_switch,1
-Sea_level_rise_costs_and_impacts.Relocation_cost_switch,0
-Sea_level_rise_costs_and_impacts.Protection_cost_switch,0
+Climate.switch sea level rise finance damage,0
+Climate.switch sea level rise productivity reduction damage,0
+Climate.switch sea level rise relocation cost damage,0
+Climate.switch sea level rise fatalities damage,1
+Climate.switch sea level rise protection cost damage,0
