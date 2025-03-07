@@ -21,3 +21,5 @@ sampleParmsParscaleRanged.csv
 .~lock*
 frida_info old.csv
 samples*ForBilly.csv
+*.log
+UA_*
