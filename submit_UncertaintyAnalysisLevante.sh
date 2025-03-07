@@ -12,16 +12,19 @@ expID=UA_nW250_nS10000_maxC1024_no2
 
 numWorkers=250
 numSamples=1.0e4
-maxConnections=1024
 
+### SLURM settings
 # How long will it take approximately? Job will be killed after this time!
 # But max 8:00 hours and the shorter the run is, the earlier the job gets run
 hours=8
 minutes=00
 
+# Use a different group account for ressources? Which partition?
+account=mh0033 
+partition=compute
+
 # Enter Email here in case you want to receive a mail, when the job failed
 email=Testmailforscript@UncertaintyAnalysis.abc
-email=lennart.ramme@mpimet.mpg.de
 
 # Copy ranges from pre-existing work?
 copyParmRangesAndScales="false"
@@ -42,8 +45,8 @@ externalRangesFile='frida_external_ranges.csv'
 excludeParmFile='frida_parameter_exclusion_list.csv'
 excludeVarFile='frida_variable_exclusion_list.csv'
 extraExportFile='frida_extra_variables_to_export_list.csv'
-
-
+##############################################################################
+########                 End of input section                      ###########
 ##############################################################################
 
 
@@ -100,13 +103,12 @@ cp $template $runscript
 
 # Modify the template
 sed -i "s/time=01:00:00/time=0${hours}:${minutes}:00/" $runscript
+sed -i "s/account=mh0033/account=${account}/" $runscript
+sed -i "s/partition=compute/partition=${partition}/" $runscript
 sed -i "s/LOG.UncertaintyAnalysis/LOG.${expID}/g" $runscript
 sed -i "s/jdoe@mail.com/${email}/" $runscript
 sed -i "s/job-name=runUncertaintyAnalysis/job-name=${expID}/" $runscript
-sed -i "s/--max-connections=1024/--max-connections=${maxConnections}/" $runscript
 sed -i "s/runMLEandParmSpace.R/${runMLE}/" $runscript
-
-##############################################################################
 
 #############################################################################
 ############ Copying parameter ranges and scales ############################
@@ -131,9 +133,6 @@ if [ "$copyParmRangesAndScales" = "true" ]; then
 		fi
 	done
 fi
-
-##############################################################################
-
 
 #############################################################################
 #######                    Submit the Job                            ########
