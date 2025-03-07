@@ -9,7 +9,7 @@ From Lennart,Ocean,Air sea co2 flux,[1],Ocean.Air sea co2 flux[1],GtC/Year
 Total radiative forcing,Forcing,Total Effective Radiative Forcing,[1],Forcing.Total Effective Radiative Forcing[1],W/m^2
 Atmospheric CO2 concentration,CO2 Forcing,Atmospheric CO2 concentration,[1],CO2 Forcing.Atmospheric CO2 concentration[1],ppm
 Surface temperature anomaly,Energy Balance Model,Surface Temperature Anomaly,[1],Energy Balance Model.Surface Temperature Anomaly[1],deg C
-sea level anomaly,Sea Level,Total global SLR,[1],Sea Level.Total global SLR[1],metre
+sea level anomaly,Sea Level,Total global sea level anomaly,[1],Sea Level.Total global sea level anomaly[1],metre
 mean surface ocean pH (Cold and Warm surface ocean pH are the required FRIDA variables),Ocean,Warm surface ocean pH,[1],Ocean.Warm surface ocean pH[1],dmnl
 ,Ocean,Cold surface ocean pH,[1],Ocean.Cold surface ocean pH[1],dmnl
 perceived climate risk,Climate Risk Perception,perceived climate risk,[1],Climate Risk Perception.perceived climate risk[1],dmnl
@@ -34,6 +34,7 @@ Terrestrial net primary production,Terrestrial Carbon Balance,Terrestrial net pr
 crop production for vegetal products,Food Demand,crop demand for food,[1],Food Demand.crop demand for food[1],PCal/year
 crop production for animal feed,Food Demand,feed production,[1],Food Demand.feed production[1],PCal/year
 crop production for biofuel,Food Demand,crops for energy,[1],Food Demand.crops for energy[1],PCal/year
+crop used for non energy other,Food Demand,crop used for non energy other,[1],Food Demand.crop used for non energy other[1],PCal/year
 crop production for seed and lost,Food Demand,Crops used for Seed or Lost,[1],Food Demand.Crops used for Seed or Lost[1],PCal/year
 Total Crop Production,Crop,Crop Production,[1],Crop.Crop Production[1],PCal/year
 water use for agriculture,Freshwater,agricultural water withdrawal,[1],Freshwater.agricultural water withdrawal[1],m^3/year
@@ -108,5 +109,16 @@ Worker income excl. government transfers,GDP,worker consumption excluding transf
 government transfers,GDP,government transfers in 2021c$,[1],GDP.government transfers in 2021c$[1],2021c$/year
 government investments,GDP,public investment in 2021c$,[1],GDP.public investment in 2021c$[1],2021c$/year
 private investments.,GDP,private investment in in 2021c$,[1],GDP.private investment in in 2021c$[1],2021c$/year
-,Forcing,Anthropogenic Effective Radiative Forcing,[1],Forcing.Anthropogenic Effective Radiative Forcing[1],W/(metre^2)
-,Land Use and Agriculture,crop used for non energy other,[1],Land Use and Agriculture.crop used for non energy other[1],PCal/Year
+Anthropogenic radiative forcing,Forcing,Anthropogenic Effective Radiative Forcing,[1],Forcing.Anthropogenic Effective Radiative Forcing[1],W/(metre^2)
+(same as row # 37),Land Use and Agriculture,crop used for non energy other,[1],Land Use and Agriculture.crop used for non energy other[1],PCal/Year
+for SLR analysis,Demographics,total deaths,[1],Demographics.total deaths[1],Mp/Year
+for SLR analysis,Coastal Assets,Coastal Assets,"[1,insufficent]","Coastal Assets.Coastal Assets[1,insufficent]",bc$
+for SLR analysis,Coastal Assets,Coastal Assets,"[1,well protected]","Coastal Assets.Coastal Assets[1,well protected]",bc$
+for SLR analysis,Coastal Population,Coastal Population,"[1,insufficent]","Coastal Population.Coastal Population[1,insufficent]",Mp
+for SLR analysis,Coastal Population,Coastal Population,"[1,well protected]","Coastal Population.Coastal Population[1,well protected]",Mp
+for SLR analysis,Sea level rise costs and impacts,Total nominal SLR protection cost,[1],Sea level rise costs and impacts.Total nominal SLR protection cost[1],b$/year
+for SLR analysis,Sea level rise costs and impacts,Total fatalities due to coastal floods,[1],Sea level rise costs and impacts.Total fatalities due to coastal floods[1],Mp/year
+for SLR analysis,Sea level rise costs and impacts,Total number of people flooded,[1],Sea level rise costs and impacts.Total number of people flooded[1],Mp/year
+for SLR analysis,Sea level rise costs and impacts,Total nominal loss of assets from SLR,[1],Sea level rise costs and impacts.Total nominal loss of assets from SLR[1],b$/year
+for SLR analysis,Sea level rise costs and impacts,Productivity reduction factor from coastal flooding,[1],Sea level rise costs and impacts.Productivity reduction factor from coastal flooding[1],dmnl
+for SLR analysis,Sea level rise costs and impacts,Total nominal people retreat costs,[1],Sea level rise costs and impacts.Total nominal people retreat costs[1],b$/year

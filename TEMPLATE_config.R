@@ -2,9 +2,11 @@
 redoAllCalc <- F
 
 # parallel ####
-if(!exists('numWorkers')){
-	numWorkers <- min(parallel::detectCores(), 120)
-}
+#if(!exists('numWorkers')){
+#	numWorkers <- parallel::detectCores()
+#}
+
+numWorkers <- 120
 
 
 # How large the chunks of work are, smaller means more frequent pauses to write out
@@ -167,7 +169,6 @@ location.output.base <- location.output
 # and be faster
 # alternative path to /dev/shm would be /run/user/####/ where #### is the uid
 # /dev/shm is not executable on some distros use /run/user
-#tmpfsDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork/',name.output)
 tmpfsDir <- 'notTMPFS'
 
 
