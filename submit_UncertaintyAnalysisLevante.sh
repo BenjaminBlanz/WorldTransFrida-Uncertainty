@@ -8,15 +8,14 @@
 # here in the script. Any change to e.g. config.R or runMLEandParmSpace.R will
 # always be used in the future, as these are the templates for this script!
 
-expID=UA_nW250_nS10000_maxC1024_no2
-
-numWorkers=250
+expID=UA_nW120_nS10000
+numWorkers=120
 numSamples=1.0e4
 
 ### SLURM settings
 # How long will it take approximately? Job will be killed after this time!
 # But max 8:00 hours and the shorter the run is, the earlier the job gets run
-hours=8
+hours=1
 minutes=00
 
 # Use a different group account for ressources? Which partition?
@@ -27,8 +26,9 @@ partition=compute
 email=Testmailforscript@UncertaintyAnalysis.abc
 
 # Copy ranges from pre-existing work?
-copyParmRangesAndScales="false"
-copyID=UA_XYZ   # This should be the name of workOutput from which the files will be copied!
+copyParmRangesAndScales="true"
+# This should be the name of workOutput from which the files will be copied!
+copyID=UA_nW250_nS10000_maxC1024_no2
 
 
 
@@ -123,10 +123,10 @@ fi
 
 
 if [ "$copyParmRangesAndScales" = "true" ]; then
-	for filename in 'parscale.RDS' 'sampleParmsParscale.csv' 'sampleParmsParscaleRanged.csv' 'sampleParmsParscaleanged.RDS' 'samplePointsBase.RDS' 'samplePoints.RDS' 'sigma-indepParms.RDS' 'sigma.RDS'; do
-		file=${filename}
+	for filename in 'parscale.RDS' 'sampleParmsParscale.csv' 'sampleParmsParscaleRanged.csv' 'sampleParmsParscaleRanged.RDS' 'samplePointsBase.RDS' 'samplePoints.RDS' 'sigma-indepParms.RDS' 'sigma.RDS'; do
+		file=workOutput/${copyID}/${filename}
 		if [ -e $file ]; then
-			cp workOutput/${copyID}/${file}  ${expDir}/
+			cp ${file}  ${expDir}/
 		else
 			echo "File ${file} not found, exiting"
 			exit 1
