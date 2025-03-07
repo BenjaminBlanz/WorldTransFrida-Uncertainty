@@ -138,11 +138,12 @@ runFridaParmsByIndex <- function(runid,silent=T){
 # runFridaParmsBySamplePoints ####
 # the same as above, but runs all samples in samplePoints for pre allocated
 # samplePoints per worker.
-runFridaParmsBySamplePoints <- function(saveOutPutDontReturn=FALSE,workUnit=NULL){
+runFridaParmsBySamplePoints <- function(saveOutPutOnlyReturnLogLike=FALSE,workUnit=NULL){
 	retlist <- runFridaParmsByIndex(1:nrow(samplePoints))
-	if(saveOutPutDontReturn){
-		saveRDS(retlist,file.path(baseWD,location.output,
-															paste0('workUnit-',workUnit,'-',workerID,'.RDS')))
+	if(saveOutPutOnlyReturnLogLike){
+		workerID <- ifelse(exists('workerID'),workerID,0)
+		return(saveParOutputToPerVarFiles(parOutput = retlist,workUnit = workUnit,
+															 workerID = workerID))
 	} else {
 		return(retlist)
 	}
@@ -320,6 +321,9 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 																					 plotMinAlpha = 0.01,
 																					 plotBaseName = 'runs-'){
 	cat('cluster run...\n')
+	# If we are not plotting while running we can directly store from the running
+	# worker processes. This is MUCH faster.
+	saveOutPutOnlyReturnLogLike <- !(plotDatWhileRunning|plotDatPerChunWhileRunning)
 	dir.create(location.output,showWarnings = F,recursive = T)
 	numSample <- nrow(samplePoints)
 	logLike <- rep(NA,numSample)
@@ -419,19 +423,28 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 				samplePoints <- readRDS('samplePoints.RDS')
 			})
 			parOutput <- unlist(
-				clusterEvalQ(cl,runFridaParmsBySamplePoints()),
+				clusterEvalQ(cl,runFridaParmsBySamplePoints(saveOutPutOnlyReturnLogLike = saveOutPutOnlyReturnLogLike)),
 				recursive = F)
 			timing <- toc(quiet=T)
 			chunkTimes[i] <- timing$toc-timing$tic
-			cat('\r(s)')
-			saveRDS(parOutput,file.path(location.output,paste0('workUnit-',i,'.RDS')))
+			if(!saveOutPutOnlyReturnLogLike){
+				cat('\r(s)')
+				saveRDS(parOutput,file.path(location.output,paste0('workUnit-',i,'.RDS')))
+				saveParOutputToPerVarFiles(parOutput=parOutput, location.output=location.output, workUnit=i)
+			}
 			cat('\r   ')
 		}
 		cat('\r(l)')
-		for(l in 1:length(parOutput)){
-			logLike[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$logLike
-			if(!is.na(parOutput[[l]]$runDat[[1]][length(parOutput[[l]]$runDat[[1]])])){
-				completeRunsSoFar <- completeRunsSoFar + 1
+		
+		if(saveOutPutOnlyReturnLogLike){
+			logLike[parOutput$logLike$id] <- parOutput$logLike$logLike
+			completeRunsSoFar <- sum(logLike > -.Machine$double.xmax+(200*.Machine$double.eps))
+		} else {
+			for(l in 1:length(parOutput)){
+				logLike[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$logLike 
+				if(parOutput[[l]]$logLike > -.Machine$double.xmax+(200*.Machine$double.eps)){
+					completeRunsSoFar <- completeRunsSoFar + 1
+				}
 			}
 		}
 		cat('\r   ')
@@ -534,6 +547,68 @@ loadClusterRuns <- function(location.output){
 	return(retList)
 }
 
+saveParOutputToPerVarFiles <- function(parOutput, workUnit, workerID='0',
+																			 location.output=location.output, 
+																			 verbosity=0, outputTypes=c('RDS','csv')){
+	varNames <- names(parOutput[[1]]$runDat)
+	workUnitLength <- length(parOutput)
+	perVarData <- list()
+	logLike <- data.frame(id=rep(NA,workUnitLength),logLike=rep(NA,workUnitLength))
+	for(varName in varNames){
+		perVarData[[varName]] <- data.frame(matrix(NA,ncol=1+nrow(parOutput[[1]]$runDat),nrow=workUnitLength))
+		colnames(perVarData[[varName]]) <- c('id',rownames(parOutput[[1]]$runDat))
+	}
+	if(verbosity>0){
+		cat('Reading parOutput:\n')
+	}
+	for(run.i in 1:length(parOutput)){
+		if(verbosity>0){
+			cat(sprintf('\rReading run %i of %i.',run.i, workUnitLength))
+		}
+		runDat <- parOutput[[run.i]]$runDat
+		for(varName in varNames){
+			perVarData[[varName]][run.i,] <- unname(unlist(c(parOutput[[run.i]]$parmsIndex,runDat[varName])))
+		}
+		logLike[run.i,] <- c(parOutput[[run.i]]$parmsIndex,parOutput[[run.i]]$logLike)
+	}
+	if(verbosity>0){
+		cat('\nWriting to files\n')
+	}
+	for(outputType in outputTypes){
+		for(varName in varNames){
+			dir.create(file.path(location.output,'detectedParmSpace','PerVarFiles',varName,outputType),
+								 showWarnings = F,recursive = T)
+			if(verbosity>0){
+				cat(sprintf('\rWriting var %i of %i: %s %s', run.i, workUnitLength, varName, rep(' ',100)))
+			}
+			if(outputType=='RDS'){
+				saveRDS(perVarData[[varName]],
+								file.path(location.output,'detectedParmSpace','PerVarFiles',varName,outputType,
+													paste0(varName,'-',workUnit,'-',workerID,'.RDS')))
+			}
+			if(outputType=='csv'){
+				write.table(perVarData[[varName]],
+								file.path(location.output,'detectedParmSpace','PerVarFiles',varName,outputType,
+													paste0(varName,'-',workUnit,'-',workerID,'.csv')),row.names = F)
+			}
+		}
+		
+		if(outputType=='RDS'){
+			saveRDS(logLike,
+							file.path(location.output,'detectedParmSpace','PerVarFiles','logLike',outputType,
+												paste0(logLike,'-',workUnit,'-',workerID,'.RDS')))
+		}
+		if(outputType=='csv'){
+			write.table(logLike,
+									file.path(location.output,'detectedParmSpace','PerVarFiles',varName,outputType,
+														paste0(logLike,'-',workUnit,'-',workerID,'.csv')),row.names = F)
+		}
+	}
+	if(verbosity>0){
+		cat('\n')
+	}
+	return(logLike)
+}
 
 
 
