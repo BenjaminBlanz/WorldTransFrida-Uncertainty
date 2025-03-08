@@ -18,5 +18,5 @@ if(exists('cl')){
 }
 # clean up working directories
 unlink('workerDirs',recursive=T,force=T)
-unlink(tmpfsDir,recursive=T,force=T)
+unlink(tmpfsBaseDir,recursive=T,force=T)
 cat('done\n')

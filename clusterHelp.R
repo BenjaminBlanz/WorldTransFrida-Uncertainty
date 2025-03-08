@@ -51,15 +51,19 @@ if(exists('cl')&&is.numeric(result)&&result==2){
 	}
 	
 	# start cluster
+	cat('start...')
 	if(clusterType=='fork'){
 		cl <- makeForkCluster(numWorkers)
 	} else if (clusterType=='psock'){
 		cl <- makePSOCKcluster(numWorkers,setup_strategy='sequential') # setup sequential to not DOS the server
+		# add ,outfile='' to enable cluster output on the console
 	}
+	cat('exports...')
 	gobble <- clusterExport(cl,list('baseWD','workDirBasename'))
 	gobble <- clusterEvalQ(cl,tools::psnice(value=15))
 	gobble <- clusterEvalQ(cl,source(file.path(baseWD,'initialise.R')))
 	gobble <- clusterEvalQ(cl,source(file.path(baseWD,'config.R')))
+	cat('work dirs...')
 	# make working directories
 	workers <- 1:length(cl)
 	gobble <- clusterApply(cl,workers,function(i){
@@ -77,7 +81,7 @@ if(exists('cl')&&is.numeric(result)&&result==2){
 		file.copy(file.path(baseWD,location.stella),getwd(),recursive=T,overwrite = T)
 		file.copy(file.path(baseWD,location.frida.info,name.frida_info),getwd(),overwrite = T)
 	})
-	
+	cat('extra vars...')
 	# copy extra vars if present (for restarting the cluster during testing)
 	if(exists('sampleParms')){clusterExport(cl,list('sampleParms'))}
 	if(exists('calDat')){clusterExport(cl,list('calDat'))}

@@ -2,11 +2,10 @@
 redoAllCalc <- F
 
 # parallel ####
-if(!exists('numWorkers')){
-	numWorkers <- min(parallel::detectCores(), 120)
-}
-
-
+#if(!exists('numWorkers')){
+#	numWorkers <- min(parallel::detectCores(), 120)
+#}
+numWorkers <- parallel::detectCores()
 # How large the chunks of work are, smaller means more frequent pauses to write out
 # itermediate results (and update the diagnostic output).
 chunkSizePerWorker <- 100
@@ -14,6 +13,12 @@ chunkSizePerWorker <- 100
 # FORK forks the currently running process, but with copy on write memory
 # sharing
 clusterType <- 'psock'
+# should the workers save their output independently or send it back to the
+# main thread.
+# If true each worker writes its results to disk in a seperate file. This should be
+# much faster than handling all output in a single thread.
+saveOutPutOnlyReturnLogLike <- TRUE
+perVarOutputTypes <- c('RDS','csv')
 
 #plotting ####
 #related things
@@ -165,11 +170,12 @@ location.output <- file.path('workOutput',name.output)
 location.output.base <- location.output
 # tmpfs location for the worker directories to not churn the hard drive
 # and be faster
-# alternative path to /dev/shm would be /run/user/####/ where #### is the uid
-# /dev/shm is not executable on some distros use /run/user
-#tmpfsDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork/',name.output)
-tmpfsDir <- 'notTMPFS'
-
+# typical options on linux are /dev/shm or /run/user/####/ where #### is the uid
+# if both of these are unavailable use notTMPFS or some other arbitrary location on disk
+#tmpfsBaseDir <- paste0('/run/user/',system('id -u',intern = T))
+tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T))
+#tmpfsBaseDir <- 'notTMPFS'
+tmpfsDir <- file.path(tmpfsBaseDir,'rwork',name.output)
 
 
 cat(sprintf('Output folder: %s\n',location.output))

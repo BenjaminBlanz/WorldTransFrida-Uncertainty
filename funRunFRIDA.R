@@ -138,15 +138,16 @@ runFridaParmsByIndex <- function(runid,silent=T){
 # runFridaParmsBySamplePoints ####
 # the same as above, but runs all samples in samplePoints for pre allocated
 # samplePoints per worker.
-runFridaParmsBySamplePoints <- function(saveOutPutOnlyReturnLogLike=FALSE,workUnit=NULL){
+runFridaParmsBySamplePoints <- function(){
 	retlist <- runFridaParmsByIndex(1:nrow(samplePoints))
 	if(saveOutPutOnlyReturnLogLike){
 		workerID <- ifelse(exists('workerID'),workerID,0)
-		return(saveParOutputToPerVarFiles(parOutput = retlist,workUnit = workUnit,
-															 workerID = workerID))
-	} else {
-		return(retlist)
+		workUnit.i <- ifelse(exists('workUnit.i'),workUnit.i,0)
+		logLike.df <- saveParOutputToPerVarFiles(parOutput = retlist,workUnit.i = workUnit.i,
+														 workerID = workerID,outputTypes=perVarOutputTypes)
+		retlist[['logLike.df']] <- logLike.df
 	}
+	return(retlist)
 }
 
 # runFridaDefaultParms ####
@@ -323,8 +324,11 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 	cat('cluster run...\n')
 	# If we are not plotting while running we can directly store from the running
 	# worker processes. This is MUCH faster.
-	saveOutPutOnlyReturnLogLike <- !(plotDatWhileRunning|plotDatPerChunWhileRunning)
-	dir.create(location.output,showWarnings = F,recursive = T)
+	if((plotDatWhileRunning|plotDatPerChunWhileRunning)&saveOutPutOnlyReturnLogLike){
+		cat('Note: Forcing saveOutPutOnlyReturnLogLike to false, as plotting is enabled\n')
+		saveOutPutOnlyReturnLogLike <<- F
+	}
+	cat(paste('saveOutPutOnlyReturnLogLike',saveOutPutOnlyReturnLogLike,'\n'))
 	numSample <- nrow(samplePoints)
 	logLike <- rep(NA,numSample)
 	names(logLike) <- 1:numSample
@@ -343,7 +347,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 		clusterExport(cl,list('location.output','baseWD','sampleParms',
 													'chunkSizePerWorker','runFridaParmsBySamplePoints',
 													'calDat','resSigma',
-													'runFridaParmsByIndex'))
+													'runFridaParmsByIndex','saveOutPutOnlyReturnLogLike'))
 	}
 	# plot setup 
 	if(plotDatWhileRunning & !plotPerChunk){
@@ -352,7 +356,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			sqrtNcols <- sqrt(ncols)
 			plotCols <- round(sqrtNcols)
 			plotRows <- ceiling(sqrtNcols)
-			png(file.path(location.output,paste0(plotBaseName,'all.png')),
+			png(file.path(baseWD,location.output,paste0(plotBaseName,'all.png')),
 					width=5*plotCols,
 					height=5*plotRows+5/4,
 					unit='cm',res=150)
@@ -368,9 +372,11 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 	i <- 0
 	while(i<(length(workUnitBoundaries)-1)){
 		i <- i+1
-		if(!redoAllCalc && file.exists(file.path(location.output,paste0('workUnit-',i,'.RDS')))){
+		workUnit.i <- i
+		clusterExport(cl,list('workUnit.i'),envir=environment())
+		if(!redoAllCalc && file.exists(file.path(baseWD,location.output,paste0('workUnit-',i,'.RDS')))){
 			cat(sprintf('\r(r) Using existing unit %i',i))
-			tryCatch({parOutput <- readRDS(file.path(location.output,paste0('workUnit-',i,'.RDS')))},
+			tryCatch({parOutput <- readRDS(file.path(baseWD,location.output,paste0('workUnit-',i,'.RDS')))},
 							 error = function(e){},warning=function(w){})
 			if(exists('parOutput')){
 				if(length(parOutput)>(workUnitBoundaries[i+1]-workUnitBoundaries[i])){
@@ -422,22 +428,28 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			gobble <- clusterEvalQ(cl,{
 				samplePoints <- readRDS('samplePoints.RDS')
 			})
-			parOutput <- unlist(
-				clusterEvalQ(cl,runFridaParmsBySamplePoints(saveOutPutOnlyReturnLogLike = saveOutPutOnlyReturnLogLike)),
-				recursive = F)
+			parOutput <- clusterEvalQ(cl,runFridaParmsBySamplePoints())
 			timing <- toc(quiet=T)
 			chunkTimes[i] <- timing$toc-timing$tic
+			if(saveOutPutOnlyReturnLogLike){
+				logLike.df <- data.frame(id=integer(),logLike=double())
+				for(r.i in 1:length(parOutput)){
+					logLike.df <- rbind(logLike.df,parOutput[[r.i]]$logLike.df)
+					parOutput[[r.i]]$logLike.df <- NULL
+				}
+			}
+			cat('\r(s)')
+			parOutput <-  unlist(parOutput, recursive = F)
+			saveRDS(parOutput,file.path(baseWD,location.output,paste0('workUnit-',i,'.RDS')))
 			if(!saveOutPutOnlyReturnLogLike){
-				cat('\r(s)')
-				saveRDS(parOutput,file.path(location.output,paste0('workUnit-',i,'.RDS')))
-				saveParOutputToPerVarFiles(parOutput=parOutput, location.output=location.output, workUnit=i)
+				saveParOutputToPerVarFiles(parOutput=parOutput, workUnit=i)
 			}
 			cat('\r   ')
 		}
 		cat('\r(l)')
 		
-		if(saveOutPutOnlyReturnLogLike){
-			logLike[parOutput$logLike$id] <- parOutput$logLike$logLike
+		if(saveOutPutOnlyReturnLogLike & exists('logLike.df')){
+			logLike[logLike.df$id] <- logLike.df$logLike
 			completeRunsSoFar <- sum(logLike > -.Machine$double.xmax+(200*.Machine$double.eps))
 		} else {
 			for(l in 1:length(parOutput)){
@@ -478,7 +490,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			sqrtNcols <- sqrt(ncols)
 			plotCols <- round(sqrtNcols)
 			plotRows <- ceiling(sqrtNcols)
-			png(file.path(location.output,paste0(plotBaseName,'-Chunk-',i,'.png')),
+			png(file.path(baseWD,location.output,paste0(plotBaseName,'-Chunk-',i,'.png')),
 					width=5*plotCols,
 					height=5*plotRows+5/4,
 					unit='cm',res=150)
@@ -518,7 +530,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			dev.print(png,width=5*ncol(subPlotLocations),
 								height=5*(nrow(subPlotLocations)-1)+5/4,
 								unit='cm',res=150,
-								file.path(location.output,paste0(plotBaseName,'all.png')))
+								file.path(baseWD,location.output,paste0(plotBaseName,'all.png')))
 		}
 		cat('done\n')
 	}
@@ -541,15 +553,14 @@ loadClusterRuns <- function(location.output){
 	runFilesList <- list.files(location.output,pattern = 'workUnit-[0-9]+\\.RDS')
 	retList <- c()
 	for(f.i in 1:length(runFilesList)){
-		parOutput <- readRDS(file.path(location.output,paste0('workUnit-',f.i,'.RDS')))
+		parOutput <- readRDS(file.path(baseWD,location.output,paste0('workUnit-',f.i,'.RDS')))
 		retList <- c(retList,parOutput)
 	}
 	return(retList)
 }
 
-saveParOutputToPerVarFiles <- function(parOutput, workUnit, workerID='0',
-																			 location.output=location.output, 
-																			 verbosity=0, outputTypes=c('RDS','csv')){
+saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
+																			 verbosity=1, outputTypes=c('RDS','csv')){
 	varNames <- names(parOutput[[1]]$runDat)
 	workUnitLength <- length(parOutput)
 	perVarData <- list()
@@ -576,33 +587,37 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit, workerID='0',
 	}
 	for(outputType in outputTypes){
 		for(varName in varNames){
-			dir.create(file.path(location.output,'detectedParmSpace','PerVarFiles',varName,outputType),
-								 showWarnings = F,recursive = T)
 			if(verbosity>0){
 				cat(sprintf('\rWriting var %i of %i: %s %s', run.i, workUnitLength, varName, rep(' ',100)))
 			}
+			dir.create(file.path(baseWD,location.output,'detectedParmSpace',paste('PerVarFiles',outputType),varName),
+								 showWarnings = F,recursive = T)
 			if(outputType=='RDS'){
 				saveRDS(perVarData[[varName]],
-								file.path(location.output,'detectedParmSpace','PerVarFiles',varName,outputType,
-													paste0(varName,'-',workUnit,'-',workerID,'.RDS')))
+								file.path(baseWD,location.output,'detectedParmSpace',paste('PerVarFiles',outputType),varName,
+													paste0(varName,'-',workUnit.i,'-',workerID,'.RDS')))
 			}
 			if(outputType=='csv'){
 				write.table(perVarData[[varName]],
-								file.path(location.output,'detectedParmSpace','PerVarFiles',varName,outputType,
-													paste0(varName,'-',workUnit,'-',workerID,'.csv')),row.names = F)
+								file.path(baseWD,location.output,'detectedParmSpace',paste('PerVarFiles',outputType),varName,
+													paste0(varName,'-',workUnit.i,'-',workerID,'.csv')),row.names = F)
 			}
 		}
-		
+		if(verbosity>0){
+			cat(sprintf('\rWriting logLike %s', rep(' ',100)))
+		}
+		dir.create(file.path(baseWD,location.output,'detectedParmSpace',paste('PerVarFiles',outputType),'logLike'),
+						 showWarnings = F,recursive = T)
 		if(outputType=='RDS'){
-			saveRDS(logLike,
-							file.path(location.output,'detectedParmSpace','PerVarFiles','logLike',outputType,
-												paste0(logLike,'-',workUnit,'-',workerID,'.RDS')))
-		}
+				saveRDS(logLike,
+						file.path(baseWD,location.output,'detectedParmSpace',paste('PerVarFiles',outputType),'logLike',
+								paste0('logLike','-',workUnit.i,'-',workerID,'.RDS')))
+				}
 		if(outputType=='csv'){
-			write.table(logLike,
-									file.path(location.output,'detectedParmSpace','PerVarFiles',varName,outputType,
-														paste0(logLike,'-',workUnit,'-',workerID,'.csv')),row.names = F)
-		}
+				write.table(logLike,
+								file.path(baseWD,location.output,'detectedParmSpace',paste('PerVarFiles',outputType),'logLike',
+									paste0('logLike','-',workUnit.i,'-',workerID,'.csv')),row.names = F)
+				}
 	}
 	if(verbosity>0){
 		cat('\n')
