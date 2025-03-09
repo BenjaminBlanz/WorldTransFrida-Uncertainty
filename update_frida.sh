@@ -59,6 +59,6 @@ fi
 
 
 echo -e ${RED}"Make sure you have the latest ./FRIDA-Info/frida_info.csv before running an uncertainity analysis!"${NOCOLOR}
-read -n 1 -s -r -p "Press any key to continue"
+read -n 1 -s -r -p "Press any key to continue\n"
 
 
