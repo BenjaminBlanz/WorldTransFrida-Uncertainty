@@ -23,7 +23,9 @@ colnames(resSigma) <- rownames(resSigma) <- colnames(calDat)
 # run files ####
 allVarNames <- read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN
 allVarNames <- allVarNames[nchar(allVarNames)>4]
-allVarNames.orig <- unique(c(varsForExport.fridaNames.orig,allVarNames))
+allVarNames.orig <- c(varsForExport.fridaNames.orig,allVarNames)
+allVarNames.orig <- gsub(' \\[(\\d)\\]','\\[\\1\\]',allVarNames.orig)
+allVarNames.orig <- unique(allVarNames.orig)
 allVarNames <- cleanNames(allVarNames.orig)
 
 # read ####
