@@ -29,7 +29,9 @@ prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NU
 		invalidLines <- c()
 	}
 	# deal with manually excluded items
-	if(!redoAllCalc && file.exists(file.path(location.frida.info,name.frida_parameter_exclusion_list)) && file.size(file.path(location.frida.info,name.frida_parameter_exclusion_list))>0){
+	if(!redoAllCalc &&
+		 file.exists(file.path(location.frida.info,name.frida_parameter_exclusion_list)) &&
+		 file.size(file.path(location.frida.info,name.frida_parameter_exclusion_list))>0){
 		manParExclusionList <- read.csv(file.path(location.frida.info,name.frida_parameter_exclusion_list))
 		excludeNames <- unique(c(excludeNames,manParExclusionList$excludedName))
 	}
@@ -44,9 +46,10 @@ prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NU
 	if(!is.null(integerParms)){
 		cat('adding integer parms...')
 		for(p.i in 1:nrow(integerParms)){
-			if(!integerParms$Variable[p.i]%in%excludeNames && !integerParms$Variable[p.i]%in%sampleParms$Variable){
+			if(!integerParms$Variable[p.i]%in%excludeNames &&
+				 !integerParms$Variable[p.i]%in%sampleParms$Variable){
 				newIdx <- nrow(sampleParms)+1
-				sampleParms[newIdx,c('Variable')] <- integerParms$Variable[p.i]# e.g. 'Climate Units.selected climate case'
+				sampleParms[newIdx,c('Variable')] <- integerParms$Variable[p.i] # e.g. 'Climate Units.selected climate case'
 				sampleParms[newIdx,c('Value','Min','Max')] <- 
 					c(integerParms$Value[p.i],
 						integerParms$Min[p.i]-0.5+.Machine$double.eps,
@@ -144,7 +147,7 @@ runFridaParmsBySamplePoints <- function(){
 		workerID <- ifelse(exists('workerID'),workerID,0)
 		workUnit.i <- ifelse(exists('workUnit.i'),workUnit.i,0)
 		logLike.df <- saveParOutputToPerVarFiles(parOutput = retlist,workUnit.i = workUnit.i,
-														 workerID = workerID,outputTypes=perVarOutputTypes)
+														 workerID = workerID)
 		retlist[['logLike.df']] <- logLike.df
 	}
 	return(retlist)
@@ -409,7 +412,8 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 										round(mean(chunkTimes,na.rm=T)),
 										length(cl)*chunkSizePerWorker/mean(chunkTimes,na.rm=T),
 										chunkSizePerWorker/mean(chunkTimes,na.rm=T),
-										if(exists('dseconds')){dseconds(round(mean(chunkTimes,na.rm=T))*(length(workUnitBoundaries)-i))} 
+										if(exists('dseconds')){dseconds(round(mean(chunkTimes,na.rm=T))*
+																											(length(workUnitBoundaries)-i))} 
 										else{paste0(round(mean(chunkTimes,na.rm=T))*(length(workUnitBoundaries)-i),'s')}))
 			}
 			tic()
@@ -521,6 +525,9 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 		}
 		rm(parOutput)
 	}
+	# merge all the individual per Var files into one complete one
+	mergePerVarFiles()
+	
 	if(plotDatWhileRunning&!plotDatPerChunWhileRunning){
 		cat(sprintf('  Saving figure...'))
 		plotCape <- capabilities()
@@ -560,7 +567,7 @@ loadClusterRuns <- function(location.output){
 }
 
 saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
-																			 verbosity=1, outputTypes=c('RDS','csv')){
+																			 verbosity=0){
 	varNames <- names(parOutput[[1]]$runDat)
 	workUnitLength <- length(parOutput)
 	perVarData <- list()
@@ -585,38 +592,39 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 	if(verbosity>0){
 		cat('\nWriting to files\n')
 	}
-	for(outputType in outputTypes){
+	# outpuperVarOutputTypestTypes from config
+	for(outputType in perVarOutputTypes){
 		for(varName in varNames){
 			if(verbosity>0){
 				cat(sprintf('\rWriting var %i of %i: %s %s', run.i, workUnitLength, varName, rep(' ',100)))
 			}
-			dir.create(file.path(baseWD,location.output,'detectedParmSpace',paste('PerVarFiles',outputType),varName),
+			dir.create(file.path(baseWD,location.output,'detectedParmSpace',paste0('PerVarFiles-',outputType),varName),
 								 showWarnings = F,recursive = T)
 			if(outputType=='RDS'){
 				saveRDS(perVarData[[varName]],
-								file.path(baseWD,location.output,'detectedParmSpace',paste('PerVarFiles',outputType),varName,
+								file.path(baseWD,location.output,'detectedParmSpace',paste0('PerVarFiles-',outputType),varName,
 													paste0(varName,'-',workUnit.i,'-',workerID,'.RDS')))
 			}
 			if(outputType=='csv'){
 				write.table(perVarData[[varName]],
-								file.path(baseWD,location.output,'detectedParmSpace',paste('PerVarFiles',outputType),varName,
-													paste0(varName,'-',workUnit.i,'-',workerID,'.csv')),row.names = F)
+								file.path(baseWD,location.output,'detectedParmSpace',paste0('PerVarFiles-',outputType),varName,
+													paste0(varName,'-',workUnit.i,'-',workerID,'.csv')),row.names = F,sep = ',')
 			}
 		}
 		if(verbosity>0){
 			cat(sprintf('\rWriting logLike %s', rep(' ',100)))
 		}
-		dir.create(file.path(baseWD,location.output,'detectedParmSpace',paste('PerVarFiles',outputType),'logLike'),
+		dir.create(file.path(baseWD,location.output,'detectedParmSpace',paste0('PerVarFiles-',outputType),'logLike'),
 						 showWarnings = F,recursive = T)
 		if(outputType=='RDS'){
 				saveRDS(logLike,
-						file.path(baseWD,location.output,'detectedParmSpace',paste('PerVarFiles',outputType),'logLike',
+						file.path(baseWD,location.output,'detectedParmSpace',paste0('PerVarFiles-',outputType),'logLike',
 								paste0('logLike','-',workUnit.i,'-',workerID,'.RDS')))
 				}
 		if(outputType=='csv'){
 				write.table(logLike,
-								file.path(baseWD,location.output,'detectedParmSpace',paste('PerVarFiles',outputType),'logLike',
-									paste0('logLike','-',workUnit.i,'-',workerID,'.csv')),row.names = F)
+								file.path(baseWD,location.output,'detectedParmSpace',paste0('PerVarFiles-',outputType),'logLike',
+									paste0('logLike','-',workUnit.i,'-',workerID,'.csv')),row.names = F,sep = ',')
 				}
 	}
 	if(verbosity>0){
@@ -625,7 +633,48 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 	return(logLike)
 }
 
-
+clusterReadPerVarSubFiles <- function(i,outputType,perVarSubfolder,fileList){
+	if(outputType=='csv'){
+		return(read.csv(file.path(perVarSubfolder,fileList[i])))
+	} else if(outputType=='RDS'){
+		return(readRDS(file.path(perVarSubfolder,fileList[i])))
+	}
+}
+mergePerVarFiles <- function(verbosity=1){
+	if(verbosity>0){
+		cat('Merging per Var files\n')
+	}
+	outputFolder <- file.path(baseWD,location.output,'detectedParmSpace')
+	outputTypeFolders <- basename(list.dirs(outputFolder,recursive = F))
+	for(outputTypeFolder in outputTypeFolders){
+		if(verbosity>0){cat(paste('Entering',outputTypeFolder,'\n'))}
+		outputType <- strsplit(outputTypeFolder,'-')[[1]][2]
+		outputTypeFolder <- file.path(baseWD,location.output,'detectedParmSpace',outputTypeFolder)
+		varNames <- basename(list.dirs(outputTypeFolder,recursive = F))
+		for(varName in varNames){
+			perVarSubfolder <- file.path(outputTypeFolder,varNames)
+			fileList <- list.files(perVarSubfolder)
+			if(verbosity>0){cat(sprintf('Processing %i files of %s...reading...',length(fileList),varName))}
+			filesContents.lst <- parLapply(cl,1:length(fileList),clusterReadPerVarSubFiles,
+																		 outputType=outputType,
+																		 perVarSubfolder=perVarSubfolder,
+																		 fileList=fileList)
+			if(verbosity>0){cat('merging...')}
+			varData <- filesContents.lst[[1]]
+			for(i in 2:length(filesContents.lst)){
+				varData <- rbind(varData,filesContents.lst[[2]])
+			}
+			if(verbosity>0){cat('writing...')}
+			if(outputType=='csv'){
+				write.table(varData,file.path(outputTypeFolder,paste(varName,'.csv')))
+			} else if(outputType=='RDS'){
+				saveRDS(varData,file.path(outputTypeFolder,paste(varName,'.RDS')))
+			}
+			if(verbosity>0){cat('done\n')}
+		}
+		# unlink(perVarSubfolder,recursive = T,force = T)
+	}
+}
 
 
 
