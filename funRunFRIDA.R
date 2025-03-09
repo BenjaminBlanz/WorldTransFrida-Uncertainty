@@ -658,6 +658,7 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 			varData <- rbind(varData,readRDS(file.path(perVarSubfolder,fileList[f.i])))
 		}
 	}
+	varData <- sort_by(varData,varData$id)
 	colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
 	if(verbosity>0){cat('writing...')}
 	if(outputType=='csv'){
@@ -666,6 +667,8 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 	} else if(outputType=='RDS'){
 		retVal <- saveRDS(varData,file.path(outputTypeFolder,past0e(varName,'.RDS')))
 	}
+	if(verbosity>0){cat('removing split files...')}
+	unlink(perVarSubfolder,recursive = T,force = T)
 	if(verbosity>0){cat('done\n')}
 	return(retVal)
 }
@@ -698,6 +701,7 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2){
 				for(i in 2:length(filesContents.lst)){
 					varData <- rbind(varData,filesContents.lst[[i]])
 				}
+				varData <- sort_by(varData,varData$id)
 				colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
 				if(verbosity>0){cat('writing...')}
 				if(outputType=='csv'){
@@ -706,6 +710,8 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2){
 				} else if(outputType=='RDS'){
 					saveRDS(varData,file.path(outputTypeFolder,paste0(varName,'.RDS')))
 				}
+				if(verbosity>0){cat('removing split files...')}
+				unlink(perVarSubfolder,recursive = T,force = T)
 				if(verbosity>0){cat('done\n')}
 			}
 		} else if(parStrat==2){
@@ -718,11 +724,24 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2){
 		} else {
 			stop('unkown parSrat\n')
 		}
-		# unlink(perVarSubfolder,recursive = T,force = T)
 	}
 }
 
-
+readPerVarFile <- function(fileNoExt,outputType){
+	if(outputType=='csv'){
+		return(read.csv(paste0(fileNoExt,'.csv')))
+	} else if(outputType=='RDS'){
+		return(readRDS(paste0(fileNoExt,'.RDS')))
+	}
+}
+writePerVarFile <- function(varData,fileNoExt,outputType){
+	if(outputType=='csv'){
+		write.table(varData,paste0(fileNoExt,'.csv'),
+								row.names = F,sep=',')
+	} else if(outputType=='RDS'){
+		saveRDS(varData,paste0(fileNoExt,'.RDS'))
+	}
+}
 
 
 
