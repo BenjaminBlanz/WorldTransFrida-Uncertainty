@@ -49,8 +49,8 @@ else
 	echo "Resetting your FRIDA to be the latest..."
 	cd ./FRIDAforUncertaintyAnalysisGit
 	git fetch origin main
-	#git reset --hard origin/main
-	
+	git reset --hard origin/main
+
 	cd ..
 
 	cleanup_repo
