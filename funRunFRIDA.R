@@ -718,11 +718,25 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2){
 		} else {
 			stop('unkown parSrat\n')
 		}
-		# unlink(perVarSubfolder,recursive = T,force = T)
+		unlink(perVarSubfolder,recursive = T,force = T)
 	}
 }
 
-
+readPerVarFile <- function(fileNoExt,outputType){
+	if(outputType=='csv'){
+		return(read.csv(paste0(fileNoExt,'.csv')))
+	} else if(outputType=='RDS'){
+		return(readRDS(paste0(fileNoExt,'.RDS')))
+	}
+}
+writePerVarFile <- function(varData,fileNoExt,outputType){
+	if(outputType=='csv'){
+		write.table(varData,paste0(fileNoExt,'.csv'),
+								row.names = F,sep=',')
+	} else if(outputType=='RDS'){
+		saveRDS(varData,paste0(fileNoExt,'.RDS'))
+	}
+}
 
 
 
