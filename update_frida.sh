@@ -33,7 +33,7 @@ function cleanup_repo() {
 	rsync -av --exclude=".*" ./FRIDAforUncertaintyAnalysisGit/ ./FRIDAforUncertaintyAnalysis
 
 	#bring in anything from the template
-	cp -R ./FRIDAforUncertaintyAnalysis_Template/ ./FRIDAforUncertaintyAnalysis/
+	cp -R ./FRIDAforUncertaintyAnalysis_Template/* ./FRIDAforUncertaintyAnalysis/
 
 }
 
