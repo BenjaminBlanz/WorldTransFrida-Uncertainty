@@ -684,6 +684,9 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2){
 		outputTypeFolder <- file.path(baseWD,location.output,'detectedParmSpace',outputTypeFolder)
 		varNames <- basename(list.dirs(outputTypeFolder,recursive = F))
 		if(verbosity>0){cat(sprintf('Found %i variable sub folder(s)\n',length(varNames)))}
+		if(length(varNames)==0){
+			next
+		}
 		if(parStrat==1){
 			for(v.i in 1:length(varNames)){
 				varName <- varNames[v.i]
