@@ -23,7 +23,9 @@ colnames(resSigma) <- rownames(resSigma) <- colnames(calDat)
 # run files ####
 allVarNames <- read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN
 allVarNames <- allVarNames[nchar(allVarNames)>4]
-allVarNames.orig <- unique(c(varsForExport.fridaNames.orig,allVarNames))
+allVarNames.orig <- c(varsForExport.fridaNames.orig,allVarNames)
+allVarNames.orig <- gsub(' \\[(\\d)\\]','\\[\\1\\]',allVarNames.orig)
+allVarNames.orig <- unique(allVarNames.orig)
 allVarNames <- cleanNames(allVarNames.orig)
 
 # read ####
@@ -86,6 +88,7 @@ for(plotWeightType in plotWeightTypes){
 	for(varName.i in 1:length(allVarNames)){
 		varName <- allVarNames[varName.i]
 		varName.orig <- allVarNames.orig[which(allVarNames==varName)]
+		if(length(varName.orig)>1){varName.orig<-varName.orig[1]}
 		cat(sprintf('(%i of %i) Plotting %s...\n  ',
 								varName.i,length(allVarNames),varName.orig))
 		cat('read...')
@@ -93,7 +96,7 @@ for(plotWeightType in plotWeightTypes){
 			cat('missing\n')
 			next
 		}
-		varData <- readPerVarFile(file.path(outputFolder,outputTypeFolders,varName),outputType)
+		varData <- readPerVarFile(file.path(outputFolder,outputTypeFolder,varName),outputType)
 		varData <- sort_by(varData,varData$id)
 		varData <- t(varData[,-1])
 		colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
