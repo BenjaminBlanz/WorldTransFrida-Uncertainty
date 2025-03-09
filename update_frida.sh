@@ -30,12 +30,11 @@ function cleanup_repo() {
 	cd ..
 
 	rm -rf ./FRIDAforUncertaintyAnalysis
-	rsync -av --exclude=".*" ./FRIDAforUncertaintyAnalysisGit ./FRIDAforUncertaintyAnalysis
+	rsync -av --exclude=".*" ./FRIDAforUncertaintyAnalysisGit/ ./FRIDAforUncertaintyAnalysis
 
 	#bring in anything from the template
-	cp -R ./FRIDAforUncertaintyAnalysis_Template/ ./FRIDAforUncertaintyAnalysis
+	cp -R ./FRIDAforUncertaintyAnalysis_Template/ ./FRIDAforUncertaintyAnalysis/
 
-	
 }
 
 if [ ! -d ./FRIDAforUncertaintyAnalysisGit ] ; then
