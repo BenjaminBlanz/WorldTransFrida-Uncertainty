@@ -718,7 +718,7 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2){
 		} else {
 			stop('unkown parSrat\n')
 		}
-		unlink(perVarSubfolder,recursive = T,force = T)
+		unlink(perVarSubfolders,recursive = T,force = T)
 	}
 }
 
