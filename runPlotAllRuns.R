@@ -89,7 +89,7 @@ for(plotWeightType in plotWeightTypes){
 		cat(sprintf('(%i of %i) Plotting %s...',
 								varName.i,length(allVarNames),varName.orig))
 		cat('read...')
-		if(!file.exists(file.path(outputFolder,outputTypeFolders,paste0(varName,'.',outputType)))){
+		if(!file.exists(file.path(outputFolder,outputTypeFolder,paste0(varName,'.',outputType)))){
 			cat('missing\n')
 			next
 		}
