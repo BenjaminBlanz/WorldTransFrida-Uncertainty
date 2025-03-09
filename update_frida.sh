@@ -4,7 +4,7 @@ RED='\033[0;31m'
 NOCOLOR='\033[0m'
 
 function cleanup_repo() {
-	cd ./FRIDAforUncertaintyAnalysis
+	cd ./FRIDAforUncertaintyAnalysisGit
 
 	#remove all the stuff we don't need
 	rm -rf "./Data Processing"
@@ -29,23 +29,26 @@ function cleanup_repo() {
 	git apply $PWD/../FRIDAforUncertaintyAnalysis.patch
 	cd ..
 
+	rm -rf ./FRIDAforUncertaintyAnalysis
+	rsync -av --exclude=".*" ./FRIDAforUncertaintyAnalysisGit ./FRIDAforUncertaintyAnalysis
+
 	#bring in anything from the template
 	cp -R ./FRIDAforUncertaintyAnalysis_Template/ ./FRIDAforUncertaintyAnalysis
 
 	
 }
 
-if [ ! -d ./FRIDAforUncertaintyAnalysis ] ; then
+if [ ! -d ./FRIDAforUncertaintyAnalysisGit ] ; then
 	#clone the FRIDA model so you always have the latest
 	echo "Cloning FRIDA from the main metno/WorldTransFRIDA repo"
-	git clone git@github.com:metno/WorldTransFRIDA.git FRIDAforUncertaintyAnalysis
+	git clone git@github.com:metno/WorldTransFRIDA.git FRIDAforUncertaintyAnalysisGit
 
 	cleanup_repo
 
 else
 	# reset your model to be the main model
 	echo "Resetting your FRIDA to be the latest..."
-	cd ./FRIDAforUncertaintyAnalysis
+	cd ./FRIDAforUncertaintyAnalysisGit
 	git fetch origin main
 	#git reset --hard origin/main
 	
