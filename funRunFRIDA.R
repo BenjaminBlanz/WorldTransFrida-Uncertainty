@@ -665,7 +665,7 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 		retVal <- write.table(varData,file.path(outputTypeFolder,paste0(varName,'.csv')),
 													row.names = F,sep=',')
 	} else if(outputType=='RDS'){
-		retVal <- saveRDS(varData,file.path(outputTypeFolder,past0e(varName,'.RDS')))
+		retVal <- saveRDS(varData,file.path(outputTypeFolder,paste0(varName,'.RDS')))
 	}
 	if(verbosity>0){cat('removing split files...')}
 	unlink(perVarSubfolder,recursive = T,force = T)
