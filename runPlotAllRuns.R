@@ -93,7 +93,7 @@ for(plotWeightType in plotWeightTypes){
 			cat('missing\n')
 			next
 		}
-		varData <- readPerVarFile(file.path(outputFolder,outputTypeFolders,varName),outputType)
+		varData <- readPerVarFile(file.path(outputFolder,outputTypeFolder,varName),outputType)
 		varData <- sort_by(varData,varData$id)
 		varData <- t(varData[,-1])
 		colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
