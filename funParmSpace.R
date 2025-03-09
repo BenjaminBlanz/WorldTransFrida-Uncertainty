@@ -216,11 +216,11 @@ secant <- function(fun, x0, x1, tol=1e-07, niter=1e4, doWarn=T, trace=0,
 			cat(sprintf('secant x0: %10f f0: %10f x1: %10f f1: %10f  x2: %10f\n',
 									x0,f0,x1,f1,x2))
 		}
-		if(hasToBePositive && x2 < 0){
-			return(NA)
-		}
 		if(is.infinite(x2)||is.nan(x2)){
 			return(bound)
+		}
+		if(hasToBePositive && x2 < 0){
+			return(NA)
 		}
 		if(abs(fun(x2,...)) < tol || abs(x2)>abs(bound)){
 			return(x2)
