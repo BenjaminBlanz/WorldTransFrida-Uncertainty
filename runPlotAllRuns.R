@@ -86,7 +86,7 @@ for(plotWeightType in plotWeightTypes){
 	for(varName.i in 1:length(allVarNames)){
 		varName <- allVarNames[varName.i]
 		varName.orig <- allVarNames.orig[which(allVarNames==varName)]
-		cat(sprintf('(%i of %i) Plotting %s...',
+		cat(sprintf('(%i of %i) Plotting %s...\n  ',
 								varName.i,length(allVarNames),varName.orig))
 		cat('read...')
 		if(!file.exists(file.path(outputFolder,outputTypeFolder,paste0(varName,'.',outputType)))){
