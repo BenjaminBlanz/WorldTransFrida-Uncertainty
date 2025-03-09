@@ -633,14 +633,43 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 	return(logLike)
 }
 
-clusterReadPerVarSubFiles <- function(i,outputType,perVarSubfolder,fileList){
+workerReadPerVarFiles <- function(i,outputType,perVarSubfolder,fileList){
 	if(outputType=='csv'){
 		return(read.csv(file.path(perVarSubfolder,fileList[i])))
 	} else if(outputType=='RDS'){
 		return(readRDS(file.path(perVarSubfolder,fileList[i])))
 	}
 }
-mergePerVarFiles <- function(verbosity=1){
+workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verbosity=0){
+	varName <- varNames[v.i]
+	perVarSubfolder <- file.path(outputTypeFolder,varName)
+	fileList <- list.files(perVarSubfolder)
+	if(verbosity>0){cat(sprintf('Processing %i files of %s...',length(fileList),varName))}
+	if(verbosity>0){cat('reading and merging...')}
+	if(outputType=='csv'){
+		varData <- read.csv(file.path(perVarSubfolder,fileList[1]))
+	} else if(outputType=='RDS'){
+		varData <- readRDS(file.path(perVarSubfolder,fileList[1]))
+	}
+	for(f.i in 2:length(fileList)){
+		if(outputType=='csv'){
+			varData <- rbind(varData,read.csv(file.path(perVarSubfolder,fileList[f.i])))
+		} else if(outputType=='RDS'){
+			varData <- rbind(varData,readRDS(file.path(perVarSubfolder,fileList[f.i])))
+		}
+	}
+	colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
+	if(verbosity>0){cat('writing...')}
+	if(outputType=='csv'){
+		retVal <- write.table(varData,file.path(outputTypeFolder,paste(varName,'.csv')),
+													row.names = F,sep=',')
+	} else if(outputType=='RDS'){
+		retVal <- saveRDS(varData,file.path(outputTypeFolder,paste(varName,'.RDS')))
+	}
+	if(verbosity>0){cat('done\n')}
+	return(retVal)
+}
+mergePerVarFiles <- function(verbosity=1,parStrat=2){
 	if(verbosity>0){
 		cat('Merging per Var files\n')
 	}
@@ -651,26 +680,43 @@ mergePerVarFiles <- function(verbosity=1){
 		outputType <- strsplit(outputTypeFolder,'-')[[1]][2]
 		outputTypeFolder <- file.path(baseWD,location.output,'detectedParmSpace',outputTypeFolder)
 		varNames <- basename(list.dirs(outputTypeFolder,recursive = F))
-		for(varName in varNames){
-			perVarSubfolder <- file.path(outputTypeFolder,varName)
-			fileList <- list.files(perVarSubfolder)
-			if(verbosity>0){cat(sprintf('Processing %i files of %s...reading...',length(fileList),varName))}
-			filesContents.lst <- parLapply(cl,1:length(fileList),clusterReadPerVarSubFiles,
-																		 outputType=outputType,
-																		 perVarSubfolder=perVarSubfolder,
-																		 fileList=fileList)
-			if(verbosity>0){cat('merging...')}
-			varData <- filesContents.lst[[1]]
-			for(i in 2:length(filesContents.lst)){
-				varData <- rbind(varData,filesContents.lst[[2]])
+		if(verbosity>0){cat(sprintf('Found %i variable sub folder(s)\n',length(varNames)))}
+		if(parStrat==1){
+			for(v.i in 1:length(varNames)){
+				varName <- varNames[v.i]
+				perVarSubfolder <- file.path(outputTypeFolder,varName)
+				fileList <- list.files(perVarSubfolder)
+				if(verbosity>0){cat(sprintf('(%i of %i) Processing %i files of %s...reading...',
+																		v.i, length(varNames),
+																		length(fileList),varName))}
+				filesContents.lst <- parLapply(cl,1:length(fileList),workerReadPerVarFiles,
+																			 outputType=outputType,
+																			 perVarSubfolder=perVarSubfolder,
+																			 fileList=fileList)
+				if(verbosity>0){cat('merging...')}
+				varData <- filesContents.lst[[1]]
+				for(i in 2:length(filesContents.lst)){
+					varData <- rbind(varData,filesContents.lst[[i]])
+				}
+				colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
+				if(verbosity>0){cat('writing...')}
+				if(outputType=='csv'){
+					write.table(varData,file.path(outputTypeFolder,paste(varName,'.csv')),
+											row.names = F,sep=',')
+				} else if(outputType=='RDS'){
+					saveRDS(varData,file.path(outputTypeFolder,paste(varName,'.RDS')))
+				}
+				if(verbosity>0){cat('done\n')}
 			}
-			if(verbosity>0){cat('writing...')}
-			if(outputType=='csv'){
-				write.table(varData,file.path(outputTypeFolder,paste(varName,'.csv')))
-			} else if(outputType=='RDS'){
-				saveRDS(varData,file.path(outputTypeFolder,paste(varName,'.RDS')))
-			}
+		} else if(parStrat==2){
+			if(verbosity>0){cat('Parallel proccessing all vars...')}
+			parLapply(cl,1:length(varNames),workerMergePerVarFiles,
+								outputType=outputType,
+								outputTypeFolder=outputTypeFolder,
+								varNames=varNames)
 			if(verbosity>0){cat('done\n')}
+		} else {
+			stop('unkown parSrat\n')
 		}
 		# unlink(perVarSubfolder,recursive = T,force = T)
 	}
