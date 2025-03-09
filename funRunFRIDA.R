@@ -658,6 +658,7 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 			varData <- rbind(varData,readRDS(file.path(perVarSubfolder,fileList[f.i])))
 		}
 	}
+	varData <- sort_by(varData,varData$id)
 	colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
 	if(verbosity>0){cat('writing...')}
 	if(outputType=='csv'){
@@ -700,6 +701,7 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2){
 				for(i in 2:length(filesContents.lst)){
 					varData <- rbind(varData,filesContents.lst[[i]])
 				}
+				varData <- sort_by(varData,varData$id)
 				colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
 				if(verbosity>0){cat('writing...')}
 				if(outputType=='csv'){
