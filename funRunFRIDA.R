@@ -525,8 +525,6 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 		}
 		rm(parOutput)
 	}
-	# merge all the individual per Var files into one complete one
-	mergePerVarFiles()
 	
 	if(plotDatWhileRunning&!plotDatPerChunWhileRunning){
 		cat(sprintf('  Saving figure...'))
@@ -552,7 +550,9 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 								chunkSizePerWorker/mean(chunkTimes,na.rm=T),
 								dseconds(round(sum(chunkTimes,na.rm=T))),
 								'                                                                             '))
-	}
+		}
+	# merge all the individual per Var files into one complete one
+	mergePerVarFiles()
 	return(logLike)
 }
 
@@ -652,7 +652,7 @@ mergePerVarFiles <- function(verbosity=1){
 		outputTypeFolder <- file.path(baseWD,location.output,'detectedParmSpace',outputTypeFolder)
 		varNames <- basename(list.dirs(outputTypeFolder,recursive = F))
 		for(varName in varNames){
-			perVarSubfolder <- file.path(outputTypeFolder,varNames)
+			perVarSubfolder <- file.path(outputTypeFolder,varName)
 			fileList <- list.files(perVarSubfolder)
 			if(verbosity>0){cat(sprintf('Processing %i files of %s...reading...',length(fileList),varName))}
 			filesContents.lst <- parLapply(cl,1:length(fileList),clusterReadPerVarSubFiles,
