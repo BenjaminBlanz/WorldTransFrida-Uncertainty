@@ -37,7 +37,7 @@ if(exists('cl')&&is.numeric(result)&&result==2){
 	gobble <- clusterEvalQ(cl,source(file.path(baseWD,'funParmSpace.R')))
 	# copy over the model and simulator
 	gobble <- clusterApply(cl,workers,function(i){
-		Sys.sleep(workerID*0.1) # stagger the file copying to not DOS the server
+		# Sys.sleep(workerID*0.1) # stagger the file copying to not DOS the server
 		file.copy(file.path(baseWD,location.frida),getwd(),recursive=T,overwrite = T)
 		file.copy(file.path(baseWD,location.stella),getwd(),recursive=T,overwrite = T)
 		file.copy(file.path(baseWD,location.frida.info,name.frida_info),getwd(),overwrite = T)
@@ -55,7 +55,7 @@ if(exists('cl')&&is.numeric(result)&&result==2){
 	if(clusterType=='fork'){
 		cl <- makeForkCluster(numWorkers)
 	} else if (clusterType=='psock'){
-		cl <- makePSOCKcluster(numWorkers,setup_strategy='sequential') # setup sequential to not DOS the server
+		cl <- makePSOCKcluster(numWorkers)#,setup_strategy='sequential') # setup sequential to not DOS the server
 		# add ,outfile='' to enable cluster output on the console
 	}
 	cat('exports...')
@@ -68,7 +68,7 @@ if(exists('cl')&&is.numeric(result)&&result==2){
 	workers <- 1:length(cl)
 	gobble <- clusterApply(cl,workers,function(i){
 		workerID <<- i
-		Sys.sleep(workerID*0.1) # stagger the file copying to not DOS the server
+		# Sys.sleep(workerID*0.1) # stagger the file copying to not DOS the server
 		system(paste('rm -r',file.path('workerDirs',paste0(workDirBasename,i))),ignore.stdout = T,ignore.stderr = T)
 		dir.create(file.path('workerDirs',paste0(workDirBasename,i)),showWarnings = F,recursive = T)
 		setwd(file.path('workerDirs',paste0(workDirBasename,i)))
@@ -76,7 +76,7 @@ if(exists('cl')&&is.numeric(result)&&result==2){
 	# clusterEvalQ(cl,getwd())
 	# copy over the model and simulator
 	gobble <- clusterApply(cl,workers,function(i){
-		Sys.sleep(workerID*0.1) # stagger the file copying to not DOS the server
+		# Sys.sleep(workerID*0.1) # stagger the file copying to not DOS the server
 		file.copy(file.path(baseWD,location.frida),getwd(),recursive=T,overwrite = T)
 		file.copy(file.path(baseWD,location.stella),getwd(),recursive=T,overwrite = T)
 		file.copy(file.path(baseWD,location.frida.info,name.frida_info),getwd(),overwrite = T)
