@@ -1,19 +1,1 @@
 ,excludedName
-2,Employment.max firing percentage
-3,Employment.sensitivity of firing to profit discrepancy
-4,Employment.share of employment in agriculture slope
-5,Employment.time to fire from missed profits
-6,Finance.desired asset to liability ratio
-7,Finance.max risk premium increase rate
-8,Government.curvature effect of debt to GDP ratio on government spending
-9,Government.effect end effect of debt to GDP ratio on government spending
-10,Government.effect start effect of debt to GDP ratio on government spending
-11,Government.solvency support adjustment time
-12,Government.time to pay subsidies
-26,Circular Flow.initial firms checking accounts
-27,Circular Flow.initial owner savings
-28,Circular Flow.initial worker savings
-29,Finance.initial bad loans
-30,Finance.initial bank investment
-31,Finance.initial good loans
-32,Finance.Initial safe assets

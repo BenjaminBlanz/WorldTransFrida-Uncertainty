@@ -11,7 +11,7 @@ prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NU
 		cat('reading frida_info...')
 		# read in the parameters in frida that have ranges defined
 		frida_info <- read.csv(file.path(location.frida.info,name.frida_info))
-		columnsThatAreFlags <- c(2,3,4,5,6,7,8,9,10)
+		columnsThatAreFlags <- c(2,3,4,5,6,7,8,9,10,11)
 		# select the parameters to be sampled
 		sampleParms <- frida_info[rowSums(frida_info[,columnsThatAreFlags])>0 &
 																frida_info$No.Sensi==0 &

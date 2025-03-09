@@ -12,7 +12,7 @@ Surface temperature anomaly,Energy Balance Model,Surface Temperature Anomaly,[1]
 sea level anomaly,Sea Level,Total global sea level anomaly,[1],Sea Level.Total global sea level anomaly[1],metre
 mean surface ocean pH (Cold and Warm surface ocean pH are the required FRIDA variables),Ocean,Warm surface ocean pH,[1],Ocean.Warm surface ocean pH[1],dmnl
 ,Ocean,Cold surface ocean pH,[1],Ocean.Cold surface ocean pH[1],dmnl
-perceived climate risk,Climate Risk Perception,perceived climate risk,[1],Climate Risk Perception.perceived climate risk[1],dmnl
+perceived climate risk,Climate Risk Perception,perceived climate change risk,[1],Climate Risk Perception.perceived climate change risk[1],dmnl
 vegetal food product demand per person per day,Food Demand,vegetal product demand per person per day,[1],Food Demand.vegetal product demand per person per day[1],kcal/person/day
 animal food product demand per day,Food Demand,animal product demand per person per day,[1],Food Demand.animal product demand per person per day[1],kcal/person/day
 desired demand from personal norm (kcal/person/day),Animal Products Demand,desired demand from personal norm,[1],Animal Products Demand.desired demand from personal norm[1],kcal/person/day
@@ -46,10 +46,8 @@ energy output from coal (Twh/year),fossil energy coal,Secondary Fossil Energy Ou
 energy output from oil (Twh/year),fossil energy oil,Secondary Fossil Energy Output,[1],fossil energy oil.Secondary Fossil Energy Output[1],TWh/Years
 energy output from gas (Twh/year),fossil energy gas,Secondary Fossil Energy Output,[1],fossil energy gas.Secondary Fossil Energy Output[1],TWh/Years
 energy output from hydro (Twh/year),hydropower energy,Hydropower Energy Output,[1],hydropower energy.Hydropower Energy Output[1],TWh/Years
-energy output from solar and wind (Twh/year),wind and solar energy,Wind and Solar Energy Output,[1],wind and solar energy.Wind and Solar Energy Output[1],TWh/Years
 energy output from nuclear (Twh/year),nuclear energy,Nuclear Energy Output,[1],nuclear energy.Nuclear Energy Output[1],TWh/Years
 energy output from biofuel (Twh/year),bio fuel energy,bio fuel secondary energy output,[1],bio fuel energy.bio fuel secondary energy output[1],TWh/Years
-energy output from other (Twh/year),other energy,Other Energy Output,[1],other energy.Other Energy Output[1],TWh/Years
 energy output from fossil,fossil energy,Secondary Fossil Energy Output,[1],fossil energy.Secondary Fossil Energy Output[1],TWh/Years
 Energy output from rewneables,renewable energy,Renewable Energy Output,[1],renewable energy.Renewable Energy Output[1],TWh/Years
 energy investment to coal extraction (2021-dollars/year),energy investments,Coal Gross Investments in Fossil Fuel Extraction Capital,[1],energy investments.Coal Gross Investments in Fossil Fuel Extraction Capital[1],2021c$/Year
@@ -58,15 +56,22 @@ energy investment to gas extraction (2021-dollars/year),energy investments,Gas G
 energy investment to coal conversion to energy (2021-dollars/year),energy investments,Coal Gross Investments in Fossil Energy Capital,[1],energy investments.Coal Gross Investments in Fossil Energy Capital[1],2021c$/Year
 energy investment to oil conversion to energy (2021-dollars/year),energy investments,Oil Gross Investments in Fossil Energy Capital,[1],energy investments.Oil Gross Investments in Fossil Energy Capital[1],2021c$/Year
 energy investment to gas conversion to energy (2021-dollars/year),energy investments,Gas Gross Investments in Fossil Energy Capital,[1],energy investments.Gas Gross Investments in Fossil Energy Capital[1],2021c$/Year
-energy investment to solar and wind,energy investments,Gross Investments in Solar and Wind Energy Capacity,[1],energy investments.Gross Investments in Solar and Wind Energy Capacity[1],2021c$/Year
 energy investment to hydro,energy investments,Gross Investments in Hydropower Energy capacity,[1],energy investments.Gross Investments in Hydropower Energy capacity[1],2021c$/Year
 energy investment to nuclear,energy investments,Investments in Nuclear Capacity,[1],energy investments.Investments in Nuclear Capacity[1],2021c$/Year
 energy investment to biofuel,energy investments,Gross Investments in Biofuel Capacity,[1],energy investments.Gross Investments in Biofuel Capacity[1],2021c$/Year
-energy investment to other,energy investments,Gross Investments in Other Capacity,[1],energy investments.Gross Investments in Other Capacity[1],2021c$/Year
 Energy investment into fossil,energy investments,Investments in Fossil Energy,[1],energy investments.Investments in Fossil Energy[1],2021c$/Year
 Energy investment into non-fossil,energy investments,Gross Investments in Renewables,[1],energy investments.Gross Investments in Renewables[1],2021c$/Year
 Economy module,,,,,
 global GDP (2021-dollars/year,GDP,Real GDP in 2021c$,[1],GDP.Real GDP in 2021c$[1],2021c$/Year
+,Circular Flow,bottom 40 share of real income,[1],Circular Flow.bottom 40 share of real income[1],%
+,Circular Flow,growth rates of income per capita among the bottom 40 per cent of the total population,[1],Circular Flow.growth rates of income per capita among the bottom 40 per cent of the total population[1],dmnl/Year
+,Circular Flow,Income Inequality,[1],Circular Flow.Income Inequality[1],dmnl
+,Circular Flow,labour share of gdp,[1],Circular Flow.labour share of gdp[1],%
+,Circular Flow,Redistributive impact of fiscal policy,[1],Circular Flow.Redistributive impact of fiscal policy[1],dmnl
+,Finance,Non performing loans net of provisions to capital,[1],Finance.Non performing loans net of provisions to capital[1],b$/yr
+,Finance,Non performing loans to total gross loans,[1],Finance.Non performing loans to total gross loans[1],
+,Finance,Regulatory Tier 1 capital to assets,[1],Finance.Regulatory Tier 1 capital to assets[1],
+,Finance,Return on assets to short term liabilities,[1],Finance.Return on assets to short term liabilities[1],
 inflation rate (%/year),Inflation,Inflation Rate,[1],Inflation.Inflation Rate[1],1/Year
 productivity (all production factors),Employment,Productivity,[1],Employment.Productivity[1],dmnl
 unemployment rate (%),Employment,unemployment rate,[1],Employment.unemployment rate[1],dmnl
@@ -110,7 +115,6 @@ government transfers,GDP,government transfers in 2021c$,[1],GDP.government trans
 government investments,GDP,public investment in 2021c$,[1],GDP.public investment in 2021c$[1],2021c$/year
 private investments.,GDP,private investment in in 2021c$,[1],GDP.private investment in in 2021c$[1],2021c$/year
 Anthropogenic radiative forcing,Forcing,Anthropogenic Effective Radiative Forcing,[1],Forcing.Anthropogenic Effective Radiative Forcing[1],W/(metre^2)
-(same as row # 37),Land Use and Agriculture,crop used for non energy other,[1],Land Use and Agriculture.crop used for non energy other[1],PCal/Year
 for SLR analysis,Demographics,total deaths,[1],Demographics.total deaths[1],Mp/Year
 for SLR analysis,Coastal Assets,Coastal Assets,"[1,insufficent]","Coastal Assets.Coastal Assets[1,insufficent]",bc$
 for SLR analysis,Coastal Assets,Coastal Assets,"[1,well protected]","Coastal Assets.Coastal Assets[1,well protected]",bc$
