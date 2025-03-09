@@ -666,6 +666,8 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 	} else if(outputType=='RDS'){
 		retVal <- saveRDS(varData,file.path(outputTypeFolder,past0e(varName,'.RDS')))
 	}
+	if(verbosity>0){cat('removing split files...')}
+	unlink(perVarSubfolder,recursive = T,force = T)
 	if(verbosity>0){cat('done\n')}
 	return(retVal)
 }
@@ -706,6 +708,8 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2){
 				} else if(outputType=='RDS'){
 					saveRDS(varData,file.path(outputTypeFolder,paste0(varName,'.RDS')))
 				}
+				if(verbosity>0){cat('removing split files...')}
+				unlink(perVarSubfolder,recursive = T,force = T)
 				if(verbosity>0){cat('done\n')}
 			}
 		} else if(parStrat==2){
@@ -718,7 +722,6 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2){
 		} else {
 			stop('unkown parSrat\n')
 		}
-		unlink(perVarSubfolders,recursive = T,force = T)
 	}
 }
 
