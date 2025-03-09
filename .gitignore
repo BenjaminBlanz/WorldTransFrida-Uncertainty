@@ -23,3 +23,5 @@ frida_info old.csv
 samples*ForBilly.csv
 *.log
 UA_*
+*.DS_Store
+./FRIDAforUncertaintyAnalysis
