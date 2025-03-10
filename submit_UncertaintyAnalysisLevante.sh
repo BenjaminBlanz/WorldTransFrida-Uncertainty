@@ -8,9 +8,11 @@
 # here in the script. Any change to e.g. config.R or runMLEandParmSpace.R will
 # always be used in the future, as these are the templates for this script!
 
-expID=UA_nW120_nS10000
-numWorkers=120
-numSamples=1.0e4
+numWorkers=250
+numSamples=10000
+chunkSizePerWorker=200
+expID=UA_nW${numWorkers}_nS${numSamples}_cS${chunkSizePerWorker}
+
 
 ### SLURM settings
 # How long will it take approximately? Job will be killed after this time!
@@ -26,15 +28,15 @@ partition=compute
 email=Testmailforscript@UncertaintyAnalysis.abc
 
 # Copy ranges from pre-existing work?
-copyParmRangesAndScales="true"
+copyParmRangesAndScales="false"
 # This should be the name of workOutput from which the files will be copied!
-copyID=UA_nW250_nS10000_maxC1024_no2
+copyID=''
 
 
 
 #### OPTIONAL: USING DIFFERENT INPUT FILES?
 # FRIDA folder
-FRIDA='FRIDAforSLRpaper'
+FRIDA='FRIDAforUncertaintyAnalyis'
 
 # These need to be located in the FRIDA-configs/ folder!
 policyFile='policy_EMB.csv'
@@ -56,10 +58,11 @@ extraExportFile='frida_extra_variables_to_export_list.csv'
 
 # Modify the config file according to the settings above
 config=${expID}_config.R
-cp TEMPLATE_config.R $config
+cp config.R $config
 
-sed -i "s/numWorkers <- 120/numWorkers <- ${numWorkers}/" $config
+sed -i "s/numWorkers <- parallel::detectCores()/numWorkers <- ${numWorkers}/" $config
 sed -i "s/numSample <- 1e4/numSample <- ${numSamples}/" $config
+sed -i "s/chunkSizePerWorker <- 100/chunkSizePerWorker <- ${chunkSizePerWorker}/" $config
 sed -i "s/file.path('workOutput',name.output)/file.path('workOutput','${expID}')/" $config
 sed -i "s/config.R/${config}/g" $config
 sed -i "s/FRIDAforUncertaintyAnalysis/${FRIDA}/" $config
@@ -75,19 +78,19 @@ sed -i "s/frida_extra_variables_to_export_list.csv/${extraExportFile}/" $config
 
 # modify runInitialise
 runInit=${expID}_runInitialiseData.R
-cp TEMPLATE_runInitialiseData.R $runInit
+cp runInitialiseData.R $runInit
 
 sed -i "/^continue <- readline/d" $runInit
 
 # modify clusterHelp to use correct config
 clusterHelp=${expID}_clusterHelp.R
-cp TEMPLATE_clusterHelp.R $clusterHelp
+cp clusterHelp.R $clusterHelp
 
 sed -i "s/config.R/${config}/" $clusterHelp
 
 # modify runMLE
 runMLE=${expID}_runMLE.R
-cp TEMPLATE_runMLEandParmSpace.R $runMLE
+cp runMLEandParmSpace.R $runMLE
 
 sed -i "s/config.R/${config}/g" $runMLE
 sed -i "s/runInitialiseData.R/${runInit}/g" $runMLE
