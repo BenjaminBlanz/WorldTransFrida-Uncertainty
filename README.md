@@ -32,7 +32,7 @@ To run the stella simulator is needed which needs to be obtained seperately, and
 ### Running via a Slurm job on Levante
 Using the uncertainty analysis on a Levante compute node generally functions the same way as in an interactive session described below. However, here everything is setup in a "runscript", which is then submitted to the cluster via SLURM.
 
-IMPORTANT: The shell script that creates and submits the runscript is the only thing that needs to be changed. BUT: it uses the templates of the ```config.R```, ```runInitialiseData.R``` ```clusterHelp.R``` and ```runMLEandParmSpace.R``` (indicated by a "TEMPLATE_" prefix). Therefore, if one of these scripts is changed and you want this change also to be included in all future runs, the respective TEMPLATE has to be changed too (if there are no other unwanted changes to the original file, it is sufficient to e.g. do ```cp config.R TEMPLATE_config.R``` )
+IMPORTANT: The shell script that creates and submits the runscript is typically the only thing that needs to be changed. However, there might be things that cannot be inserted there. Then these have to be changed directly in the respective R scripts. It might be useful to then adapt the shell script to also allow these changes there too.
 
 The shell script that creates the scripts is currently called **```submit_UncertaintyAnalysisLevante.sh```**. The things that should be changed in there are the following:
 - Set an experiment ID. This will be the name used for the scripts and the workOutput
