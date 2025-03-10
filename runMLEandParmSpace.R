@@ -298,6 +298,8 @@ while(newMaxFound){
 		}
 	}
 	parBounds <- frida_info[idcOfSampleParmsInFridaInfo,c('Min','Max')]
+	rownames(parBounds) <- sampleParms$Variable
+	colnames(parBounds) <- c('Min','Max')
 	lpdensEps <- -negLLike(parVect) - log(likeCutoffRatio)
 	notDeterminedBorders <- array(TRUE,dim=c(length(parVect),2))
 	colnames(notDeterminedBorders) <- c('Min','Max')
@@ -316,8 +318,6 @@ while(newMaxFound){
 													 rep(.Machine$double.xmax,length(parVect))),
 												 dim=c(length(parVect),2))
 		}
-		rownames(parBounds) <- sampleParms$Variable
-		colnames(parBounds) <- c('Min','Max')
 		## for testing
 		# test.i <- 1
 		# #min bound
@@ -374,7 +374,7 @@ while(newMaxFound){
 			}
 			write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
 			saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
-			cat('done\n')	
+			cat('done\n')
 		}
 	}
 	## make borders symmetric ####
