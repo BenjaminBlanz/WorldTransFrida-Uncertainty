@@ -13,12 +13,30 @@ sea level anomaly,Sea Level,Total global sea level anomaly,[1],Sea Level.Total g
 mean surface ocean pH (Cold and Warm surface ocean pH are the required FRIDA variables),Ocean,Warm surface ocean pH,[1],Ocean.Warm surface ocean pH[1],dmnl
 ,Ocean,Cold surface ocean pH,[1],Ocean.Cold surface ocean pH[1],dmnl
 perceived climate risk,Climate Risk Perception,perceived climate change risk,[1],Climate Risk Perception.perceived climate change risk[1],dmnl
+Perceived Temperature Anomaly,Climate Risk Perception,Perceived Temperature Anomaly,[1],Climate Risk Perception.Perceived Temperature Anomaly[1],deg C
+Reference Temperature Anomaly,Climate Risk Perception,Reference Temperature Anomaly,[1],Climate Risk Perception.Reference Temperature Anomaly[1],deg C
+Perceived Climate Extremes Exposure,Climate Risk Perception,Perceived Climate Extremes Exposure,[1],Climate Risk Perception.Perceived Climate Extremes Exposure[1],Indices/person/year
+Reference Climate Extremes Exposure,Climate Risk Perception,Reference Climate Extremes Exposure,[1],Climate Risk Perception.Reference Climate Extremes Exposure[1],Indices/person/year
+Perceived SLR Flooding Exposure,Climate Risk Perception,Perceived SLR Flooding Exposure,[1],Climate Risk Perception.Perceived SLR Flooding Exposure[1],Mp/year
+Reference SLR Flooding Exposure,Climate Risk Perception,Reference SLR Flooding Exposure,[1],Climate Risk Perception.Reference SLR Flooding Exposure[1],Mp/year
+animal products production,Animal Products,animal products production,[1],Animal Products.animal products production[1],PCal/Year
 vegetal food product demand per person per day,Food Demand,vegetal product demand per person per day,[1],Food Demand.vegetal product demand per person per day[1],kcal/person/day
 animal food product demand per day,Food Demand,animal product demand per person per day,[1],Food Demand.animal product demand per person per day[1],kcal/person/day
-desired demand from personal norm (kcal/person/day),Animal Products Demand,desired demand from personal norm,[1],Animal Products Demand.desired demand from personal norm[1],kcal/person/day
-desired demand from descriptive norm (kcal/person/day),Animal Products Demand,desired demand from descriptive norm,[1],Animal Products Demand.desired demand from descriptive norm[1],kcal/person/day
-desired demand from accessibility (kcal/person/day),Animal Products Demand,desired demand from accessibility ,[1],Animal Products Demand.desired demand from accessibility [1],kcal/person/day
-average daily demand (kcal/person/day),Animal Products Demand,Average Daily Demand Per Capita,[1],Animal Products Demand.Average Daily Demand Per Capita[1],kcal/person/day
+animal products demand (pcal/year),Food Demand,animal products demand,[1],Food Demand.animal products demand[1],Pcal/Year
+animal products desired demand from personal norm (kcal/person/day),Animal Products Demand,desired demand from personal norm,[1],Animal Products Demand.desired demand from personal norm[1],kcal/person/day
+animal products perceived consumption risk,Animal Products Demand,perceived consumption risk,[1],Animal Products Demand.perceived consumption risk[1],dmnl
+animal products perceived social value,Animal Products Demand,Perceived Social Value,[1],Animal Products Demand.Perceived Social Value[1],dmnl
+animal products desired demand from descriptive norm (kcal/person/day),Animal Products Demand,desired demand from descriptive norm,[1],Animal Products Demand.desired demand from descriptive norm[1],kcal/person/day
+animal products desired demand from accessibility (kcal/person/day),Animal Products Demand,Desired Demand from Accessibility ,[1],Animal Products Demand.Desired Demand from Accessibility [1],kcal/person/day
+animal products weight of accessibility,Animal Products Demand,weight of accessibility,[1],Animal Products Demand.weight of accessibility[1],dmnl
+animal products average daily demand (kcal/person/day),Animal Products Demand,average daily demand per capita,[1],Animal Products Demand.average daily demand per capita[1],kcal/person/day
+direct food demand per person per day,Food Demand,direct food demand per person per day,[1],Food Demand.direct food demand per person per day[1],kcal/person/day
+total food desired demand from personal norm (kcal/person/day),Total Food Demand,desired demand from personal norm,[1],Total Food Demand.desired demand from personal norm[1],kcal/person/day
+total food perceived consumption risk,Total Food Demand,perceived consumption risk,[1],Total Food Demand.perceived consumption risk[1],dmnl
+total food perceived social value,Total Food Demand,Perceived Social Value,[1],Total Food Demand.Perceived Social Value[1],dmnl
+total food desired demand from descriptive norm (kcal/person/day),Total Food Demand,desired demand from descriptive norm,[1],Total Food Demand.desired demand from descriptive norm[1],kcal/person/day
+total food desired demand from accessibility (kcal/person/day),Total Food Demand,Desired Demand from Accessibility ,[1],Total Food Demand.Desired Demand from Accessibility [1],kcal/person/day
+total food weight of accessibility,Total Food Demand,weight of accessibility,[1],Total Food Demand.weight of accessibility[1],dmnl
 Area of crop land,Land Use,Cropland,[1],Land Use.Cropland[1],Mha
 are of mature forest,Land Use,Mature Forest,[1],Land Use.Mature Forest[1],Mha
 area of young forest,Land Use,Young Forest,[1],Land Use.Young Forest[1],Mha
