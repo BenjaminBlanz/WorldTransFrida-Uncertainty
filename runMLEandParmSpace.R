@@ -385,8 +385,8 @@ while(newMaxFound){
 																	 sampleParms$Max-sampleParms$Value)
 			if(symmetricRangesBoundByAuthors){
 				sampleParms$distance <- pmin(sampleParms$distance,
-																		 pmin(sampleParms$Value-parBounds[rownames(sampleParms),'Min'],
-																		 		 parBounds[rownames(sampleParms),'Max']-sampleParms$Value)
+																		 pmin(sampleParms$Value-parBounds$Min,
+																		 		 parBounds$Max-sampleParms$Value)
 																		 )
 			}
 		} else {
