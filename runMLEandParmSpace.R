@@ -311,7 +311,8 @@ while(newMaxFound){
 		# boundary value in log likelihood
 		idcToMod <- 1:length(parVect)
 		if(ignoreParBounds){
-			parBounds <- array(c(rep(-.Machine$double.xmax,length(parVect)),rep(.Machine$double.xmax,length(parVect))),
+			parBounds <- array(c(rep(-.Machine$double.xmax,length(parVect)),
+													 rep(.Machine$double.xmax,length(parVect))),
 												 dim=c(length(parVect),2))
 		}
 		rownames(parBounds) <- sampleParms$Variable
@@ -379,6 +380,12 @@ while(newMaxFound){
 		if(symmetricRanges=='Max'){
 			sampleParms$distance <- pmax(sampleParms$Value-sampleParms$Min,
 																	 sampleParms$Max-sampleParms$Value)
+			if(symmetricRangesBoundByAuthors){
+				sampleParms$distance <- pmin(sampleParms$distance,
+																		 pmin(sampleParms$Value-parBounds[rownames(sampleParms),'Min'],
+																		 		 parBounds[rownames(sampleParms),'Max']-sampleParms$Value)
+																		 )
+			}
 		} else {
 			sampleParms$distance <- pmin(sampleParms$Value-sampleParms$Min,
 																	 sampleParms$Max-sampleParms$Value)

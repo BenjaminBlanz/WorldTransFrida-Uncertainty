@@ -102,8 +102,9 @@ forceParBounds <- FALSE
 # can specify 'Min' or 'Max' to decide if the larger or smaller of the ranges of 
 # the parameter should be used to decide the new range. Any other value deactivates this
 # feature.
-symmetricRanges <- 'Min'
+symmetricRanges <- 'Max'
 allowAssymetricToAvoidZeroRanges <- FALSE
+symmetricRangesBoundByAuthors <- TRUE
 # should we skip the parameter maximum likelihood estimation and use the default
 # frida pars as MLE
 if(!exists('skipParMLE')){
@@ -174,7 +175,7 @@ location.output.base <- location.output
 # if both of these are unavailable use notTMPFS or some other arbitrary location on disk
 #tmpfsBaseDir <- paste0('/run/user/',system('id -u',intern = T))
 tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T))
-#tmpfsBaseDir <- 'notTMPFS'
+# tmpfsBaseDir <- 'notTMPFS'
 tmpfsDir <- file.path(tmpfsBaseDir,'rwork',name.output)
 
 
