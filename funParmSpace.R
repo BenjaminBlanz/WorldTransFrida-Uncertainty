@@ -295,10 +295,10 @@ funFindParScale <- function(par.i,niter=100,useOrdersOfMagGuesses=F){
 								par.i,substr(names(jParVect)[par.i],1,50),NA))
 		return(NA)
 	} else {
-		retScale <- ordersOfMagDeltRes[which.min(ordersOfMagNegLLResp)]
+		retScale <- ordersOfMagDeltRes[which.min(abs(ordersOfMagNegLLResp))]
 		cat(sprintf('\r%4i %-50s ... %+e                     \n',
 								par.i,substr(names(jParVect)[par.i],1,50),retScale))
-		return(ordersOfMagDeltRes[which.min(ordersOfMagNegLLResp)])
+		return(ordersOfMagDeltRes[which.min(abs(ordersOfMagNegLLResp))])
 	}
 }
 
