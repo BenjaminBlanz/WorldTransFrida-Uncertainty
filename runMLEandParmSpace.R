@@ -186,7 +186,8 @@ while(newMaxFound){
 			cat(paste(excludeParmNames,collapse='\n'))
 			cat('\n')
 			sampleParms <- prepareSampleParms(excludeNames = c(excludeParmNames,excludedParmsForBeingIntegers))
-			if(file.exists(file.path(location.frida.info,name.frida_parameter_exclusion_list))&&file.size(file.path(location.frida.info,name.frida_parameter_exclusion_list))>0){
+			if(file.exists(file.path(location.frida.info,name.frida_parameter_exclusion_list))&&
+				 file.size(file.path(location.frida.info,name.frida_parameter_exclusion_list))>0){
 				oldExclusionList <- read.csv(file.path(location.frida.info,name.frida_parameter_exclusion_list))
 				exclusionList <- data.frame(excludedName=unique(c(oldExclusionList$excludedName,excludeParmNames)))
 			} else {
@@ -355,8 +356,10 @@ while(newMaxFound){
 													 workerStagger = T)) 
 			names(border.coefs[,direction]) <- names(parVect)
 			# fallback values in case borders could not be determined:
-			notDeterminedBorders[,direction] <- (is.infinite(border.coefs[,direction])+(parVect==border.coefs[,direction]))>=1
-			border.coefs[,direction][notDeterminedBorders[,direction]] <- sampleParms[[direction]][notDeterminedBorders[,direction]]
+			notDeterminedBorders[,direction] <- 
+				(is.infinite(border.coefs[,direction])+(parVect==border.coefs[,direction]))>=1
+			border.coefs[,direction][notDeterminedBorders[,direction]] <- 
+				sampleParms[[direction]][notDeterminedBorders[,direction]]
 			cat(sprintf('done. %i failures\n',sum(notDeterminedBorders[,direction])))
 			write.csv(notDeterminedBorders,file.path(location.output,'notDeterminedBorders.csv'))
 			# check that the min val actually has the desired like
@@ -394,8 +397,10 @@ while(newMaxFound){
 		sampleParms$MaxAfterDet <- sampleParms$Max
 		sampleParms$MinAfterDet <- sampleParms$Min
 		if(allowAssymetricToAvoidZeroRanges){
-			sampleParms$Max[sampleParms$distance!=0] <- sampleParms$Value[sampleParms$distance!=0]+sampleParms$distance[sampleParms$distance!=0]
-			sampleParms$Min[sampleParms$distance!=0] <- sampleParms$Value[sampleParms$distance!=0]-sampleParms$distance[sampleParms$distance!=0]
+			sampleParms$Max[sampleParms$distance!=0] <- 
+				sampleParms$Value[sampleParms$distance!=0]+sampleParms$distance[sampleParms$distance!=0]
+			sampleParms$Min[sampleParms$distance!=0] <- 
+				sampleParms$Value[sampleParms$distance!=0]-sampleParms$distance[sampleParms$distance!=0]
 		} else {
 			sampleParms$Max <- sampleParms$Value+sampleParms$distance
 			sampleParms$Min <- sampleParms$Value-sampleParms$distance
