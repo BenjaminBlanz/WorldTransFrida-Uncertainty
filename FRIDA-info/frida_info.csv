@@ -228,7 +228,7 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Finance.minimum reference stranded energy capital[1]",0,0,0,0,0,1,0,0,0,0,1.5,0.5,2.5
 "Finance.normal bank profit payment fraction[1]",1,0,0,0,0,0,0,0,0,0,1,0,2
 "Finance.normal exploration rate[1]",1,0,0,0,0,0,0,0,0,0,0.03,0.01,0.05
-"Finance.normal failure rate[1]",0,0,0,0,0,1,0,0,0,0,0.0150033473442084,0.015,0.05
+"Finance.normal failure rate[1]",0,0,0,0,0,1,0,0,0,0,0.0150033473442084,0.01,0.05
 "Finance.normal growth rate of GDP growth rate[1]",1,0,0,0,0,0,0,0,0,0,1,0.5,1.5
 "Finance.normal safe loans failure rate[1]",1,0,0,0,0,0,0,0,0,0,0.03,0,0.1
 "Finance.reference formation time[1]",1,0,0,0,0,1,0,0,0,0,80,60,100
@@ -589,6 +589,7 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Government Regulations.minimum percentage of taxes spent by government",0,0,0,0,0,0,0,0,1,0,0.9,0.5,1
 "Government Regulations.Moratorium on fossil energy year",0,0,0,0,0,0,0,0,1,0,2150,2070,2150
 "Government Regulations.profit tax rate policy",0,0,0,0,0,0,0,0,1,0,0.332,0,1
+"Government Regulations.SLR adaptation start year",0,0,0,0,0,0,0,0,1,0,2025,2025,2100
 "Government Regulations.switch animal product efficiency policy",0,0,0,0,0,0,0,0,1,0,0,0,1
 "Government Regulations.switch irrigation fraction policy",0,0,0,0,0,0,0,0,1,0,0,0,1
 "Government Regulations.switch non agricultural water use policy",0,0,0,0,0,0,0,0,1,0,0,0,1
