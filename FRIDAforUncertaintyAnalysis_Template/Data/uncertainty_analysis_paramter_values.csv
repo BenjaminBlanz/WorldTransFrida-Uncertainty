@@ -1,1169 +1,429 @@
-"Animal Products Demand.average daily demand per capita in 1980",376.138991775897
-"Animal Products Demand.initial share of demand from consumption domain",0.172464884414208
-"Animal Products Demand.sensitivity of demand to consumption",0.518316536690958
-"Animal Products Demand.sensitivity of demand to relative scarcity",0.806017264409131
-"Animal Products Demand.sensitivity of personal norm to climate risk",-0.489803886181443
-"Animal Products Demand.sensitivity of personal norm to consumption risk",-0.429621143624203
-"Animal Products Demand.sensitivity of personal norm to social value",1.18695856177348
-"Animal Products Demand.time horizon for long term perception",54.4979682842435
-"Animal Products Demand.time horizon for short term perception",3.55738013918865
-"Animal Products Demand.time to adjust consumption pattern",3.9263611057428
-"Animal Products Demand.time to adjust value perception",2.96004421804137
-"Animal Products Demand.time to observe consequences",25.0080858552951
-"Animal Products Demand.time to perceive average consumption",2.9416089689167
-"Animal Products Demand.time to perceive change in accessibility",1
-"Climate Risk Perception.additional time horizon of reference climate extremes exposure",50.3938555678285
-"Climate Risk Perception.additional time horizon of reference temperature anomaly",10.027183988045
-"Climate Risk Perception.sensitivity to climate extremes exposure",0.982003746222356
-"Climate Risk Perception.sensitivity to climate information",0.984649428508052
-"Climate Risk Perception.time to perceive climate extremes exposure",3.06714243170849
-"Climate Risk Perception.time to perceive temperature anomaly",2.74357000025433
-"Climate Risk Perception.time to report climate information",8.45054017051046
-"Behavioral Choices.switch animal products fraction policy",0
-"Behavioral Choices.switch aquatic animal products fraction policy",0
-"Behavioral Choices.switch energy demand policy",0
-"Behavioral Choices.switch food demand policy",0
-"Climate.switch behavioral impact",1
-"Climate.switch demography damage",1
-"Climate.switch energy damage",1
-"Climate.switch finance damage",1
-"Climate.switch government damage",1
-"Climate.switch labor damage",1
-"Climate.switch land carbon impact",1
-"Climate.switch landuse damage",1
-"Climate.switch sea level rise damage",1
-"Emissions.baseline Food and Land use CH4 emissions",46.8304840395625
-"Emissions.baseline Food and Land Use N2O emissions",3650.08419815139
-"Emissions.baseline GDP per person",7.50891781169888
-"Emissions.baseline HFC134a eq per person",0.00154865341098791
-"Emissions.baseline N2O per person",0.000133691928151863
-"Emissions.baseline non fossil CH4 per person",0.00977488928173013
-"Emissions.desulphurisation rate of energy related emissions[Gas]",-0.0362290966896637
-"Emissions.desulphurisation rate of energy related emissions[Oil]",-0.0187665377872956
-"Emissions.desulphurisation rate of energy related emissions[Coal]",-0.0381309286234209
-"Emissions.effective CDD logistic speed",3.36491949212931
-"Emissions.Initial Fossil Energy CH4 Intensity[Gas]",28.9349731860506
-"Emissions.Initial Fossil Energy CH4 Intensity[Oil]",19.0743900723425
-"Emissions.Initial Fossil Energy CH4 Intensity[Coal]",34.9932706069747
-"Emissions.Initial Fossil Energy N2O Intensity[Gas]",226.778786246058
-"Emissions.Initial Fossil Energy N2O Intensity[Oil]",277.828736410406
-"Emissions.Initial Fossil Energy N2O Intensity[Coal]",499.595527820781
-"Emissions.Initial Fossil Energy Sulfur Intensity[Gas]",40.19101259422
-"Emissions.Initial Fossil Energy Sulfur Intensity[Oil]",12.7947455576527
-"Emissions.Initial Fossil Energy Sulfur Intensity[Coal]",48.692450051843
-"Emissions.MtCH4 emission per PCal animal products 1980",0.114713914107229
-"Emissions.MtN2O emission per PCal animal products 1980",0.0025356048812357
-"Emissions.rate of change in energy related CH4 emissions[Gas]",-0.0719828982587394
-"Emissions.rate of change in energy related CH4 emissions[Oil]",-0.0446128576953571
-"Emissions.rate of change in energy related CH4 emissions[Coal]",-0.000841838858379762
-"Emissions.rate of change in energy related N2O emissions[Gas]",-0.0180409223132277
-"Emissions.rate of change in energy related N2O emissions[Oil]",-0.00902089160155854
-"Emissions.rate of change in energy related N2O emissions[Coal]",-0.0234692244011569
-"Emissions.rate of decline in MtCH4 emission per PCal animal products",0.0142433921773313
-"Emissions.rate of decline in MtN2O emission per PCal animal products",0.00234165831543859
-"Emissions.rate of decline in tN2O emission per tN fertilizer",0.00573155692671689
-"Emissions.sensitivity of HFC134a eq per person to relative CDD",8.06007324455125
-"Emissions.sensitivity of non fossil CH4 per person to GDP per capita",0
-"Emissions.sensitivity of Other N2O per person to GDP per capita",-0.272890376937794
-"Emissions.tN2O emission per tN fertilizer 1980",0.0262730510536762
-"Forest.CO2 tree net primary production parameter",0.001
-"Forest.forest aboveground biomass 1980",546.990743207387
-"Forest.STA maximum aboveground biomass per area parameter",0.253488316289495
-"Forest.STA squared maximum aboveground biomass per area parameter",-0.0487098107344002
-"Forest.STA squared tree net primary production parameter",-0.023015026037364
-"Forest.STA tree net primary production parameter",0.125348729226489
-"Forest.tree net primary production in 1980",0.00832071686493894
-"Forest.Young mature forest biomass ratio",0.558925781060304
-"Grass.CO2 grass net primary production parameter",0.000963653776025308
-"Grass.grass net primary production in 1980",0.005
-"Grass.GtC per PCal of grazing multiplier",0.31577880511698
-"Grass.STA grass net primary production parameter",0.126281691693998
-"Grass.STA squared grass net primary production",-0.0346543950643458
-"cropland soil carbon.cropland soil carbon 1980",106.352146988511
-"degraded land soil carbon.degraded land productivity reduction factor",0.05
-"forest soil carbon.forest soil carbon initialisation",799.996522487009
-"forest soil carbon.Young forest soil carbon reduction factor",0.862530531087245
-"grassland soil carbon.grassland soil carbon 1980",330
-"soil carbon decay.cropland litter input share slow soil carbon",0.0162331648914426
-"soil carbon decay.cropland slow soil carbon historic share",0.37474255141796
-"soil carbon decay.e0",290.028744464422
-"soil carbon decay.grassland litter input share slow soil carbon",0.0182493478295644
-"soil carbon decay.grassland slow soil carbon historic share",0.4
-"soil carbon decay.mature forest litter input share slow soil carbon",0.0213652503506472
-"soil carbon decay.mature forest slow soil carbon historic share",0.399614251669709
-"soil carbon decay.natural decay rate fast soil carbon",0.025
-"soil carbon decay.natural decay rate litter carbon",0.600513407157666
-"soil carbon decay.natural decay rate slow soil carbon",0.000808823659549357
-"soil carbon decay.temp response",60
-"soil carbon decay.young forest litter input share slow soil carbon",0.0117298173139784
-"soil carbon decay.young forest slow soil carbon historic share",0.3
-"Terrestrial Carbon Balance.Global peatland carbon uptake rate",0.29995460500312
-"Ocean.Initial Cold surface ocean carbon reservoir[1]",127.468766831
-"Ocean.Initial Cold surface ocean carbon reservoir[2]",356.90516641
-"Ocean.Initial Cold surface ocean carbon reservoir[3]",450.345429704
-"Ocean.Initial Cold surface ocean carbon reservoir[4]",232.911868638
-"Ocean.Initial Cold surface ocean carbon reservoir[5]",207.570874867
-"Ocean.Initial Cold surface ocean carbon reservoir[6]",482.32102325
-"Ocean.Initial Cold surface ocean carbon reservoir[7]",389.43106499
-"Ocean.Initial Cold surface ocean carbon reservoir[8]",373.752545789
-"Ocean.Initial Cold surface ocean carbon reservoir[9]",80.3926514772
-"Ocean.Initial Cold surface ocean carbon reservoir[10]",165.876168363
-"Ocean.Initial Cold surface ocean carbon reservoir[11]",609.048668102
-"Ocean.Initial Cold surface ocean carbon reservoir[12]",609.022436657
-"Ocean.Initial Cold surface ocean carbon reservoir[13]",228.107418819
-"Ocean.Initial Cold surface ocean carbon reservoir[14]",299.229053131
-"Ocean.Initial Cold surface ocean carbon reservoir[15]",593.057059407
-"Ocean.Initial Cold surface ocean carbon reservoir[16]",400.452003216
-"Ocean.Initial Cold surface ocean carbon reservoir[17]",128.946879813
-"Ocean.Initial Cold surface ocean carbon reservoir[18]",574.940745381
-"Ocean.Initial Cold surface ocean carbon reservoir[19]",604.939485756
-"Ocean.Initial Cold surface ocean carbon reservoir[20]",406.795216291
-"Ocean.Initial Cold surface ocean carbon reservoir[21]",448.493079517
-"Ocean.Initial Cold surface ocean carbon reservoir[22]",631.778051646
-"Ocean.Initial Cold surface ocean carbon reservoir[23]",629.950712195
-"Ocean.Initial Cold surface ocean carbon reservoir[24]",469.127438869
-"Ocean.Initial Cold surface ocean carbon reservoir[25]",374.358359864
-"Ocean.Initial Cold surface ocean carbon reservoir[26]",288.189169019
-"Ocean.Initial Cold surface ocean carbon reservoir[27]",210.147023987
-"Ocean.Initial Cold surface ocean carbon reservoir[28]",536.817282649
-"Ocean.Initial Cold surface ocean carbon reservoir[29]",339.274535908
-"Ocean.Initial Cold surface ocean carbon reservoir[30]",278.884388056
-"Ocean.Initial Cold surface ocean carbon reservoir[31]",401.07950598
-"Ocean.Initial Cold surface ocean carbon reservoir[32]",432.779275143
-"Ocean.Initial Cold surface ocean carbon reservoir[33]",553.485306151
-"Ocean.Initial Cold surface ocean carbon reservoir[34]",279.370801952
-"Ocean.Initial Cold surface ocean carbon reservoir[35]",507.072590187
-"Ocean.Initial Cold surface ocean carbon reservoir[36]",577.447452127
-"Ocean.Initial Cold surface ocean carbon reservoir[37]",426.879893903
-"Ocean.Initial Cold surface ocean carbon reservoir[38]",521.828598785
-"Ocean.Initial Cold surface ocean carbon reservoir[39]",185.572213683
-"Ocean.Initial Cold surface ocean carbon reservoir[40]",221.932163694
-"Ocean.Initial Cold surface ocean carbon reservoir[41]",353.478814178
-"Ocean.Initial Cold surface ocean carbon reservoir[42]",568.943163672
-"Ocean.Initial Cold surface ocean carbon reservoir[43]",282.413263539
-"Ocean.Initial Cold surface ocean carbon reservoir[44]",411.637167755
-"Ocean.Initial Cold surface ocean carbon reservoir[45]",116.363451322
-"Ocean.Initial Cold surface ocean carbon reservoir[46]",377.428701561
-"Ocean.Initial Cold surface ocean carbon reservoir[47]",474.419237268
-"Ocean.Initial Cold surface ocean carbon reservoir[48]",120.742571631
-"Ocean.Initial Cold surface ocean carbon reservoir[49]",242.608963015
-"Ocean.Initial Cold surface ocean carbon reservoir[50]",317.584577377
-"Ocean.Initial Cold surface ocean carbon reservoir[51]",397.271498081
-"Ocean.Initial Cold surface ocean carbon reservoir[52]",492.002371655
-"Ocean.Initial Cold surface ocean carbon reservoir[53]",614.536516359
-"Ocean.Initial Cold surface ocean carbon reservoir[54]",505.480568565
-"Ocean.Initial Cold surface ocean carbon reservoir[55]",151.364595712
-"Ocean.Initial Cold surface ocean carbon reservoir[56]",278.006139842
-"Ocean.Initial Cold surface ocean carbon reservoir[57]",467.175191801
-"Ocean.Initial Cold surface ocean carbon reservoir[58]",193.419309792
-"Ocean.Initial Cold surface ocean carbon reservoir[59]",417.397357193
-"Ocean.Initial Cold surface ocean carbon reservoir[60]",225.220213009
-"Ocean.Initial Cold surface ocean carbon reservoir[61]",594.047075235
-"Ocean.Initial Cold surface ocean carbon reservoir[62]",380.624130755
-"Ocean.Initial Cold surface ocean carbon reservoir[63]",608.757049632
-"Ocean.Initial Cold surface ocean carbon reservoir[64]",255.371971478
-"Ocean.Initial Cold surface ocean carbon reservoir[65]",624.813823487
-"Ocean.Initial Cold surface ocean carbon reservoir[66]",619.444336986
-"Ocean.Initial Cold surface ocean carbon reservoir[67]",627.117643124
-"Ocean.Initial Cold surface ocean carbon reservoir[68]",541.036734453
-"Ocean.Initial Cold surface ocean carbon reservoir[69]",283.994008325
-"Ocean.Initial Cold surface ocean carbon reservoir[70]",396.412695688
-"Ocean.Initial Cold surface ocean carbon reservoir[71]",270.73587057
-"Ocean.Initial Cold surface ocean carbon reservoir[72]",120.194038801
-"Ocean.Initial Cold surface ocean carbon reservoir[73]",625.361290256
-"Ocean.Initial Cold surface ocean carbon reservoir[74]",529.810307949
-"Ocean.Initial Cold surface ocean carbon reservoir[75]",534.240874269
-"Ocean.Initial Cold surface ocean carbon reservoir[76]",403.25344925
-"Ocean.Initial Cold surface ocean carbon reservoir[77]",169.353111156
-"Ocean.Initial Cold surface ocean carbon reservoir[78]",130.026865989
-"Ocean.Initial Cold surface ocean carbon reservoir[79]",247.102688949
-"Ocean.Initial Cold surface ocean carbon reservoir[80]",251.921681295
-"Ocean.Initial Cold surface ocean carbon reservoir[81]",604.474429744
-"Ocean.Initial Cold surface ocean carbon reservoir[82]",579.74635693
-"Ocean.Initial Cold surface ocean carbon reservoir[83]",176.215484162
-"Ocean.Initial Cold surface ocean carbon reservoir[84]",277.734812079
-"Ocean.Initial Cold surface ocean carbon reservoir[85]",432.020402412
-"Ocean.Initial Cold surface ocean carbon reservoir[86]",399.116094593
-"Ocean.Initial Cold surface ocean carbon reservoir[87]",502.571408789
-"Ocean.Initial Cold surface ocean carbon reservoir[88]",271.897770473
-"Ocean.Initial Cold surface ocean carbon reservoir[89]",273.235631276
-"Ocean.Initial Cold surface ocean carbon reservoir[90]",287.068868494
-"Ocean.Initial Cold surface ocean carbon reservoir[91]",435.383758409
-"Ocean.Initial Cold surface ocean carbon reservoir[92]",107.965033027
-"Ocean.Initial Cold surface ocean carbon reservoir[93]",218.841315952
-"Ocean.Initial Cold surface ocean carbon reservoir[94]",272.218004189
-"Ocean.Initial Cold surface ocean carbon reservoir[95]",544.241054755
-"Ocean.Initial Cold surface ocean carbon reservoir[96]",516.269983671
-"Ocean.Initial Cold surface ocean carbon reservoir[97]",435.973575923
-"Ocean.Initial Cold surface ocean carbon reservoir[98]",330.098678811
-"Ocean.Initial Cold surface ocean carbon reservoir[99]",370.254294026
-"Ocean.Initial Cold surface ocean carbon reservoir[100]",551.742075028
-"Ocean.Initial Cold surface ocean pH[1]",8.40055240517
-"Ocean.Initial Cold surface ocean pH[2]",8.35213651858
-"Ocean.Initial Cold surface ocean pH[3]",8.25148978464
-"Ocean.Initial Cold surface ocean pH[4]",8.16960399016
-"Ocean.Initial Cold surface ocean pH[5]",8.33835808982
-"Ocean.Initial Cold surface ocean pH[6]",8.29171703143
-"Ocean.Initial Cold surface ocean pH[7]",8.3425326046
-"Ocean.Initial Cold surface ocean pH[8]",8.35513168722
-"Ocean.Initial Cold surface ocean pH[9]",8.38378605016
-"Ocean.Initial Cold surface ocean pH[10]",8.24297307973
-"Ocean.Initial Cold surface ocean pH[11]",8.39801172588
-"Ocean.Initial Cold surface ocean pH[12]",8.36413917174
-"Ocean.Initial Cold surface ocean pH[13]",8.21510499065
-"Ocean.Initial Cold surface ocean pH[14]",8.2342784816
-"Ocean.Initial Cold surface ocean pH[15]",8.30967648149
-"Ocean.Initial Cold surface ocean pH[16]",8.41987158767
-"Ocean.Initial Cold surface ocean pH[17]",8.49701842763
-"Ocean.Initial Cold surface ocean pH[18]",8.26898742452
-"Ocean.Initial Cold surface ocean pH[19]",8.33952616177
-"Ocean.Initial Cold surface ocean pH[20]",8.38808753533
-"Ocean.Initial Cold surface ocean pH[21]",8.20326272679
-"Ocean.Initial Cold surface ocean pH[22]",8.33707912762
-"Ocean.Initial Cold surface ocean pH[23]",8.2387210729
-"Ocean.Initial Cold surface ocean pH[24]",8.3097546986
-"Ocean.Initial Cold surface ocean pH[25]",8.35316734463
-"Ocean.Initial Cold surface ocean pH[26]",8.40256001767
-"Ocean.Initial Cold surface ocean pH[27]",8.23033397142
-"Ocean.Initial Cold surface ocean pH[28]",8.26001650053
-"Ocean.Initial Cold surface ocean pH[29]",8.28202946416
-"Ocean.Initial Cold surface ocean pH[30]",8.24987923931
-"Ocean.Initial Cold surface ocean pH[31]",8.23650119725
-"Ocean.Initial Cold surface ocean pH[32]",8.27505772993
-"Ocean.Initial Cold surface ocean pH[33]",8.49177796741
-"Ocean.Initial Cold surface ocean pH[34]",8.28261157511
-"Ocean.Initial Cold surface ocean pH[35]",8.36364074505
-"Ocean.Initial Cold surface ocean pH[36]",8.24863694103
-"Ocean.Initial Cold surface ocean pH[37]",8.23283327921
-"Ocean.Initial Cold surface ocean pH[38]",8.22303643905
-"Ocean.Initial Cold surface ocean pH[39]",8.24377180743
-"Ocean.Initial Cold surface ocean pH[40]",8.1795670166
-"Ocean.Initial Cold surface ocean pH[41]",8.29251112296
-"Ocean.Initial Cold surface ocean pH[42]",8.29915683248
-"Ocean.Initial Cold surface ocean pH[43]",8.24161986324
-"Ocean.Initial Cold surface ocean pH[44]",8.38118084441
-"Ocean.Initial Cold surface ocean pH[45]",8.37901349558
-"Ocean.Initial Cold surface ocean pH[46]",8.26293636925
-"Ocean.Initial Cold surface ocean pH[47]",8.52350598566
-"Ocean.Initial Cold surface ocean pH[48]",8.25693377792
-"Ocean.Initial Cold surface ocean pH[49]",8.22450217305
-"Ocean.Initial Cold surface ocean pH[50]",8.32589693299
-"Ocean.Initial Cold surface ocean pH[51]",8.42308438755
-"Ocean.Initial Cold surface ocean pH[52]",8.47829466882
-"Ocean.Initial Cold surface ocean pH[53]",8.28192501114
-"Ocean.Initial Cold surface ocean pH[54]",8.40119446379
-"Ocean.Initial Cold surface ocean pH[55]",8.34322995424
-"Ocean.Initial Cold surface ocean pH[56]",8.45177932286
-"Ocean.Initial Cold surface ocean pH[57]",8.2786961488
-"Ocean.Initial Cold surface ocean pH[58]",8.45961254032
-"Ocean.Initial Cold surface ocean pH[59]",8.22433608244
-"Ocean.Initial Cold surface ocean pH[60]",8.18801522169
-"Ocean.Initial Cold surface ocean pH[61]",8.25226617004
-"Ocean.Initial Cold surface ocean pH[62]",8.30715276422
-"Ocean.Initial Cold surface ocean pH[63]",8.45283614135
-"Ocean.Initial Cold surface ocean pH[64]",8.51630956551
-"Ocean.Initial Cold surface ocean pH[65]",8.3413082362
-"Ocean.Initial Cold surface ocean pH[66]",8.47699856135
-"Ocean.Initial Cold surface ocean pH[67]",8.35822544855
-"Ocean.Initial Cold surface ocean pH[68]",8.33311463147
-"Ocean.Initial Cold surface ocean pH[69]",8.22859279354
-"Ocean.Initial Cold surface ocean pH[70]",8.36546052549
-"Ocean.Initial Cold surface ocean pH[71]",8.30114181243
-"Ocean.Initial Cold surface ocean pH[72]",8.38312060726
-"Ocean.Initial Cold surface ocean pH[73]",8.40676167082
-"Ocean.Initial Cold surface ocean pH[74]",8.4094653976
-"Ocean.Initial Cold surface ocean pH[75]",8.2971899321
-"Ocean.Initial Cold surface ocean pH[76]",8.41073837058
-"Ocean.Initial Cold surface ocean pH[77]",8.34005192734
-"Ocean.Initial Cold surface ocean pH[78]",8.50098705579
-"Ocean.Initial Cold surface ocean pH[79]",8.39628383103
-"Ocean.Initial Cold surface ocean pH[80]",8.46625094276
-"Ocean.Initial Cold surface ocean pH[81]",8.29622496882
-"Ocean.Initial Cold surface ocean pH[82]",8.34849732878
-"Ocean.Initial Cold surface ocean pH[83]",8.41453155485
-"Ocean.Initial Cold surface ocean pH[84]",8.34664823757
-"Ocean.Initial Cold surface ocean pH[85]",8.37643993387
-"Ocean.Initial Cold surface ocean pH[86]",8.21839591049
-"Ocean.Initial Cold surface ocean pH[87]",8.32602476266
-"Ocean.Initial Cold surface ocean pH[88]",8.25991337575
-"Ocean.Initial Cold surface ocean pH[89]",8.23371339375
-"Ocean.Initial Cold surface ocean pH[90]",8.20733815312
-"Ocean.Initial Cold surface ocean pH[91]",8.28758927734
-"Ocean.Initial Cold surface ocean pH[92]",8.33083136614
-"Ocean.Initial Cold surface ocean pH[93]",8.29489323224
-"Ocean.Initial Cold surface ocean pH[94]",8.27473982387
-"Ocean.Initial Cold surface ocean pH[95]",8.27970544773
-"Ocean.Initial Cold surface ocean pH[96]",8.40849344646
-"Ocean.Initial Cold surface ocean pH[97]",8.29394431129
-"Ocean.Initial Cold surface ocean pH[98]",8.23795261909
-"Ocean.Initial Cold surface ocean pH[99]",8.22947101579
-"Ocean.Initial Cold surface ocean pH[100]",8.3224716368
-"Ocean.Initial Deep ocean ocean carbon reservoir[1]",28982.9195645
-"Ocean.Initial Deep ocean ocean carbon reservoir[2]",28411.2440737
-"Ocean.Initial Deep ocean ocean carbon reservoir[3]",26572.0047142
-"Ocean.Initial Deep ocean ocean carbon reservoir[4]",25711.1854893
-"Ocean.Initial Deep ocean ocean carbon reservoir[5]",28645.5466538
-"Ocean.Initial Deep ocean ocean carbon reservoir[6]",26933.2435578
-"Ocean.Initial Deep ocean ocean carbon reservoir[7]",25893.3278544
-"Ocean.Initial Deep ocean ocean carbon reservoir[8]",28934.9077518
-"Ocean.Initial Deep ocean ocean carbon reservoir[9]",30546.0739616
-"Ocean.Initial Deep ocean ocean carbon reservoir[10]",25000.6582805
-"Ocean.Initial Deep ocean ocean carbon reservoir[11]",28822.2283501
-"Ocean.Initial Deep ocean ocean carbon reservoir[12]",28161.5403201
-"Ocean.Initial Deep ocean ocean carbon reservoir[13]",23328.3000406
-"Ocean.Initial Deep ocean ocean carbon reservoir[14]",26990.6644344
-"Ocean.Initial Deep ocean ocean carbon reservoir[15]",30463.5426239
-"Ocean.Initial Deep ocean ocean carbon reservoir[16]",30101.9502869
-"Ocean.Initial Deep ocean ocean carbon reservoir[17]",30673.5251691
-"Ocean.Initial Deep ocean ocean carbon reservoir[18]",28946.1141651
-"Ocean.Initial Deep ocean ocean carbon reservoir[19]",25326.9455648
-"Ocean.Initial Deep ocean ocean carbon reservoir[20]",30107.8791747
-"Ocean.Initial Deep ocean ocean carbon reservoir[21]",26934.9652934
-"Ocean.Initial Deep ocean ocean carbon reservoir[22]",24829.3156767
-"Ocean.Initial Deep ocean ocean carbon reservoir[23]",24535.6944974
-"Ocean.Initial Deep ocean ocean carbon reservoir[24]",26677.4951551
-"Ocean.Initial Deep ocean ocean carbon reservoir[25]",27547.9726766
-"Ocean.Initial Deep ocean ocean carbon reservoir[26]",33338.0988173
-"Ocean.Initial Deep ocean ocean carbon reservoir[27]",27102.5929108
-"Ocean.Initial Deep ocean ocean carbon reservoir[28]",23274.8351416
-"Ocean.Initial Deep ocean ocean carbon reservoir[29]",25401.6545451
-"Ocean.Initial Deep ocean ocean carbon reservoir[30]",28348.9989895
-"Ocean.Initial Deep ocean ocean carbon reservoir[31]",30115.8804382
-"Ocean.Initial Deep ocean ocean carbon reservoir[32]",28791.0110039
-"Ocean.Initial Deep ocean ocean carbon reservoir[33]",26864.547766
-"Ocean.Initial Deep ocean ocean carbon reservoir[34]",26087.1394746
-"Ocean.Initial Deep ocean ocean carbon reservoir[35]",24720.2224136
-"Ocean.Initial Deep ocean ocean carbon reservoir[36]",27411.2692997
-"Ocean.Initial Deep ocean ocean carbon reservoir[37]",27278.2910028
-"Ocean.Initial Deep ocean ocean carbon reservoir[38]",26822.8159845
-"Ocean.Initial Deep ocean ocean carbon reservoir[39]",28238.6284274
-"Ocean.Initial Deep ocean ocean carbon reservoir[40]",26630.5050305
-"Ocean.Initial Deep ocean ocean carbon reservoir[41]",29325.4627288
-"Ocean.Initial Deep ocean ocean carbon reservoir[42]",28634.6871453
-"Ocean.Initial Deep ocean ocean carbon reservoir[43]",28185.0399655
-"Ocean.Initial Deep ocean ocean carbon reservoir[44]",24835.3588706
-"Ocean.Initial Deep ocean ocean carbon reservoir[45]",27086.5482902
-"Ocean.Initial Deep ocean ocean carbon reservoir[46]",24820.69604
-"Ocean.Initial Deep ocean ocean carbon reservoir[47]",32642.8348821
-"Ocean.Initial Deep ocean ocean carbon reservoir[48]",24759.3323949
-"Ocean.Initial Deep ocean ocean carbon reservoir[49]",27369.8575672
-"Ocean.Initial Deep ocean ocean carbon reservoir[50]",29322.2114883
-"Ocean.Initial Deep ocean ocean carbon reservoir[51]",31451.6150845
-"Ocean.Initial Deep ocean ocean carbon reservoir[52]",32729.7577462
-"Ocean.Initial Deep ocean ocean carbon reservoir[53]",29519.5986475
-"Ocean.Initial Deep ocean ocean carbon reservoir[54]",26217.0341301
-"Ocean.Initial Deep ocean ocean carbon reservoir[55]",27080.9881537
-"Ocean.Initial Deep ocean ocean carbon reservoir[56]",27459.5015491
-"Ocean.Initial Deep ocean ocean carbon reservoir[57]",27368.4536315
-"Ocean.Initial Deep ocean ocean carbon reservoir[58]",28157.7428926
-"Ocean.Initial Deep ocean ocean carbon reservoir[59]",26202.9904602
-"Ocean.Initial Deep ocean ocean carbon reservoir[60]",26661.6034389
-"Ocean.Initial Deep ocean ocean carbon reservoir[61]",25935.8591966
-"Ocean.Initial Deep ocean ocean carbon reservoir[62]",26651.7259584
-"Ocean.Initial Deep ocean ocean carbon reservoir[63]",30488.8841257
-"Ocean.Initial Deep ocean ocean carbon reservoir[64]",33165.1163724
-"Ocean.Initial Deep ocean ocean carbon reservoir[65]",28197.7037935
-"Ocean.Initial Deep ocean ocean carbon reservoir[66]",29041.7924554
-"Ocean.Initial Deep ocean ocean carbon reservoir[67]",26091.5215639
-"Ocean.Initial Deep ocean ocean carbon reservoir[68]",30369.6836456
-"Ocean.Initial Deep ocean ocean carbon reservoir[69]",27081.3305053
-"Ocean.Initial Deep ocean ocean carbon reservoir[70]",25631.5355229
-"Ocean.Initial Deep ocean ocean carbon reservoir[71]",30577.2577931
-"Ocean.Initial Deep ocean ocean carbon reservoir[72]",31061.2147624
-"Ocean.Initial Deep ocean ocean carbon reservoir[73]",26529.7087613
-"Ocean.Initial Deep ocean ocean carbon reservoir[74]",30847.6276862
-"Ocean.Initial Deep ocean ocean carbon reservoir[75]",29258.8386494
-"Ocean.Initial Deep ocean ocean carbon reservoir[76]",26032.5243227
-"Ocean.Initial Deep ocean ocean carbon reservoir[77]",27394.9998491
-"Ocean.Initial Deep ocean ocean carbon reservoir[78]",31599.8236159
-"Ocean.Initial Deep ocean ocean carbon reservoir[79]",32715.6700843
-"Ocean.Initial Deep ocean ocean carbon reservoir[80]",31056.602756
-"Ocean.Initial Deep ocean ocean carbon reservoir[81]",27227.8731909
-"Ocean.Initial Deep ocean ocean carbon reservoir[82]",25223.6566018
-"Ocean.Initial Deep ocean ocean carbon reservoir[83]",24482.273968
-"Ocean.Initial Deep ocean ocean carbon reservoir[84]",29714.1281093
-"Ocean.Initial Deep ocean ocean carbon reservoir[85]",26092.3465467
-"Ocean.Initial Deep ocean ocean carbon reservoir[86]",30115.4554609
-"Ocean.Initial Deep ocean ocean carbon reservoir[87]",26044.1252887
-"Ocean.Initial Deep ocean ocean carbon reservoir[88]",30563.5795572
-"Ocean.Initial Deep ocean ocean carbon reservoir[89]",24083.1934827
-"Ocean.Initial Deep ocean ocean carbon reservoir[90]",24329.856326
-"Ocean.Initial Deep ocean ocean carbon reservoir[91]",24662.4514109
-"Ocean.Initial Deep ocean ocean carbon reservoir[92]",31403.8643158
-"Ocean.Initial Deep ocean ocean carbon reservoir[93]",29555.1640364
-"Ocean.Initial Deep ocean ocean carbon reservoir[94]",28367.540548
-"Ocean.Initial Deep ocean ocean carbon reservoir[95]",26172.8666374
-"Ocean.Initial Deep ocean ocean carbon reservoir[96]",30038.3408186
-"Ocean.Initial Deep ocean ocean carbon reservoir[97]",24663.0813269
-"Ocean.Initial Deep ocean ocean carbon reservoir[98]",27017.9462818
-"Ocean.Initial Deep ocean ocean carbon reservoir[99]",26800.1482531
-"Ocean.Initial Deep ocean ocean carbon reservoir[100]",27350.1326841
-"Ocean.Initial Intermediate depth ocean carbon reservoir[1]",7341.09802494
-"Ocean.Initial Intermediate depth ocean carbon reservoir[2]",4219.83024839
-"Ocean.Initial Intermediate depth ocean carbon reservoir[3]",6762.31278215
-"Ocean.Initial Intermediate depth ocean carbon reservoir[4]",7847.72103351
-"Ocean.Initial Intermediate depth ocean carbon reservoir[5]",8333.34684005
-"Ocean.Initial Intermediate depth ocean carbon reservoir[6]",9008.49913698
-"Ocean.Initial Intermediate depth ocean carbon reservoir[7]",9201.23140947
-"Ocean.Initial Intermediate depth ocean carbon reservoir[8]",6811.74568108
-"Ocean.Initial Intermediate depth ocean carbon reservoir[9]",4172.44623523
-"Ocean.Initial Intermediate depth ocean carbon reservoir[10]",9328.0288275
-"Ocean.Initial Intermediate depth ocean carbon reservoir[11]",6078.30705951
-"Ocean.Initial Intermediate depth ocean carbon reservoir[12]",6945.42252941
-"Ocean.Initial Intermediate depth ocean carbon reservoir[13]",8730.88666734
-"Ocean.Initial Intermediate depth ocean carbon reservoir[14]",4513.72304653
-"Ocean.Initial Intermediate depth ocean carbon reservoir[15]",4334.83892838
-"Ocean.Initial Intermediate depth ocean carbon reservoir[16]",7574.57782446
-"Ocean.Initial Intermediate depth ocean carbon reservoir[17]",5247.71709088
-"Ocean.Initial Intermediate depth ocean carbon reservoir[18]",3446.90829282
-"Ocean.Initial Intermediate depth ocean carbon reservoir[19]",7035.61778212
-"Ocean.Initial Intermediate depth ocean carbon reservoir[20]",4050.13969186
-"Ocean.Initial Intermediate depth ocean carbon reservoir[21]",4967.14175054
-"Ocean.Initial Intermediate depth ocean carbon reservoir[22]",9310.32697846
-"Ocean.Initial Intermediate depth ocean carbon reservoir[23]",8310.85058914
-"Ocean.Initial Intermediate depth ocean carbon reservoir[24]",9549.47983091
-"Ocean.Initial Intermediate depth ocean carbon reservoir[25]",5162.76578987
-"Ocean.Initial Intermediate depth ocean carbon reservoir[26]",3180.09481919
-"Ocean.Initial Intermediate depth ocean carbon reservoir[27]",6670.25730215
-"Ocean.Initial Intermediate depth ocean carbon reservoir[28]",9309.96831607
-"Ocean.Initial Intermediate depth ocean carbon reservoir[29]",9362.67875808
-"Ocean.Initial Intermediate depth ocean carbon reservoir[30]",6672.44817927
-"Ocean.Initial Intermediate depth ocean carbon reservoir[31]",5181.18100811
-"Ocean.Initial Intermediate depth ocean carbon reservoir[32]",5870.17359149
-"Ocean.Initial Intermediate depth ocean carbon reservoir[33]",7843.43917626
-"Ocean.Initial Intermediate depth ocean carbon reservoir[34]",7469.36507707
-"Ocean.Initial Intermediate depth ocean carbon reservoir[35]",9481.73811176
-"Ocean.Initial Intermediate depth ocean carbon reservoir[36]",4837.34603473
-"Ocean.Initial Intermediate depth ocean carbon reservoir[37]",4756.57523114
-"Ocean.Initial Intermediate depth ocean carbon reservoir[38]",5779.00787221
-"Ocean.Initial Intermediate depth ocean carbon reservoir[39]",4269.74668993
-"Ocean.Initial Intermediate depth ocean carbon reservoir[40]",5912.3046909
-"Ocean.Initial Intermediate depth ocean carbon reservoir[41]",5169.54600309
-"Ocean.Initial Intermediate depth ocean carbon reservoir[42]",5530.79378483
-"Ocean.Initial Intermediate depth ocean carbon reservoir[43]",5884.93687537
-"Ocean.Initial Intermediate depth ocean carbon reservoir[44]",9131.64401444
-"Ocean.Initial Intermediate depth ocean carbon reservoir[45]",7422.81278272
-"Ocean.Initial Intermediate depth ocean carbon reservoir[46]",9158.03110754
-"Ocean.Initial Intermediate depth ocean carbon reservoir[47]",4903.24610805
-"Ocean.Initial Intermediate depth ocean carbon reservoir[48]",7267.20040538
-"Ocean.Initial Intermediate depth ocean carbon reservoir[49]",7339.57405462
-"Ocean.Initial Intermediate depth ocean carbon reservoir[50]",7015.18614366
-"Ocean.Initial Intermediate depth ocean carbon reservoir[51]",4924.70361209
-"Ocean.Initial Intermediate depth ocean carbon reservoir[52]",3230.13358853
-"Ocean.Initial Intermediate depth ocean carbon reservoir[53]",6064.28016368
-"Ocean.Initial Intermediate depth ocean carbon reservoir[54]",8627.28740733
-"Ocean.Initial Intermediate depth ocean carbon reservoir[55]",7550.41204049
-"Ocean.Initial Intermediate depth ocean carbon reservoir[56]",9522.15285833
-"Ocean.Initial Intermediate depth ocean carbon reservoir[57]",4496.70959182
-"Ocean.Initial Intermediate depth ocean carbon reservoir[58]",9097.81741112
-"Ocean.Initial Intermediate depth ocean carbon reservoir[59]",7566.9151579
-"Ocean.Initial Intermediate depth ocean carbon reservoir[60]",7396.77691023
-"Ocean.Initial Intermediate depth ocean carbon reservoir[61]",5573.8827773
-"Ocean.Initial Intermediate depth ocean carbon reservoir[62]",5030.04400978
-"Ocean.Initial Intermediate depth ocean carbon reservoir[63]",4290.49580844
-"Ocean.Initial Intermediate depth ocean carbon reservoir[64]",3952.53876328
-"Ocean.Initial Intermediate depth ocean carbon reservoir[65]",6263.5790126
-"Ocean.Initial Intermediate depth ocean carbon reservoir[66]",6984.57814854
-"Ocean.Initial Intermediate depth ocean carbon reservoir[67]",7542.83863303
-"Ocean.Initial Intermediate depth ocean carbon reservoir[68]",6327.9375994
-"Ocean.Initial Intermediate depth ocean carbon reservoir[69]",7579.32081578
-"Ocean.Initial Intermediate depth ocean carbon reservoir[70]",8434.60756136
-"Ocean.Initial Intermediate depth ocean carbon reservoir[71]",3642.66243114
-"Ocean.Initial Intermediate depth ocean carbon reservoir[72]",5618.51349159
-"Ocean.Initial Intermediate depth ocean carbon reservoir[73]",9275.94014125
-"Ocean.Initial Intermediate depth ocean carbon reservoir[74]",3159.16230624
-"Ocean.Initial Intermediate depth ocean carbon reservoir[75]",2994.76566413
-"Ocean.Initial Intermediate depth ocean carbon reservoir[76]",8386.32237569
-"Ocean.Initial Intermediate depth ocean carbon reservoir[77]",5818.78697596
-"Ocean.Initial Intermediate depth ocean carbon reservoir[78]",4925.29498308
-"Ocean.Initial Intermediate depth ocean carbon reservoir[79]",4139.90716027
-"Ocean.Initial Intermediate depth ocean carbon reservoir[80]",3657.96738653
-"Ocean.Initial Intermediate depth ocean carbon reservoir[81]",7719.34751596
-"Ocean.Initial Intermediate depth ocean carbon reservoir[82]",9580.44667008
-"Ocean.Initial Intermediate depth ocean carbon reservoir[83]",10062.7991835
-"Ocean.Initial Intermediate depth ocean carbon reservoir[84]",7839.30083725
-"Ocean.Initial Intermediate depth ocean carbon reservoir[85]",7963.87104735
-"Ocean.Initial Intermediate depth ocean carbon reservoir[86]",3810.52046274
-"Ocean.Initial Intermediate depth ocean carbon reservoir[87]",7352.72689963
-"Ocean.Initial Intermediate depth ocean carbon reservoir[88]",3866.37059637
-"Ocean.Initial Intermediate depth ocean carbon reservoir[89]",7771.67439152
-"Ocean.Initial Intermediate depth ocean carbon reservoir[90]",9075.68347679
-"Ocean.Initial Intermediate depth ocean carbon reservoir[91]",8919.62588856
-"Ocean.Initial Intermediate depth ocean carbon reservoir[92]",3204.40389823
-"Ocean.Initial Intermediate depth ocean carbon reservoir[93]",4813.41066845
-"Ocean.Initial Intermediate depth ocean carbon reservoir[94]",5526.47455617
-"Ocean.Initial Intermediate depth ocean carbon reservoir[95]",8674.74122089
-"Ocean.Initial Intermediate depth ocean carbon reservoir[96]",6693.44174397
-"Ocean.Initial Intermediate depth ocean carbon reservoir[97]",8919.60202912
-"Ocean.Initial Intermediate depth ocean carbon reservoir[98]",7114.56325549
-"Ocean.Initial Intermediate depth ocean carbon reservoir[99]",6577.57141146
-"Ocean.Initial Intermediate depth ocean carbon reservoir[100]",4898.58984706
-"Ocean.Initial Warm surface ocean carbon reservoir[1]",1777.80781295
-"Ocean.Initial Warm surface ocean carbon reservoir[2]",3142.95637198
-"Ocean.Initial Warm surface ocean carbon reservoir[3]",2244.80147647
-"Ocean.Initial Warm surface ocean carbon reservoir[4]",1117.90791834
-"Ocean.Initial Warm surface ocean carbon reservoir[5]",1377.38149347
-"Ocean.Initial Warm surface ocean carbon reservoir[6]",749.699131335
-"Ocean.Initial Warm surface ocean carbon reservoir[7]",1378.45922388
-"Ocean.Initial Warm surface ocean carbon reservoir[8]",946.732272738
-"Ocean.Initial Warm surface ocean carbon reservoir[9]",3386.04015654
-"Ocean.Initial Warm surface ocean carbon reservoir[10]",3527.59808531
-"Ocean.Initial Warm surface ocean carbon reservoir[11]",1136.48417035
-"Ocean.Initial Warm surface ocean carbon reservoir[12]",2116.35953525
-"Ocean.Initial Warm surface ocean carbon reservoir[13]",3609.77038713
-"Ocean.Initial Warm surface ocean carbon reservoir[14]",3493.88576702
-"Ocean.Initial Warm surface ocean carbon reservoir[15]",1204.34360998
-"Ocean.Initial Warm surface ocean carbon reservoir[16]",778.527712042
-"Ocean.Initial Warm surface ocean carbon reservoir[17]",2353.71101392
-"Ocean.Initial Warm surface ocean carbon reservoir[18]",3381.41872216
-"Ocean.Initial Warm surface ocean carbon reservoir[19]",2887.24853196
-"Ocean.Initial Warm surface ocean carbon reservoir[20]",2651.25621157
-"Ocean.Initial Warm surface ocean carbon reservoir[21]",2981.48704092
-"Ocean.Initial Warm surface ocean carbon reservoir[22]",2364.94586282
-"Ocean.Initial Warm surface ocean carbon reservoir[23]",2703.56872133
-"Ocean.Initial Warm surface ocean carbon reservoir[24]",1012.30851596
-"Ocean.Initial Warm surface ocean carbon reservoir[25]",3582.85307295
-"Ocean.Initial Warm surface ocean carbon reservoir[26]",1063.80314443
-"Ocean.Initial Warm surface ocean carbon reservoir[27]",1770.2114936
-"Ocean.Initial Warm surface ocean carbon reservoir[28]",2303.16881219
-"Ocean.Initial Warm surface ocean carbon reservoir[29]",1706.14402311
-"Ocean.Initial Warm surface ocean carbon reservoir[30]",1854.50917506
-"Ocean.Initial Warm surface ocean carbon reservoir[31]",1015.31929977
-"Ocean.Initial Warm surface ocean carbon reservoir[32]",1047.83750173
-"Ocean.Initial Warm surface ocean carbon reservoir[33]",1144.24031719
-"Ocean.Initial Warm surface ocean carbon reservoir[34]",2642.65027329
-"Ocean.Initial Warm surface ocean carbon reservoir[35]",2615.32932401
-"Ocean.Initial Warm surface ocean carbon reservoir[36]",3598.19503805
-"Ocean.Initial Warm surface ocean carbon reservoir[37]",3014.26373125
-"Ocean.Initial Warm surface ocean carbon reservoir[38]",3216.49518705
-"Ocean.Initial Warm surface ocean carbon reservoir[39]",3220.62341334
-"Ocean.Initial Warm surface ocean carbon reservoir[40]",2320.5488477
-"Ocean.Initial Warm surface ocean carbon reservoir[41]",1572.8036707
-"Ocean.Initial Warm surface ocean carbon reservoir[42]",1465.60826857
-"Ocean.Initial Warm surface ocean carbon reservoir[43]",2235.06004842
-"Ocean.Initial Warm surface ocean carbon reservoir[44]",2811.23146293
-"Ocean.Initial Warm surface ocean carbon reservoir[45]",2294.00347094
-"Ocean.Initial Warm surface ocean carbon reservoir[46]",2036.78638407
-"Ocean.Initial Warm surface ocean carbon reservoir[47]",855.03541197
-"Ocean.Initial Warm surface ocean carbon reservoir[48]",3512.12460773
-"Ocean.Initial Warm surface ocean carbon reservoir[49]",885.445797245
-"Ocean.Initial Warm surface ocean carbon reservoir[50]",1751.40028333
-"Ocean.Initial Warm surface ocean carbon reservoir[51]",2225.55367492
-"Ocean.Initial Warm surface ocean carbon reservoir[52]",2141.12189268
-"Ocean.Initial Warm surface ocean carbon reservoir[53]",922.586007928
-"Ocean.Initial Warm surface ocean carbon reservoir[54]",1851.62667333
-"Ocean.Initial Warm surface ocean carbon reservoir[55]",3237.38475269
-"Ocean.Initial Warm surface ocean carbon reservoir[56]",2341.24424135
-"Ocean.Initial Warm surface ocean carbon reservoir[57]",3229.63565093
-"Ocean.Initial Warm surface ocean carbon reservoir[58]",825.916606833
-"Ocean.Initial Warm surface ocean carbon reservoir[59]",1434.25168486
-"Ocean.Initial Warm surface ocean carbon reservoir[60]",1672.2671443
-"Ocean.Initial Warm surface ocean carbon reservoir[61]",3530.55385997
-"Ocean.Initial Warm surface ocean carbon reservoir[62]",3642.28029315
-"Ocean.Initial Warm surface ocean carbon reservoir[63]",1534.29121595
-"Ocean.Initial Warm surface ocean carbon reservoir[64]",1286.34399593
-"Ocean.Initial Warm surface ocean carbon reservoir[65]",1007.40095977
-"Ocean.Initial Warm surface ocean carbon reservoir[66]",2143.43378654
-"Ocean.Initial Warm surface ocean carbon reservoir[67]",3249.95788522
-"Ocean.Initial Warm surface ocean carbon reservoir[68]",778.351668004
-"Ocean.Initial Warm surface ocean carbon reservoir[69]",1663.06557163
-"Ocean.Initial Warm surface ocean carbon reservoir[70]",3282.40165454
-"Ocean.Initial Warm surface ocean carbon reservoir[71]",2081.95041525
-"Ocean.Initial Warm surface ocean carbon reservoir[72]",1338.77375851
-"Ocean.Initial Warm surface ocean carbon reservoir[73]",1990.16816419
-"Ocean.Initial Warm surface ocean carbon reservoir[74]",1993.7235687
-"Ocean.Initial Warm surface ocean carbon reservoir[75]",3497.31718271
-"Ocean.Initial Warm surface ocean carbon reservoir[76]",2041.59855403
-"Ocean.Initial Warm surface ocean carbon reservoir[77]",3641.39562625
-"Ocean.Initial Warm surface ocean carbon reservoir[78]",1517.40128255
-"Ocean.Initial Warm surface ocean carbon reservoir[79]",2449.38913853
-"Ocean.Initial Warm surface ocean carbon reservoir[80]",2504.45291881
-"Ocean.Initial Warm surface ocean carbon reservoir[81]",1708.20635969
-"Ocean.Initial Warm surface ocean carbon reservoir[82]",1326.90302058
-"Ocean.Initial Warm surface ocean carbon reservoir[83]",3367.36559465
-"Ocean.Initial Warm surface ocean carbon reservoir[84]",1583.1665854
-"Ocean.Initial Warm surface ocean carbon reservoir[85]",1516.22451077
-"Ocean.Initial Warm surface ocean carbon reservoir[86]",1643.33291544
-"Ocean.Initial Warm surface ocean carbon reservoir[87]",3130.24662892
-"Ocean.Initial Warm surface ocean carbon reservoir[88]",2244.19324632
-"Ocean.Initial Warm surface ocean carbon reservoir[89]",3163.05325556
-"Ocean.Initial Warm surface ocean carbon reservoir[90]",2044.8263068
-"Ocean.Initial Warm surface ocean carbon reservoir[91]",2741.49357227
-"Ocean.Initial Warm surface ocean carbon reservoir[92]",2372.75686547
-"Ocean.Initial Warm surface ocean carbon reservoir[93]",2777.82811574
-"Ocean.Initial Warm surface ocean carbon reservoir[94]",1871.30027068
-"Ocean.Initial Warm surface ocean carbon reservoir[95]",1506.39351618
-"Ocean.Initial Warm surface ocean carbon reservoir[96]",1937.88119793
-"Ocean.Initial Warm surface ocean carbon reservoir[97]",2742.68722655
-"Ocean.Initial Warm surface ocean carbon reservoir[98]",1086.03551259
-"Ocean.Initial Warm surface ocean carbon reservoir[99]",2578.80870583
-"Ocean.Initial Warm surface ocean carbon reservoir[100]",3426.31299985
-"Ocean.Initial Warm surface ocean pH[1]",8.07405337216
-"Ocean.Initial Warm surface ocean pH[2]",8.09305161983
-"Ocean.Initial Warm surface ocean pH[3]",8.09006404624
-"Ocean.Initial Warm surface ocean pH[4]",8.09764874888
-"Ocean.Initial Warm surface ocean pH[5]",8.08142114988
-"Ocean.Initial Warm surface ocean pH[6]",8.08154628929
-"Ocean.Initial Warm surface ocean pH[7]",8.07993625197
-"Ocean.Initial Warm surface ocean pH[8]",8.07801470392
-"Ocean.Initial Warm surface ocean pH[9]",8.08040560169
-"Ocean.Initial Warm surface ocean pH[10]",8.08970313311
-"Ocean.Initial Warm surface ocean pH[11]",8.08051648704
-"Ocean.Initial Warm surface ocean pH[12]",8.08469805775
-"Ocean.Initial Warm surface ocean pH[13]",8.0953042459
-"Ocean.Initial Warm surface ocean pH[14]",8.09827126811
-"Ocean.Initial Warm surface ocean pH[15]",8.08276522555
-"Ocean.Initial Warm surface ocean pH[16]",8.07178059177
-"Ocean.Initial Warm surface ocean pH[17]",8.07336494042
-"Ocean.Initial Warm surface ocean pH[18]",8.09187268014
-"Ocean.Initial Warm surface ocean pH[19]",8.08817969794
-"Ocean.Initial Warm surface ocean pH[20]",8.08708663781
-"Ocean.Initial Warm surface ocean pH[21]",8.10058960485
-"Ocean.Initial Warm surface ocean pH[22]",8.09008639304
-"Ocean.Initial Warm surface ocean pH[23]",8.09192690365
-"Ocean.Initial Warm surface ocean pH[24]",8.07966079399
-"Ocean.Initial Warm surface ocean pH[25]",8.08449192235
-"Ocean.Initial Warm surface ocean pH[26]",8.07525362689
-"Ocean.Initial Warm surface ocean pH[27]",8.08989478656
-"Ocean.Initial Warm surface ocean pH[28]",8.09697617421
-"Ocean.Initial Warm surface ocean pH[29]",8.08812029488
-"Ocean.Initial Warm surface ocean pH[30]",8.08453180085
-"Ocean.Initial Warm surface ocean pH[31]",8.07867692495
-"Ocean.Initial Warm surface ocean pH[32]",8.08436250471
-"Ocean.Initial Warm surface ocean pH[33]",8.08094443388
-"Ocean.Initial Warm surface ocean pH[34]",8.09261676502
-"Ocean.Initial Warm surface ocean pH[35]",8.08526218765
-"Ocean.Initial Warm surface ocean pH[36]",8.09208385381
-"Ocean.Initial Warm surface ocean pH[37]",8.0918606417
-"Ocean.Initial Warm surface ocean pH[38]",8.09689229836
-"Ocean.Initial Warm surface ocean pH[39]",8.09211179016
-"Ocean.Initial Warm surface ocean pH[40]",8.0939499047
-"Ocean.Initial Warm surface ocean pH[41]",8.08288640396
-"Ocean.Initial Warm surface ocean pH[42]",8.08335782094
-"Ocean.Initial Warm surface ocean pH[43]",8.08733105488
-"Ocean.Initial Warm surface ocean pH[44]",8.08164558755
-"Ocean.Initial Warm surface ocean pH[45]",8.08607763452
-"Ocean.Initial Warm surface ocean pH[46]",8.08620559261
-"Ocean.Initial Warm surface ocean pH[47]",8.07399972651
-"Ocean.Initial Warm surface ocean pH[48]",8.09569170428
-"Ocean.Initial Warm surface ocean pH[49]",8.08573984525
-"Ocean.Initial Warm surface ocean pH[50]",8.07933731537
-"Ocean.Initial Warm surface ocean pH[51]",8.07914256859
-"Ocean.Initial Warm surface ocean pH[52]",8.07836548168
-"Ocean.Initial Warm surface ocean pH[53]",8.07469874872
-"Ocean.Initial Warm surface ocean pH[54]",8.08310916516
-"Ocean.Initial Warm surface ocean pH[55]",8.08577132375
-"Ocean.Initial Warm surface ocean pH[56]",8.07689958764
-"Ocean.Initial Warm surface ocean pH[57]",8.0954084709
-"Ocean.Initial Warm surface ocean pH[58]",8.07123751071
-"Ocean.Initial Warm surface ocean pH[59]",8.09057630619
-"Ocean.Initial Warm surface ocean pH[60]",8.09071434304
-"Ocean.Initial Warm surface ocean pH[61]",8.09623726192
-"Ocean.Initial Warm surface ocean pH[62]",8.09304920686
-"Ocean.Initial Warm surface ocean pH[63]",8.07881010359
-"Ocean.Initial Warm surface ocean pH[64]",8.07398209159
-"Ocean.Initial Warm surface ocean pH[65]",8.0845304136
-"Ocean.Initial Warm surface ocean pH[66]",8.07817811339
-"Ocean.Initial Warm surface ocean pH[67]",8.08517423584
-"Ocean.Initial Warm surface ocean pH[68]",8.07796251071
-"Ocean.Initial Warm surface ocean pH[69]",8.08891980565
-"Ocean.Initial Warm surface ocean pH[70]",8.08320988834
-"Ocean.Initial Warm surface ocean pH[71]",8.08622502727
-"Ocean.Initial Warm surface ocean pH[72]",8.07417894438
-"Ocean.Initial Warm surface ocean pH[73]",8.0851663103
-"Ocean.Initial Warm surface ocean pH[74]",8.08104430352
-"Ocean.Initial Warm surface ocean pH[75]",8.0966665143
-"Ocean.Initial Warm surface ocean pH[76]",8.08189812467
-"Ocean.Initial Warm surface ocean pH[77]",8.09218597414
-"Ocean.Initial Warm surface ocean pH[78]",8.07467240307
-"Ocean.Initial Warm surface ocean pH[79]",8.0803701503
-"Ocean.Initial Warm surface ocean pH[80]",8.08049240112
-"Ocean.Initial Warm surface ocean pH[81]",8.08735959731
-"Ocean.Initial Warm surface ocean pH[82]",8.08377331745
-"Ocean.Initial Warm surface ocean pH[83]",8.08216924027
-"Ocean.Initial Warm surface ocean pH[84]",8.08004964982
-"Ocean.Initial Warm surface ocean pH[85]",8.08187883244
-"Ocean.Initial Warm surface ocean pH[86]",8.08400334722
-"Ocean.Initial Warm surface ocean pH[87]",8.09189890961
-"Ocean.Initial Warm surface ocean pH[88]",8.0850365771
-"Ocean.Initial Warm surface ocean pH[89]",8.09447285815
-"Ocean.Initial Warm surface ocean pH[90]",8.09290187043
-"Ocean.Initial Warm surface ocean pH[91]",8.08946135909
-"Ocean.Initial Warm surface ocean pH[92]",8.0824599625
-"Ocean.Initial Warm surface ocean pH[93]",8.08192461764
-"Ocean.Initial Warm surface ocean pH[94]",8.0842424255
-"Ocean.Initial Warm surface ocean pH[95]",8.08484723156
-"Ocean.Initial Warm surface ocean pH[96]",8.08004083985
-"Ocean.Initial Warm surface ocean pH[97]",8.09084707491
-"Ocean.Initial Warm surface ocean pH[98]",8.08860369138
-"Ocean.Initial Warm surface ocean pH[99]",8.09223951521
-"Ocean.Initial Warm surface ocean pH[100]",8.0919903558
-"Sea Level.energy input to SLR conversion factor max",0.12
-"Sea Level.energy input to SLR conversion factor min",0.1
-"Sea Level.Include MICI behaviour",0
-"Sea Level.initial SLR from AntIS",-0.00182
-"Sea Level.initial SLR from GrIS",-0.0028
-"Sea Level.initial SLR from LWS",-0.00538178993296836
-"Sea Level.initial SLR from MG",-0.0035
-"Sea Level.initial thermosteric SLR",-0.008
-"Sea Level.Initial water storage from water impoundment",3.95e+12
-"Sea Level.scale factor Antarctic ice sheet",0.5
-"Sea Level.scale factor Greenland ice sheet",0.5
-"Sea Level.scale factor mountain glaciers",0.5
-"Sea Level.scale factor thermosteric SLR",0.5
-"Sea Level.Water catchment per GW of hydropower",3001923201.20131
-"Demographics.1 to 20 mortality alpha",0.463232760660157
-"Demographics.1 to 20 mortality gamma",-1.91626353496676
-"Demographics.20 to 40 mortality alpha",1.5046596507159
-"Demographics.20 to 40 mortality gamma",-0.8587498326706
-"Demographics.40 to 60 mortality alpha",0.763740662405719
-"Demographics.40 to 60 mortality gamma",-0.820327060905547
-"Demographics.60 to 65 mortality alpha",0.952847801039223
-"Demographics.60 to 65 mortality gamma",-1.02434772617879
-"Demographics.65 to 75 mortality alpha",1.0766817334859
-"Demographics.65 to 75 mortality gamma",-0.841638056289411
-"Demographics.averaging time",7
-"Demographics.Cold mortality sensitivity to T",-0.0189917894
-"Demographics.Cold mortality sensitivity to T2",0.0019403962
-"Demographics.effect of GDP on female population literacy percentage constant",0.771842225255908
-"Demographics.effect of GDP on female population literacy percentage scale factor",2.75952336510515
-"Demographics.Hot mortality sensitivity to T",0.0319957449
-"Demographics.Hot mortality sensitivity to T2",-0.0006130132
-"Demographics.infant mortality alpha",0.671808041620949
-"Demographics.infant mortality gamma",-1.60887476967732
-"Demographics.initial fertility",3.86744717386613
-"Demographics.Over 75 mortality alpha",0.507668340979306
-"Demographics.Over 75 mortality gamma",-0.387630660009161
-"Demographics.sensitivity of fertility to inverse GDP per person",-0.431828214875588
-"Demographics.sensitivity of fertility to literacy",-0.0188452053694482
-"Demographics.time to change fertility",23.9945440463099
-"Circular Flow.consumption habits adjustment time",1.46411131412802
-"Circular Flow.desired savings as multiple of profits",10.4006699587885
-"Circular Flow.desired savings as multiple of wages",2.37276044476926
-"Circular Flow.fraction of income to consumption",0.75
-"Circular Flow.fraction of owner income to consumption",0.75
-"Circular Flow.initial firms checking accounts",5250.07188747317
-"Circular Flow.initial owner savings",49956.2592480143
-"Circular Flow.initial worker savings",23714.3444009328
-"Circular Flow.minimum fraction of income to consumption",0.35
-"Circular Flow.profit tax rate",0.331874184033976
-"Circular Flow.time to consider desired savings",1.12342129181053
-"Circular Flow.time to pay out profits",2.87401827216072
-"Circular Flow.time to reach savings goal",4.93412698683933
-"Circular Flow.wage tax rate",0.180383702505909
-"Employment.average development completion time",5
-"Employment.fraction of productivity gains translating to firing",0.5
-"Employment.hiring to investment ratio",0.188766099640879
-"Employment.initial unemployment rate",0.0707707941548209
-"Employment.Initial Wage Rate",6978.45761510245
-"Employment.labour force participation fixed",63.9986638721396
-"Employment.max change in fractional wage growth",0.13129852225776
-"Employment.max firing percentage",0.0443150263767423
-"Employment.negotiation effectiveness",1
-"Employment.productivity yield of exploratory investment",1.9473283132336
-"Employment.productivity yield of non bank innovation",0.13266869511252
-"Employment.rent to investment ratio",0.25
-"Employment.sensitivity of firing to profit discrepancy",0.5
-"Employment.sensitivity of hiring to unemployment rate",1.46429540944776
-"Employment.share of employment in agriculture intercept",66.850525614721
-"Employment.share of employment in agriculture slope",-15.8153975163181
-"Employment.share of employment in industry intercept",0.24841473283493
-"Employment.share of employment in industry slope",2.84169994702987
-"Employment.share of employment in services intercept",-25.3265314921532
-"Employment.share of employment in services slope",7.29955124748939
-"Employment.Temperature effect on high exposure productivity",-6.12997762
-"Employment.Temperature effect on low exposure productivity",-2.08597315
-"Employment.Temperature squared effect on high exposure productivity",-1.06326622
-"Employment.Temperature squared effect on low exposure productivity",-1.56791946
-"Employment.threshold unemployment rate",0.0904040226572417
-"Employment.time for defaults to affect firing",1
-"Employment.time for productivity to affect firing",5
-"Employment.time seeking employees",1.41669641584092
-"Employment.time to fire from missed profits",1
-"Employment.Urgency with which wage growth is demanded",2
-"Employment.wage adjustment negotiation time",1.99971463266878
-"Finance.average time private refinances debt",3
-"Finance.bank expectation formation time",2.5936119971122
-"Finance.desired asset to liability ratio",1.02
-"Finance.elasticity of bankruptcy rate on risk premium",3.0021073225205
-"Finance.elasticity of desired bank growth rate to changes in lending standards",1.87073309552934
-"Finance.exploratory premium",2
-"Finance.exponential effect of interest on defaults",9.04924518340355
-"Finance.initial bad loans",203.069459184058
-"Finance.initial bank investment",3858.59342433962
-"Finance.initial bank investment growth rate",0.0670672298125876
-"Finance.initial good loans",8061.31658291787
-"Finance.initial risk premium",0.0212644453216266
-"Finance.Initial safe assets",72479.764986349
-"Finance.loan maturation time",20.6642325520063
-"Finance.max change in bank investment as fraction of normal",0.633779113539891
-"Finance.max change in failure rate",0.0423112259461265
-"Finance.max change in lending standards",0.139977445515381
-"Finance.max risk premium increase rate",0.035
-"Finance.normal failure rate",0.034599523818908
-"Finance.reference formation time",80
-"Finance.renegotiation time",1
-"Finance.reporting delay",0.961854331465005
-"Finance.scale of exploratory loan failure",7.50457450073726
-"Finance.sensitivity of bank exploration to profit decline",0.501962557390594
-"Finance.sensitivity of bank profit payment to net asset growth",1.1
-"Finance.sensitivity of defaults to changes in risky interest",11.8992899900341
-"Finance.sensitivity of effect of sta on failure rate[1]",0.579202382378928
-"Finance.sensitivity of exploratory loan failure to GDP growth",1.05
-"Finance.sensitivity of failure rate to investment to gdp ratio",0.074417795338962
-"Finance.sensitivity of investment and GDP difference",2.21707411084322
-"Finance.strength of effect of recent GDP growth on lending standards",-0.11484822159777
-"Finance.time for safe loans that will fail to actually fail",10.917841161278
-"Finance.time to change lending standards",1.32446095321286
-"Finance.time to measure changes in risky interest",1
-"GDP.initial real GDP growth rate",0.036033440243071
-"Government.average time government refinances debt",7
-"Government.averaging time to adjust tax based on income",2.56714283794001
-"Government.central bank adjustment time",1.5
-"Government.central bank interest rate reactivity",1
-"Government.curvature effect of debt to GDP ratio on government spending",10
-"Government.effect end effect of debt to GDP ratio on government spending",2
-"Government.effect start effect of debt to GDP ratio on government spending",1
-"Government.GDP perception time",2.08053287072274
-"Government.inflation weight",1.33
-"Government.initial government debt",10000.6804028102
-"Government.initial safe interest",0.0307541470950899
-"Government.maximum effect of debt to GDP ratio on government spending",1.30756745296304
-"Government.normal investment share of public expenditure",0.0452270234274113
-"Government.normal public consumption to transfers ratio",0.673075183502727
-"Government.sensitivity of banks gov debt risk perception",0.1
-"Government.sensitivity of STA on public consumption",0.0524958489390172
-"Government.solvency support adjustment time",1
-"Government.time to pay subsidies",1
-"Government.unemployment weight",0.33
-"Inflation.Agriculture share of GDP intercept",3.28243599500953
-"Inflation.agriculture share of GDP slope",-2.34407498425802
-"Inflation.agriculture share of GDP starting point determinant",19.9164957522956
-"Inflation.deflation adjustment time",4.28777090981341
-"Inflation.inflation adjustment time",1
-"Inflation.initial inflation index",0.437344443199253
-"Inflation.initial inflation rate",0.0300546499505354
-"Inflation.weight of cropland inflation contribution",0.102822576655457
-"Inflation.weight of fertilizer used per unit of crop production",0.00599453744915399
-"Inflation.weight of grazing land inflation contribution",0.0562349691952981
-"Inflation.weight of irrigation water used per unit of crop production inflation contribution",0.046270179287465
-"Inflation.weight of marginal energy cost inflation",0.0218328123044687
-"Innovation.initial firms innovation orientation",0.5
-"Innovation.normal time to decrease innovation orientation",10.0365220459605
-"Innovation.sensitivity of firms innovation orientation to cash deceleration",1.00636732406836
-"Innovation.sensitivity of innovation decrease to cash growth",9.99611044301486
-"Sea level rise Impacts and Adaptation.Sensitivity of expected SLR to CO2 emissions",3.48e-06
-"Sea level rise Impacts and Adaptation.Sensitivity of expected SLR to T anomaly",0.086
-"Coastal Assets.asset flood damage elasticity",1
-"Coastal Assets.asset flood damage sensitivity",0.15
-"Coastal Assets.Effective flood height at which only half the investment would be made",1
-"Coastal Assets.Fraction of storm damages that is not rebuild",0.1
-"Coastal Assets.Initial fraction of assets that are on the coast",0.13
-"Coastal Assets.initial growth rate of coastal assets",0.085
-"Coastal Assets.Proactive retreat time scale",10
-"Coastal population.Fatality rate in flood events",0.01
-"Coastal population.people flood damage elasticity",2
-"Coastal population.people flood damage sensitivity",0.5
-"Sea level rise adaptation.Average value of land in coastal zones in 1980",0.005367
-"Sea level rise adaptation.flood protection cost index baseline",0.3786
-"Sea level rise adaptation.flood protection cost index sensitivity to GDPpc",0.036853
-"Sea level rise adaptation.Fraction of dike construction cost for maintenance annually",0.02
-"Sea level rise adaptation.Maximum fraction of coastal GDP spent for flood protection annually",0.05
-"Sea level rise adaptation.reference opportunity cost rate",0.04
-"Sea level rise adaptation.reference protection cost",0.00602
-"Sea level rise adaptation.Time to increase flood protection height",10
-"Sea level rise costs and impacts.Not depreciated fraction of assets at time of retreat",0.1
-"energy demand.CDD linear coefficient",287.84696037
-"energy demand.effect of GDP on per person use of energy alpha",0.47
-"energy demand.effect of GDP on per person use of energy beta",0.836832290828595
-"energy demand.energy use per CDD",0.000875
-"energy demand.Energy use per HDD",0.002
-"energy demand.HDD exponential coefficient",-0.232561095
-"energy demand.normal per person use of energy",7.5
-"energy investments.adaptive energy investments differntiating factor",-7.16119449319558
-"energy investments.adaptive energy investments integrating factor",-3
-"energy investments.adaptive energy investments proportional factor",-30
-"energy investments.baseline energy investments",857228400873.641
-"energy investments.historical cost adjustment[Coal fuel extraction, 1]",1.03182639996729
-"energy investments.historical cost adjustment[Coal fuel extraction, 2]",0.411013278076705
-"energy investments.historical cost adjustment[Coal fuel extraction, 3]",1.35499734230099
-"energy investments.historical cost adjustment[Coal fuel extraction, 4]",2.24654974118007
-"energy investments.historical cost adjustment[Coal fuel extraction, 5]",0.903079139062742
-"energy investments.historical cost adjustment[Coal fuel extraction, 6]",0.883520941673724
-"energy investments.historical cost adjustment[Coal fuel extraction, 7]",0.705933761613417
-"energy investments.historical cost adjustment[Coal fuel extraction, 8]",1.26758780287594
-"energy investments.historical cost adjustment[Coal fuel extraction, 9]",1.06656235542764
-"energy investments.historical cost adjustment[Coal energy conversion, 1]",0.462606149331934
-"energy investments.historical cost adjustment[Coal energy conversion, 2]",0.15641731011234
-"energy investments.historical cost adjustment[Coal energy conversion, 3]",0.509484960140968
-"energy investments.historical cost adjustment[Coal energy conversion, 4]",0.608640604381689
-"energy investments.historical cost adjustment[Coal energy conversion, 5]",0.298363230604727
-"energy investments.historical cost adjustment[Coal energy conversion, 6]",0.16046277800617
-"energy investments.historical cost adjustment[Coal energy conversion, 7]",0.252018593441725
-"energy investments.historical cost adjustment[Coal energy conversion, 8]",0.416089741988227
-"energy investments.historical cost adjustment[Coal energy conversion, 9]",0.395634178478145
-"energy investments.historical cost adjustment[Oil fuel extraction, 1]",0.08
-"energy investments.historical cost adjustment[Oil fuel extraction, 2]",0.0631447818118235
-"energy investments.historical cost adjustment[Oil fuel extraction, 3]",0.0832899695083518
-"energy investments.historical cost adjustment[Oil fuel extraction, 4]",0.0811803846769153
-"energy investments.historical cost adjustment[Oil fuel extraction, 5]",0.0871103735629449
-"energy investments.historical cost adjustment[Oil fuel extraction, 6]",0.0788140812679224
-"energy investments.historical cost adjustment[Oil fuel extraction, 7]",0.0848239154051217
-"energy investments.historical cost adjustment[Oil fuel extraction, 8]",0.0948915618379132
-"energy investments.historical cost adjustment[Oil fuel extraction, 9]",0.116576196209823
-"energy investments.historical cost adjustment[Oil energy conversion, 1]",0.25
-"energy investments.historical cost adjustment[Oil energy conversion, 2]",0.082246260208623
-"energy investments.historical cost adjustment[Oil energy conversion, 3]",0.308600364731014
-"energy investments.historical cost adjustment[Oil energy conversion, 4]",0.329544255589911
-"energy investments.historical cost adjustment[Oil energy conversion, 5]",0.198137176233781
-"energy investments.historical cost adjustment[Oil energy conversion, 6]",0.143651989372607
-"energy investments.historical cost adjustment[Oil energy conversion, 7]",0.109870383254787
-"energy investments.historical cost adjustment[Oil energy conversion, 8]",0.135399061457095
-"energy investments.historical cost adjustment[Oil energy conversion, 9]",0.145584260397014
-"energy investments.historical cost adjustment[Gas fuel extraction, 1]",0.306789184301203
-"energy investments.historical cost adjustment[Gas fuel extraction, 2]",0.125206238934051
-"energy investments.historical cost adjustment[Gas fuel extraction, 3]",0.317261585007743
-"energy investments.historical cost adjustment[Gas fuel extraction, 4]",0.51627865725358
-"energy investments.historical cost adjustment[Gas fuel extraction, 5]",0.295503741378641
-"energy investments.historical cost adjustment[Gas fuel extraction, 6]",0.247967288328749
-"energy investments.historical cost adjustment[Gas fuel extraction, 7]",0.246917880445067
-"energy investments.historical cost adjustment[Gas fuel extraction, 8]",0.300532748741577
-"energy investments.historical cost adjustment[Gas fuel extraction, 9]",0.354420997875602
-"energy investments.historical cost adjustment[Gas energy conversion, 1]",0.217387943500359
-"energy investments.historical cost adjustment[Gas energy conversion, 2]",0.0830660852563276
-"energy investments.historical cost adjustment[Gas energy conversion, 3]",0.244762190658124
-"energy investments.historical cost adjustment[Gas energy conversion, 4]",0.510978720364552
-"energy investments.historical cost adjustment[Gas energy conversion, 5]",0.0818126062819203
-"energy investments.historical cost adjustment[Gas energy conversion, 6]",0.149353338128107
-"energy investments.historical cost adjustment[Gas energy conversion, 7]",0.144485076045946
-"energy investments.historical cost adjustment[Gas energy conversion, 8]",0.188451446070731
-"energy investments.historical cost adjustment[Gas energy conversion, 9]",0.254064440915985
-"energy investments.historical cost adjustment[Solar and Wind, 1]",0.483160329942946
-"energy investments.historical cost adjustment[Solar and Wind, 2]",0.48427323099357
-"energy investments.historical cost adjustment[Solar and Wind, 3]",1.03432713584854
-"energy investments.historical cost adjustment[Solar and Wind, 4]",0.447055436374411
-"energy investments.historical cost adjustment[Solar and Wind, 5]",0.152920516448904
-"energy investments.historical cost adjustment[Solar and Wind, 6]",0.117753731835763
-"energy investments.historical cost adjustment[Solar and Wind, 7]",0.0885764864827472
-"energy investments.historical cost adjustment[Solar and Wind, 8]",0.125892901224737
-"energy investments.historical cost adjustment[Solar and Wind, 9]",0.088172814481905
-"energy investments.historical cost adjustment[Hydropower, 1]",1.23552401351051
-"energy investments.historical cost adjustment[Hydropower, 2]",0.294365386428212
-"energy investments.historical cost adjustment[Hydropower, 3]",1.42483682860833
-"energy investments.historical cost adjustment[Hydropower, 4]",2.92788478064123
-"energy investments.historical cost adjustment[Hydropower, 5]",0.919496745734629
-"energy investments.historical cost adjustment[Hydropower, 6]",0.416399557375146
-"energy investments.historical cost adjustment[Hydropower, 7]",0.323800093657265
-"energy investments.historical cost adjustment[Hydropower, 8]",0.368592038515488
-"energy investments.historical cost adjustment[Hydropower, 9]",0.37778446436346
-"energy investments.historical cost adjustment[Other, 1]",0.591854841456433
-"energy investments.historical cost adjustment[Other, 2]",0.366516926932816
-"energy investments.historical cost adjustment[Other, 3]",0.850059911944079
-"energy investments.historical cost adjustment[Other, 4]",2.92611206206516
-"energy investments.historical cost adjustment[Other, 5]",0.693792259463251
-"energy investments.historical cost adjustment[Other, 6]",0.457377000728142
-"energy investments.historical cost adjustment[Other, 7]",0.380384516467479
-"energy investments.historical cost adjustment[Other, 8]",0.544896989147429
-"energy investments.historical cost adjustment[Other, 9]",0.526616997703634
-"energy investments.historical cost adjustment[Nuclear, 1]",0.849651954516884
-"energy investments.historical cost adjustment[Nuclear, 2]",0.222113481988137
-"energy investments.historical cost adjustment[Nuclear, 3]",1.28968027925542
-"energy investments.historical cost adjustment[Nuclear, 4]",2.67523457864792
-"energy investments.historical cost adjustment[Nuclear, 5]",0.616765955324353
-"energy investments.historical cost adjustment[Nuclear, 6]",0.277556081976935
-"energy investments.historical cost adjustment[Nuclear, 7]",0.209895747492842
-"energy investments.historical cost adjustment[Nuclear, 8]",0.232814267565246
-"energy investments.historical cost adjustment[Nuclear, 9]",0.237882303072467
-"energy investments.historical cost adjustment[Bio, 1]",0.60965492507349
-"energy investments.historical cost adjustment[Bio, 2]",0.111618780580821
-"energy investments.historical cost adjustment[Bio, 3]",0.691374566756469
-"energy investments.historical cost adjustment[Bio, 4]",2.99407383582991
-"energy investments.historical cost adjustment[Bio, 5]",0.617416839462124
-"energy investments.historical cost adjustment[Bio, 6]",0.342950229479712
-"energy investments.historical cost adjustment[Bio, 7]",0.341810045342304
-"energy investments.historical cost adjustment[Bio, 8]",0.527813512409802
-"energy investments.historical cost adjustment[Bio, 9]",0.519900626520621
-"energy investments.initial relative supply missmatch",0.1
-"energy investments.Relative Energy Supply Mismatch Buffer",0.01
-"energy investments.shape",1
-"Damages.Exponent of Capital Damage Function",2
-"Damages.Slope of Capital Damage Function",0.00713869179990239
-"efficiency reduction in power plants.effect of STA on hydropower energy capacity efficiency quadratic",-0.24704396
-"efficiency reduction in power plants.effect of STA on hydropower energy capacity efficiency slope",-0.53155579
-"fossil energy coal.carbon intensity in btu",0.025398539651913
-"fossil energy coal.Fossil Energy Capital Scaling Parameter",0.6
-"fossil energy coal.initial fossil energy capital",5.5e+11
-"fossil energy coal.initial fossil extraction knowledge",100.62801075018
-"fossil energy coal.initial fossil fuel extraction capital",1.16e+12
-"fossil energy coal.Primary Fossil Energy Scaling Parameter",1.8904838057499
-"fossil energy coal.productivity per extractionknowledge",0.00177120414219463
-"fossil energy coal.TFP in 1980",0.148
-"fossil energy coal.TFP Max",0.185
-"fossil energy coal.TFP Max Ramp Year",2020
-"fossil energy coal.TFP Ramp Speed",0.097
-"fossil energy coal.TFP Slope Start",1980.08990139598
-"fossil energy gas.carbon intensity in btu",0.0156655503172815
-"fossil energy gas.Fossil Energy Capital Scaling Parameter",0.451289120233549
-"fossil energy gas.initial fossil energy capital",4e+11
-"fossil energy gas.initial fossil extraction knowledge",127.05822244485
-"fossil energy gas.initial fossil fuel extraction capital",1988520830978.01
-"fossil energy gas.Primary Fossil Energy Scaling Parameter",1.12013244009994
-"fossil energy gas.productivity per extractionknowledge",0.000340426522970275
-"fossil energy gas.TFP in 1980",0.241551022597929
-"fossil energy gas.TFP Max",0.295
-"fossil energy gas.TFP Max Ramp Year",2013.5943006936
-"fossil energy gas.TFP Ramp Speed",0.139893371386549
-"fossil energy gas.TFP Slope Start",1980.10137291122
-"fossil energy oil.carbon intensity in btu",0.019446984722055
-"fossil energy oil.Fossil Energy Capital Scaling Parameter",0.6
-"fossil energy oil.initial fossil energy capital",1e+12
-"fossil energy oil.initial fossil extraction knowledge",151.117578870786
-"fossil energy oil.initial fossil fuel extraction capital",8318356306450
-"fossil energy oil.Primary Fossil Energy Scaling Parameter",1.99999958734975
-"fossil energy oil.productivity per extractionknowledge",0.000209715322232346
-"fossil energy oil.TFP in 1980",0.141258869457008
-"fossil energy oil.TFP Max",0.17
-"fossil energy oil.TFP Max Ramp Year",2017.33847855222
-"fossil energy oil.TFP Ramp Speed",0.0976371503131552
-"fossil energy oil.TFP Slope Start",1983.31840997973
-"nuclear energy.baseline nuclear energy capacity efficiency",7.5
-"nuclear energy.Ceiling of Nuclear Installation Costs",6000
-"nuclear energy.Floor of Nuclear Installation Costs",2108.20854100359
-"nuclear energy.Initial Nuclear Capacity",97.5591716556717
-"nuclear energy.Intercept Nuclear Installation Costs",-2690
-"nuclear energy.Slope of Nuclear Installation Costs",280.4
-"bio fuel energy.bio fuel primary energy content",2.02106814875483e-05
-"bio fuel energy.Floor Costs",14817700.9860935
-"bio fuel energy.Initial biofuel production Capacity",5
-"bio fuel energy.Initial Installation Costs",1177719565.64476
-"bio fuel energy.Learning Rate",0.0446576738196583
-"bio fuel energy.PCal per Mt of fuel",4
-"bio fuel energy.relative carbon intensity of biofuels to petroleum fuels",0.65
-"bio fuel energy.stepping on toes parameter",0.402774716236313
-"hydropower energy.Base Hydropower Installation Costs",100.335633411328
-"hydropower energy.baseline hydropower energy capacity efficiency",3.8457342676995
-"hydropower energy.Initial Hydropower Capacity",478.776803701607
-"hydropower energy.Slope of Hydropower Installation Costs wrt Capacity",1.63415093676841e-06
-"other energy.Floor of Other Installation Costs",949.698778788993
-"other energy.Initial Other Capacity",8.83829724631003
-"other energy.Initial Other Installation Costs",1999.96729277803
-"other energy.Learning Rate",0.0780908876868298
-"other energy.Other Energy Capacity Efficiency",5.92790244874951
-"other energy.stepping on toes parameter",0.443900376583671
-"wind and solar energy.Initial Renewable Energy Installation Costs",4498.06716252767
-"wind and solar energy.Renewable Energy Floor Costs",138
-"wind and solar energy.Renewable Energy Learning Rate",0.104592378256239
-"wind and solar energy.sensitivity of renewable floor costs to grid storage needs",5.5
-"wind and solar energy.sensitivity of renewable floor costs to grid storage needs non linear part",-5.25
-"wind and solar energy.stepping on toes parameter in renewable energy sector",0.499920680455662
-"wind and solar energy.Wind and Solar Energy Full Load Hours",1776.49905654678
-"Government Regulations.government debt to GDP ratio target",1.2
-"Government Regulations.inflation goal policy",0.02
-"Government Regulations.max change per year in inflation",0.001
-"Government Regulations.max change per year in unemployment",0.001
-"Government Regulations.minimum percentage of taxes spent by government",0.9
-"Government Regulations.Moratorium on fossil energy year",2130
-"Government Regulations.profit tax rate policy",0.332
-"Government Regulations.switch animal product efficiency policy",0
-"Government Regulations.switch irrigation fraction policy",0
-"Government Regulations.switch non agricultural water use policy",0
-"Government Regulations.switch tax policy",0
-"Government Regulations.tax policy start year",2025
-"Government Regulations.time for government to change the debt to GDP ratio target",10
-"Government Regulations.time to implement tax policy",5
-"Government Regulations.time to start central bank policy",2025
-"Government Regulations.unemployment goal policy",0.05
-"Government Regulations.wage tax rate policy",0.1935
-"Government Regulations.wealth tax policy",0
-"Animal Products.Animal Products Yield in 1980",0.900663724024713
-"Animal Products.aquatic animal product share 1980",0.060992005579786
-"Animal Products.average animal product growth efficiency",0.165652625411197
-"Animal Products.averaging time",5
-"Animal Products.desired animal products reserve capacity",0.0652815721691582
-"Animal Products.elasticity of aquatic animal product share to GDP per person",0.50613259313534
-"Animal Products.normal rate of change in grazing land yield",0.0409300999701161
-"Animal Products.sensitivity of rate of change in animal products balance to growth rate in yield",-84.0270986860196
-"Crop.crop prod linear CO2 effect",0.04688
-"Crop.crop prod linear temp effect",31.07
-"Crop.crop prod squared temp effect",-1.11
-"Crop.desired crop reserve capacity",0.019928670670062
-"Crop.fertilizer use crop yield parameter",0.0119701049606006
-"Crop.harvest index for energy crops",0.948343290328895
-"Crop.harvest index for feed crops",0.798296702453515
-"Crop.initial crop yield",5.87126118591938
-"Crop.irrigation crop yield parameter",2.5
-"Crop.normal harvest index for food crops",0.449975438362196
-"Crop.rel change in crop productivity intercept",-235.8
-"Crop.sensitivity of effect of crop residue production on field fraction",0.559285998582094
-"Crop.sensitivity of effect of crop yield on harvest index",0.0991496769388762
-"Crop.soil carbon crop yield parameter",0.00403003233337647
-"Crop.tolerance of the cap on harvest index and residue on field fraction",0.05
-"Crop.UNIT GtC per PCal crop",0.000220559
-"Food Demand.animal product demand per person 1980",0.147979444396838
-"Food Demand.crops used for non energy other per person",0.557436516594666
-"Food Demand.crops used for seed or lost per person 1980",0.131006836194532
-"Food Demand.direct food demand per person per day 1980",2497.71640119686
-"Food Demand.elasticity of animal product demand to GDP per person",0.600290829837464
-"Food Demand.elasticity of crops used for non energy other to GDP per person",0.373935379788447
-"Food Demand.elasticity of crops used for seed or lost to GDP per person",0.41983328873356
-"Food Demand.elasticity of food demand to GDP per person",0.3
-"Food Demand.initial crop demand for feed offset",0.95510156216511
-"Food Demand.time to change demand for feed",6.09350732047478
-"Food Demand.time to change dietary habits",10
-"Freshwater.average deep groundwater infiltration time",100
-"Freshwater.base fraction of cropland irrigated",0.175096361655183
-"Freshwater.elasticity of non agricultural water withdrawal per capita to GDP per person",0.212565882590844
-"Freshwater.initial available water supply",48246123068322.7
-"Freshwater.initial fraction of unsustainable water withdrawal",0.050119763269032
-"Freshwater.non agricultural water withdrawal 1980",152871727.697761
-"Freshwater.rate of change in irrigation efficiency",0.00372911435525424
-"Freshwater.rate of change in technological water discovery",-0.0176282415983987
-"Freshwater.sensitivity of effect of available water supply on land irrigated",0.60604908038264
-"Freshwater.sensitivity of fraction of cropland irrigated indicated to GDP per person",0.521630786617305
-"Freshwater.sensitivity of pressure to expand water supply to available water supply",-2.95984018192533
-"Freshwater.sensitivity of surface temperature anomaly on water used per Mtcrop",0.0643524347524963
-"Freshwater.technological water discovery 1980",30530715604.1891
-"Freshwater.water withdrawal per MHa irrigated 1980",9622530556.56337
-"Land Nutrients.elasticity of effect of animal products on manure fertilizer use",0.094818728859585
-"Land Nutrients.maximum desired growth in fertilizer use",0.05
-"Land Nutrients.sensitivity demand to relative use",-0.0816206526655366
-"Land Nutrients.sensitivity of fertilizer use to crop balance with reserves",-1.86816007521138
-"Land Nutrients.time to change fertilizer use",3
-"Land Use.cropland expansion time",2.85540818636608
-"Land Use.elasticity of effect of animal products yield on fraction of grassland degrading",0.715843214541742
-"Land Use.elasticity of effect of crop yield on fraction cropland degrading",0.871586116429116
-"Land Use.forest recovery time",64.1561170254402
-"Land Use.fraction cropland degrading 1980",5e-05
-"Land Use.fraction of depleting cropland to grassland",0.413435581074887
-"Land Use.fraction of grassland degrading 1980",1e-05
-"Land Use.fraction of grassland for grazing",0.674669821635115
-"Land Use.fraction of new cropland from forests",0.510883652553408
-"Land Use.normal average cutting time",569.731217192907
-"Land Use.normal average time cropland in use",975.933316464732
-"Land Use.percent of forest recovering in 1980",0.085754335610631
-"Land Use.sensitivity of crop land use time to cropland size",3.41610970515866
-"Land Use.sensitivity of cutting time to forest size",1.6
-"Land Use.sensitivity of effect of animal products balance on grassland expansion rate",-0.167767622093889
-"Land Use.sensitivity of effect of crop balance on crop land expansion rate",-0.242935802299059
-"Land Use.time to close grassland gap",8.50216384310196
-"Concrete.BASE AVERAGE LIFETIME OF BUILDINGS",185.551125466542
-"Concrete.BASE AVERAGE LIFETIME OF INFRASTRUCTURE",60.6266188178707
-"Concrete.CLIMATE IMPACT ON CONCRETE LIFETIME",-0.075
-"Concrete.CO2 INTENSITY OF INFRASTRUCTURE CONCRETE",0.0842890302801893
-"Concrete.CO2 INTENSITY OF RS BUILDINGS CONCRETE",0.0542134551261592
-"Concrete.CONCRETE PER m2 UFA",0.998
-"Concrete.GAP ADJUSTMENT TIME FOR BUILDINGS",14.6616180859513
-"Concrete.GAP ADJUSTMENT TIME FOR INFRASTRUCTURE",9.45930961383885
-"Concrete.INFRA ALPHA",-24055.7818588206
-"Concrete.INFRA BETA",-34.7999180884332
-"Concrete.INFRA GAMMA",6.01537251853227
-"Concrete.INIT CONCRETE IN NEW BUILDINGS",20000.6694269533
-"Concrete.INIT CONCRETE IN NEW INFRASTRUCTURE",6502.54623003724
-"Concrete.INIT CONCRETE IN OLD BUILDINGS",50963.6563089793
-"Concrete.INIT CONCRETE IN OLD INFRASTRUCTURE",12294.8402422716
-"Concrete.INTERCEPT",165310
-"Concrete.NORMAL CONCRETE DETERIORATION RATE",0.0158950991238031
-"Concrete.TIME TO ADJUST DESIRED FLOOR AREA",3.94347304975288
-"Concrete.TIME TO ADJUST DESIRED INFRASTRUCTURE AREA",5.1383825712853
-"Concrete.UFA alpha",25.2572561601996
-"Concrete.UFA intercept",-200.729776361609
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

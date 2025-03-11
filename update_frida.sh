@@ -11,6 +11,7 @@ function cleanup_repo() {
 	rm -rf "./FRIDA Dashboard"
 	rm -rf "./FRIDA ILE"
 	rm -rf "./FRIDA Uncertainity Dashboard"
+	rm -r FRIDA.isdb
 	rm -f LICENSE
 	rm -f ReadMe.md
 
