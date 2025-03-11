@@ -10,10 +10,11 @@ To run the stella simulator is needed which needs to be obtained seperately, and
 
 - R is case sensitive, i.e. when preparing parameter or policy files, make sure to use the same capitalisation as in FRIDA
 
-- The uncertainty analysis directory has to include a folder of FRIDA.
-    - The FRIDA.stmx has to include additional settings for importing and exporting data from/to files. Check out the diff to an unmodified version to find out what has to be changed
-    - A few files have to be added to the Data subdirectory inside the FRIDA folder. Check for additonal viles in current version compared to normal FRIDA.
-    - Set the FRIDA end year to 2100 in the stmx
+- Use update-frida.sh to ensure you have access to the latest model and to prep the model for use with this program.  This bash script takes care of all sub-bullets here
+    - The uncertainty analysis directory has to include a folder of FRIDA.
+        - The FRIDA.stmx has to include additional settings for importing and exporting data from/to files. Check out the diff to an unmodified version to find out what has to be changed
+        - A few files have to be added to the Data subdirectory inside the FRIDA folder. Check for additonal files in current version compared to normal FRIDA.
+        - The end time for the analysis can be controlled via the "Simulation End" variable in FRIDA
 
 - If additional output variables are required, add them into the file ```frida_extra_variables_to_export_list.csv```. This should be done in the WorldTrans Google Drive WP3 folder for the uncertainty analysis, and then the file has to be exported as csv. The csv file then has to be stored under FRIDA-info/ (The file in the WP3 folder has a slightly different name)
 - The model needs a ```frida_info.csv``` (inside FRIDA-info/), which includes all FRIDA model parameters and their taggs and ranges. Currently, Billy creates these files by parsing the FRIDA model for all constant parameters that have a range attached to it.
@@ -21,9 +22,9 @@ To run the stella simulator is needed which needs to be obtained seperately, and
     - All model parameters that have a range, but should not be varied in the uncertainty analysis need to be tagged with "no sensi"!
     - The frida_info.csv has to be generated from the FRIDA version used for the uncertainty analyis, i.e. the one specified in the config file
 
-- There is a list called ```frida_parameter_exclusion_list.csv```, which contains variables that are excluded in the analysis. In the future, this list should be reduced to 0 lines, as the exclusion of parameters is supposed to work via the "No Sensi" tag in FRIDA.
+- There is a list called ```frida_parameter_exclusion_list.csv```, which contains variables that are excluded in the analysis. In the future, this list should be reduced to 0 lines, as the exclusion of parameters is supposed to work via the "No Sensi" tag in FRIDA. Variables which are excluded by the ranging algorithim are included here as a part of program operation.  Variables fail ranging generally because they have no impact on any variable which has calibration data.  This can happen if its a parameter which control a future policy assumption.
 
-- If output variables are not needed, specify them in ```frida_variable_exclusion_list.csv```
+- If output variables are not needed, specify them in ```frida_variable_exclusion_list.csv``` by default all variables in the calibration data set are included.
 
 - If there are model parameters, for which the a fixed range should be used (i.e. the uncertainty analysis should not search for a smaller range on its own), these parameters and the allowed min and max values should be listed in ```FRIDA-info/frida_external_ranges.csv```
 
