@@ -10,7 +10,7 @@ To run the stella simulator is needed which needs to be obtained seperately, and
 
 - R is case sensitive, i.e. when preparing parameter or policy files, make sure to use the same capitalisation as in FRIDA
 
-- Use update-frida.sh to ensure you have access to the latest model and to prep the model for use with this program.  This bash script takes care of all sub-bullets here
+- Use uncertainity_update_frida.sh to ensure you have access to the latest model and to prep the model for use with this program.  This bash script takes care of all sub-bullets here
     - The uncertainty analysis directory has to include a folder of FRIDA.
         - The FRIDA.stmx has to include additional settings for importing and exporting data from/to files. Check out the diff to an unmodified version to find out what has to be changed
         - A few files have to be added to the Data subdirectory inside the FRIDA folder. Check for additonal files in current version compared to normal FRIDA.

@@ -3,7 +3,7 @@
 RED='\033[0;31m'
 NOCOLOR='\033[0m'
 
-function cleanup_repo() {
+function cleanup_uncertainty_repo() {
 	cd ./FRIDAforUncertaintyAnalysisGit
 
 	#remove all the stuff we don't need
@@ -27,7 +27,7 @@ function cleanup_repo() {
 	mv "Calibration Data.csv" "./Data/Calibration Data.csv"
 	mv "frida_input_data.csv" "./Data/frida_input_data.csv"
 
-	git apply $PWD/../FRIDAforUncertaintyAnalysis.patch
+	git apply $PWD/../FRIDAforAnalysis.patch
 	cd ..
 
 	rm -rf ./FRIDAforUncertaintyAnalysis
@@ -43,7 +43,7 @@ if [ ! -d ./FRIDAforUncertaintyAnalysisGit ] ; then
 	echo "Cloning FRIDA from the main metno/WorldTransFRIDA repo"
 	git clone git@github.com:metno/WorldTransFRIDA.git FRIDAforUncertaintyAnalysisGit
 
-	cleanup_repo
+	cleanup_uncertainty_repo
 
 else
 	# reset your model to be the main model
@@ -54,12 +54,12 @@ else
 
 	cd ..
 
-	cleanup_repo
+	cleanup_uncertainty_repo
 fi
 
 
 
 echo -e ${RED}"Make sure you have the latest ./FRIDA-Info/frida_info.csv before running an uncertainity analysis!"${NOCOLOR}
-read -n 1 -s -r -p "Press any key to continue\n"
+read -n 1 -s -r -p $'Press any key to continue...\n'
 
 
