@@ -4,10 +4,11 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Animal Products Demand.elasticity of demand to GDP[1]",0,0,0,0,0,1,0,0,0,0,0.398392964876698,0,1
 "Animal Products Demand.growth rate of socioeconomic effect[1]",0,0,0,0,0,1,0,0,0,0,-5.97659679187918,-7.5,-2.5
 "Animal Products Demand.initial share of demand from consumption domain[1]",0,0,0,0,0,1,0,0,0,0,0.17785654811108,0.15,0.3
+"Animal Products Demand.maximum effect of additional environmental consciousness[1]",1,0,0,0,0,0,0,0,0,0,0.5,0.25,0.75
+"Animal Products Demand.normal sensitivity of personal norm to climate risk[1]",0,0,0,0,0,1,0,0,0,0,-0.539168518858367,-2,-0.01
 "Animal Products Demand.range of socioeconomic effect[1]",1,0,0,0,0,0,0,0,0,0,1,0.5,1.5
 "Animal Products Demand.reference GDP per person for socioeconomic effect[1]",0,0,0,0,1,0,0,0,0,0,40000,35000,45000
 "Animal Products Demand.sensitivity of demand to relative scarcity[1]",0,0,0,0,0,1,0,0,0,0,0.513105792960793,0,1
-"Animal Products Demand.sensitivity of personal norm to climate risk[1]",0,0,0,0,0,1,0,0,0,0,-0.539168518858367,-2,-0.01
 "Animal Products Demand.sensitivity of personal norm to consumption risk[1]",0,0,0,0,0,1,0,0,0,0,-0.731307305449605,-2,-0.1
 "Animal Products Demand.sensitivity of personal norm to social value[1]",0,0,0,0,0,1,0,0,0,0,0.998463390740021,0.1,2
 "Animal Products Demand.sensitivity of social value perception[1]",0,0,0,0,0,1,0,0,0,0,1.29363878627903,0.1,2
@@ -20,9 +21,11 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Animal Products Demand.time to perceive average consumption[1]",0,0,0,0,0,1,0,0,0,0,2.85872025323181,1,5
 "Climate Risk Perception.additional time horizon of reference climate extremes exposure[1]",0,0,0,0,0,1,0,0,0,0,51.0952027298084,10,100
 "Climate Risk Perception.additional time horizon of reference SLR flooding exposure[1]",0,0,0,0,0,1,0,0,0,0,48.0481328069786,10,100
-"Climate Risk Perception.additional time horizon of reference temperature anomaly[1]",0,0,0,0,0,1,0,0,0,0,10.0528228428386,10,100
+"Climate Risk Perception.maximum effect of additional environmental consciousness on climate information sensitivity[1]",1,0,0,0,0,0,0,0,0,0,0.5,0.25,0.75
+"Climate Risk Perception.maximum effect of additional environmental consciousness on reference time horizon[1]",1,0,0,0,0,0,0,0,0,0,5,2.5,7.5
 "Climate Risk Perception.minimum reference for SLR flooding exposure[1]",1,0,0,0,0,0,0,0,0,0,10,5,15
-"Climate Risk Perception.sensitivity to climate information[1]",0,0,0,0,0,1,0,0,0,0,0.504395896216198,0,1
+"Climate Risk Perception.normal additional time horizon of reference temperature anomaly[1]",0,0,0,0,0,1,0,0,0,0,10.0528228428386,10,100
+"Climate Risk Perception.normal sensitivity to climate information[1]",0,0,0,0,0,1,0,0,0,0,0.504395896216198,0,1
 "Climate Risk Perception.sensitivity to climatic events exposure[1]",0,0,0,0,0,1,0,0,0,0,0.534713154373705,0,1
 "Climate Risk Perception.time to perceive climate extremes exposure[1]",0,0,0,0,0,1,0,0,0,0,3.92167072438823,1,10
 "Climate Risk Perception.time to perceive SLR flooding exposure[1]",0,0,0,0,0,1,0,0,0,0,3.03895267564342,1,10
@@ -47,6 +50,7 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Behavioral Choices.switch animal products fraction policy",0,0,0,0,0,0,0,0,1,0,0,0,1
 "Behavioral Choices.switch aquatic animal products fraction policy",0,0,0,0,0,0,0,0,1,0,0,0,1
 "Behavioral Choices.switch energy demand policy",0,0,0,0,0,0,0,0,1,0,0,0,1
+"Behavioral Choices.switch environmental consciousness policy",0,0,0,0,0,0,0,0,1,0,0,0,1
 "Behavioral Choices.switch food demand policy",0,0,0,0,0,0,0,0,1,0,0,0,1
 "Climate.climate impact stoptime",0,0,0,0,0,0,1,0,0,0,2025,1979,2130
 "Climate.switch behavioral impact",0,0,0,0,0,0,1,0,0,0,1,0,1
@@ -217,7 +221,7 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Finance.innovation effect midpoint[1]",1,0,0,0,0,1,0,0,0,0,1.2,0.8,1.6
 "Finance.loan maturation time[1]",0,0,0,0,0,1,0,0,0,0,10.1537647212335,3,30
 "Finance.max change in bank investment as fraction of normal[1]",0,0,0,0,0,1,0,0,0,0,0.999999976470528,0.1,1
-"Finance.max change in failure rate[1]",0,0,0,0,0,1,0,0,0,0,0.0590331365006087,0.02,0.06
+"Finance.max change in failure rate[1]",0,0,0,0,0,1,0,0,0,0,0.0590331365006087,0.02,0.1
 "Finance.max change in lending standards[1]",0,0,0,0,0,1,0,0,0,0,0.120092950728545,0,1
 "Finance.max risk premium increase rate[1]",0,0,0,0,1,0,0,0,0,0,0.035,0.01,0.15
 "Finance.maximum default rate from interest rate increases[1]",1,0,0,0,0,0,0,0,0,0,0.15,0.1,0.5
