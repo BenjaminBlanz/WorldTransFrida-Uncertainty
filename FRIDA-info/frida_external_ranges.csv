@@ -1,7 +1,7 @@
 Variable,Min,Max
-Finance.normal failure rate[1],0.015,0.05 
-Finance.bank expectation formation time[1],1,5.5
-Finance.loan maturation time[1],3,30
+Finance.normal failure rate[1],0.01,0.02 
+Finance.bank expectation formation time[1],1,4
+Finance.loan maturation time[1],3,17
 Finance.sensitivity of effect of sta on failure rate[1],0.3,0.85
 Finance.max change in bank investment as fraction of normal[1],0.1,1
 Finance.sensitivity of defaults to changes in risky interest[1],0,13
