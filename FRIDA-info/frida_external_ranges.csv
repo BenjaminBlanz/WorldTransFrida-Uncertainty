@@ -29,3 +29,9 @@ Sea Level.scale factor for thermosteric SLR[1],0,1
 Sea Level.scale factor mountain glaciers[1],0,1
 Sea Level.scale factor Greenland ice sheet[1],0,1
 Sea Level.scale factor Antarctic ice sheet[1],0,1
+Food Demand.elasticity of food demand to GDP per person[1],0.18,0.35
+Food Demand.elasticity of animal product demand to GDP per person[1],0.4,0.6
+Food Demand.direct food demand per person per day 1980[1],2400,2500
+Food Demand.animal product demand per person 1980[1],0.14,0.15
+Animal Products Demand.reference GDP per person for socioeconomic effect[1],35000,45000
+Total Food Demand.reference GDP per person for socioeconomic effect[1],45000,55000
