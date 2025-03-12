@@ -310,7 +310,8 @@ funOrderOfMagnitude <- function(x){
 generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 																								restretchSamplePoints=F,
 																								ignoreExistingResults=F,
-																								integerParms=NULL){
+																								integerParms=NULL,
+																								nullProb=0){
 	if(!ignoreExistingResults && file.exists(file.path(location.output,'samplePoints.RDS'))){
 		cat('Reading sampling points...')
 		samplePoints <- readRDS(file.path(location.output,'samplePoints.RDS'))
@@ -324,15 +325,30 @@ generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 		if(sum(duplicated(samplePoints.base))>0){
 			stop('Not enough unique sample points. Check the sobol generation\n')
 		}
-		samplePoints <- funStretchSamplePoints(samplePoints.base,sampleParms,restretchSamplePoints)
-		# samplePoints <- rbind(samplePoints, t(sampleParms$Value))
+		if(nullProb>0){
+			samplePoints.base[samplePoints.base<=nullProb] <- NA
+			samplePoints.base <- samplePoints.base[!duplicated(samplePoints.base),]
+			samplePoints.base[!is.na(samplePoints.base)] <- 
+				(samplePoints.base[!is.na(samplePoints.base)]-nullProb)/(1-nullProb)
+		}
+		if(!is.null(integerParms)){
+			sampleParms[sampleParms$Variable==integerParms$Variable,c('Max')] <- 
+				sampleParms[sampleParms$Variable==integerParms$Variable,c('Max')] + 1
+		}
+		samplePoints <- funStretchSamplePoints(samplePoints.base,sampleParms,
+																					 restretchSamplePoints)
+		colnames(samplePoints) <- sampleParms$Variable
 		if(!is.null(integerParms)){
 			cat('rounding integer parms...')
 			for(p.i in 1:nrow(integerParms)){
 				if(integerParms$Variable[p.i]%in%sampleParms$Variable){
-					samplePoints[,integerParms$Variable[p.i]] <- round(samplePoints[,integerParms$Variable[p.i]])
+					samplePoints[,as.character(integerParms$Variable[p.i])] <-
+						 floor(samplePoints[,as.character(integerParms$Variable[p.i])])
+					samplePoints[samplePoints[,as.character(integerParms$Variable[p.i])]==sampleParms$Max[p.i],
+											 as.character(integerParms$Variable[p.i])] <- sampleParms$Max[p.i]-1
 				}
 			}
+			samplePoints <- samplePoints[!duplicated(samplePoints),]
 		}
 		# if('Climate Units.selected climate case'%in%sampleParms$Variable){
 		# 	samplePoints[,'Climate Units.selected climate case'] <- round(samplePoints[,'Climate Units.selected climate case'])

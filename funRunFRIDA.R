@@ -74,13 +74,29 @@ writeFRIDAExportSpec <- function(varsForExport.fridaNames,location.frida){
 
 # write frida input ####
 # uses location.frida and name.fridaInputFile from the global env.
-writeFRIDAInput <- function(variables,values){
+writeFRIDAInput <- function(variables,values,policyMode=F){
 	if(disk.free(location.frida)< 2e4){
 		stop('less than 20mib in frida location\n')
 	}
-	parmValues <- data.frame(Variable=unlist(variables),Value=unlist(values))
-	write.table(parmValues,file = file.path(location.frida,'Data',name.fridaInputFile),
-							row.names = F,col.names = F,sep=',')
+	if(policyMode){
+		sink(file.path(location.frida,'Data',name.fridaInputFile))
+		for(domID in 1:length(values)){
+			if(!is.na(values[domID])){
+				dplID <- values[domID]
+				sdmID <- jointPolicies$sdmID[jointPolicies$domID==domID & 
+																		 	jointPolicies$dplID==dplID]
+				pfID <- pdpMeta$pfID[pdpMeta$domID==domID & pdpMeta$sdmID==sdmID]
+				sdpID <- jointPolicies$sdpID[jointPolicies$domID==domID & jointPolicies$dplID==dplID]
+				pf <- pdp.lst[[pfID]]
+				cat(paste0(pf[which(pf$polID==sdpID),c('policyString')],'\n',collapse = ''))
+			}
+		}
+		sink()
+	} else {
+		parmValues <- data.frame(Variable=unlist(variables),Value=unlist(values))
+		write.table(parmValues,file = file.path(location.frida,'Data',name.fridaInputFile),
+								row.names = F,col.names = F,sep=',')
+	}
 }
 
 # check for free space
@@ -101,26 +117,32 @@ disk.free <- function(path = getwd()) {
 #   sampleParms,samplePoints,location.frida, and name.fridaInputFile
 # If retNegLogLike also uses from global env:
 # 	calDat,resSigma
-runFridaParmsByIndex <- function(runid,silent=T){
+runFridaParmsByIndex <- function(runid,silent=T,policyMode=F){
 	retlist <- vector(mode = "list", length = length(runid))
 	for(i in runid){
 		if(i <= nrow(samplePoints)){
 			sink(file.path(location.frida,'lastRun.txt'))
 			cat(row.names(samplePoints)[i],'\n')
 			sink()
-			writeFRIDAInput(colnames(samplePoints),samplePoints[i,])
+			writeFRIDAInput(colnames(samplePoints),samplePoints[i,],policyMode=policyMode)
 			system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
 									 file.path(location.frida,'FRIDA.stmx')),
 						 ignore.stdout = silent,ignore.stderr = silent,wait = T)
 			runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
+			origColNames <- unname(unlist(read.table(file.path(location.frida,'Data',name.fridaOutputFile),
+															 sep=',')[1,]))[-1]
 			colnames(runDat) <- cleanNames(colnames(runDat))
 			rownames(runDat) <- runDat$year
 			runDat <- runDat[,-1]
-			resDat <- calDat-runDat[1:nrow(calDat),colnames(calDat)]
-			logLike <- funLogLikelihood(resDat,resSigma)
-			# If the logLike is not NA but the run did not complete assign 
-			# lowest nonzero value. We use this when narrowing the parms space
-			if(is.na(runDat[[1]][nrow(calDat)])||logLike==-Inf){
+			if(!policyMode){
+				resDat <- calDat-runDat[1:nrow(calDat),colnames(calDat)]
+				logLike <- funLogLikelihood(resDat,resSigma)
+				# If the logLike is not NA but the run did not complete assign 
+				# lowest nonzero value. We use this when narrowing the parms space
+				if(is.na(runDat[[1]][nrow(calDat)])||logLike==-Inf){
+					logLike <- -.Machine$double.xmax+sum(!is.na(runDat[[1]]))*.Machine$double.eps
+				}
+			} else {
 				logLike <- -.Machine$double.xmax+sum(!is.na(runDat[[1]]))*.Machine$double.eps
 			}
 			suppressWarnings(parmsIndex<-as.numeric(row.names(samplePoints)[i]))
@@ -128,10 +150,12 @@ runFridaParmsByIndex <- function(runid,silent=T){
 				retlist[[i]] <- (list(parmsName=row.names(samplePoints)[i],
 															parmsIndex=i,
 															runDat=runDat,
+															origColNames=origColNames,
 															logLike=logLike))
 			} else {
 				retlist[[i]] <- (list(parmsIndex=parmsIndex,
 															runDat=runDat,
+															origColNames=origColNames,
 															logLike=logLike))
 			}
 		}
@@ -141,13 +165,16 @@ runFridaParmsByIndex <- function(runid,silent=T){
 # runFridaParmsBySamplePoints ####
 # the same as above, but runs all samples in samplePoints for pre allocated
 # samplePoints per worker.
-runFridaParmsBySamplePoints <- function(){
-	retlist <- runFridaParmsByIndex(1:nrow(samplePoints))
-	if(saveOutPutOnlyReturnLogLike){
+runFridaParmsBySamplePoints <- function(policyMode=F){
+	retlist <- runFridaParmsByIndex(1:nrow(samplePoints),policyMode=policyMode)
+	if(writePerWorkerFiles){
 		workerID <- ifelse(exists('workerID'),workerID,0)
 		workUnit.i <- ifelse(exists('workUnit.i'),workUnit.i,0)
 		logLike.df <- saveParOutputToPerVarFiles(parOutput = retlist,workUnit.i = workUnit.i,
 														 workerID = workerID)
+		if(doNotReturnRunDataSavePerWorkerOnly){
+			retlist <- list()	
+		}
 		retlist[['logLike.df']] <- logLike.df
 	}
 	return(retlist)
@@ -191,12 +218,14 @@ runFRIDASpecParms <- function(parVect,silent=T){
 cleanNames <- function(colNames){
 	gsub('time','year',
 			 gsub('_+$','',
-			 		 gsub('\\$','',
-			 		 		 gsub('_1','',
-			 		 		 		 gsub('\\[1]','_',
-			 		 		 		 		 gsub('_+','_',
-			 		 		 		 		 		 gsub('[. ]','_',
-			 		 		 		 		 		 		 tolower(colNames))))))))
+			 		 gsub('_+','_',
+			 		 		 gsub(',','_',
+			 		 		 		 gsub('\\$','',
+			 		 		 		 		 gsub('_1','',
+			 		 		 		 		 		 gsub('\\]','_',
+			 		 		 		 		 		 		 gsub('\\[\\d+','_',
+			 		 		 		 		 		 		 		 gsub('[. ]','_',
+			 		 		 		 		 		 		 		 		 tolower(colNames))))))))))
 }
 
 # idxOfVarName ####
@@ -327,11 +356,10 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 	cat('cluster run...\n')
 	# If we are not plotting while running we can directly store from the running
 	# worker processes. This is MUCH faster.
-	if((plotDatWhileRunning|plotDatPerChunWhileRunning)&saveOutPutOnlyReturnLogLike){
-		cat('Note: Forcing saveOutPutOnlyReturnLogLike to false, as plotting is enabled\n')
-		saveOutPutOnlyReturnLogLike <<- F
+	if((plotDatWhileRunning|plotDatPerChunWhileRunning)&writePerWorkerFiles){
+		cat('Note: Forcing writePerWorkerFiles to false, as plotting is enabled\n')
+		writePerWorkerFiles <<- F
 	}
-	cat(paste('saveOutPutOnlyReturnLogLike',saveOutPutOnlyReturnLogLike,'\n'))
 	numSample <- nrow(samplePoints)
 	logLike <- rep(NA,numSample)
 	names(logLike) <- 1:numSample
@@ -350,7 +378,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 		clusterExport(cl,list('location.output','baseWD','sampleParms',
 													'chunkSizePerWorker','runFridaParmsBySamplePoints',
 													'calDat','resSigma',
-													'runFridaParmsByIndex','saveOutPutOnlyReturnLogLike'))
+													'runFridaParmsByIndex','writePerWorkerFiles'))
 	}
 	# plot setup 
 	if(plotDatWhileRunning & !plotPerChunk){
@@ -423,10 +451,10 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			for(w.i in workers){
 				if(w.i <= length(workerWorkUnits) && !is.null(workerWorkUnits[[w.i]])){
 					saveRDS(samplePoints[workerWorkUnits[[w.i]],],
-									file.path('workerDirs',paste0(workDirBasename,w.i),'samplePoints.RDS'))
+									file.path(name.workDir,paste0(name.workerDirBasename,w.i),'samplePoints.RDS'))
 				} else {
 					saveRDS(samplePoints[c(),],
-									file.path('workerDirs',paste0(workDirBasename,w.i),'samplePoints.RDS'))
+									file.path(name.workDir,paste0(name.workerDirBasename,w.i),'samplePoints.RDS'))
 				}
 			}
 			gobble <- clusterEvalQ(cl,{
@@ -435,7 +463,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			parOutput <- clusterEvalQ(cl,runFridaParmsBySamplePoints())
 			timing <- toc(quiet=T)
 			chunkTimes[i] <- timing$toc-timing$tic
-			if(saveOutPutOnlyReturnLogLike){
+			if(writePerWorkerFiles){
 				logLike.df <- data.frame(id=integer(),logLike=double())
 				for(r.i in 1:length(parOutput)){
 					logLike.df <- rbind(logLike.df,parOutput[[r.i]]$logLike.df)
@@ -445,14 +473,14 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			cat('\r(s)')
 			parOutput <-  unlist(parOutput, recursive = F)
 			saveRDS(parOutput,file.path(baseWD,location.output,paste0('workUnit-',i,'.RDS')))
-			if(!saveOutPutOnlyReturnLogLike){
+			if(!writePerWorkerFiles){
 				saveParOutputToPerVarFiles(parOutput=parOutput, workUnit=i)
 			}
 			cat('\r   ')
 		}
 		cat('\r(l)')
 		
-		if(saveOutPutOnlyReturnLogLike & exists('logLike.df')){
+		if(writePerWorkerFiles & exists('logLike.df')){
 			logLike[logLike.df$id] <- logLike.df$logLike
 			completeRunsSoFar <- sum(logLike > -.Machine$double.xmax+(200*.Machine$double.eps))
 		} else {
@@ -550,7 +578,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 								chunkSizePerWorker/mean(chunkTimes,na.rm=T),
 								dseconds(round(sum(chunkTimes,na.rm=T))),
 								'                                                                             '))
-		}
+	}
 	# merge all the individual per Var files into one complete one
 	mergePerVarFiles()
 	return(logLike)
@@ -568,14 +596,24 @@ loadClusterRuns <- function(location.output){
 
 saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 																			 verbosity=0){
-	varNames <- names(parOutput[[1]]$runDat)
+	varNames <- parOutput[[1]]$origColNames
 	workUnitLength <- length(parOutput)
 	perVarData <- list()
 	logLike <- data.frame(id=rep(NA,workUnitLength),logLike=rep(NA,workUnitLength))
-	for(varName in varNames){
-		perVarData[[varName]] <- data.frame(matrix(NA,ncol=1+nrow(parOutput[[1]]$runDat),nrow=workUnitLength))
-		colnames(perVarData[[varName]]) <- c('id',rownames(parOutput[[1]]$runDat))
+	varsIdc.lst <- list()
+	varNamesNoSOW.all <- gsub('\\[\\d+','',varNames)
+	varNamesNoSOW <- unique(varNamesNoSOW.all)
+	for(v.i in 1:length(varNamesNoSOW)){
+		varsIdc.lst[[cleanNames(varNamesNoSOW[v.i])]] <- which(varNamesNoSOW.all==varNamesNoSOW[v.i])
+		if(length(varsIdc.lst[[cleanNames(varNamesNoSOW[v.i])]]>1)){
+			perVarData[[varName]] <- data.frame(matrix(NA,ncol=2+nrow(parOutput[[1]]$runDat),nrow=workUnitLength))
+			colnames(perVarData[[varName]]) <- c('polID','sowID',rownames(parOutput[[1]]$runDat))
+		} else {
+			perVarData[[varName]] <- data.frame(matrix(NA,ncol=1+nrow(parOutput[[1]]$runDat),nrow=workUnitLength))
+			colnames(perVarData[[varName]]) <- c('id',rownames(parOutput[[1]]$runDat))
+		}
 	}
+	varNames <- names(perVarData)
 	if(verbosity>0){
 		cat('Reading parOutput:\n')
 	}
@@ -585,7 +623,13 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 		}
 		runDat <- parOutput[[run.i]]$runDat
 		for(varName in varNames){
-			perVarData[[varName]][run.i,] <- unname(unlist(c(parOutput[[run.i]]$parmsIndex,runDat[varName])))
+			if(length(varsIdc.lst[[cleanNames(varNamesNoSOW[v.i])]]>1)){
+				# TODO WORK HERE RBIND THE run.i together
+				perVarData[[varName]] <- rbind(perVarData[[varName]],
+																			 data.frame(unname(unlist(c(parOutput[[run.i]]$parmsIndex,runDat[varName])))
+			} else{
+				perVarData[[varName]][run.i,] <- unname(unlist(c(parOutput[[run.i]]$parmsIndex,runDat[varName])))
+			}
 		}
 		logLike[run.i,] <- c(parOutput[[run.i]]$parmsIndex,parOutput[[run.i]]$logLike)
 	}

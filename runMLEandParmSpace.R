@@ -77,6 +77,7 @@ jParVect <- c(parVect,resSigmaVect)
 
 # start cluster ####
 source('clusterHelp.R')
+gobble <- clusterEvalQ(cl,source(file.path(baseWD,'config.R')))
 
 # MLE and Sensi Loop ####
 parscale <- rep(NA,length(jParVect))

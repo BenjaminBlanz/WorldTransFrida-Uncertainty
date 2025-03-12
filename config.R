@@ -17,8 +17,11 @@ clusterType <- 'psock'
 # main thread.
 # If true each worker writes its results to disk in a seperate file. This should be
 # much faster than handling all output in a single thread.
-saveOutPutOnlyReturnLogLike <- TRUE
+writePerWorkerFiles <- TRUE
+doNotReturnRunDataSavePerWorkerOnly <- FALSE
 perVarOutputTypes <- c('RDS','csv')
+name.workDir <- 'workerDirs'
+name.workerDirBasename <- 'workDir_'
 
 #plotting ####
 #related things
