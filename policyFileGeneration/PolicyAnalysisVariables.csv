@@ -1,0 +1,78 @@
+Policy Name,Module,Var,Default Value,Min,Max,Kind,StellaVar
+Carbon Tax,Government Regulations,tax on CO2e emissions,0,0,300,SixParm,Government Regulations.tax on CO2e emissions
+Coal Extraction + Tax,Government Regulations,tax rate on newly installed coal extraction capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed coal extraction capacity
+Coal Extraction + Subsidies,Government Regulations,tax rate on newly installed coal extraction capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed coal extraction capacity
+Oil Extraction + Tax,Government Regulations,tax rate on newly installed oil extraction capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed oil extraction capacity
+Oil Extraction + Subsidy,Government Regulations,tax rate on newly installed oil extraction capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed oil extraction capacity
+Gas Extraction + Tax,Government Regulations,tax rate on newly installed gas extraction capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed gas extraction capacity
+Gas Extraction + Subsidy,Government Regulations,tax rate on newly installed gas extraction capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed gas extraction capacity
+Coal Production + Tax,Government Regulations,tax rate on newly installed coal production capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed coal production capacity
+Coal Production + Subsidy,Government Regulations,tax rate on newly installed coal production capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed coal production capacity
+Oil Production + Tax,Government Regulations,tax rate on newly installed oil production capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed oil production capacity
+Oil Production + Subsidy,Government Regulations,tax rate on newly installed oil production capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed oil production capacity
+Gas Production + Tax,Government Regulations,tax rate on newly installed gas production capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed gas production capacity
+Gas Production + Subsidy,Government Regulations,tax rate on newly installed gas production capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed gas production capacity
+Hydropower Capacity + Tax,Government Regulations,tax rate on newly installed hydropower capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed hydropower capacity
+Hydropower Capacity + Subsidy,Government Regulations,tax rate on newly installed hydropower capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed hydropower capacity
+Bio Energy Capacity + Tax,Government Regulations,tax rate on newly installed bio energy capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed bio energy capacity
+Bio Energy Capacity + Subsidy,Government Regulations,tax rate on newly installed bio energy capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed bio energy capacity
+Nuclear Energy Capacity + Tax,Government Regulations,tax rate on newly installed nuclear energy capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed nuclear energy capacity
+Nuclear Energy Capacity + Subsidy,Government Regulations,tax rate on newly installed nuclear energy capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed nuclear energy capacity
+Solar Energy Capacity + Tax,Government Regulations,tax rate on newly installed solar energy capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed solar energy capacity
+Solar Energy Capacity + Subsidy,Government Regulations,tax rate on newly installed solar energy capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed solar energy capacity
+Wind Energy Capacity + Tax,Government Regulations,tax rate on newly installed wind energy capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed wind energy capacity
+Wind Energy Capacity + Subsidy,Government Regulations,tax rate on newly installed wind energy capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed wind energy capacity
+,,,,,,,
+SLR Strategy + Protection,Government Regulations,Protection as SLR adaptation strategy,0,0,1,Ones,Government Regulations.Protection as SLR adaptation strategy
+SLR Strategy + Protection,Government Regulations,SLR adaptation strategy start year,2025,2025,2100,DivBy5Parm,Government Regulations.SLR adaptation strategy start year
+SLR Strategy + Protection,Government Regulations,No SLR adaptation strategy,1,0,1,Zeros,Government Regulations.No SLR adaptation strategy
+SLR Strategy + Retreat,Government Regulations,Retreat as SLR adaptation strategy,0,0,1,Ones,Government Regulations.Retreat as SLR adaptation strategy
+SLR Strategy + Retreat,Government Regulations,SLR adaptation strategy start year,2025,2025,2100,DivBy5Parm,Government Regulations.SLR adaptation strategy start year
+SLR Strategy + Retreat,Government Regulations,No SLR adaptation strategy,1,0,1,Zeros,Government Regulations.No SLR adaptation strategy
+,,,,,,,
+Forrestation,Government Regulations,forestation policy,0,0,0.002,SixParm,Government Regulations.forestation policy
+,,,,,,,
+Irrigation,Government Regulations,irrigation fraction policy,0.239,0.15,1,ThreeParm,Government Regulations.irrigation fraction policy
+Irrigation,Government Regulations,switch irrigation fraction policy,0,0,1,Ones,Government Regulations.switch irrigation fraction policy
+,,,,,,,
+Non Ag Water Use,Government Regulations,non agricultural water use policy,0,"170,000,000","173,500,000",ThreeParm,Government Regulations.non agricultural water use policy
+Non Ag Water Use,Government Regulations,switch non agricultural water use policy,0,0,1,Ones,Government Regulations.switch non agricultural water use policy
+,,,,,,,
+Austerity Level,Government Regulations,minimum percentage of taxes spent by government,0.9,0.7,1,OneParm,Government Regulations.minimum percentage of taxes spent by government
+,,,,,,,
+Debt to GDP Level,Government Regulations,government debt to GDP ratio target,1.2,0.5,2,OneParm,Government Regulations.government debt to GDP ratio target
+Debt to GDP Level,Government Regulations,time for government to change the debt to GDP ratio target,10,5,50,DivBy5Parm,Government Regulations.time for government to change the debt to GDP ratio target
+Debt to GDP Level,Government Regulations,debt to gdp level start year,2025,2025,2100,DivBy5Parm,Government Regulations.debt to gdp level start year
+,,,,,,,
+Central Bank Inflation Goal,Government Regulations,time to start central bank inflation policy,2025,2025,2100,DivBy5Parm,Government Regulations.time to start central bank inflation policy
+Central Bank Inflation Goal,Government Regulations,inflation goal policy,0.02,0,0.1,OneParm,Government Regulations.inflation goal policy
+Central Bank Inflation Goal,Government Regulations,max change per year in inflation,0.001,0.0001,0.02,OneParm,Government Regulations.max change per year in inflation
+,,,,,,,
+Central Bank Unemployment Goal,Government Regulations,max change per year in unemployment,0.001,0.0001,0.02,OneParm,Government Regulations.max change per year in unemployment
+Central Bank Unemployment Goal,Government Regulations,unemployment goal policy,0.05,0,0.15,OneParm,Government Regulations.unemployment goal policy
+Central Bank Unemployment Goal,Government Regulations,time to start central bank unemployment policy,2025,2025,2100,DivBy5Parm,Government Regulations.time to start central bank unemployment policy
+,,,,,,,
+Wage Tax Policy,Government Regulations,wage tax policy,0.219,0.05,0.5,OneParm,Government Regulations.wage tax policy
+Wage Tax Policy,Government Regulations,wage tax policy start year,2025,2025,2100,DivBy5Parm,Government Regulations.wage tax policy start year
+Wage Tax Policy,Government Regulations,time to implement wage tax policy,5,5,75,DivBy5Parm,Government Regulations.time to implement wage tax policy
+Wage Tax Policy,Government Regulations,switch wage tax policy,0,0,1,Ones,Government Regulations.switch wage tax policy
+,,,,,,,
+Profit Tax Policy,Government Regulations,profit tax rate policy,0.327,0.05,0.5,OneParm,Government Regulations.profit tax rate policy
+Profit Tax Policy,Government Regulations,profit tax policy start year,2025,2025,2100,DivBy5Parm,Government Regulations.profit tax policy start year
+Profit Tax Policy,Government Regulations,time to implement profit tax policy,5,5,75,DivBy5Parm,Government Regulations.time to implement profit tax policy
+Profit Tax Policy,Government Regulations,switch profit tax policy,0,0,1,Ones,Government Regulations.switch profit tax policy
+,,,,,,,
+Wealth Tax Policy,Government Regulations,wealth tax rate policy,0,0.05,0.5,OneParm,Government Regulations.wealth tax rate policy
+Wealth Tax Policy,Government Regulations,wealth tax policy start year,2025,2025,2100,DivBy5Parm,Government Regulations.wealth tax policy start year
+Wealth Tax Policy,Government Regulations,time to implement wealth tax policy,5,5,75,DivBy5Parm,Government Regulations.time to implement wealth tax policy
+,,,,,,,
+Per Person Food Demand,Behavioral Choices,food demand policy,2833,2200,4000,ThreeParm,Behavioral Choices.food demand policy
+Per Person Food Demand,Behavioral Choices,switch food demand policy,0,0,1,Ones,Behavioral Choices.switch food demand policy
+,,,,,,,
+Diet Shift + Additional Environmental Consciousness,Behavioral Choices,additional environmental consciousness policy,0,0,1,ThreeParm,Behavioral Choices.additional environmental consciousness policy
+Diet Shift + Additional Environmental Consciousness,Behavioral Choices,switch environmental consciousness policy,0,0,1,Ones,Behavioral Choices.switch environmental consciousness policy
+Diet Shift + Animal Products Fraction,Behavioral Choices,animal products fraction policy,0.19,0.05,0.3,ThreeParm,Behavioral Choices.animal products fraction policy
+Diet Shift + Animal Products Fraction,Behavioral Choices,switch animal products fraction policy,0,0,1,Ones,Behavioral Choices.switch animal products fraction policy
+,,,,,,,
+Per Person Energy Demand,Behavioral Choices,per person use of energy policy,8.64,5,10,ThreeParm,Behavioral Choices.per person use of energy policy
+Per Person Energy Demand,Behavioral Choices,switch energy demand policy,0,0,1,Ones,Behavioral Choices.switch energy demand policy
