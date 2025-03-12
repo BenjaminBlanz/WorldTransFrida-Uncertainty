@@ -1,11 +1,12 @@
 Variable,Min,Max
-Finance.normal failure rate[1],0.01,0.02 
+Finance.normal failure rate[1],0.0135,0.017 
 Finance.bank expectation formation time[1],1,4
 Finance.loan maturation time[1],3,17
-Finance.sensitivity of effect of sta on failure rate[1],0.3,0.85
+Finance.sensitivity of effect of sta on failure rate[1],0.35,0.85
 Finance.max change in bank investment as fraction of normal[1],0.99,1
 Finance.sensitivity of defaults to changes in risky interest[1],0,13
 Finance.exponential effect of interest on defaults,8,15
+Demographics.sensitivity of fertility to literacy,-0.02,-0.0177
 Sea level rise costs and impacts.Increase factor for costs of reactive retreat[1],3,5
 Sea level rise costs and impacts.Asset demolition cost factor[1],0.025,0.075
 Sea level rise costs and impacts.Mobile assets fraction[1],0.2,0.3
