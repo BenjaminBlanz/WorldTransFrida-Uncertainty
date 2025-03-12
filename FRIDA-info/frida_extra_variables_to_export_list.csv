@@ -1,4 +1,8 @@
 ,FRIDA Module,FRIDA Name,Index,FRIDA FQN,Unit
+From Chris,Aerosol Forcing,Effective Radiative Forcing from Aerosol Radiation Interactions,[1],Aerosol Forcing.Effective Radiative Forcing from Aerosol Radiation Interactions[1],W/(metre^2)
+From Chris,Aerosol Forcing,Effective Radiative Forcing from Aerosol Cloud Interactions,[1],Aerosol Forcing.Effective Radiative Forcing from Aerosol Cloud Interactions[1],W/(metre^2)
+From Chris,CH4 Forcing,Atmospheric CH4 Concentration,[1],CH4 Forcing.Atmospheric CH4 Concentration[1],ppb
+From Chris,N2O Forcing,Atmospheric N2O Concentration,[1],N2O Forcing.Atmospheric N2O Concentration[1],ppb
 From Lennart,CO2 Forcing,Atmospheric CO2 growth GtC,[1],CO2 Forcing.Atmospheric CO2 growth GtC[1],GtC/Year
 From Lennart,Emissions,CO2 Emissions from Food and Land Use GtC,[1],Emissions.CO2 Emissions from Food and Land Use GtC[1],GtC/Year
 From Lennart,Emissions,CO2 Emissions from Other GtC,[1],Emissions.CO2 Emissions from Other GtC[1],GtC/Year
@@ -27,7 +31,7 @@ animal products desired demand from personal norm (kcal/person/day),Animal Produ
 animal products perceived consumption risk,Animal Products Demand,perceived consumption risk,[1],Animal Products Demand.perceived consumption risk[1],dmnl
 animal products perceived social value,Animal Products Demand,Perceived Social Value,[1],Animal Products Demand.Perceived Social Value[1],dmnl
 animal products desired demand from descriptive norm (kcal/person/day),Animal Products Demand,desired demand from descriptive norm,[1],Animal Products Demand.desired demand from descriptive norm[1],kcal/person/day
-animal products desired demand from accessibility (kcal/person/day),Animal Products Demand,Desired Demand from Accessibility ,[1],Animal Products Demand.Desired Demand from Accessibility [1],kcal/person/day
+animal products desired demand from accessibility (kcal/person/day),Animal Products Demand,Desired Demand from Accessibility,[1],Animal Products Demand.Desired Demand from Accessibility[1],kcal/person/day
 animal products weight of accessibility,Animal Products Demand,weight of accessibility,[1],Animal Products Demand.weight of accessibility[1],dmnl
 animal products average daily demand (kcal/person/day),Animal Products Demand,average daily demand per capita,[1],Animal Products Demand.average daily demand per capita[1],kcal/person/day
 direct food demand per person per day,Food Demand,direct food demand per person per day,[1],Food Demand.direct food demand per person per day[1],kcal/person/day
@@ -138,9 +142,10 @@ for SLR analysis,Coastal Assets,Coastal Assets,"[1,insufficent]","Coastal Assets
 for SLR analysis,Coastal Assets,Coastal Assets,"[1,well protected]","Coastal Assets.Coastal Assets[1,well protected]",bc$
 for SLR analysis,Coastal Population,Coastal Population,"[1,insufficent]","Coastal Population.Coastal Population[1,insufficent]",Mp
 for SLR analysis,Coastal Population,Coastal Population,"[1,well protected]","Coastal Population.Coastal Population[1,well protected]",Mp
-for SLR analysis,Sea level rise costs and impacts,Total nominal SLR protection cost,[1],Sea level rise costs and impacts.Total nominal SLR protection cost[1],b$/year
+for SLR analysis,Sea level rise costs and impacts,Total SLR protection cost,[1],Sea level rise costs and impacts.Total SLR protection cost[1],bc$/year
 for SLR analysis,Sea level rise costs and impacts,Total fatalities due to coastal floods,[1],Sea level rise costs and impacts.Total fatalities due to coastal floods[1],Mp/year
 for SLR analysis,Sea level rise costs and impacts,Total number of people flooded,[1],Sea level rise costs and impacts.Total number of people flooded[1],Mp/year
-for SLR analysis,Sea level rise costs and impacts,Total nominal loss of assets from SLR,[1],Sea level rise costs and impacts.Total nominal loss of assets from SLR[1],b$/year
+for SLR analysis,Sea level rise costs and impacts,Total loss of assets from SLR,[1],Sea level rise costs and impacts.Total loss of assets from SLR[1],bc$/year
 for SLR analysis,Sea level rise costs and impacts,Productivity reduction factor from coastal flooding,[1],Sea level rise costs and impacts.Productivity reduction factor from coastal flooding[1],dmnl
-for SLR analysis,Sea level rise costs and impacts,Total nominal people retreat costs,[1],Sea level rise costs and impacts.Total nominal people retreat costs[1],b$/year
+for SLR analysis,Sea level rise costs and impacts,Total people retreat costs,[1],Sea level rise costs and impacts.Total people retreat costs[1],bc$/year
+for SLR analysis,Sea level rise costs and impacts,Total asset retreat costs,[1],Sea level rise costs and impacts.Total asset retreat costs[1],bc$/year
