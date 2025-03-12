@@ -102,7 +102,7 @@ forceParBounds <- FALSE
 # can specify 'Min' or 'Max' to decide if the larger or smaller of the ranges of 
 # the parameter should be used to decide the new range. Any other value deactivates this
 # feature.
-symmetricRanges <- 'Max'
+symmetricRanges <- 'Min'
 allowAssymetricToAvoidZeroRanges <- FALSE
 symmetricRangesBoundByAuthors <- TRUE
 # should we skip the parameter maximum likelihood estimation and use the default
