@@ -41,7 +41,7 @@ yearsToRead <- rownames(defRun)
 # cat(paste0(varsToRead,collapse='\n   '))
 # cat('\n')
 # dimensions time in rows, run IDs in columns,  variables to read
-varsToRead <- subSampleTargetVars
+varsToRead <- subSample.TargetVars
 runsData <- array(NA,dim=c(nrow(defRun),nrow(samplePoints),length(varsToRead)))
 dimnames(runsData) <- list(rownames(defRun),1:nrow(samplePoints),varsToRead)
 for(f.i in 1:length(runFilesList)){
