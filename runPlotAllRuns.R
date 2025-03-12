@@ -53,6 +53,11 @@ for (y.i in 1:length(yearsToPlot.names)){
 	}
 }
 
+dir.create(file.path(location.output,location.plots),recursive = T,showWarnings = F)
+sink(file.path(location.output,location.plots,'pathToTheOutputUnderlyingTheseFigures.txt'))
+cat(file.path(getwd(),location.output))
+sink()
+
 for(plotWeightType in plotWeightTypes){
 	# weighting ####
 	cat(sprintf('Plotting %s weighted\n',plotWeightType))
