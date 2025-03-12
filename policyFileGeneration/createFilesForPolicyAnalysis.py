@@ -17,8 +17,8 @@ discountRate=0.04
 # this will take around 10-15 min on Levante interactive node.
 # For testing set this to  something like 1024 and 8
 # (the SobolSequence sampler complains if the number is not a power of 2)
-Nprior=int(2**16) 
-Nselect=128
+Nprior=int(2**15) 
+Nselect=64
 
 ###################################################
 
@@ -90,7 +90,7 @@ for i, policy in enumerate(policyList):
     else: fileExists=False
 
     polType=policyTypes[i]
-    startvalue=policyInputList[i][0]
+    startvalue=float(policyInputList[i][0].replace(",", ""))
     minvalue=float(policyInputList[i][1].replace(",", ""))
     maxvalue=float(policyInputList[i][2].replace(",", ""))
     
@@ -159,8 +159,8 @@ for i, policy in enumerate(policyList):
             bundleMinValues = []
             bundleMaxValues = []
             # get the information on the variables that are already in there
-            for i in range(nvars):                
-                idx = fullVarList.index(re.split(r'[,:]', df.values[i,1])[0])
+            for ii in range(nvars):                
+                idx = fullVarList.index(re.split(r'[,:]', df.values[ii,1])[0])
                 bundlePolTypes.append(policyTypes[idx])
                 bundleVarnames.append(fullVarList[idx])
                 bundleMinValues.append(float(policyInputList[idx][1].replace(",", "")))
