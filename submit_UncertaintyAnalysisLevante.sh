@@ -10,14 +10,14 @@
 
 numWorkers=250
 numSamples=10000
-chunkSizePerWorker=200
-expID=UA_nW${numWorkers}_nS${numSamples}_cS${chunkSizePerWorker}
+chunkSizePerWorker=100
+expID=UA_policy_GDPforFoodDemand_nS${numSamples}
 
 
 ### SLURM settings
 # How long will it take approximately? Job will be killed after this time!
 # But max 8:00 hours and the shorter the run is, the earlier the job gets run
-hours=1
+hours=2
 minutes=00
 
 # Use a different group account for ressources? Which partition?
@@ -33,13 +33,16 @@ copyParmRangesAndScales="false"
 copyID=''
 
 
+outputType='both' # can also be 'csv' or 'RDS'
+
+
 
 #### OPTIONAL: USING DIFFERENT INPUT FILES?
 # FRIDA folder
-FRIDA='FRIDAforUncertaintyAnalyis'
+FRIDA='FRIDAforUncertaintyAnalysis'
 
 # These need to be located in the FRIDA-configs/ folder!
-policyFile='policy_EMB.csv'
+policyFile='policy_useGDPforFoodDemand.csv'
 
 # These need to be located in the FRIDA-info/ folder!
 infoFile='frida_info.csv'
@@ -56,6 +59,7 @@ extraExportFile='frida_extra_variables_to_export_list.csv'
 ############ Preparing the R-scripts and the runscript ######################
 #############################################################################
 
+########
 # Modify the config file according to the settings above
 config=${expID}_config.R
 cp config.R $config
@@ -72,7 +76,20 @@ sed -i "s/frida_parameter_exclusion_list.csv/${excludeParmFile}/" $config
 sed -i "s/frida_variable_exclusion_list.csv/${excludeVarFile}/" $config
 sed -i "s/frida_extra_variables_to_export_list.csv/${extraExportFile}/" $config
 
+if [ "$outputType" = "csv" ]; then
+	sed -i "/^perVarOutputTypes/c\perVarOutputTypes <- c('csv')" $config
+elif [ "$outputType" = "RDS" ]; then
+	sed -i "/^perVarOutputTypes/c\perVarOutputTypes <- c('RDS')" $config
+elif [ "$outputType" = "both" ]; then
+	sed -i "/^perVarOutputTypes/c\perVarOutputTypes <- c('RDS','csv')" $config		
+else
+	echo "Output Type ${OutputType} not defined, exiting"
+	exit 1
+fi
 
+
+
+#########
 # Need to also modify the runMLE and runInitData, to avoid the breaks in R 
 # that wait for someone to hit enter and to use the updated config
 
@@ -97,6 +114,14 @@ sed -i "s/runInitialiseData.R/${runInit}/g" $runMLE
 sed -i "s/clusterHelp.R/${clusterHelp}/g" $runMLE
 sed -i "/^continue <- readline/d" $runMLE
 
+
+# modify runPlotAllRuns
+runPlot=${expID}_runPlotAllRuns.R
+cp runPlotAllRuns.R $runPlot
+
+sed -i "s/config.R/${config}/g" $runPlot
+
+
 # Create the runscript from the template
 template='UncertaintyAnalysis.run'
 runscript="${expID}.run"
@@ -108,10 +133,13 @@ cp $template $runscript
 sed -i "s/time=01:00:00/time=0${hours}:${minutes}:00/" $runscript
 sed -i "s/account=mh0033/account=${account}/" $runscript
 sed -i "s/partition=compute/partition=${partition}/" $runscript
-sed -i "s/LOG.UncertaintyAnalysis/LOG.${expID}/g" $runscript
+sed -i "s/ntasks-per-node=128/ntasks-per-node=${numWorkers}/" $runscript
+#sed -i "s/LOG.UncertaintyAnalysis/LOG.${expID}/g" $runscript
+sed -i "s/expID/${expID}/g" $runscript
 sed -i "s/jdoe@mail.com/${email}/" $runscript
-sed -i "s/job-name=runUncertaintyAnalysis/job-name=${expID}/" $runscript
+#sed -i "s/job-name=runUncertaintyAnalysis/job-name=${expID}/" $runscript
 sed -i "s/runMLEandParmSpace.R/${runMLE}/" $runscript
+sed -i "s/runPlotAllRuns.R/${runPlot}/" $runscript
 
 #############################################################################
 ############ Copying parameter ranges and scales ############################
@@ -126,7 +154,7 @@ fi
 
 
 if [ "$copyParmRangesAndScales" = "true" ]; then
-	for filename in 'parscale.RDS' 'sampleParmsParscale.csv' 'sampleParmsParscaleRanged.csv' 'sampleParmsParscaleRanged.RDS' 'samplePointsBase.RDS' 'samplePoints.RDS' 'sigma-indepParms.RDS' 'sigma.RDS'; do
+	for filename in 'parscale.RDS' 'sampleParmsParscale.csv' 'sampleParmsParscaleRanged.csv' 'sampleParmsParscaleRanged.RDS' 'sigma-indepParms.RDS' 'sigma.RDS'; do
 		file=workOutput/${copyID}/${filename}
 		if [ -e $file ]; then
 			cp ${file}  ${expDir}/

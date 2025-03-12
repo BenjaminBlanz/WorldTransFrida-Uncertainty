@@ -2,14 +2,16 @@
 #SBATCH --partition=compute
 #SBATCH --account=mh0033
 #SBATCH --nodes=1
+#SBATCH --ntasks-per-node=128
 #SBATCH --time=01:00:00
-#SBATCH --output=LOG.UncertaintyAnalysis_%j.log
-#SBATCH --error=LOG.UncertaintyAnalysis_%j.log
+#SBATCH --output=workOutput/expID/LOG.expID_%j.log
+#SBATCH --error=workOutput/expID/LOG.expID_%j.log
 #SBATCH --mail-user=jdoe@mail.com
 #SBATCH --mail-type=FAIL
-#SBATCH --job-name=runUncertaintyAnalysis
+#SBATCH --job-name=expID
 
 module load r/4.4.2-gcc-11.2.0
 
-Rscript --max-connections=1024 -e "source('runMLEandParmSpace.R')"
+Rscript --max-connections=1024 -e "source('runMLEandParmSpace.R'); source('runPlotAllRuns.R'); source('cleanup.R')"
 
+mv expID_*.R workOutput/expID/
