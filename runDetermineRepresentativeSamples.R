@@ -159,7 +159,11 @@ sqrtNumPlots <- sqrt(length(subSample.TargetVars))
 plotCols <- round(sqrtNumPlots)
 plotRows <- ceiling(sqrtNumPlots)
 par(mfrow=c(plotRows,plotCols))
+subsampleFigDir <- file.path(location.output,'figures','subSample.TargetVars')
+dir.create(file.path(subsampleFigDir),showWarnings = F,recursive = T)
 for(var.i in 1:length(subSample.TargetVars)){
+	png(file.path(subsampleFigDir,paste0(subSample.TargetVars[var.i],'.png')),
+			width = plotWidth, height = plotHeight, units = plotUnit,res = plotRes)
 	plot(rownames(defRun),defRun[,subSample.TargetVars[var.i]],ylim=range(runsData[,minSSEidc[,var.i],var.i]),
 			 type='n',xlab='year',ylab=subSample.TargetVars[var.i])
 	for(var.ii in 1:length(subSample.TargetVars)){
@@ -170,6 +174,7 @@ for(var.i in 1:length(subSample.TargetVars)){
 						lwd=3)
 		}
 	}
+	dev.off()
 }
 
 # the likelihood for the quantiles is the likelihood that the errors are from 
