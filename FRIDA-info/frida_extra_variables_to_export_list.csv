@@ -1,151 +1,149 @@
 ,FRIDA Module,FRIDA Name,Index,FRIDA FQN,Unit
-From Chris,Aerosol Forcing,Effective Radiative Forcing from Aerosol Radiation Interactions,[1],Aerosol Forcing.Effective Radiative Forcing from Aerosol Radiation Interactions[1],W/(metre^2)
-From Chris,Aerosol Forcing,Effective Radiative Forcing from Aerosol Cloud Interactions,[1],Aerosol Forcing.Effective Radiative Forcing from Aerosol Cloud Interactions[1],W/(metre^2)
-From Chris,CH4 Forcing,Atmospheric CH4 Concentration,[1],CH4 Forcing.Atmospheric CH4 Concentration[1],ppb
-From Chris,N2O Forcing,Atmospheric N2O Concentration,[1],N2O Forcing.Atmospheric N2O Concentration[1],ppb
-From Lennart,CO2 Forcing,Atmospheric CO2 growth GtC,[1],CO2 Forcing.Atmospheric CO2 growth GtC[1],GtC/Year
-From Lennart,Emissions,CO2 Emissions from Food and Land Use GtC,[1],Emissions.CO2 Emissions from Food and Land Use GtC[1],GtC/Year
-From Lennart,Emissions,CO2 Emissions from Other GtC,[1],Emissions.CO2 Emissions from Other GtC[1],GtC/Year
-From Lennart,Emissions,land carbon sink,[1],Emissions.land carbon sink[1],GtC/Year
-From Lennart,Emissions,Realized CO2 Emissions from Energy GtC,[1],Emissions.Realized CO2 Emissions from Energy GtC[1],GtC/Year
-From Lennart,Emissions,Total CO2 Emissions GtC,[1],Emissions.Total CO2 Emissions GtC[1],GtC/Year
-From Lennart,Ocean,Air sea co2 flux,[1],Ocean.Air sea co2 flux[1],GtC/Year
-Total radiative forcing,Forcing,Total Effective Radiative Forcing,[1],Forcing.Total Effective Radiative Forcing[1],W/m^2
-Atmospheric CO2 concentration,CO2 Forcing,Atmospheric CO2 concentration,[1],CO2 Forcing.Atmospheric CO2 concentration[1],ppm
-Surface temperature anomaly,Energy Balance Model,Surface Temperature Anomaly,[1],Energy Balance Model.Surface Temperature Anomaly[1],deg C
-sea level anomaly,Sea Level,Total global sea level anomaly,[1],Sea Level.Total global sea level anomaly[1],metre
-mean surface ocean pH (Cold and Warm surface ocean pH are the required FRIDA variables),Ocean,Warm surface ocean pH,[1],Ocean.Warm surface ocean pH[1],dmnl
-,Ocean,Cold surface ocean pH,[1],Ocean.Cold surface ocean pH[1],dmnl
-perceived climate risk,Climate Risk Perception,perceived climate change risk,[1],Climate Risk Perception.perceived climate change risk[1],dmnl
-Perceived Temperature Anomaly,Climate Risk Perception,Perceived Temperature Anomaly,[1],Climate Risk Perception.Perceived Temperature Anomaly[1],deg C
-Reference Temperature Anomaly,Climate Risk Perception,Reference Temperature Anomaly,[1],Climate Risk Perception.Reference Temperature Anomaly[1],deg C
-Perceived Climate Extremes Exposure,Climate Risk Perception,Perceived Climate Extremes Exposure,[1],Climate Risk Perception.Perceived Climate Extremes Exposure[1],Indices/person/year
-Reference Climate Extremes Exposure,Climate Risk Perception,Reference Climate Extremes Exposure,[1],Climate Risk Perception.Reference Climate Extremes Exposure[1],Indices/person/year
-Perceived SLR Flooding Exposure,Climate Risk Perception,Perceived SLR Flooding Exposure,[1],Climate Risk Perception.Perceived SLR Flooding Exposure[1],Mp/year
-Reference SLR Flooding Exposure,Climate Risk Perception,Reference SLR Flooding Exposure,[1],Climate Risk Perception.Reference SLR Flooding Exposure[1],Mp/year
-animal products production,Animal Products,animal products production,[1],Animal Products.animal products production[1],PCal/Year
-vegetal food product demand per person per day,Food Demand,vegetal product demand per person per day,[1],Food Demand.vegetal product demand per person per day[1],kcal/person/day
-animal food product demand per day,Food Demand,animal product demand per person per day,[1],Food Demand.animal product demand per person per day[1],kcal/person/day
-animal products demand (pcal/year),Food Demand,animal products demand,[1],Food Demand.animal products demand[1],Pcal/Year
-animal products desired demand from personal norm (kcal/person/day),Animal Products Demand,desired demand from personal norm,[1],Animal Products Demand.desired demand from personal norm[1],kcal/person/day
-animal products perceived consumption risk,Animal Products Demand,perceived consumption risk,[1],Animal Products Demand.perceived consumption risk[1],dmnl
-animal products perceived social value,Animal Products Demand,Perceived Social Value,[1],Animal Products Demand.Perceived Social Value[1],dmnl
-animal products desired demand from descriptive norm (kcal/person/day),Animal Products Demand,desired demand from descriptive norm,[1],Animal Products Demand.desired demand from descriptive norm[1],kcal/person/day
-animal products desired demand from accessibility (kcal/person/day),Animal Products Demand,Desired Demand from Accessibility,[1],Animal Products Demand.Desired Demand from Accessibility[1],kcal/person/day
-animal products weight of accessibility,Animal Products Demand,weight of accessibility,[1],Animal Products Demand.weight of accessibility[1],dmnl
-animal products average daily demand (kcal/person/day),Animal Products Demand,average daily demand per capita,[1],Animal Products Demand.average daily demand per capita[1],kcal/person/day
-direct food demand per person per day,Food Demand,direct food demand per person per day,[1],Food Demand.direct food demand per person per day[1],kcal/person/day
-total food desired demand from personal norm (kcal/person/day),Total Food Demand,desired demand from personal norm,[1],Total Food Demand.desired demand from personal norm[1],kcal/person/day
-total food perceived consumption risk,Total Food Demand,perceived consumption risk,[1],Total Food Demand.perceived consumption risk[1],dmnl
-total food perceived social value,Total Food Demand,Perceived Social Value,[1],Total Food Demand.Perceived Social Value[1],dmnl
-total food desired demand from descriptive norm (kcal/person/day),Total Food Demand,desired demand from descriptive norm,[1],Total Food Demand.desired demand from descriptive norm[1],kcal/person/day
-total food desired demand from accessibility (kcal/person/day),Total Food Demand,Desired Demand from Accessibility ,[1],Total Food Demand.Desired Demand from Accessibility [1],kcal/person/day
-total food weight of accessibility,Total Food Demand,weight of accessibility,[1],Total Food Demand.weight of accessibility[1],dmnl
-Area of crop land,Land Use,Cropland,[1],Land Use.Cropland[1],Mha
-are of mature forest,Land Use,Mature Forest,[1],Land Use.Mature Forest[1],Mha
-area of young forest,Land Use,Young Forest,[1],Land Use.Young Forest[1],Mha
-area of grassland,Land Use,Grassland,[1],Land Use.Grassland[1],Mha
-area of degraded land,Land Use,Degraded Land,[1],Land Use.Degraded Land[1],Mha
-net primary production from mature forest (GtC/year),Forest,mature forest net primary production,[1],Forest.mature forest net primary production[1],GtC/Year
-net primary production from young forest (GtC/year),Forest,young forest net primary production,[1],Forest.young forest net primary production[1],GtC/Year
-net primary production from cropland (GtC/year),Crop,cropland net primary production,[1],Crop.cropland net primary production[1],GtC/Year
-net primary production from grassland (GtC/year),Grass,grassland net primary production,[1],Grass.grassland net primary production[1],GtC/Year
-net primary production from peatlands,Terrestrial Carbon Balance,Annual carbon uptake in peatlands,[1],Terrestrial Carbon Balance.Annual carbon uptake in peatlands[1],GtC/Year
-net primary production from degraded land soil carbon,degraded land soil carbon,degraded land litter,[1],degraded land soil carbon.degraded land litter[1],GtC/Year
-Terrestrial net primary production,Terrestrial Carbon Balance,Terrestrial net primary production ,[1],Terrestrial Carbon Balance.Terrestrial net primary production [1],GtC/Year
-crop production for vegetal products,Food Demand,crop demand for food,[1],Food Demand.crop demand for food[1],PCal/year
-crop production for animal feed,Food Demand,feed production,[1],Food Demand.feed production[1],PCal/year
-crop production for biofuel,Food Demand,crops for energy,[1],Food Demand.crops for energy[1],PCal/year
-crop used for non energy other,Food Demand,crop used for non energy other,[1],Food Demand.crop used for non energy other[1],PCal/year
-crop production for seed and lost,Food Demand,Crops used for Seed or Lost,[1],Food Demand.Crops used for Seed or Lost[1],PCal/year
-Total Crop Production,Crop,Crop Production,[1],Crop.Crop Production[1],PCal/year
-water use for agriculture,Freshwater,agricultural water withdrawal,[1],Freshwater.agricultural water withdrawal[1],m^3/year
-water use other,Freshwater,non agricultural water withdrawl,[1],Freshwater.non agricultural water withdrawl[1],m^3/year
-fertilizer manure,Land Nutrients,manure fertilizer use,[1],Land Nutrients.manure fertilizer use[1],MtN/year
-fertilizer man-made,Land Nutrients,man made fertilizer use,[1],Land Nutrients.man made fertilizer use[1],MtN/year
+From Chris,Aerosol Forcing,Effective Radiative Forcing from Aerosol Radiation Interactions,[*],Aerosol Forcing.Effective Radiative Forcing from Aerosol Radiation Interactions[*],W/(metre^2)
+From Chris,Aerosol Forcing,Effective Radiative Forcing from Aerosol Cloud Interactions,[*],Aerosol Forcing.Effective Radiative Forcing from Aerosol Cloud Interactions[*],W/(metre^2)
+From Chris,CH4 Forcing,Atmospheric CH4 Concentration,[*],CH4 Forcing.Atmospheric CH4 Concentration[*],ppb
+From Chris,N2O Forcing,Atmospheric N2O Concentration,[*],N2O Forcing.Atmospheric N2O Concentration[*],ppb
+From Lennart,CO2 Forcing,Atmospheric CO2 growth GtC,[*],CO2 Forcing.Atmospheric CO2 growth GtC[*],GtC/Year
+From Lennart,Emissions,CO2 Emissions from Food and Land Use GtC,[*],Emissions.CO2 Emissions from Food and Land Use GtC[*],GtC/Year
+From Lennart,Emissions,CO2 Emissions from Other GtC,[*],Emissions.CO2 Emissions from Other GtC[*],GtC/Year
+From Lennart,Emissions,land carbon sink,[*],Emissions.land carbon sink[*],GtC/Year
+From Lennart,Emissions,Realized CO2 Emissions from Energy GtC,[*],Emissions.Realized CO2 Emissions from Energy GtC[*],GtC/Year
+From Lennart,Emissions,Total CO2 Emissions GtC,[*],Emissions.Total CO2 Emissions GtC[*],GtC/Year
+From Lennart,Ocean,Air sea co2 flux,[*],Ocean.Air sea co2 flux[*],GtC/Year
+Total radiative forcing,Forcing,Total Effective Radiative Forcing,[*],Forcing.Total Effective Radiative Forcing[*],W/m^2
+Atmospheric CO2 concentration,CO2 Forcing,Atmospheric CO2 concentration,[*],CO2 Forcing.Atmospheric CO2 concentration[*],ppm
+Surface temperature anomaly,Energy Balance Model,Surface Temperature Anomaly,[*],Energy Balance Model.Surface Temperature Anomaly[*],deg C
+sea level anomaly,Sea Level,Total global sea level anomaly,[*],Sea Level.Total global sea level anomaly[*],metre
+mean surface ocean pH (Cold and Warm surface ocean pH are the required FRIDA variables),Ocean,Warm surface ocean pH,[*],Ocean.Warm surface ocean pH[*],dmnl
+,Ocean,Cold surface ocean pH,[*],Ocean.Cold surface ocean pH[*],dmnl
+perceived climate risk,Climate Risk Perception,perceived climate change risk,[*],Climate Risk Perception.perceived climate change risk[*],dmnl
+Perceived Temperature Anomaly,Climate Risk Perception,Perceived Temperature Anomaly,[*],Climate Risk Perception.Perceived Temperature Anomaly[*],deg C
+Reference Temperature Anomaly,Climate Risk Perception,Reference Temperature Anomaly,[*],Climate Risk Perception.Reference Temperature Anomaly[*],deg C
+Perceived Climate Extremes Exposure,Climate Risk Perception,Perceived Climate Extremes Exposure,[*],Climate Risk Perception.Perceived Climate Extremes Exposure[*],Indices/person/year
+Reference Climate Extremes Exposure,Climate Risk Perception,Reference Climate Extremes Exposure,[*],Climate Risk Perception.Reference Climate Extremes Exposure[*],Indices/person/year
+Perceived SLR Flooding Exposure,Climate Risk Perception,Perceived SLR Flooding Exposure,[*],Climate Risk Perception.Perceived SLR Flooding Exposure[*],Mp/year
+Reference SLR Flooding Exposure,Climate Risk Perception,Reference SLR Flooding Exposure,[*],Climate Risk Perception.Reference SLR Flooding Exposure[*],Mp/year
+animal products production,Animal Products,animal products production,[*],Animal Products.animal products production[*],PCal/Year
+vegetal food product demand per person per day,Food Demand,vegetal product demand per person per day,[*],Food Demand.vegetal product demand per person per day[*],kcal/person/day
+animal food product demand per day,Food Demand,animal product demand per person per day,[*],Food Demand.animal product demand per person per day[*],kcal/person/day
+animal products demand (pcal/year),Food Demand,animal products demand,[*],Food Demand.animal products demand[*],Pcal/Year
+animal products desired demand from personal norm (kcal/person/day),Animal Products Demand,desired demand from personal norm,[*],Animal Products Demand.desired demand from personal norm[*],kcal/person/day
+animal products perceived consumption risk,Animal Products Demand,perceived consumption risk,[*],Animal Products Demand.perceived consumption risk[*],dmnl
+animal products perceived social value,Animal Products Demand,Perceived Social Value,[*],Animal Products Demand.Perceived Social Value[*],dmnl
+animal products desired demand from descriptive norm (kcal/person/day),Animal Products Demand,desired demand from descriptive norm,[*],Animal Products Demand.desired demand from descriptive norm[*],kcal/person/day
+animal products desired demand from accessibility (kcal/person/day),Animal Products Demand,Desired Demand from Accessibility,[*],Animal Products Demand.Desired Demand from Accessibility[*],kcal/person/day
+animal products weight of accessibility,Animal Products Demand,weight of accessibility,[*],Animal Products Demand.weight of accessibility[*],dmnl
+animal products average daily demand (kcal/person/day),Animal Products Demand,average daily demand per capita,[*],Animal Products Demand.average daily demand per capita[*],kcal/person/day
+direct food demand per person per day,Food Demand,direct food demand per person per day,[*],Food Demand.direct food demand per person per day[*],kcal/person/day
+total food desired demand from personal norm (kcal/person/day),Total Food Demand,desired demand from personal norm,[*],Total Food Demand.desired demand from personal norm[*],kcal/person/day
+total food perceived consumption risk,Total Food Demand,perceived consumption risk,[*],Total Food Demand.perceived consumption risk[*],dmnl
+total food perceived social value,Total Food Demand,Perceived Social Value,[*],Total Food Demand.Perceived Social Value[*],dmnl
+total food desired demand from descriptive norm (kcal/person/day),Total Food Demand,desired demand from descriptive norm,[*],Total Food Demand.desired demand from descriptive norm[*],kcal/person/day
+total food desired demand from accessibility (kcal/person/day),Total Food Demand,Desired Demand from Accessibility ,[*],Total Food Demand.Desired Demand from Accessibility [*],kcal/person/day
+total food weight of accessibility,Total Food Demand,weight of accessibility,[*],Total Food Demand.weight of accessibility[*],dmnl
+Area of crop land,Land Use,Cropland,[*],Land Use.Cropland[*],Mha
+are of mature forest,Land Use,Mature Forest,[*],Land Use.Mature Forest[*],Mha
+area of young forest,Land Use,Young Forest,[*],Land Use.Young Forest[*],Mha
+area of grassland,Land Use,Grassland,[*],Land Use.Grassland[*],Mha
+area of degraded land,Land Use,Degraded Land,[*],Land Use.Degraded Land[*],Mha
+net primary production from mature forest (GtC/year),Forest,mature forest net primary production,[*],Forest.mature forest net primary production[*],GtC/Year
+net primary production from young forest (GtC/year),Forest,young forest net primary production,[*],Forest.young forest net primary production[*],GtC/Year
+net primary production from cropland (GtC/year),Crop,cropland net primary production,[*],Crop.cropland net primary production[*],GtC/Year
+net primary production from grassland (GtC/year),Grass,grassland net primary production,[*],Grass.grassland net primary production[*],GtC/Year
+net primary production from peatlands,Terrestrial Carbon Balance,Annual carbon uptake in peatlands,[*],Terrestrial Carbon Balance.Annual carbon uptake in peatlands[*],GtC/Year
+net primary production from degraded land soil carbon,degraded land soil carbon,degraded land litter,[*],degraded land soil carbon.degraded land litter[*],GtC/Year
+Terrestrial net primary production,Terrestrial Carbon Balance,Terrestrial net primary production ,[*],Terrestrial Carbon Balance.Terrestrial net primary production [*],GtC/Year
+crop production for vegetal products,Food Demand,crop demand for food,[*],Food Demand.crop demand for food[*],PCal/year
+crop production for animal feed,Food Demand,feed production,[*],Food Demand.feed production[*],PCal/year
+crop production for biofuel,Food Demand,crops for energy,[*],Food Demand.crops for energy[*],PCal/year
+crop used for non energy other,Food Demand,crop used for non energy other,[*],Food Demand.crop used for non energy other[*],PCal/year
+crop production for seed and lost,Food Demand,Crops used for Seed or Lost,[*],Food Demand.Crops used for Seed or Lost[*],PCal/year
+Total Crop Production,Crop,Crop Production,[*],Crop.Crop Production[*],PCal/year
+water use for agriculture,Freshwater,agricultural water withdrawal,[*],Freshwater.agricultural water withdrawal[*],m^3/year
+water use other,Freshwater,non agricultural water withdrawl,[*],Freshwater.non agricultural water withdrawl[*],m^3/year
+fertilizer manure,Land Nutrients,manure fertilizer use,[*],Land Nutrients.manure fertilizer use[*],MtN/year
+fertilizer man-made,Land Nutrients,man made fertilizer use,[*],Land Nutrients.man made fertilizer use[*],MtN/year
 Energy module,,,,,
-energy output from coal (Twh/year),fossil energy coal,Secondary Fossil Energy Output,[1],fossil energy coal.Secondary Fossil Energy Output[1],TWh/Years
-energy output from oil (Twh/year),fossil energy oil,Secondary Fossil Energy Output,[1],fossil energy oil.Secondary Fossil Energy Output[1],TWh/Years
-energy output from gas (Twh/year),fossil energy gas,Secondary Fossil Energy Output,[1],fossil energy gas.Secondary Fossil Energy Output[1],TWh/Years
-energy output from hydro (Twh/year),hydropower energy,Hydropower Energy Output,[1],hydropower energy.Hydropower Energy Output[1],TWh/Years
-energy output from nuclear (Twh/year),nuclear energy,Nuclear Energy Output,[1],nuclear energy.Nuclear Energy Output[1],TWh/Years
-energy output from biofuel (Twh/year),bio fuel energy,bio fuel secondary energy output,[1],bio fuel energy.bio fuel secondary energy output[1],TWh/Years
-energy output from fossil,fossil energy,Secondary Fossil Energy Output,[1],fossil energy.Secondary Fossil Energy Output[1],TWh/Years
-Energy output from rewneables,renewable energy,Renewable Energy Output,[1],renewable energy.Renewable Energy Output[1],TWh/Years
-energy investment to coal extraction (2021-dollars/year),energy investments,Coal Gross Investments in Fossil Fuel Extraction Capital,[1],energy investments.Coal Gross Investments in Fossil Fuel Extraction Capital[1],2021c$/Year
-energy investment to oil extraction (2021-dollars/year),energy investments,Oil Gross Investments in Fossil Fuel Extraction Capital,[1],energy investments.Oil Gross Investments in Fossil Fuel Extraction Capital[1],2021c$/Year
-energy investment to gas extraction (2021-dollars/year),energy investments,Gas Gross Investments in Fossil Fuel Extraction Capital,[1],energy investments.Gas Gross Investments in Fossil Fuel Extraction Capital[1],2021c$/Year
-energy investment to coal conversion to energy (2021-dollars/year),energy investments,Coal Gross Investments in Fossil Energy Capital,[1],energy investments.Coal Gross Investments in Fossil Energy Capital[1],2021c$/Year
-energy investment to oil conversion to energy (2021-dollars/year),energy investments,Oil Gross Investments in Fossil Energy Capital,[1],energy investments.Oil Gross Investments in Fossil Energy Capital[1],2021c$/Year
-energy investment to gas conversion to energy (2021-dollars/year),energy investments,Gas Gross Investments in Fossil Energy Capital,[1],energy investments.Gas Gross Investments in Fossil Energy Capital[1],2021c$/Year
-energy investment to hydro,energy investments,Gross Investments in Hydropower Energy capacity,[1],energy investments.Gross Investments in Hydropower Energy capacity[1],2021c$/Year
-energy investment to nuclear,energy investments,Investments in Nuclear Capacity,[1],energy investments.Investments in Nuclear Capacity[1],2021c$/Year
-energy investment to biofuel,energy investments,Gross Investments in Biofuel Capacity,[1],energy investments.Gross Investments in Biofuel Capacity[1],2021c$/Year
-Energy investment into fossil,energy investments,Investments in Fossil Energy,[1],energy investments.Investments in Fossil Energy[1],2021c$/Year
-Energy investment into non-fossil,energy investments,Gross Investments in Renewables,[1],energy investments.Gross Investments in Renewables[1],2021c$/Year
+energy output from coal (Twh/year),fossil energy coal,Secondary Fossil Energy Output,[*],fossil energy coal.Secondary Fossil Energy Output[*],TWh/Years
+energy output from oil (Twh/year),fossil energy oil,Secondary Fossil Energy Output,[*],fossil energy oil.Secondary Fossil Energy Output[*],TWh/Years
+energy output from gas (Twh/year),fossil energy gas,Secondary Fossil Energy Output,[*],fossil energy gas.Secondary Fossil Energy Output[*],TWh/Years
+energy output from hydro (Twh/year),hydropower energy,Hydropower Energy Output,[*],hydropower energy.Hydropower Energy Output[*],TWh/Years
+energy output from nuclear (Twh/year),nuclear energy,Nuclear Energy Output,[*],nuclear energy.Nuclear Energy Output[*],TWh/Years
+energy output from biofuel (Twh/year),bio fuel energy,bio fuel secondary energy output,[*],bio fuel energy.bio fuel secondary energy output[*],TWh/Years
+energy output from fossil,fossil energy,Secondary Fossil Energy Output,[*],fossil energy.Secondary Fossil Energy Output[*],TWh/Years
+Energy output from rewneables,renewable energy,Renewable Energy Output,[*],renewable energy.Renewable Energy Output[*],TWh/Years
+energy investment to coal extraction (2021-dollars/year),energy investments,Coal Gross Investments in Fossil Fuel Extraction Capital,[*],energy investments.Coal Gross Investments in Fossil Fuel Extraction Capital[*],2021c$/Year
+energy investment to oil extraction (2021-dollars/year),energy investments,Oil Gross Investments in Fossil Fuel Extraction Capital,[*],energy investments.Oil Gross Investments in Fossil Fuel Extraction Capital[*],2021c$/Year
+energy investment to gas extraction (2021-dollars/year),energy investments,Gas Gross Investments in Fossil Fuel Extraction Capital,[*],energy investments.Gas Gross Investments in Fossil Fuel Extraction Capital[*],2021c$/Year
+energy investment to coal conversion to energy (2021-dollars/year),energy investments,Coal Gross Investments in Fossil Energy Capital,[*],energy investments.Coal Gross Investments in Fossil Energy Capital[*],2021c$/Year
+energy investment to oil conversion to energy (2021-dollars/year),energy investments,Oil Gross Investments in Fossil Energy Capital,[*],energy investments.Oil Gross Investments in Fossil Energy Capital[*],2021c$/Year
+energy investment to gas conversion to energy (2021-dollars/year),energy investments,Gas Gross Investments in Fossil Energy Capital,[*],energy investments.Gas Gross Investments in Fossil Energy Capital[*],2021c$/Year
+energy investment to hydro,energy investments,Gross Investments in Hydropower Energy capacity,[*],energy investments.Gross Investments in Hydropower Energy capacity[*],2021c$/Year
+energy investment to nuclear,energy investments,Investments in Nuclear Capacity,[*],energy investments.Investments in Nuclear Capacity[*],2021c$/Year
+energy investment to biofuel,energy investments,Gross Investments in Biofuel Capacity,[*],energy investments.Gross Investments in Biofuel Capacity[*],2021c$/Year
+Energy investment into fossil,energy investments,Investments in Fossil Energy,[*],energy investments.Investments in Fossil Energy[*],2021c$/Year
+Energy investment into non-fossil,energy investments,Gross Investments in Renewables,[*],energy investments.Gross Investments in Renewables[*],2021c$/Year
 Economy module,,,,,
-global GDP (2021-dollars/year,GDP,Real GDP in 2021c$,[1],GDP.Real GDP in 2021c$[1],2021c$/Year
-,Circular Flow,bottom 40 share of real income,[1],Circular Flow.bottom 40 share of real income[1],%
-,Circular Flow,growth rates of income per capita among the bottom 40 per cent of the total population,[1],Circular Flow.growth rates of income per capita among the bottom 40 per cent of the total population[1],dmnl/Year
-,Circular Flow,Income Inequality,[1],Circular Flow.Income Inequality[1],dmnl
-,Circular Flow,labour share of gdp,[1],Circular Flow.labour share of gdp[1],%
-,Circular Flow,Redistributive impact of fiscal policy,[1],Circular Flow.Redistributive impact of fiscal policy[1],dmnl
-,Finance,Non performing loans net of provisions to capital,[1],Finance.Non performing loans net of provisions to capital[1],b$/yr
-,Finance,Non performing loans to total gross loans,[1],Finance.Non performing loans to total gross loans[1],
-,Finance,Regulatory Tier 1 capital to assets,[1],Finance.Regulatory Tier 1 capital to assets[1],
-,Finance,Return on assets to short term liabilities,[1],Finance.Return on assets to short term liabilities[1],
-inflation rate (%/year),Inflation,Inflation Rate,[1],Inflation.Inflation Rate[1],1/Year
-productivity (all production factors),Employment,Productivity,[1],Employment.Productivity[1],dmnl
-unemployment rate (%),Employment,unemployment rate,[1],Employment.unemployment rate[1],dmnl
-worker share of net income (%),Circular Flow,worker share of net income,[1],Circular Flow.worker share of net income[1],%
+global GDP (2021-dollars/year,GDP,Real GDP in 2021c$,[*],GDP.Real GDP in 2021c$[*],2021c$/Year
+,Circular Flow,bottom 40 share of real income,[*],Circular Flow.bottom 40 share of real income[*],%
+,Circular Flow,growth rates of income per capita among the bottom 40 per cent of the total population,[*],Circular Flow.growth rates of income per capita among the bottom 40 per cent of the total population[*],dmnl/Year
+,Circular Flow,Income Inequality,[*],Circular Flow.Income Inequality[*],dmnl
+,Circular Flow,labour share of gdp,[*],Circular Flow.labour share of gdp[*],%
+,Circular Flow,Redistributive impact of fiscal policy,[*],Circular Flow.Redistributive impact of fiscal policy[*],dmnl
+,Finance,Non performing loans net of provisions to capital,[*],Finance.Non performing loans net of provisions to capital[*],b$/yr
+,Finance,Non performing loans to total gross loans,[*],Finance.Non performing loans to total gross loans[*],
+,Finance,Regulatory Tier 1 capital to assets,[*],Finance.Regulatory Tier 1 capital to assets[*],
+,Finance,Return on assets to short term liabilities,[*],Finance.Return on assets to short term liabilities[*],
+inflation rate (%/year),Inflation,Inflation Rate,[*],Inflation.Inflation Rate[*],1/Year
+productivity (all production factors),Employment,Productivity,[*],Employment.Productivity[*],dmnl
+unemployment rate (%),Employment,unemployment rate,[*],Employment.unemployment rate[*],dmnl
+worker share of net income (%),Circular Flow,worker share of net income,[*],Circular Flow.worker share of net income[*],%
 Resources module,,,,,
-yearly concrete production (million tonnes per year),Concrete,total yearly concrete use,[1],Concrete.total yearly concrete use[1],Mtonne/year
-in use concrete stock (million tonnes),Concrete,In use concrete stock,[1],Concrete.In use concrete stock[1],Mtonne
+yearly concrete production (million tonnes per year),Concrete,total yearly concrete use,[*],Concrete.total yearly concrete use[*],Mtonne/year
+in use concrete stock (million tonnes),Concrete,In use concrete stock,[*],Concrete.In use concrete stock[*],Mtonne
 Demography module,,,,,
-population,Demographics,Population,[1],Demographics.Population[1],Mp
-demographics.Aged 0 years,Demographics,Aged 0 years,[1],Demographics.Aged 0 years[1],Mp
-‘demographics.Aged 1 to 20 years,Demographics,Aged 1 to 20 years,[1],Demographics.Aged 1 to 20 years[1],Mp
-demographics.Aged 20 to 40 years,Demographics,Aged 20 to 40 years,[1],Demographics.Aged 20 to 40 years[1],Mp
-demographics.Aged 40 to 60 years,Demographics,Aged 40 to 60 years,[1],Demographics.Aged 40 to 60 years[1],Mp
-demographics.Aged 60 to 65 years,Demographics,Aged 60 to 65 years,[1],Demographics.Aged 60 to 65 years[1],Mp
-demographics.Aged 65 to 75 years,Demographics,Aged 65 to 75 years,[1],Demographics.Aged 65 to 75 years[1],Mp
-demographics.Aged over 75 years,Demographics,Aged over 75 years,[1],Demographics.Aged over 75 years[1],Mp
+population,Demographics,Population,[*],Demographics.Population[*],Mp
+demographics.Aged 0 years,Demographics,Aged 0 years,[*],Demographics.Aged 0 years[*],Mp
+‘demographics.Aged 1 to 20 years,Demographics,Aged 1 to 20 years,[*],Demographics.Aged 1 to 20 years[*],Mp
+demographics.Aged 20 to 40 years,Demographics,Aged 20 to 40 years,[*],Demographics.Aged 20 to 40 years[*],Mp
+demographics.Aged 40 to 60 years,Demographics,Aged 40 to 60 years,[*],Demographics.Aged 40 to 60 years[*],Mp
+demographics.Aged 60 to 65 years,Demographics,Aged 60 to 65 years,[*],Demographics.Aged 60 to 65 years[*],Mp
+demographics.Aged 65 to 75 years,Demographics,Aged 65 to 75 years,[*],Demographics.Aged 65 to 75 years[*],Mp
+demographics.Aged over 75 years,Demographics,Aged over 75 years,[*],Demographics.Aged over 75 years[*],Mp
 Carbon budget,,,,,
-carbon emissions from land use change (CO2-flux (GtC/year),Emissions,CO2 Emissions from Food and Land Use GtC ,[1],Emissions.CO2 Emissions from Food and Land Use GtC [1],GtC/Year
-carbon emissions from fossil fuels (CO2-flux (GtC/year),Emissions,Realized CO2 Emissions from Energy GtC,[1],Emissions.Realized CO2 Emissions from Energy GtC[1],GtC/Year
-carbon emissions from concrete (CO2-flux (GtC/year),Emissions,CO2 Emissions from Other GtC,[1],Emissions.CO2 Emissions from Other GtC[1],GtC/Year
-carbon uptake in land (CO2-flux (GtC/year),Emissions,land carbon sink,[1],Emissions.land carbon sink[1],GtC/Year
-carbon uptake in ocean (CO2-flux (GtC/year),Ocean,Air sea co2 flux,[1],Ocean.Air sea co2 flux[1],GtC/Year
-carbon uptake in atmosphere (CO2-flux (GtC/year),CO2 Forcing,Atmospheric CO2 growth GtC,[1],CO2 Forcing.Atmospheric CO2 growth GtC[1],GtC/Year
-carbon captured (GtC/year),CCS,Storing CO2,[1],CCS.Storing CO2[1],MtCO2/Year
+carbon emissions from land use change (CO2-flux (GtC/year),Emissions,CO2 Emissions from Food and Land Use GtC ,[*],Emissions.CO2 Emissions from Food and Land Use GtC [*],GtC/Year
+carbon emissions from fossil fuels (CO2-flux (GtC/year),Emissions,Realized CO2 Emissions from Energy GtC,[*],Emissions.Realized CO2 Emissions from Energy GtC[*],GtC/Year
+carbon emissions from concrete (CO2-flux (GtC/year),Emissions,CO2 Emissions from Other GtC,[*],Emissions.CO2 Emissions from Other GtC[*],GtC/Year
+carbon uptake in land (CO2-flux (GtC/year),Emissions,land carbon sink,[*],Emissions.land carbon sink[*],GtC/Year
+carbon uptake in ocean (CO2-flux (GtC/year),Ocean,Air sea co2 flux,[*],Ocean.Air sea co2 flux[*],GtC/Year
+carbon uptake in atmosphere (CO2-flux (GtC/year),CO2 Forcing,Atmospheric CO2 growth GtC,[*],CO2 Forcing.Atmospheric CO2 growth GtC[*],GtC/Year
+carbon captured (GtC/year),CCS,Storing CO2,[*],CCS.Storing CO2[*],MtCO2/Year
 Income Cycle,,,,,
-Owner profit not from banks (after tax) (2021-dollars / year),Circular Flow,non bank profits in 2021c$,[1],Circular Flow.non bank profits in 2021c$[1],2021c$/year
-Owner profits from banks (after tax),Circular Flow,bank profits in 2021c$,[1],Circular Flow.bank profits in 2021c$[1],2021c$/year
-Owner rent income (after tax),Circular Flow,rent in in 2021c$,[1],Circular Flow.rent in in 2021c$[1],2021c$/year
-Owner income savings interest,Circular Flow,owner savings interest in 2021c$,[1],Circular Flow.owner savings interest in 2021c$[1],2021c$/year
-Worker income government transfers,Circular Flow,transfers in 2021c$,[1],Circular Flow.transfers in 2021c$[1],2021c$/year
-Worker income wages (after tax),Circular Flow,wages in 2021c$,[1],Circular Flow.wages in 2021c$[1],2021c$/year
-Worker income savings interest,Circular Flow,worker savings interest in 2021c$,[1],Circular Flow.worker savings interest in 2021c$[1],2021c$/year
-"Government income, profit taxes",Circular Flow,profit tax in 2021c$,[1],Circular Flow.profit tax in 2021c$[1],2021c$/year
-"Government income, rent taxes",Circular Flow,rent tax in 2021c$,[1],Circular Flow.rent tax in 2021c$[1],2021c$/year
-"government income, wage taxes",Circular Flow,wage tax in 2021c$,[1],Circular Flow.wage tax in 2021c$[1],2021c$/year
-Owner consumption,GDP,owner consumption in 2021c$,[1],GDP.owner consumption in 2021c$[1],2021c$/year
-Worker income excl. government transfers,GDP,worker consumption excluding transfers in 2021c$,[1],GDP.worker consumption excluding transfers in 2021c$[1],2021c$/year
-"government consumption, climate repairs",Government,government spending because of climate in 2021c$,[1],Government.government spending because of climate in 2021c$[1],2021c$/year
-"Government consumption, not climate repairs",Government,government spending without climate impact in 2021c$,[1],Government.government spending without climate impact in 2021c$[1],2021c$/year
-government transfers,GDP,government transfers in 2021c$,[1],GDP.government transfers in 2021c$[1],2021c$/year
-government investments,GDP,public investment in 2021c$,[1],GDP.public investment in 2021c$[1],2021c$/year
-private investments.,GDP,private investment in in 2021c$,[1],GDP.private investment in in 2021c$[1],2021c$/year
-Anthropogenic radiative forcing,Forcing,Anthropogenic Effective Radiative Forcing,[1],Forcing.Anthropogenic Effective Radiative Forcing[1],W/(metre^2)
-for SLR analysis,Demographics,total deaths,[1],Demographics.total deaths[1],Mp/Year
-for SLR analysis,Coastal Assets,Coastal Assets,"[1,insufficent]","Coastal Assets.Coastal Assets[1,insufficent]",bc$
-for SLR analysis,Coastal Assets,Coastal Assets,"[1,well protected]","Coastal Assets.Coastal Assets[1,well protected]",bc$
-for SLR analysis,Coastal Population,Coastal Population,"[1,insufficent]","Coastal Population.Coastal Population[1,insufficent]",Mp
-for SLR analysis,Coastal Population,Coastal Population,"[1,well protected]","Coastal Population.Coastal Population[1,well protected]",Mp
-for SLR analysis,Sea level rise costs and impacts,Total SLR protection cost,[1],Sea level rise costs and impacts.Total SLR protection cost[1],bc$/year
-for SLR analysis,Sea level rise costs and impacts,Total fatalities due to coastal floods,[1],Sea level rise costs and impacts.Total fatalities due to coastal floods[1],Mp/year
-for SLR analysis,Sea level rise costs and impacts,Total number of people flooded,[1],Sea level rise costs and impacts.Total number of people flooded[1],Mp/year
-for SLR analysis,Sea level rise costs and impacts,Total loss of assets from SLR,[1],Sea level rise costs and impacts.Total loss of assets from SLR[1],bc$/year
-for SLR analysis,Sea level rise costs and impacts,Productivity reduction factor from coastal flooding,[1],Sea level rise costs and impacts.Productivity reduction factor from coastal flooding[1],dmnl
-for SLR analysis,Sea level rise costs and impacts,Total people retreat costs,[1],Sea level rise costs and impacts.Total people retreat costs[1],bc$/year
-for SLR analysis,Sea level rise costs and impacts,Total asset retreat costs,[1],Sea level rise costs and impacts.Total asset retreat costs[1],bc$/year
+Owner profit not from banks (after tax) (2021-dollars / year),Circular Flow,non bank profits in 2021c$,[*],Circular Flow.non bank profits in 2021c$[*],2021c$/year
+Owner profits from banks (after tax),Circular Flow,bank profits in 2021c$,[*],Circular Flow.bank profits in 2021c$[*],2021c$/year
+Owner rent income (after tax),Circular Flow,rent in in 2021c$,[*],Circular Flow.rent in in 2021c$[*],2021c$/year
+Owner income savings interest,Circular Flow,owner savings interest in 2021c$,[*],Circular Flow.owner savings interest in 2021c$[*],2021c$/year
+Worker income government transfers,Circular Flow,transfers in 2021c$,[*],Circular Flow.transfers in 2021c$[*],2021c$/year
+Worker income wages (after tax),Circular Flow,wages in 2021c$,[*],Circular Flow.wages in 2021c$[*],2021c$/year
+Worker income savings interest,Circular Flow,worker savings interest in 2021c$,[*],Circular Flow.worker savings interest in 2021c$[*],2021c$/year
+"Government income, profit taxes",Circular Flow,profit tax in 2021c$,[*],Circular Flow.profit tax in 2021c$[*],2021c$/year
+"Government income, rent taxes",Circular Flow,rent tax in 2021c$,[*],Circular Flow.rent tax in 2021c$[*],2021c$/year
+"government income, wage taxes",Circular Flow,wage tax in 2021c$,[*],Circular Flow.wage tax in 2021c$[*],2021c$/year
+Owner consumption,GDP,owner consumption in 2021c$,[*],GDP.owner consumption in 2021c$[*],2021c$/year
+Worker income excl. government transfers,GDP,worker consumption excluding transfers in 2021c$,[*],GDP.worker consumption excluding transfers in 2021c$[*],2021c$/year
+"government consumption, climate repairs",Government,government spending because of climate in 2021c$,[*],Government.government spending because of climate in 2021c$[*],2021c$/year
+"Government consumption, not climate repairs",Government,government spending without climate impact in 2021c$,[*],Government.government spending without climate impact in 2021c$[*],2021c$/year
+government transfers,GDP,government transfers in 2021c$,[*],GDP.government transfers in 2021c$[*],2021c$/year
+government investments,GDP,public investment in 2021c$,[*],GDP.public investment in 2021c$[*],2021c$/year
+private investments.,GDP,private investment in in 2021c$,[*],GDP.private investment in in 2021c$[*],2021c$/year
+Anthropogenic radiative forcing,Forcing,Anthropogenic Effective Radiative Forcing,[*],Forcing.Anthropogenic Effective Radiative Forcing[*],W/(metre^2)
+for SLR analysis,Demographics,total deaths,[*],Demographics.total deaths[*],Mp/Year
+for SLR analysis,Coastal Assets,Coastal Assets,"[*,*]","Coastal Assets.Coastal Assets[*,*]",bc$
+for SLR analysis,Coastal Population,Coastal Population,"[*,*]","Coastal Population.Coastal Population[*,*]",Mp
+for SLR analysis,Sea level rise costs and impacts,Total SLR protection costs,[*],Sea level rise costs and impacts.Total SLR protection costs[*],bc$/year
+for SLR analysis,Sea level rise costs and impacts,Total fatalities due to coastal floods,[*],Sea level rise costs and impacts.Total fatalities due to coastal floods[*],Mp/year
+for SLR analysis,Sea level rise costs and impacts,Total number of people flooded,[*],Sea level rise costs and impacts.Total number of people flooded[*],Mp/year
+for SLR analysis,Sea level rise costs and impacts,Total loss of assets from SLR,[*],Sea level rise costs and impacts.Total loss of assets from SLR[*],bc$/year
+for SLR analysis,Sea level rise costs and impacts,Productivity reduction factor from coastal flooding,[*],Sea level rise costs and impacts.Productivity reduction factor from coastal flooding[*],dmnl
+for SLR analysis,Sea level rise costs and impacts,Total people retreat costs,[*],Sea level rise costs and impacts.Total people retreat costs[*],bc$/year
+for SLR analysis,Sea level rise costs and impacts,Total asset retreat costs,[*],Sea level rise costs and impacts.Total asset retreat costs[*],bc$/year
