@@ -167,44 +167,33 @@ def createSamplingOrderedByDPS(N, startvalue, minvalue, maxvalue, policyType='Si
     return sortedSamples, sortedGraphicals, sorted_idx, time
 
     
-def selectFromOrderedSampling(DPS, sortedSamples, sortedGraphicals, Nselect=100, old=False):
+def selectFromOrderedSampling(DPS, sortedSamples, sortedGraphicals, Nselect=100):
     
     target_values = np.linspace(DPS[0], DPS[-1], Nselect)
 
-    # Step 2. For each target value, find the index in arr where that value would be inserted.
-    
-    if old:
-        indices = []
-        for v in target_values:
-            i = np.searchsorted(DPS, v)
-            # If i is not the first element and if the previous value is closer, take it
-            if i > 0 and (i == len(DPS) or np.abs(v - DPS[i-1]) <= np.abs(v - DPS[i])):
-                i -= 1
-            indices.append(i)    
-    else:
-        indices = []
-        for target in target_values:
+    indices = []
+    for target in target_values:
         
-            # This index is the first index where arr[index] >= target_value.
-            search_idx = np.searchsorted(DPS, target)
-            # To choose the closest actual array value, we check the neighbor if possible.        
-            if search_idx > 0 and (search_idx == len(DPS) or np.abs(target - DPS[search_idx-1]) <= np.abs(target - DPS[search_idx])): 
-                search_idx -= 1
+        # This index is the first index where arr[index] >= target_value.
+        search_idx = np.searchsorted(DPS, target)
+        # To choose the closest actual array value, we check the neighbor if possible.        
+        if search_idx > 0 and (search_idx == len(DPS) or np.abs(target - DPS[search_idx-1]) <= np.abs(target - DPS[search_idx])): 
+            search_idx -= 1
             
-            # Now check if this was already selected!
-            if search_idx in indices:
-                # Find upper and lower index that was not selected yet:
-                i_up = search_idx
-                i_lo = search_idx
-                while i_up in indices: i_up+=1
-                while i_lo in indices: i_lo+=-1
+        # Now check if this was already selected!
+        if search_idx in indices:
+            # Find upper and lower index that was not selected yet:
+            i_up = search_idx
+            i_lo = search_idx
+            while i_up in indices: i_up+=1
+            while i_lo in indices: i_lo+=-1
                 
-                if i_up >= len(DPS) or np.abs(target - DPS[i_up]) > np.abs(target - DPS[i_lo]):
-                    search_idx = i_lo
-                else:
-                    search_idx = i_up
+            if i_up >= len(DPS) or np.abs(target - DPS[i_up]) > np.abs(target - DPS[i_lo]):
+                search_idx = i_lo
+            else:
+                search_idx = i_up
             
-            indices.append(search_idx)        
+        indices.append(search_idx)        
     
     
     return DPS[indices], sortedSamples[:,indices], sortedGraphicals[:,indices], indices

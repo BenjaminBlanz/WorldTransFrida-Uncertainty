@@ -66,9 +66,10 @@ policyTypes = [policyTypes[i] for i in newIndices]
 ############### Create the new files #####################################
 
 # Delete existing Folder?
-if True:
+if not os.path.exists(directory): os.makedirs(directory)
+else:
+    # Delete existing files!
     directory = "./PolicyFolder"
-    if not os.path.exists(directory): os.makedirs(directory)
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
         # Check if it's a file (and not a directory)
@@ -117,7 +118,6 @@ for i, policy in enumerate(policyList):
         for iPol, sample in enumerate(np.transpose(selectedSamples)):
             polID=iPol+1
 
-
             graphical=selectedGraphicals[:,iPol]
             policyString_X = varname+':x'
             policyString_Y = varname+':y'
@@ -146,9 +146,7 @@ for i, policy in enumerate(policyList):
     elif polType in ['OneParm', 'DivBy5Parm']:
     
         if fileExists:
-            # Exit here because the sampling would be independent from the already existing sampling!
-            pass #sys.exit('Error: writing OneParm PolType, but file already exists: '+outfile)
-                   
+
             # check how many variables are already in that file
             df = pd.read_csv(outfile)
             nvars=0
