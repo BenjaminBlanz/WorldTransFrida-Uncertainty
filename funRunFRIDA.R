@@ -184,15 +184,12 @@ runFridaParmsBySamplePoints <- function(policyMode=F){
 # Uses location.frida, and name.fridaInputFile
 # from the global environment
 runFridaDefaultParms <- function(silent=T){
-	frida_info <- read.csv(file.path(location.frida.info,name.frida_info))
-	parVect <- frida_info$Value
-	names(parVect) <- frida_info$Variable
-	return(runFRIDASpecParms(parVect,silent))
+	return(runFRIDASpecParms(c(),silent))
 }
 
 # runFRIDASpecParms ####
 runFRIDASpecParms <- function(parVect,silent=T){
-	if(is.null(names(parVect))||length(parVect)==0){
+	if(is.null(names(parVect))&length(parVect)>0){
 		stop('need names in parVect to write FRIDA input\n')
 	}
 	if(length(parVect)==0){
@@ -606,8 +603,9 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 	for(v.i in 1:length(varNamesNoSOW)){
 		varName <- cleanNames(varNamesNoSOW[v.i])
 		varsIdc.lst[[varName]] <- which(varNamesNoSOW.all==varNamesNoSOW[v.i])
-		if(length(varsIdc.lst[[cleanNames(varNamesNoSOW[v.i])]]>1)){
-			perVarData[[varName]] <- data.frame(matrix(NA,ncol=2+nrow(parOutput[[1]]$runDat),nrow=workUnitLength))
+		numSOW <- length(varsIdc.lst[[cleanNames(varNamesNoSOW[v.i])]])
+		if(numSOW>1){
+			perVarData[[varName]] <- data.frame(matrix(NA,ncol=2+nrow(parOutput[[1]]$runDat),nrow=workUnitLength*numSOW))
 			colnames(perVarData[[varName]]) <- c('polID','sowID',rownames(parOutput[[1]]$runDat))
 		} else {
 			perVarData[[varName]] <- data.frame(matrix(NA,ncol=1+nrow(parOutput[[1]]$runDat),nrow=workUnitLength))
@@ -624,10 +622,14 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 		}
 		runDat <- parOutput[[run.i]]$runDat
 		for(varName in varNames){
-			if(length(varsIdc.lst[[cleanNames(varNamesNoSOW[v.i])]]>1)){
+			if(length(varsIdc.lst[[varName]])>1){
 				# TODO WORK HERE RBIND THE run.i together
-				# perVarData[[varName]] <- rbind(perVarData[[varName]],
-				# 															 data.frame(unname(unlist(c(parOutput[[run.i]]$parmsIndex,runDat[varName])))
+				perVarDataIndices <- (run.i+(run.i-1)*(numSOW-1)):((run.i+(run.i-1)*(numSOW-1))+numSOW-1)
+				perVarData[[varName]][perVarDataIndices,'polID'] <- parOutput[[run.i]]$parmsIndex
+				perVarData[[varName]][perVarDataIndices,'sowID'] <- 1:numSOW
+				perVarData[[varName]][perVarDataIndices,3:ncol(perVarData[[varName]])] <- 
+																			 unname(t(parOutput[[run.i]]$runDat[,varsIdc.lst[[varName]]]))
+				
 			} else{
 				perVarData[[varName]][run.i,] <- unname(unlist(c(parOutput[[run.i]]$parmsIndex,runDat[varName])))
 			}
@@ -703,7 +705,7 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 			varData <- rbind(varData,readRDS(file.path(perVarSubfolder,fileList[f.i])))
 		}
 	}
-	varData <- sort_by(varData,varData$id)
+	varData <- sort_by(varData,varData[,1])
 	colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
 	if(verbosity>0){cat('writing...')}
 	if(outputType=='csv'){
@@ -749,7 +751,7 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2){
 				for(i in 2:length(filesContents.lst)){
 					varData <- rbind(varData,filesContents.lst[[i]])
 				}
-				varData <- sort_by(varData,varData$id)
+				varData <- sort_by(varData,varData[,1])
 				colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
 				if(verbosity>0){cat('writing...')}
 				if(outputType=='csv'){
