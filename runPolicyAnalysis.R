@@ -117,9 +117,6 @@ samplePoints <- generateSobolSequenceForSampleParms(sampleParms,
 																										integerParms = sampleParms,
 																										nullProb = nullPolProb)
 samplePoints <- rbind(singlePolicyArr,samplePoints)
-
-samplePoints <- samplePoints[1:28,]
-
 numSample <- nrow(samplePoints)
 rownames(samplePoints) <- 1:numSample
 # hist(rowSums(!is.na(samplePoints)))
