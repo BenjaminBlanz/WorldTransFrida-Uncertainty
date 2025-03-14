@@ -56,6 +56,7 @@ for (y.i in 1:length(yearsToPlot.names)){
 dir.create(file.path(location.output,location.plots),recursive = T,showWarnings = F)
 sink(file.path(location.output,location.plots,'pathToTheOutputUnderlyingTheseFigures.txt'))
 cat(file.path(getwd(),location.output))
+file.copy(file.path(location.output,'config.R'),file.path(location.output,location.plots,'configOfTheUnderlyingRuns.R'))
 sink()
 
 for(plotWeightType in plotWeightTypes){
@@ -111,7 +112,7 @@ for(plotWeightType in plotWeightTypes){
 		ciBoundQs.lty <- c(rev(CIsToPlot.lty),CIsToPlot.lty[-1])
 		ciBoundQs.lwd <- c(rev(CIsToPlot.lwd),CIsToPlot.lwd[-1])
 		ciBoundQs.lcol <- c(rev(CIsToPlot.lcol),CIsToPlot.lcol[-1])
-		medianQIdx <- length(CIsToPlot)+1
+		medianQIdx <- which(ciBoundQs==0.5)
 		ciBounds <- array(NA,dim=c(nrow(defRun),length(ciBoundQs)))
 		means <- rep(NA,nrow(defRun))
 		names(means) <- rownames(ciBounds) <- rownames(defRun)
@@ -156,17 +157,26 @@ for(plotWeightType in plotWeightTypes){
 				plotData <- list()
 				plotData$variable <- varName
 				plotData$years <- rownames(defRun)
+				plotData$CIsToPlot <- CIsToPlot
 				plotData$ciBoundQs <- ciBoundQs
 				plotData$ciBounds <- ciBounds
 				plotData$uncertaintyType <- uncertaintyType
 				plotData$means <- means
 				plotData$defaultRun <- defRun[[varName]]
 				plotData$calDat <- calDat[[varName]]
+				plotData$varName.orig <- varName.orig
 				dir.create(file.path(location.output,location.plots,'CI-plots',
 														 paste0(plotWeightType,'Weighted'),'plotData'),F,T)
 				saveRDS(plotData,file.path(location.output,location.plots,'CI-plots',
 																	 paste0(plotWeightType,'Weighted'),'plotData',
 																	 paste0(paste(varName,uncertaintyType,plotWeightType,'weighted',sep='-'),'.RDS')))
+				csvExport.df <- data.frame(year=plotData$years,mean=means,defaultRun=defRun)
+				for(q.i in 1:length(ciBoundQs)){
+					csvExport.df[[paste0('Quantile',ciBoundQs[q.i])]] <- ciBounds[,q.i]
+				}
+				write.csv(csvExport.df,file.path(location.output,location.plots,'CI-plots',
+																				 paste0(plotWeightType,'Weighted'),'plotData',
+																				 paste0(paste(varName,uncertaintyType,plotWeightType,'weighted',sep='-'),'.csv')))
 				cat('drawing...')
 				for(years.i in 1:length(yearsToPlot.lst)){
 					for(alsoPlotMean in alsoPlotMean.vals){
