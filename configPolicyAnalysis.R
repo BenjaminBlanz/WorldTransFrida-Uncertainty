@@ -34,6 +34,9 @@ tmpfsBaseDir <- paste0('/run/user/',system('id -u',intern = T))
 # tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T))
 # tmpfsBaseDir <- 'notTMPFS'
 
+# output ####
+perVarOutputTypes <- c('csv','RDS')
+
 # locations and names ####
 # location of frida/stella for running
 location.frida <- './FRIDAforPolicyAnalysis'

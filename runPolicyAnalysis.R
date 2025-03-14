@@ -24,13 +24,13 @@ sink()
 sink(file.path(location.output,'log.txt'),append=T,split=T)
 
 # read domain policies ####
-cat('done\nRead policies...')
+cat('Read policies...')
 pdp.lst <- list()
 for(singleDomainPolicyFile in list.files(location.singleDomainPoliciyFiles)){
 	pdp.lst[[tools::file_path_sans_ext(singleDomainPolicyFile)]] <-
 		read.csv(file.path(location.singleDomainPoliciyFiles,singleDomainPolicyFile))
 }
-cat('metadata...')
+cat('done\nGenerate metadata...')
 subDomainNames <- names(pdp.lst)
 domainNames <-c()
 for(i in 1:length(subDomainNames)){
@@ -74,6 +74,7 @@ for(domID in unique(pdpMeta$domID)){
 cat('done\n')
 
 # setup policies ####
+cat('setting up policies...')
 jointPolicies <- data.frame(polID=numeric(),
 														domID=numeric(),
 														dplID=numeric(),
@@ -116,10 +117,14 @@ samplePoints <- generateSobolSequenceForSampleParms(sampleParms,
 																										integerParms = sampleParms,
 																										nullProb = nullPolProb)
 samplePoints <- rbind(singlePolicyArr,samplePoints)
+
+samplePoints <- samplePoints[1:28,]
+
 numSample <- nrow(samplePoints)
 rownames(samplePoints) <- 1:numSample
 # hist(rowSums(!is.na(samplePoints)))
 
+# cluster setup ####
 source('clusterHelp.R')
 clusterExport(cl,list('pdpMeta',
 											'pdp.lst',
@@ -128,6 +133,8 @@ clusterExport(cl,list('pdpMeta',
 											'perVarOutputTypes',
 											'doNotReturnRunDataSavePerWorkerOnly'))
 
+# work chunkification ####
+cat('chunkification...')
 # chunk list and save to workers
 workUnitBoundaries <- seq(1,numSample,chunkSizePerWorker*numWorkers)
 # in case the chunkSize is not a perfect divisor of the numSample, add numSample as the 
@@ -137,10 +144,14 @@ if(workUnitBoundaries[length(workUnitBoundaries)]!=numSample){
 }
 # add one to the last work unit boundary, as during running we always deduct one from the next boundary
 workUnitBoundaries[length(workUnitBoundaries)] <- numSample+1
-cat(sprintf('  Run of %i runs split up into %i work units of size %i (%i per worker).\n',
+cat('done\n')
+
+cat(sprintf('Run of %i runs split up into %i work units of size %i (%i per worker).\n',
 						numSample,length(workUnitBoundaries)-1,chunkSizePerWorker*numWorkers,chunkSizePerWorker))
 chunkTimes <- c()
 completeRunsSoFar <- 0
+
+# run ####
 i <- 0
 while(i<(length(workUnitBoundaries)-1)){
 	i <- i+1
@@ -184,8 +195,8 @@ while(i<(length(workUnitBoundaries)-1)){
 	logLike.df <- data.frame(id=integer(),logLike=double())
 	for(r.i in 1:length(parOutput)){
 		logLike.df <- rbind(logLike.df,parOutput[[r.i]]$logLike.df)
-		parOutput[[r.i]]$logLike.df <- NULL
 	}
+	logLike <- c()
 	logLike[logLike.df$id] <- logLike.df$logLike
 	completeRunsSoFar <- sum(logLike > -.Machine$double.xmax+(200*.Machine$double.eps))
 	cat('\r   ')
@@ -197,42 +208,10 @@ cat(sprintf('\r    complete runs %i (%.2f%%), average chunk time %i sec (%.2f r/
 						chunkSizePerWorker/mean(chunkTimes,na.rm=T),
 						dseconds(round(sum(chunkTimes,na.rm=T))),
 						'                                                                             '))
-mergePerVarFiles()
+
+# merge files ####
+mergePerVarFiles(verbosity = 1)
 
 
 
-#TODO
-# merge output files
-# recover from half finished runs by checking the per var output files per worker 
 
-
-# Done
-# Read in single policy files
-# csvs containing policy id and policy string
-# a single policy can consist of multiple rows, which if selected get written to the 
-# policy file for frida to import.
-#
-#
-# Generate sobol sequence, number of dimensions equal to number of single policy domains
-# number of samplePoints from config
-# scale each dimension of sobol sequence to the number of policy ids for that domain
-# actually scale each dimeons of sobol sequence to tthe number of ids * sth that accounts for
-# the null probability
-# round all values to integers
-# select policy ids per domain off of said integers
-# -> THIS is the main table of all policy runs which will be chunked off to the workers
-# Chunk the policy table, save chunks to worker directories.
-#
-# Workers:
-# sequentially per row in assigned chunk of main table
-# write all selected policy strings accross domains into a single joint policy file
-# runFRIDA
-# collect output per Chunk
-# each variable appears with sow index (runID) in stella output
-# for writing into output files regex for runID and for var name#  
-# write chunk to file (per worker per chunk per variable)
-# Desired output : One file per variable with columns:
-#  polID, sowID, data columns
-# 
-#  
-# 
