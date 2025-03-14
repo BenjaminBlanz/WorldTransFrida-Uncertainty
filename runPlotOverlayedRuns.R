@@ -1,13 +1,17 @@
+# this script can overlay an arbitrary number of different run ensembles. 
+# uses output of the runPlotAllRuns script, so that has to be run first for each 
+# overlayed ensemble
+
 # just for plot specification
 plotWeightType <- 'equaly'
-dataForOverlayedFiguresFolders <- c('workOutput/figures_JeffEMB/CI-plots/equalyWeighted/plotData/',
+dataForOverlayedFiguresFolders <- c('workOutput/JeffEMB_figures/CI-plots/equalyWeighted/plotData/',
 																		'workOutput/JeffGDP_figures/CI-plots/equalyWeighted/plotData/')
 overlayNames <- c('EMB','GDP driven food demand')
 overlayColors <- c('black','blue')
 
 location.plots <- file.path('workOutput','jeffsOverlayedFigures',uncertaintyType)
 dir.create(location.plots,F,T)
-for(file in list.files(dataForOverlayedFiguresFolders[1])){
+for(file in list.files(dataForOverlayedFiguresFolders[1],pattern = '*RDS')){
 	if(sum(file.exists(file.path(dataForOverlayedFiguresFolders,file)))==length(dataForOverlayedFiguresFolders)){
 		varName <- tools::file_path_sans_ext(file)
 		png(file.path(location.plots,paste0(varName,'.png')),
@@ -35,7 +39,7 @@ for(file in list.files(dataForOverlayedFiguresFolders[1])){
 		varName.orig <- plotData$varName.orig
 		calDat <- plotData$calDat
 		medianQIdx <- which(ciBoundQs==0.5)
-		layout(matrix(c(3,2,1),nrow=3),heights = c(0.8,0.1,0.1))
+		layout(matrix(c(3,2,1),nrow=3),heights = c(0.9,0.05,0.05))
 		par(mar=c(0,0,0,0))
 		plot(0,0,type='n',axes=F)
 		legend.text=c(
@@ -69,7 +73,7 @@ for(file in list.files(dataForOverlayedFiguresFolders[1])){
 					 horiz=T,xpd=T)
 		par(mar=c(3.1,4.1,4.1,2.1))
 		plot(yearsToPlot,ciBounds[yearsToPlot,medianQIdx],
-				 ylim=range(c(ciBounds[yearsToPlot,c(2,length(ciBoundQs)-1)],calDat[yearsToPlot,varName]),na.rm=T),
+				 ylim=range(c(ciBounds[yearsToPlot,c(2,length(ciBoundQs)-1)],calDat[yearsToPlot]),na.rm=T),
 				 xlim=range(as.numeric(yearsToPlot)),
 				 xaxs='i',
 				 type='n',
@@ -77,7 +81,7 @@ for(file in list.files(dataForOverlayedFiguresFolders[1])){
 				 ylab=varName.orig,
 				 xaxt='n',
 				 main=varName.orig)
-		mtext(paste('Samples',plotWeightType,'weighted. Ranges show ',uncertaintyType,'.'),3,0.5)
+		mtext(paste('Samples',plotWeightType,'weighted. Ranges show ',uncertaintyType,'.'),3,0.5,cex=par('cex'))
 		xax <- axis(1,at=seq(as.numeric(yearsToPlot[1]),as.numeric(yearsToPlot[length(yearsToPlot)]),10))
 		mtext('year',1,3)
 		grid(nx=length(xax)-1,ny=NA)
@@ -135,8 +139,8 @@ for(file in list.files(dataForOverlayedFiguresFolders[1])){
 			if(alsoPlotDefaultRun){
 				lines(yearsToPlot,defRun[yearsToPlot,varName],lty=def.lty,lwd=def.lwd,col=def.col)
 			}
-			if(!is.null(calDat[[varName]])){
-				points(rownames(calDat),calDat[[varName]],
+			if(!is.null(calDat)){
+				points(yearsToPlot[1:length(calDat)],calDat,
 							 col=calDat.col,pch=20)
 			}
 		}
