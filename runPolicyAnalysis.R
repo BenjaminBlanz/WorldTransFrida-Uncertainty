@@ -123,7 +123,10 @@ rownames(samplePoints) <- 1:numSample
 source('clusterHelp.R')
 clusterExport(cl,list('pdpMeta',
 											'pdp.lst',
-											'jointPolicies'))
+											'jointPolicies',
+											'writePerWorkerFiles',
+											'perVarOutputTypes',
+											'doNotReturnRunDataSavePerWorkerOnly'))
 
 # chunk list and save to workers
 workUnitBoundaries <- seq(1,numSample,chunkSizePerWorker*numWorkers)
