@@ -604,7 +604,8 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 	varNamesNoSOW.all <- gsub('\\[\\d+','',varNames)
 	varNamesNoSOW <- unique(varNamesNoSOW.all)
 	for(v.i in 1:length(varNamesNoSOW)){
-		varsIdc.lst[[cleanNames(varNamesNoSOW[v.i])]] <- which(varNamesNoSOW.all==varNamesNoSOW[v.i])
+		varName <- cleanNames(varNamesNoSOW[v.i])
+		varsIdc.lst[[varName]] <- which(varNamesNoSOW.all==varNamesNoSOW[v.i])
 		if(length(varsIdc.lst[[cleanNames(varNamesNoSOW[v.i])]]>1)){
 			perVarData[[varName]] <- data.frame(matrix(NA,ncol=2+nrow(parOutput[[1]]$runDat),nrow=workUnitLength))
 			colnames(perVarData[[varName]]) <- c('polID','sowID',rownames(parOutput[[1]]$runDat))
@@ -625,8 +626,8 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 		for(varName in varNames){
 			if(length(varsIdc.lst[[cleanNames(varNamesNoSOW[v.i])]]>1)){
 				# TODO WORK HERE RBIND THE run.i together
-				perVarData[[varName]] <- rbind(perVarData[[varName]],
-																			 data.frame(unname(unlist(c(parOutput[[run.i]]$parmsIndex,runDat[varName])))
+				# perVarData[[varName]] <- rbind(perVarData[[varName]],
+				# 															 data.frame(unname(unlist(c(parOutput[[run.i]]$parmsIndex,runDat[varName])))
 			} else{
 				perVarData[[varName]][run.i,] <- unname(unlist(c(parOutput[[run.i]]$parmsIndex,runDat[varName])))
 			}
