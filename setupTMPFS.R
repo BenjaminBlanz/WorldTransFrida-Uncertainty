@@ -1,14 +1,14 @@
 # clean up first
 if(!exists('cl')<0&&try(clusterEvalQ(cl,1+1)[[1]],silent=T)!=2){
-	if(file.exists('workerDirs')){
+	if(file.exists(name.workDir)){
 		source('cleanup.R')
 	}
 	# create the tmpfsDir and link to workerDirs
 	if(!file.exists(tmpfsDir)){
 		dir.create(tmpfsDir,recursive = T,showWarnings = F)
 	}
-	if(!file.exists('workerDirs')){
-		system(paste('ln -s',tmpfsDir,'workerDirs'))
+	if(!file.exists(name.workDir)){
+		system(paste('ln -s',tmpfsDir,name.workDir))
 	}
 	
 	# set up the tmpfs for the single threaded runs

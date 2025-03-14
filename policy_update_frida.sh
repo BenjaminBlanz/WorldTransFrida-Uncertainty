@@ -14,11 +14,11 @@ function cleanup_policy_repo() {
 	rm -rf "./FRIDA_Modules"
 	rm -rf "./FRIDA Uncertainity Dashboard/Graphics"
 	rm -r FRIDA.isdb
-	rm -r FRIDA.sxtmx
+	rm -r FRIDA.stmx
 	rm -f LICENSE
 	rm -f ReadMe.md
 
-	git apply $PWD/../FRIDAforAnalysis.patch
+	git apply --verbose $PWD/../FRIDAforPolicyAnalysis.patch
 	cd ..
 
 	rm -rf ./FRIDAforPolicyAnalysis

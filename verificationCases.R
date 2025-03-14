@@ -110,7 +110,7 @@ for(l in 1:nrow(samplePoints)){
 
 ## run cluster ####
 for(worker in 1:length(cl)){
-	writeFRIDAExportSpec(varsForExport.fridaNames,file.path('workerDirs',paste0('workDir_',worker),'FRIDAforUncertaintyAnalysis'))
+	writeFRIDAExportSpec(varsForExport.fridaNames,file.path(name.workDir,paste0('workDir_',worker),'FRIDAforUncertaintyAnalysis'))
 }
 chunkSizePerWorker <- 5
 test2outputPathMT <- file.path(location.output,'test2','multiThreaded')
