@@ -11,7 +11,7 @@
 numWorkers=250
 numSamples=10000
 chunkSizePerWorker=100
-expID=UA_policy_GDPforFoodDemand_nS${numSamples}
+expID=UA_EMB_nS${numSamples}
 
 
 ### SLURM settings
@@ -28,9 +28,11 @@ partition=compute
 email=Testmailforscript@UncertaintyAnalysis.abc
 
 # Copy ranges from pre-existing work?
-copyParmRangesAndScales="false"
 # This should be the name of workOutput from which the files will be copied!
-copyID=''
+copyID='UA_EMB_nS100000'
+# What to copy?
+copyParmRangesAndScales="false"
+copySamplePoints="false" # for run-by-run comparisons
 
 
 outputType='both' # can also be 'csv' or 'RDS'
@@ -42,7 +44,7 @@ outputType='both' # can also be 'csv' or 'RDS'
 FRIDA='FRIDAforUncertaintyAnalysis'
 
 # These need to be located in the FRIDA-configs/ folder!
-policyFile='policy_useGDPforFoodDemand.csv'
+policyFile='policy_EMB.csv'
 
 # These need to be located in the FRIDA-info/ folder!
 infoFile='frida_info.csv'
@@ -71,6 +73,7 @@ sed -i "s/file.path('workOutput',name.output)/file.path('workOutput','${expID}')
 sed -i "s/config.R/${config}/g" $config
 sed -i "s/FRIDAforUncertaintyAnalysis/${FRIDA}/" $config
 sed -i "s/frida_info.csv/${infoFile}/" $config
+sed -i "s/policy_EMB.csv/${policyFile}/" $config
 sed -i "s/frida_external_ranges.csv/${externalRangesFile}/" $config
 sed -i "s/frida_parameter_exclusion_list.csv/${excludeParmFile}/" $config
 sed -i "s/frida_variable_exclusion_list.csv/${excludeVarFile}/" $config
