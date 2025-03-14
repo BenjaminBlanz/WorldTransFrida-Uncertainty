@@ -165,6 +165,10 @@ for(plotWeightType in plotWeightTypes){
 				plotData$defaultRun <- defRun[[varName]]
 				plotData$calDat <- calDat[[varName]]
 				plotData$varName.orig <- varName.orig
+				plotData$plotWeightType <- plotWeightType
+				plotData$ciBoundQs.lty <- ciBoundQs.lty
+				plotData$ciBoundQs.lwd <- ciBoundQs.lwd
+				plotData$ciBoundQs.lcol <- ciBoundQs.lcol
 				dir.create(file.path(location.output,location.plots,'CI-plots',
 														 paste0(plotWeightType,'Weighted'),'plotData'),F,T)
 				saveRDS(plotData,file.path(location.output,location.plots,'CI-plots',
