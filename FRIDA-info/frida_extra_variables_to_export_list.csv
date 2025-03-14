@@ -1,4 +1,4 @@
-,FRIDA Module,FRIDA Name,Index,FRIDA FQN,Unit
+IMPORTANT: NO WHITESPACE AT THE END OF FIELDS!,FRIDA Module,FRIDA Name,Index,FRIDA FQN,Unit
 From Chris,Aerosol Forcing,Effective Radiative Forcing from Aerosol Radiation Interactions,[*],Aerosol Forcing.Effective Radiative Forcing from Aerosol Radiation Interactions[*],W/(metre^2)
 From Chris,Aerosol Forcing,Effective Radiative Forcing from Aerosol Cloud Interactions,[*],Aerosol Forcing.Effective Radiative Forcing from Aerosol Cloud Interactions[*],W/(metre^2)
 From Chris,CH4 Forcing,Atmospheric CH4 Concentration,[*],CH4 Forcing.Atmospheric CH4 Concentration[*],ppb
@@ -111,7 +111,7 @@ demographics.Aged 60 to 65 years,Demographics,Aged 60 to 65 years,[*],Demographi
 demographics.Aged 65 to 75 years,Demographics,Aged 65 to 75 years,[*],Demographics.Aged 65 to 75 years[*],Mp
 demographics.Aged over 75 years,Demographics,Aged over 75 years,[*],Demographics.Aged over 75 years[*],Mp
 Carbon budget,,,,,
-carbon emissions from land use change (CO2-flux (GtC/year),Emissions,CO2 Emissions from Food and Land Use GtC ,[*],Emissions.CO2 Emissions from Food and Land Use GtC [*],GtC/Year
+carbon emissions from land use change (CO2-flux (GtC/year),Emissions,CO2 Emissions from Food and Land Use GtC,[*],Emissions.CO2 Emissions from Food and Land Use GtC[*],GtC/Year
 carbon emissions from fossil fuels (CO2-flux (GtC/year),Emissions,Realized CO2 Emissions from Energy GtC,[*],Emissions.Realized CO2 Emissions from Energy GtC[*],GtC/Year
 carbon emissions from concrete (CO2-flux (GtC/year),Emissions,CO2 Emissions from Other GtC,[*],Emissions.CO2 Emissions from Other GtC[*],GtC/Year
 carbon uptake in land (CO2-flux (GtC/year),Emissions,land carbon sink,[*],Emissions.land carbon sink[*],GtC/Year
