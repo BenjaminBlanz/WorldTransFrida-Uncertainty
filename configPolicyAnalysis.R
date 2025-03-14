@@ -30,8 +30,8 @@ name.workDir <- 'policy-WorkDirs'
 # and be faster
 # typical options on linux are /dev/shm or /run/user/####/ where #### is the uid
 # if both of these are unavailable use notTMPFS or some other arbitrary location on disk
-tmpfsBaseDir <- paste0('/run/user/',system('id -u',intern = T))
-# tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T))
+# tmpfsBaseDir <- paste0('/run/user/',system('id -u',intern = T))
+tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T))
 # tmpfsBaseDir <- 'notTMPFS'
 
 # output ####
