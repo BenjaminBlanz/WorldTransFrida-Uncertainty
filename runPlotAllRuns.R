@@ -225,7 +225,7 @@ for(plotWeightType in plotWeightTypes){
 										 horiz=T,xpd=T)
 							par(mar=c(3.1,4.1,4.1,2.1))
 							plot(yearsToPlot,ciBounds[yearsToPlot,medianQIdx],
-									 ylim=range(c(ciBounds[yearsToPlot,c(2,length(ciBoundQs)-1)],calDat[yearsToPlot,varName]),na.rm=T),
+									 ylim=range(c(ciBounds,calDat[yearsToPlot,varName]),na.rm=T),
 									 xlim=range(as.numeric(yearsToPlot)),
 									 xaxs='i',
 									 type='n',
