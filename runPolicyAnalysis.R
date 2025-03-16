@@ -70,7 +70,7 @@ for(i in 2:length(subDomainNames)){
 for(domID in unique(pdpMeta$domID)){
 	pdpMeta$numDP[pdpMeta$domID==domID] <- sum(pdpMeta$numSDP[pdpMeta$domID==domID])
 }
-
+write.csv(pdpMeta,file.path(location.output,'perDomainPolicyMetadata.csv'))
 cat('done\n')
 
 # setup policies ####
@@ -92,12 +92,14 @@ for(pfID in pdpMeta$pfID){
 	)
 	maxPolID <- maxPolID+pdpMeta$numSDP[pfID]
 }
+write.csv(jointPolicies,file.path(location.output,'policyIdentifierList.csv'))
 
 sampleParms <- data.frame(Variable=pdpMeta$domID,
 													Value=rep(0,nrow(pdpMeta)),
 													Min=rep(1,nrow(pdpMeta)),
 													Max=pdpMeta$numDP)
 sampleParms <- sampleParms[!duplicated(sampleParms),]
+write.csv(sampleParms, file.path(location.output,'policyIndexBounds.csv'))
 
 singlePolicyArr <- array(NA,dim=c(sum(pdpMeta$numSDP),
 																 numDom))
@@ -119,6 +121,7 @@ samplePoints <- generateSobolSequenceForSampleParms(sampleParms,
 samplePoints <- rbind(singlePolicyArr,samplePoints)
 numSample <- nrow(samplePoints)
 rownames(samplePoints) <- 1:numSample
+write.csv(samplePoints,file.path(location.output,'policySamplePoints.csv'))
 # hist(rowSums(!is.na(samplePoints)))
 
 # cluster setup ####
