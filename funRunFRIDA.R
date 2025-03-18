@@ -634,7 +634,6 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 		runDat <- parOutput[[run.i]]$runDat
 		for(varName in varNames){
 			if(length(varsIdc.lst[[varName]])>1){
-				# TODO WORK HERE RBIND THE run.i together
 				perVarDataIndices <- (run.i+(run.i-1)*(numSOW-1)):((run.i+(run.i-1)*(numSOW-1))+numSOW-1)
 				perVarData[[varName]][perVarDataIndices,'polID'] <- parOutput[[run.i]]$parmsIndex
 				perVarData[[varName]][perVarDataIndices,'sowID'] <- 1:numSOW
