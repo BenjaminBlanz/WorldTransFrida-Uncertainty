@@ -357,6 +357,8 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 		cat('Note: Forcing writePerWorkerFiles to false, as plotting is enabled\n')
 		writePerWorkerFiles <<- F
 	}
+	# prevent skipping work if parOutput exists in the global env.
+	if(exists('parOutput')){rm(parOutput)}
 	numSample <- nrow(samplePoints)
 	logLike <- rep(NA,numSample)
 	names(logLike) <- 1:numSample
