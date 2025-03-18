@@ -67,6 +67,14 @@ prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NU
 
 # write firda export vars ####
 writeFRIDAExportSpec <- function(varsForExport.fridaNames,location.frida){
+	varsForExport.cleanNames <- cleanNames(varsForExport.fridaNames)
+	dupe.lst <- split(seq_along(varsForExport.cleanNames), varsForExport.cleanNames)
+	nonDupeIdc <- c()
+	for(i in 1:length(dupe.lst)){
+		nonDupeIdc[i] <- dupe.lst[[i]][1]
+	}
+	nonDupeIdc <- sort(nonDupeIdc)
+	varsForExport.fridaNames <- varsForExport.fridaNames[nonDupeIdc]
 	sink(file=file.path(location.frida,'Data',name.fridaExportVarsFile))
 	cat(paste0(varsForExport.fridaNames,collapse='\n'))
 	sink()
@@ -220,9 +228,10 @@ cleanNames <- function(colNames){
 			 		 		 		 gsub('\\$','',
 			 		 		 		 		 gsub('_1','',
 			 		 		 		 		 		 gsub('\\]','_',
-			 		 		 		 		 		 		 gsub('\\[\\d+','_',
-			 		 		 		 		 		 		 		 gsub('[. ]','_',
-			 		 		 		 		 		 		 		 		 tolower(colNames))))))))))
+			 		 		 		 		 		 		 gsub('\\[\\*','_',
+				 		 		 		 		 		 		 gsub('\\[\\d+','_',
+				 		 		 		 		 		 		 		 gsub('[. ]','_',
+				 		 		 		 		 		 		 		 		 tolower(colNames)))))))))))
 }
 
 # idxOfVarName ####
@@ -595,7 +604,7 @@ loadClusterRuns <- function(location.output){
 
 saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 																			 verbosity=0){
-	varNames <- parOutput[[1]]$origColNames
+	varNames <- unique(parOutput[[1]]$origColNames)
 	workUnitLength <- length(parOutput)
 	perVarData <- list()
 	logLike <- data.frame(id=rep(NA,workUnitLength),logLike=rep(NA,workUnitLength))
