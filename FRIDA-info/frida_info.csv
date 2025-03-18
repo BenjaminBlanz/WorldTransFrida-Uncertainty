@@ -1,52 +1,52 @@
 Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Variable,External Parameter,Internal Calibration Parameter,No Sensi,Parameter,Policy,Unit,Value,Min,Max
 "Simulation End",0,0,0,0,0,0,1,0,0,0,2150,2023,2200
-"Animal Products Demand.average daily demand per capita in 1980[1]",0,0,0,0,0,1,0,0,0,0,377.763038651953,350,400
-"Animal Products Demand.elasticity of demand to GDP[1]",0,0,0,0,0,1,0,0,0,0,0.398392964876698,0,1
-"Animal Products Demand.growth rate of socioeconomic effect[1]",0,0,0,0,0,1,0,0,0,0,-5.97659679187918,-7.5,-2.5
-"Animal Products Demand.initial share of demand from consumption domain[1]",0,0,0,0,0,1,0,0,0,0,0.17785654811108,0.15,0.3
+"Animal Products Demand.average daily demand per capita in 1980[1]",0,0,0,0,0,1,0,0,0,0,377.415889471548,350,400
+"Animal Products Demand.elasticity of demand to GDP[1]",0,0,0,0,0,1,0,0,0,0,0.400315946580561,0,1
+"Animal Products Demand.growth rate of socioeconomic effect[1]",0,0,0,0,0,1,0,0,0,0,-6.04581446574783,-7.5,-2.5
+"Animal Products Demand.initial share of demand from consumption domain[1]",0,0,0,0,0,1,0,0,0,0,0.17689893446435,0.15,0.3
 "Animal Products Demand.maximum effect of additional environmental consciousness[1]",1,0,0,0,0,0,0,0,0,0,0.5,0.25,0.75
-"Animal Products Demand.normal sensitivity of personal norm to climate risk[1]",0,0,0,0,0,1,0,0,0,0,-0.539168518858367,-2,-0.01
+"Animal Products Demand.normal sensitivity of personal norm to climate risk[1]",0,0,0,0,0,1,0,0,0,0,-0.489784556151165,-2,-0.01
 "Animal Products Demand.range of socioeconomic effect[1]",1,0,0,0,0,0,0,0,0,0,1,0.5,1.5
 "Animal Products Demand.reference GDP per person for socioeconomic effect[1]",0,0,0,0,1,0,0,0,0,0,40000,35000,45000
-"Animal Products Demand.sensitivity of demand to relative scarcity[1]",0,0,0,0,0,1,0,0,0,0,0.513105792960793,0,1
-"Animal Products Demand.sensitivity of personal norm to consumption risk[1]",0,0,0,0,0,1,0,0,0,0,-0.731307305449605,-2,-0.1
-"Animal Products Demand.sensitivity of personal norm to social value[1]",0,0,0,0,0,1,0,0,0,0,0.998463390740021,0.1,2
-"Animal Products Demand.sensitivity of social value perception[1]",0,0,0,0,0,1,0,0,0,0,1.29363878627903,0.1,2
-"Animal Products Demand.time horizon for long term perception[1]",0,0,0,0,0,1,0,0,0,0,55.5016287320391,20,100
-"Animal Products Demand.time horizon for short term perception[1]",0,0,0,0,0,1,0,0,0,0,5.71580941364724,1,20
-"Animal Products Demand.time to adjust consumption pattern[1]",0,0,0,0,0,1,0,0,0,0,4.3197942959022,1,10
+"Animal Products Demand.sensitivity of demand to relative scarcity[1]",0,0,0,0,0,1,0,0,0,0,0.484264763282481,0,1
+"Animal Products Demand.sensitivity of personal norm to consumption risk[1]",0,0,0,0,0,1,0,0,0,0,-0.859656312700229,-2,-0.1
+"Animal Products Demand.sensitivity of personal norm to social value[1]",0,0,0,0,0,1,0,0,0,0,1.02579389191537,0.1,2
+"Animal Products Demand.sensitivity of social value perception[1]",0,0,0,0,0,1,0,0,0,0,1.30889062202953,0.1,2
+"Animal Products Demand.time horizon for long term perception[1]",0,0,0,0,0,1,0,0,0,0,55.5343890546226,20,100
+"Animal Products Demand.time horizon for short term perception[1]",0,0,0,0,0,1,0,0,0,0,5.73630122108872,1,20
+"Animal Products Demand.time to adjust consumption pattern[1]",0,0,0,0,0,1,0,0,0,0,4.3360253159047,1,10
 "Animal Products Demand.time to adjust desired demand from accessibility[1]",0,0,0,0,0,1,0,0,0,0,1.0258931993514,1,5
-"Animal Products Demand.time to adjust value perception[1]",0,0,0,0,0,1,0,0,0,0,5.00203760193562,1,10
-"Animal Products Demand.time to observe consequences[1]",0,0,0,0,0,1,0,0,0,0,25.0084399606373,10,30
-"Animal Products Demand.time to perceive average consumption[1]",0,0,0,0,0,1,0,0,0,0,2.85872025323181,1,5
-"Climate Risk Perception.additional time horizon of reference climate extremes exposure[1]",0,0,0,0,0,1,0,0,0,0,51.0952027298084,10,100
-"Climate Risk Perception.additional time horizon of reference SLR flooding exposure[1]",0,0,0,0,0,1,0,0,0,0,48.0481328069786,10,100
+"Animal Products Demand.time to adjust value perception[1]",0,0,0,0,0,1,0,0,0,0,5.00213271954964,1,10
+"Animal Products Demand.time to observe consequences[1]",0,0,0,0,0,1,0,0,0,0,25.0084849210837,10,30
+"Animal Products Demand.time to perceive average consumption[1]",0,0,0,0,0,1,0,0,0,0,2.86134047814327,1,5
+"Climate Risk Perception.additional time horizon of reference climate extremes exposure[1]",0,0,0,0,0,1,0,0,0,0,51.038637388268,10,100
+"Climate Risk Perception.additional time horizon of reference SLR flooding exposure[1]",0,0,0,0,0,1,0,0,0,0,48.041183742345,10,100
 "Climate Risk Perception.maximum effect of additional environmental consciousness on climate information sensitivity[1]",1,0,0,0,0,0,0,0,0,0,0.5,0.25,0.75
 "Climate Risk Perception.maximum effect of additional environmental consciousness on reference time horizon[1]",1,0,0,0,0,0,0,0,0,0,5,2.5,7.5
 "Climate Risk Perception.minimum reference for SLR flooding exposure[1]",1,0,0,0,0,0,0,0,0,0,10,5,15
-"Climate Risk Perception.normal additional time horizon of reference temperature anomaly[1]",0,0,0,0,0,1,0,0,0,0,10.0528228428386,10,100
-"Climate Risk Perception.normal sensitivity to climate information[1]",0,0,0,0,0,1,0,0,0,0,0.504395896216198,0,1
-"Climate Risk Perception.sensitivity to climatic events exposure[1]",0,0,0,0,0,1,0,0,0,0,0.534713154373705,0,1
-"Climate Risk Perception.time to perceive climate extremes exposure[1]",0,0,0,0,0,1,0,0,0,0,3.92167072438823,1,10
-"Climate Risk Perception.time to perceive SLR flooding exposure[1]",0,0,0,0,0,1,0,0,0,0,3.03895267564342,1,10
-"Climate Risk Perception.time to report and perceive climate information[1]",0,0,0,0,0,1,0,0,0,0,6.13805899892639,1,10
-"Total Food Demand.average daily demand per capita in 1980[1]",0,0,0,0,0,1,0,0,0,0,2439.14460954741,2300,2500
-"Total Food Demand.elasticity of demand to GDP[1]",0,0,0,0,0,1,0,0,0,0,0.28442726895672,0,1
-"Total Food Demand.growth rate of socioeconomic effect[1]",0,0,0,0,0,1,0,0,0,0,-4.96945045477866,-7.5,-2.5
+"Climate Risk Perception.normal additional time horizon of reference temperature anomaly[1]",0,0,0,0,0,1,0,0,0,0,10,10,100
+"Climate Risk Perception.normal sensitivity to climate information[1]",0,0,0,0,0,1,0,0,0,0,0.450117400477455,0,1
+"Climate Risk Perception.sensitivity to climatic events exposure[1]",0,0,0,0,0,1,0,0,0,0,0.442035131549343,0,1
+"Climate Risk Perception.time to perceive climate extremes exposure[1]",0,0,0,0,0,1,0,0,0,0,3.85777439569587,1,10
+"Climate Risk Perception.time to perceive SLR flooding exposure[1]",0,0,0,0,0,1,0,0,0,0,3.10995133702873,1,10
+"Climate Risk Perception.time to report and perceive climate information[1]",0,0,0,0,0,1,0,0,0,0,5.60764310739301,1,10
+"Total Food Demand.average daily demand per capita in 1980[1]",0,0,0,0,0,1,0,0,0,0,2429.76260347005,2300,2500
+"Total Food Demand.elasticity of demand to GDP[1]",0,0,0,0,0,1,0,0,0,0,0.323165857347434,0,1
+"Total Food Demand.growth rate of socioeconomic effect[1]",0,0,0,0,0,1,0,0,0,0,-5.3454321574366,-7.5,-2.5
 "Total Food Demand.range of socioeconomic effect[1]",1,0,0,0,0,0,0,0,0,0,1,0.5,1.5
 "Total Food Demand.reference GDP per person for socioeconomic effect[1]",0,0,0,0,1,0,0,0,0,0,50000,45000,55000
-"Total Food Demand.sensitivity of demand to scarcity[1]",0,0,0,0,0,1,0,0,0,0,0.509262893265083,0,1
-"Total Food Demand.sensitivity of personal norm to climate risk[1]",0,0,0,0,0,1,0,0,0,0,-0.115833955801314,-2,-0.01
-"Total Food Demand.sensitivity of personal norm to consumption risk[1]",0,0,0,0,0,1,0,0,0,0,-0.762537775574747,-2,-0.1
-"Total Food Demand.sensitivity of personal norm to social value[1]",0,0,0,0,0,1,0,0,0,0,0.911394423965517,0.1,2
-"Total Food Demand.sensitivity of social value perception[1]",0,0,0,0,0,1,0,0,0,0,1.12988701375632,0.1,2
-"Total Food Demand.time horizon for long term perception[1]",0,0,0,0,0,1,0,0,0,0,55.4133138338667,20,100
-"Total Food Demand.time horizon for short term perception[1]",0,0,0,0,0,1,0,0,0,0,2.41325544430903,1,20
-"Total Food Demand.time to adjust consumption pattern[1]",0,0,0,0,0,1,0,0,0,0,1.86155580615495,1,10
-"Total Food Demand.time to adjust desired demand from accessibility[1]",0,0,0,0,0,1,0,0,0,0,1.60194947837275,1,5
-"Total Food Demand.time to adjust value perception[1]",0,0,0,0,0,1,0,0,0,0,5.02861988432261,1,10
-"Total Food Demand.time to observe consequences[1]",0,0,0,0,0,1,0,0,0,0,6.64990856127302,5,30
-"Total Food Demand.time to perceive average consumption[1]",0,0,0,0,0,1,0,0,0,0,2.44455741760626,1,5
+"Total Food Demand.sensitivity of demand to scarcity[1]",0,0,0,0,0,1,0,0,0,0,0.514461080567943,0,1
+"Total Food Demand.sensitivity of personal norm to climate risk[1]",0,0,0,0,0,1,0,0,0,0,-0.227781354329473,-2,-0.01
+"Total Food Demand.sensitivity of personal norm to consumption risk[1]",0,0,0,0,0,1,0,0,0,0,-0.705504462028266,-2,-0.1
+"Total Food Demand.sensitivity of personal norm to social value[1]",0,0,0,0,0,1,0,0,0,0,0.93093334168249,0.1,2
+"Total Food Demand.sensitivity of social value perception[1]",0,0,0,0,0,1,0,0,0,0,1.18532541118215,0.1,2
+"Total Food Demand.time horizon for long term perception[1]",0,0,0,0,0,1,0,0,0,0,55.4599903972486,20,100
+"Total Food Demand.time horizon for short term perception[1]",0,0,0,0,0,1,0,0,0,0,2.37934216661947,1,20
+"Total Food Demand.time to adjust consumption pattern[1]",0,0,0,0,0,1,0,0,0,0,1.88251042948571,1,10
+"Total Food Demand.time to adjust desired demand from accessibility[1]",0,0,0,0,0,1,0,0,0,0,1.00199095572415,1,5
+"Total Food Demand.time to adjust value perception[1]",0,0,0,0,0,1,0,0,0,0,4.58040005379812,1,10
+"Total Food Demand.time to observe consequences[1]",0,0,0,0,0,1,0,0,0,0,7.11678385315226,5,30
+"Total Food Demand.time to perceive average consumption[1]",0,0,0,0,0,1,0,0,0,0,2.16736926466416,1,5
 "Behavioral Choices.switch animal products fraction policy",0,0,0,0,0,0,0,0,1,0,0,0,1
 "Behavioral Choices.switch aquatic animal products fraction policy",0,0,0,0,0,0,0,0,1,0,0,0,1
 "Behavioral Choices.switch energy demand policy",0,0,0,0,0,0,0,0,1,0,0,0,1
@@ -102,8 +102,6 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Emissions.sensitivity of non fossil CH4 per person to GDP per capita[1]",0,0,0,0,0,1,0,0,0,0,0,-1,1
 "Emissions.sensitivity of Other N2O per person to GDP per capita[1]",0,0,0,0,0,1,0,0,0,0,-0.275015555994815,-1,1
 "Emissions.tN2O emission per tN fertilizer 1980[1]",0,0,0,0,0,1,0,0,0,0,0.0255426788719578,0,0.1
-"Energy Balance Model.T effect on population exposure to record breaking indices[1]",0,0,1,0,1,0,0,0,0,0,0.72065224,0.5655407,0.87576371
-"Energy Balance Model.T2 effect on population exposure to record breaking indices[1]",0,0,1,0,1,0,0,0,0,0,-0.024831,-0.04022107,-0.00944092
 "Sea Level.Include MICI behaviour",0,0,0,0,0,0,1,0,0,0,0,0,1
 "Sea Level.initial sea level anomaly from AntIS[1]",0,0,0,0,1,0,1,0,0,0,-0.00182,-0.005,0.01
 "Sea Level.initial sea level anomaly from GrIS[1]",0,0,0,0,1,0,1,0,0,0,-0.0028,-0.01,0
@@ -128,12 +126,8 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Demographics.65 to 75 mortality alpha[1]",0,0,0,0,0,1,0,0,0,0,1.076681733,0,3
 "Demographics.65 to 75 mortality gamma[1]",0,0,0,0,0,1,0,0,0,0,-0.644522938598286,-3,0
 "Demographics.averaging time[1]",0,0,0,0,0,1,0,0,0,0,7,7,20
-"Demographics.Cold mortality sensitivity to T[1]",0,0,1,0,1,0,0,0,0,0,-0.018991789,-0.01974,-0.01825
-"Demographics.Cold mortality sensitivity to T2[1]",0,0,1,0,1,0,0,0,0,0,0.001940396,0.00183,0.00206
 "Demographics.effect of GDP on female population literacy percentage constant[1]",0,0,0,0,0,1,0,0,0,0,-0.480993429103833,-5,5
 "Demographics.effect of GDP on female population literacy percentage scale factor[1]",0,0,0,0,0,1,0,0,0,0,3.50341638903122,0,5
-"Demographics.Hot mortality sensitivity to T[1]",0,0,1,0,1,0,0,0,0,0,0.031995745,0.02646,0.03702
-"Demographics.Hot mortality sensitivity to T2[1]",0,0,1,0,1,0,0,0,0,0,-0.000613013,-0.00183,0.000693
 "Demographics.infant mortality alpha[1]",0,0,0,0,0,1,0,0,0,0,0.794998128560624,0,2
 "Demographics.infant mortality gamma[1]",0,0,0,0,0,1,0,0,0,0,-1.54362576073659,-3,0
 "Demographics.initial average relative nominal gdp per person[1]",0,0,0,0,0,1,0,0,0,0,0.836977789295941,0.5,1
@@ -144,44 +138,43 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Demographics.sensitivity of fertility to literacy[1]",0,0,0,0,0,1,0,0,0,0,-0.018845205,-0.05,0
 "Demographics.time to change fertility[1]",0,0,0,0,0,1,0,0,0,0,23.99454405,15,25
 "Circular Flow.consumption habits adjustment time[1]",1,0,0,0,0,1,0,0,0,0,1.464111314,0.5,2.5
-"Circular Flow.desired savings as multiple of profits[1]",0,0,0,0,0,1,0,0,0,0,11.959643088224,2,20
-"Circular Flow.desired savings as multiple of wages[1]",0,0,0,0,0,1,0,0,0,0,1.73520197811103,1,5
+"Circular Flow.desired savings as multiple of profits[1]",0,0,0,0,0,1,0,0,0,0,12.0380447845399,2,20
+"Circular Flow.desired savings as multiple of wages[1]",0,0,0,0,0,1,0,0,0,0,1.360040591162,1,5
 "Circular Flow.fraction of income to consumption[1]",1,0,0,0,0,1,0,0,0,0,0.75,0.65,0.85
 "Circular Flow.fraction of owner income to consumption[1]",1,0,0,0,0,1,0,0,0,0,0.75,0.65,0.85
 "Circular Flow.initial firms checking accounts[1]",0,0,0,0,0,1,0,0,0,0,5003.53414951,4000,6000
 "Circular Flow.initial owner savings[1]",0,0,0,0,0,1,0,0,0,0,46357.0465153,30000,60000
 "Circular Flow.initial worker savings[1]",0,0,0,0,0,1,0,0,0,0,22209.0362704,20000,30000
 "Circular Flow.minimum fraction of income to consumption[1]",1,0,0,0,0,1,0,0,0,0,0.35,0.25,0.45
-"Circular Flow.normal bottom 40 wages[1]",0,0,0,0,0,1,0,0,0,0,0.112361832107313,0.05,0.15
-"Circular Flow.profit tax rate[1]",0,0,0,0,0,1,0,0,0,0,0.327443333564517,0,0.4
-"Circular Flow.time for bottom 40 to be affected[1]",0,0,0,0,0,1,0,0,0,0,20,1,20
+"Circular Flow.normal bottom 40 wages[1]",0,0,0,0,0,1,0,0,0,0,0.0831516345862597,0.05,0.15
+"Circular Flow.profit tax rate[1]",0,0,0,0,0,1,0,0,0,0,0.33535681219092,0,0.4
+"Circular Flow.time for bottom 40 to be affected[1]",0,0,0,0,0,1,0,0,0,0,14.6109573260845,1,20
 "Circular Flow.time for inflation to change consumption[1]",0,0,0,0,0,1,0,0,0,1,1,0.5,2
-"Circular Flow.time to consider desired savings[1]",0,0,0,0,0,1,0,0,0,0,1.68505580860359,1,10
-"Circular Flow.time to pay out profits[1]",0,0,0,0,0,1,0,0,0,0,2.41900072499316,1,5
-"Circular Flow.time to reach savings goal[1]",0,0,0,0,0,1,0,0,0,0,4.76244896094109,1,5
-"Circular Flow.wage tax rate[1]",0,0,0,0,0,1,0,0,0,0,0.218514085704368,0.1,0.3
-"Circular Flow.xfinish[1]",0,0,0,0,0,1,0,0,0,0,1.83924954720287,1,2
-"Circular Flow.xmiddle[1]",0,0,0,0,0,1,0,0,0,0,0.798639728206527,0.5,1.5
-"Circular Flow.xspeed[1]",0,0,0,0,0,1,0,0,0,0,11.0612046289175,1,16
-"Circular Flow.xstart[1]",0,0,0,0,0,1,0,0,0,0,0.063144440403097,0,1
-"Circular Flow.yfrom[1]",0,0,0,0,0,1,0,0,0,0,1.39617351302856,1.1,2
-"Circular Flow.yto[1]",0,0,0,0,0,1,0,0,0,0,0.565293587864245,0,1
+"Circular Flow.time to consider desired savings[1]",0,0,0,0,0,1,0,0,0,0,2.38172432195012,1,10
+"Circular Flow.time to pay out profits[1]",0,0,0,0,0,1,0,0,0,0,2.46541691975885,1,5
+"Circular Flow.time to reach savings goal[1]",0,0,0,0,0,1,0,0,0,0,4.98998316100836,1,5
+"Circular Flow.wage tax rate[1]",0,0,0,0,0,1,0,0,0,0,0.216302410345921,0.1,0.3
+"Circular Flow.xfinish[1]",0,0,0,0,0,1,0,0,0,0,1.73023439765863,1,2
+"Circular Flow.xmiddle[1]",0,0,0,0,0,1,0,0,0,0,0.874699516459804,0.5,1.5
+"Circular Flow.xspeed[1]",0,0,0,0,0,1,0,0,0,0,15.6682446590189,1,16
+"Circular Flow.xstart[1]",0,0,0,0,0,1,0,0,0,0,0.248144932632012,0,1
+"Circular Flow.yfrom[1]",0,0,0,0,0,1,0,0,0,0,1.31361355217506,1.1,2
+"Circular Flow.yto[1]",0,0,0,0,0,1,0,0,0,0,0.783933728544206,0,1
 "Employment.average development completion time[1]",1,0,0,0,0,1,0,0,0,0,5,4,6
 "Employment.fraction of productivity gains translating to firing[1]",1,0,0,0,0,1,0,0,0,0,0.5,0.25,0.75
-"Employment.hiring to investment ratio[1]",0,0,0,0,0,1,0,0,0,0,0.453576692359076,0.1,0.75
-"Employment.initial productivity growth[1]",1,0,0,0,0,1,0,0,0,0,0.0268379400227628,0.01,0.03
-"Employment.initial unemployment rate[1]",0,0,0,0,0,1,0,0,0,0,0.0517521320695013,0.03,0.1
-"Employment.Initial Wage Rate[1]",0,0,0,0,0,1,0,0,0,0,5569.25785906402,2000,10000
-"Employment.labour force participation fixed[1]",0,0,0,0,0,1,0,0,0,0,63.9533581236645,61.8,66
-"Employment.max change in fractional wage growth[1]",0,0,0,0,0,1,0,0,0,0,0.0651860521548508,0,0.9
-"Employment.max firing percentage[1]",0,0,0,0,0,1,0,0,0,0,0.0440130495610323,0.03,0.1
+"Employment.hiring to investment ratio[1]",0,0,0,0,0,1,0,0,0,0,0.45478769491224,0.1,0.75
+"Employment.initial productivity growth[1]",1,0,0,0,0,1,0,0,0,0,0.0249557210876292,0.01,0.03
+"Employment.initial unemployment rate[1]",0,0,0,0,0,1,0,0,0,0,0.0478965120134679,0.03,0.1
+"Employment.Initial Wage Rate[1]",0,0,0,0,0,1,0,0,0,0,5656.48029317278,2000,10000
+"Employment.labour force participation fixed[1]",0,0,0,0,0,1,0,0,0,0,63.9379901778196,61.8,66
+"Employment.max change in fractional wage growth[1]",0,0,0,0,0,1,0,0,0,0,0.0656117349133141,0,0.9
 "Employment.negotiation effectiveness[1]",1,0,0,0,0,1,0,0,0,0,1,0.5,1.5
 "Employment.productivity yield of exploratory investment[1]",1,0,0,0,0,1,0,0,0,0,1.947328313,0.9473283132336,2.9473283132336
 "Employment.productivity yield of non bank innovation[1]",1,0,0,0,0,1,0,0,0,0,0.132668695,0.05,0.25
 "Employment.profit threshold multiplier[1]",1,0,0,0,0,0,0,0,0,0,1,0.5,2
 "Employment.rent to investment ratio[1]",1,0,0,0,0,1,0,0,0,0,0.25,0.15,0.35
 "Employment.sensitivity of firing to profit discrepancy[1]",1,0,0,0,0,1,0,0,0,0,0.5,0.25,1
-"Employment.sensitivity of hiring to unemployment rate[1]",0,0,0,0,0,1,0,0,0,0,1.54823562878133,0.1,2
+"Employment.sensitivity of hiring to unemployment rate[1]",0,0,0,0,0,1,0,0,0,0,1.90724015662932,0.1,2
 "Employment.share of employment in agriculture intercept[1]",0,0,0,0,0,1,0,0,0,0,62.901759597299,-100,100
 "Employment.share of employment in agriculture slope[1]",0,0,0,0,0,1,0,0,0,0,-15.3331166860372,-50,1
 "Employment.share of employment in industry intercept[1]",0,0,0,0,0,1,0,0,0,0,-2.58133183549477,-100,100
@@ -192,68 +185,76 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Employment.Temperature effect on low exposure productivity[1]",0,0,1,0,1,0,0,0,0,0,-2.08262027,-16,5
 "Employment.Temperature squared effect on high exposure productivity[1]",0,0,1,0,1,0,0,0,0,0,-1.06197873,-1.5,1
 "Employment.Temperature squared effect on low exposure productivity[1]",0,0,1,0,1,0,0,0,0,0,-1.56936859,-2,0.1
-"Employment.threshold unemployment rate[1]",0,0,0,0,0,1,0,0,0,0,0.124716634418707,0.04,0.15
+"Employment.threshold unemployment rate[1]",0,0,0,0,0,1,0,0,0,0,0.0972104858751928,0.04,0.15
 "Employment.time for defaults to affect firing[1]",1,0,0,0,0,1,0,0,0,0,1,0.5,1.5
 "Employment.time for productivity to affect firing[1]",1,0,0,0,0,1,0,0,0,0,5,3,7
-"Employment.time seeking employees[1]",0,0,0,0,0,1,0,0,0,0,1.41696813703378,1,3
+"Employment.time seeking employees[1]",0,0,0,0,0,1,0,0,0,0,1.41678326995789,1,3
 "Employment.time to fire from missed profits[1]",1,0,0,0,0,1,0,0,0,0,1,0.5,1.5
 "Employment.Urgency with which wage growth is demanded[1]",1,0,0,0,0,1,0,0,0,0,2,1,3
 "Employment.wage adjustment negotiation time[1]",1,0,0,0,0,1,0,0,0,0,1.999714633,1,3
 "Finance.average time private refinances debt[1]",1,0,0,0,0,1,0,0,0,0,3,2,4
-"Finance.bank expectation formation time[1]",0,0,0,0,0,1,0,0,0,0,2.55210712772329,2,20
-"Finance.desired asset to liability ratio[1]",1,0,0,0,0,1,0,0,0,0,1.08,1.01,1.11
-"Finance.elasticity of bankruptcy rate on risk premium[1]",0,0,0,0,0,1,0,0,0,0,2.8515154846553,2.5,5
-"Finance.elasticity of desired bank growth rate to changes in lending standards[1]",0,0,0,0,0,1,0,0,0,0,2.03807159642058,1,10
-"Finance.exploration effect midpoint[1]",0,0,0,0,0,1,0,0,0,0,1.2,0.8,1.6
+"Finance.bank desired asset to liability ratio[1]",1,0,0,0,0,1,0,0,0,0,1.1,1.01,1.21
+"Finance.effect of default rate on lending standards curvature[1]",0,0,0,0,0,1,0,0,0,0,3.98096757259305,1,10
+"Finance.effect of default rate on lending standards range[1]",0,0,0,0,0,1,0,0,0,0,1.9124176965235,0.5,5
+"Finance.effect of lending standards on failure rate curvature[1]",0,0,0,0,0,1,0,0,0,0,3.20316540945926,1,10
+"Finance.effect of lending standards on failure rate range[1]",0,0,0,0,0,1,0,0,0,0,4.99518233734072,0.5,5
+"Finance.elasticity of bankruptcy rate on risk premium[1]",0,0,0,0,0,1,0,0,0,0,2.94740565781421,2.5,5
+"Finance.elasticity of desired bank growth rate to changes in lending standards[1]",0,0,0,0,0,1,0,0,0,0,2.04202632292307,0,10
+"Finance.equity gap above min effect[1]",0,0,0,0,0,1,0,0,0,0,0.439119475603571,-50,0.5
+"Finance.equity gap below max effect[1]",0,0,0,0,0,1,0,0,0,0,3.12704788826583,1.5,10
+"Finance.equity gap effect max x magnitude[1]",0,0,0,0,0,1,0,0,0,0,0.12238316864416,0.05,0.2
+"Finance.equity ratio gap effect above exponent[1]",0,0,0,0,0,1,0,0,0,0,-1.12919859071388,-10,-1
+"Finance.equity ratio gap effect below exponent[1]",0,0,0,0,0,1,0,0,0,0,1.06976101223978,1,10
+"Finance.exploration effect midpoint[1]",0,0,0,0,0,1,0,0,0,0,1.21048988410032,0.8,1.6
 "Finance.exploratory premium[1]",1,0,0,0,0,1,0,0,0,0,2,2,4
-"Finance.exponential effect of interest on defaults[1]",0,0,0,0,0,1,0,0,0,0,9.049245183,9,10
+"Finance.exponential effect of interest on defaults[1]",0,0,0,0,0,1,0,0,0,0,9.049245183,8,12
+"Finance.failure rate floor[1]",1,0,0,0,0,0,0,0,0,0,0.002,0.001,0.003
+"Finance.government bailout assets to liabilities threshold[1]",1,0,0,0,0,0,0,0,0,0,1.04,1.02,1.06
 "Finance.initial annual bank negative profit fractional growth[1]",0,0,0,0,0,1,0,0,0,0,0.14,0.05,0.35
 "Finance.initial bad loans[1]",0,0,0,0,0,1,0,0,0,0,202.031071557794,180,300
-"Finance.initial bank investment growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.0439330111702498,0,0.1
+"Finance.initial bank investment growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.0983090715051729,0,0.1
 "Finance.initial fraction of safe loans financing innovation[1]",1,0,0,0,0,1,0,0,0,0,0.03,0.01,0.05
 "Finance.initial fraction of safe loans that are exploratory[1]",1,0,0,0,0,1,0,0,0,0,0.02,0.001,0.05
 "Finance.initial good loans[1]",0,0,0,0,0,1,0,0,0,0,8240.06768880644,7500,8500
-"Finance.initial investment growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.045367825,0.01,0.1
+"Finance.initial investment growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.1,0,0.2
 "Finance.initial net bank asset fractional growth[1]",0,0,0,0,0,1,0,0,0,0,0.155,0.1,0.22
-"Finance.initial non energy bank investment[1]",0,0,0,0,0,1,0,0,0,0,3851.97629060219,3000,5000
-"Finance.initial risk premium[1]",0,0,0,0,0,1,0,0,0,0,0.0185327119002396,0.01,0.05
+"Finance.initial non energy bank investment[1]",0,0,0,0,0,1,0,0,0,0,3000,3000,5000
+"Finance.initial risk premium[1]",0,0,0,0,0,1,0,0,0,0,0.02318105353481,0.01,0.05
 "Finance.Initial safe assets[1]",0,0,0,0,0,1,0,0,0,0,72569.1999314293,60000,100000
 "Finance.innovation effect midpoint[1]",1,0,0,0,0,1,0,0,0,0,1.2,0.8,1.6
-"Finance.loan maturation time[1]",0,0,0,0,0,1,0,0,0,0,10.1537647212335,3,30
-"Finance.max change in bank investment as fraction of normal[1]",0,0,0,0,0,1,0,0,0,0,0.999999976470528,0.1,1
-"Finance.max change in failure rate[1]",0,0,0,0,0,1,0,0,0,0,0.0590331365006087,0.02,0.1
-"Finance.max change in lending standards[1]",0,0,0,0,0,1,0,0,0,0,0.120092950728545,0,1
+"Finance.loan maturation time[1]",0,0,0,0,0,1,0,0,0,0,11.7053787456889,3,30
+"Finance.max change in failure rate[1]",0,0,0,0,0,1,0,0,0,0,0.0871560406871874,0.02,0.5
+"Finance.max change in lending standards[1]",0,0,0,0,0,1,0,0,0,0,0.22464772882775,0,1
 "Finance.max risk premium increase rate[1]",0,0,0,0,1,0,0,0,0,0,0.035,0.01,0.15
 "Finance.maximum default rate from interest rate increases[1]",1,0,0,0,0,0,0,0,0,0,0.15,0.1,0.5
 "Finance.minimum reference stranded energy capital[1]",0,0,0,0,0,1,0,0,0,0,1.5,0.5,2.5
 "Finance.normal bank profit payment fraction[1]",1,0,0,0,0,0,0,0,0,0,1,0,2
-"Finance.normal exploration rate[1]",1,0,0,0,0,0,0,0,0,0,0.03,0.01,0.05
-"Finance.normal failure rate[1]",0,0,0,0,0,1,0,0,0,0,0.0150033473442084,0.01,0.05
+"Finance.normal exploration rate[1]",1,0,0,0,0,0,0,0,0,0,0.037949415406514,0.01,0.05
+"Finance.normal failure rate[1]",0,0,0,0,0,1,0,0,0,0,0.0628479190191978,0.01,0.07
 "Finance.normal growth rate of GDP growth rate[1]",1,0,0,0,0,0,0,0,0,0,1,0.5,1.5
 "Finance.normal safe loans failure rate[1]",1,0,0,0,0,0,0,0,0,0,0.03,0,0.1
-"Finance.reference formation time[1]",1,0,0,0,0,1,0,0,0,0,80,60,100
+"Finance.reference formation time[1]",1,0,0,0,0,1,0,0,0,0,80,20,100
 "Finance.renegotiation time[1]",1,0,0,0,0,1,0,0,0,0,1,1,1.5
-"Finance.reporting delay[1]",0,0,0,0,0,1,0,0,0,0,0.557438886480119,0.125,1.5
-"Finance.scale of exploratory loan failure[1]",1,0,0,0,0,1,0,0,0,0,7.504574501,6,9
+"Finance.reporting delay[1]",0,0,0,0,0,1,0,0,0,0,0.475316019650675,0.125,1.5
+"Finance.scale of exploratory loan failure[1]",1,0,0,0,0,1,0,0,0,0,7.50783399147054,6,9
 "Finance.sensitivity of bank exploration to profit decline[1]",1,0,0,0,0,1,0,0,0,0,0.501962557,0.2,0.8
 "Finance.sensitivity of bank profit payment to net asset growth[1]",1,0,0,0,0,1,0,0,0,0,1.1,0.5,1.5
-"Finance.sensitivity of defaults to changes in risky interest[1]",0,0,0,0,0,1,0,0,0,0,11.89928999,11,13.3
-"Finance.sensitivity of effect of sta on failure rate[1]",0,0,0,0,0,1,0,0,0,0,0.572786478649781,0.1,1.1
-"Finance.sensitivity of effect of stranded energy capital on other assets[1]",0,0,0,0,0,1,0,0,0,0,2,1,3
-"Finance.sensitivity of exploratory loan failure to GDP growth[1]",1,0,0,0,0,1,0,0,0,0,1.05,0.5,1.5
-"Finance.sensitivity of failure rate to investment to gdp ratio[1]",0,0,0,0,0,1,0,0,0,0,0.0609146432112289,0.06,0.12
+"Finance.sensitivity of defaults to changes in risky interest[1]",0,0,0,0,0,1,0,0,0,0,11.89928999,10,13.3
+"Finance.sensitivity of effect of sta on failure rate[1]",0,0,0,0,0,1,0,0,0,0,0.567162727392292,0.1,1.1
+"Finance.sensitivity of effect of stranded energy capital on other assets[1]",0,0,0,0,0,1,0,0,0,0,2.15686290161918,1,5
+"Finance.sensitivity of exploratory loan failure to GDP growth[1]",1,0,0,0,0,1,0,0,0,0,1.04885086254694,0.5,1.5
+"Finance.sensitivity of failure rate to investment to gdp ratio[1]",0,0,0,0,0,1,0,0,0,0,0.171372596261786,0.1,0.5
 "Finance.sensitivity of investment and GDP difference[1]",1,0,0,0,0,1,0,0,0,0,2.217074111,1,3
 "Finance.stranded energy capital reference formation time[1]",0,0,0,0,0,1,0,0,0,0,50,10,110
-"Finance.strength of effect of recent GDP growth on lending standards[1]",0,0,0,0,0,1,0,0,0,0,-0.232135598795891,-1,-0.11
-"Finance.time for safe loans that will fail to actually fail[1]",0,0,0,0,0,1,0,0,0,0,11.1311074042744,3,30
-"Finance.time to change lending standards[1]",0,0,0,0,0,1,0,0,0,0,1.06771247495424,0.5,1.5
+"Finance.time for safe loans that will fail to actually fail[1]",0,0,0,0,0,1,0,0,0,0,13.7388720321355,3,30
+"Finance.time to change lending standards[1]",0,0,0,0,0,1,0,0,0,0,1.33613226720109,0.5,2
 "Finance.time to measure changes in risky interest[1]",0,0,0,0,0,0,0,0,0,1,1,0.8,1.2
 "Finance.tolerance of the cap on default rate from interest rate increases[1]",0,0,0,0,1,0,0,0,0,0,0.06,0.01,0.11
 "Finance.tolerance of the cap on indicated risk premium[1]",1,0,0,0,0,0,0,0,0,0,0.01,0.005,0.015
-"GDP.initial nominal GDP growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.029992375,0,0.05
-"GDP.initial real GDP growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.0378863989105273,0,0.05
+"GDP.initial nominal GDP growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.0414868952469566,0,0.1
+"GDP.initial real GDP growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.028319290487115,0,0.05
 "Government.average time government refinances debt[1]",1,0,0,0,0,1,0,0,0,0,7,5,10
-"Government.averaging time to adjust tax based on income[1]",0,0,0,0,0,1,0,0,0,0,2.28099394601465,1,3
+"Government.averaging time to adjust tax based on income[1]",0,0,0,0,0,1,0,0,0,0,2.28541780683895,1,3
 "Government.banks threshold for perceiving gov debt as risky[1]",1,0,0,0,0,0,0,0,0,0,1,0.8,1.5
 "Government.baseline interest[1]",1,0,0,0,0,0,0,0,0,0,0.02,0.01,0.03
 "Government.central bank adjustment time[1]",1,0,0,0,0,1,0,0,0,0,1.5,0.5,2
@@ -264,27 +265,26 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Government.fraction of wages as child transfer payments[1]",0,0,0,0,0,1,0,0,0,0,0.0824119478469878,0,1
 "Government.fraction of wages as pension[1]",0,0,0,0,0,1,0,0,0,0,0.374566700660406,0,1
 "Government.fraction of wages as unemployment payments[1]",0,0,0,0,0,1,0,0,0,0,0.249829592285828,0,1
-"Government.GDP perception time[1]",0,0,0,0,0,1,0,0,0,0,2.17316066037567,1,3
 "Government.historical minimum effect of deb to GDP ratio on government spending[1]",1,0,0,0,0,0,0,0,0,0,0.9,0.5,1
 "Government.inflation weight[1]",1,0,0,0,0,1,0,0,0,0,1.33,1.2,1.4
 "Government.initial government debt[1]",0,0,0,0,0,1,0,0,0,0,9712.9001009413,0,25000
-"Government.initial perceived GDP[1]",0,0,0,0,0,1,0,0,0,0,20970.4,20000,22000
-"Government.initial safe interest[1]",0,0,0,0,0,1,0,0,0,0,0.0330464757458191,0,0.2
+"Government.initial measured GDP[1]",0,0,0,0,0,1,0,0,0,0,20970.4,20000,22000
+"Government.initial safe interest[1]",0,0,0,0,0,1,0,0,0,0,0.0387837536148122,0,0.2
 "Government.initial smoothed total public tax income[1]",0,0,0,0,0,1,0,0,0,0,2635.2,2200,2900
-"Government.maximum effect of debt to GDP ratio on government spending[1]",0,0,0,0,0,1,0,0,0,0,1.23920781827243,1.2,1.5
+"Government.maximum effect of debt to GDP ratio on government spending[1]",0,0,0,0,0,1,0,0,0,0,1.24615700203977,1.2,1.5
 "Government.normal share of public expenditure available for investment and consumption to consumption[1]",0,0,0,0,0,1,0,0,0,0,0.834964400848686,0.7,0.92
 "Government.sensitivity of banks gov debt risk perception[1]",1,0,0,0,0,1,0,0,0,0,0.1,0.05,0.15
-"Government.sensitivity of STA on public consumption[1]",0,0,0,0,0,1,0,0,0,0,0.0654000951715641,0,0.2
+"Government.sensitivity of STA on public consumption[1]",0,0,0,0,0,1,0,0,0,0,0.0725863718024457,0,0.2
 "Government.solvency support adjustment time[1]",1,0,0,0,0,1,0,0,0,0,1,0.5,1.5
 "Government.time for government spending to change[1]",0,0,0,0,0,1,0,0,0,0,3.12888717930535,1,5
 "Government.time for government to change transfers[1]",0,0,0,0,0,1,0,0,0,0,5,3,10
 "Government.time to measure unemployment[1]",0,0,0,0,0,1,0,0,0,0,1,0.5,1.5
 "Government.unemployment weight[1]",1,0,0,0,0,1,0,0,0,0,0.33,0.2,0.4
-"Inflation.Agriculture share of GDP intercept[1]",0,0,0,0,0,1,0,0,0,0,3.62013559340907,0,100
-"Inflation.agriculture share of GDP slope[1]",0,0,0,0,0,1,0,0,0,0,-2.28521098871544,-10,1
-"Inflation.agriculture share of GDP starting point determinant[1]",0,0,0,0,0,1,0,0,0,0,19.853545173348,0,20
-"Inflation.deflation adjustment time[1]",0,0,0,0,0,1,0,0,0,0,3.53212686942959,3,10
-"Inflation.inflation adjustment time[1]",1,0,0,0,0,1,0,0,0,0,0.632571426842737,0.25,2.5
+"Inflation.Agriculture share of GDP intercept[1]",0,0,0,0,0,1,0,0,0,0,3.45022012319431,0,100
+"Inflation.agriculture share of GDP slope[1]",0,0,0,0,0,1,0,0,0,0,-2.28211621705711,-10,1
+"Inflation.agriculture share of GDP starting point determinant[1]",0,0,0,0,0,1,0,0,0,0,19.8771510983067,0,20
+"Inflation.deflation adjustment time[1]",0,0,0,0,0,1,0,0,0,0,3.64191889994024,2.5,10
+"Inflation.inflation adjustment time[1]",1,0,0,0,0,1,0,0,0,0,1.46065101656929,0.25,1.5
 "Inflation.initial animal products demand growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.02,0,0.1
 "Inflation.initial animal products production growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.035,0,0.1
 "Inflation.initial crop demand growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.02,0,0.1
@@ -295,22 +295,22 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Inflation.initial growth rate in cropland[1]",0,0,0,0,0,1,0,0,0,0,0.00275,0,0.1
 "Inflation.initial growth rate in grazing land[1]",0,0,0,0,0,1,0,0,0,0,0.001,0,0.1
 "Inflation.initial income growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.020044647,0,0.1
-"Inflation.initial inflation index[1]",0,0,0,0,0,1,0,0,0,0,0.392124170676222,0.35,0.55
-"Inflation.initial inflation rate[1]",0,0,0,0,0,1,0,0,0,0,0.0529539890799932,0,0.1
-"Inflation.time to measure growth rate",0,0,0,0,0,1,0,0,0,0,2,1.5,2.5
-"Inflation.weight of cropland inflation contribution[1]",0,0,0,0,0,1,0,0,0,0,0.102822577,0.001,2
-"Inflation.weight of fertilizer used per unit of crop production[1]",0,0,0,0,0,1,0,0,0,0,0.005994537,0.001,2
-"Inflation.weight of grazing land inflation contribution[1]",0,0,0,0,0,1,0,0,0,0,0.056234969,0.001,2
-"Inflation.weight of irrigation water used per unit of crop production inflation contribution[1]",0,0,0,0,0,1,0,0,0,0,0.046270179,0.001,2
-"Inflation.weight of marginal energy cost inflation[1]",0,0,0,0,0,1,0,0,0,0,0.7,0.01,2
+"Inflation.initial inflation index[1]",0,0,0,0,0,1,0,0,0,0,0.383744869050754,0.35,0.55
+"Inflation.initial inflation rate[1]",0,0,0,0,0,1,0,0,0,0,0.0611748198858995,0,0.1
+"Inflation.time to measure growth rate[1]",0,0,0,0,0,1,0,0,0,0,2,1.5,2.5
+"Inflation.weight of cropland inflation contribution[1]",0,0,0,0,0,1,0,0,0,0,0.0950715842912796,0.001,2
+"Inflation.weight of fertilizer used per unit of crop production[1]",0,0,0,0,0,1,0,0,0,0,0.0175557167100381,0.001,2
+"Inflation.weight of grazing land inflation contribution[1]",0,0,0,0,0,1,0,0,0,0,0.0541574166692365,0.001,2
+"Inflation.weight of irrigation water used per unit of crop production inflation contribution[1]",0,0,0,0,0,1,0,0,0,0,0.0501789845976313,0.001,2
+"Inflation.weight of marginal energy cost inflation[1]",0,0,0,0,0,1,0,0,0,0,0.596092656776731,0.01,2
 "Innovation.cash reserve growth threshold for no decline in innovation[1]",1,0,0,0,0,0,0,0,0,0,0,-0.1,0.1
 "Innovation.initial cash reserve growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.37,0.2,0.5
 "Innovation.initial firms innovation orientation[1]",1,0,0,0,0,1,0,0,0,0,0.5,0.2,0.8
 "Innovation.initial net cash flow growth rate[1]",0,0,0,0,0,1,0,0,0,0,-0.590282336,-1,1
 "Innovation.normal cash reserve growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.05,0.01,0.11
-"Innovation.normal time to decrease innovation orientation[1]",0,0,0,0,0,1,0,0,0,0,10.0558855693026,5,20
-"Innovation.sensitivity of firms innovation orientation to cash deceleration[1]",0,0,0,0,0,1,0,0,0,0,1.01478793929433,0,20
-"Innovation.sensitivity of innovation decrease to cash growth[1]",0,0,0,0,0,1,0,0,0,0,9.98672531592705,0,20
+"Innovation.normal time to decrease innovation orientation[1]",0,0,0,0,0,1,0,0,0,0,10.067639297699,5,20
+"Innovation.sensitivity of firms innovation orientation to cash deceleration[1]",0,0,0,0,0,1,0,0,0,0,1.03421806709848,0,20
+"Innovation.sensitivity of innovation decrease to cash growth[1]",0,0,0,0,0,1,0,0,0,0,9.96482615544285,0,20
 "Coastal Assets.Coastal zone divestment threshold[1]",1,0,0,0,0,1,0,0,0,0,0.95,0.9,1
 "Coastal Assets.Effective flood height at which only half the investment would be made[1]",1,0,0,0,0,1,0,0,0,0,1,0.5,3
 "Coastal Assets.Fraction of assets that has to stay at the coast[1]",1,0,0,0,0,1,0,0,0,0,0.5,0.2,0.8
@@ -460,9 +460,6 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "energy investments.time to perceive energy supply missmatch[1]",1,0,0,0,0,0,0,0,0,0,1,0.25,5
 "Damages.Exponent of Capital Damage Function[1]",0,0,1,0,0,1,0,0,0,0,2,1,3
 "Damages.Slope of Capital Damage Function[1]",0,0,1,0,0,1,0,0,0,0,0.00005096093,0,8
-"efficiency reduction in power plants.effect of STA on hydropower energy capacity efficiency quadratic[1]",0,0,1,0,1,0,0,0,0,0,-0.53155579,-1.32875391,2.74922918
-"efficiency reduction in power plants.effect of STA on hydropower energy capacity efficiency slope[1]",0,0,1,0,1,0,0,0,0,0,-0.24704396,-1.09012669,0
-"efficiency reduction in power plants.effect of STA on river cooled thermal power energy capacity efficiency quadratic[1]",0,0,1,0,1,0,0,0,0,0,-0.53405196,-0.75,-0.12655722
 "fossil energy coal.carbon intensity in btu[1]",0,0,0,0,0,1,0,0,0,0,0.0268311344149649,0.01,0.03
 "fossil energy coal.depreciation rate of fossil energy capital[1]",1,0,0,0,0,0,0,0,0,0,0.025,0,0.05
 "fossil energy coal.Depreciation rate of Fuel Extraction Capital[1]",1,0,0,0,0,0,0,0,0,0,0.05,0,0.1
@@ -615,9 +612,6 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Animal Products.elasticity of aquatic animal product share to GDP per person[1]",0,0,0,0,0,1,0,0,0,0,0.3927547306698,0,1
 "Animal Products.normal rate of change in grazing land yield[1]",0,0,0,0,0,1,0,0,0,0,0.0495491289306329,0.01,0.1
 "Animal Products.sensitivity of rate of change in animal products balance to growth rate in yield[1]",0,0,0,0,0,1,0,0,0,0,-84.2082305110113,-100,0
-"Crop.crop prod linear CO2 effect[1]",0,0,0,0,1,0,0,0,0,0,0.04688,0.0465156,0.0472444
-"Crop.crop prod linear temp effect[1]",0,0,0,0,1,0,0,0,0,0,31.07,30.5574,31.5826
-"Crop.crop prod squared temp effect[1]",0,0,0,0,1,0,0,0,0,0,-1.11,-1.12588,-1.09412
 "Crop.desired crop reserve capacity[1]",0,0,0,0,0,1,0,0,0,0,0.00904843522834254,0,0.1
 "Crop.fertilizer use crop yield parameter[1]",0,0,0,0,0,1,0,0,0,0,0.0166667132489498,0.00001,0.1
 "Crop.harvest index for energy crops[1]",0,0,0,0,0,1,0,0,0,0,0.94354183537263,0.6,0.95
@@ -625,7 +619,6 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Crop.initial crop yield[1]",0,0,0,0,0,1,0,0,0,0,5.90242907197977,5.5,6.5
 "Crop.irrigation crop yield parameter[1]",0,0,0,0,0,1,0,0,0,0,2.5,2.5,9
 "Crop.normal harvest index for food crops[1]",0,0,0,0,0,1,0,0,0,0,0.449922146050117,0.4,0.45
-"Crop.rel change in crop productivity intercept[1]",0,0,0,0,1,0,0,0,0,0,-235.8,-239.948,-231.652
 "Crop.sensitivity of effect of crop residue production on field fraction[1]",0,0,0,0,0,1,0,0,0,0,0.559682992447628,0,0.75
 "Crop.sensitivity of effect of crop yield on harvest index[1]",0,0,0,0,0,1,0,0,0,0,0.0993697795186493,0.05,0.1
 "Crop.soil carbon crop yield parameter[1]",0,0,0,0,0,1,0,0,0,0,0.0181034489639068,1e-8,0.2
