@@ -332,8 +332,8 @@ generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 				(samplePoints.base[!is.na(samplePoints.base)]-nullProb)/(1-nullProb)
 		}
 		if(!is.null(integerParms)){
-			sampleParms[sampleParms$Variable==integerParms$Variable,c('Max')] <- 
-				sampleParms[sampleParms$Variable==integerParms$Variable,c('Max')] + 1
+			sampleParms[sampleParms$Variable %in% integerParms$Variable,c('Max')] <- 
+				sampleParms[sampleParms$Variable %in% integerParms$Variable,c('Max')] + 1
 		}
 		samplePoints <- funStretchSamplePoints(samplePoints.base,sampleParms,
 																					 restretchSamplePoints)
