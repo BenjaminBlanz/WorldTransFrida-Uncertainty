@@ -3,6 +3,8 @@
 #SBATCH --account=mh0033
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=128
+#SBATCH --constraint=256G
+#SBATCH --mem=0
 #SBATCH --time=01:00:00
 #SBATCH --output=workOutput/expID/LOG.expID_%j.log
 #SBATCH --error=workOutput/expID/LOG.expID_%j.log
