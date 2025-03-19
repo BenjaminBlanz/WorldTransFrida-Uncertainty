@@ -1,6 +1,6 @@
 Variable,Min,Max
-Finance.normal failure rate[1],0.056,0.085
-Finance.loan maturation time[1],10,14
+Finance.normal failure rate[1],0.056,0.0856
+Finance.loan maturation time[1],10,15
 Finance.sensitivity of defaults to changes in risky interest[1],0,13
 Finance.sensitivity of effect of sta on failure rate[1],0.3,1.1
 Finance.effect of default rate on lending standards curvature[1],2,15
