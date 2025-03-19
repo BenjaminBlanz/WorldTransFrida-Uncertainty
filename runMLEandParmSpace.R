@@ -521,7 +521,9 @@ while(newMaxFound){
 	parVect <- sampleParms$Value
 	names(parVect) <- sampleParms$Variable
 	maxLLike <- -negLLike(parVect)
-	if(-baseNegLL!=maxLLike){stop('call ghostbusters\n')}
+	if(-baseNegLL!=maxLLike) {
+		cat(sprintf('Would have called ghostbusters... -baseNegLL=%10f, maxLLike=%10f\n', -baseNegLL, maxLLike))
+	}
 	
 	## sample points ####
 	# add the integer parms back
