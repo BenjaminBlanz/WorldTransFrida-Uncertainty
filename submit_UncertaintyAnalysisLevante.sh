@@ -20,6 +20,11 @@ expID=UA_EMB_nS${numSamples}
 hours=2
 minutes=00
 
+# Does the job need larger memory?
+# (the larger the memory you request, the longer the job might sit in the queue, if the machine is full)
+memorySize='256G' # can be ['256G' '512G', '1024G'], '256G' sometimes fails with 100,000 samples
+
+
 # Use a different group account for ressources? Which partition?
 account=mh0033 
 partition=compute
@@ -35,8 +40,8 @@ copyParmRangesAndScales="false"
 copySamplePoints="false" # for run-by-run comparisons
 
 
-outputType='both' # can also be 'csv' or 'RDS'
-
+outputType='both' # can be 'both', 'csv' or 'RDS'
+plotting='true' # avoiding the plotting can save quit some compute time
 
 
 #### OPTIONAL: USING DIFFERENT INPUT FILES?
@@ -119,10 +124,11 @@ sed -i "/^continue <- readline/d" $runMLE
 
 
 # modify runPlotAllRuns
-runPlot=${expID}_runPlotAllRuns.R
-cp runPlotAllRuns.R $runPlot
-
-sed -i "s/config.R/${config}/g" $runPlot
+if [ "${plotting}" = "true" ]; then
+	runPlot=${expID}_runPlotAllRuns.R
+	cp runPlotAllRuns.R $runPlot
+	sed -i "s/config.R/${config}/g" $runPlot
+fi
 
 
 # Create the runscript from the template
@@ -137,12 +143,15 @@ sed -i "s/time=01:00:00/time=0${hours}:${minutes}:00/" $runscript
 sed -i "s/account=mh0033/account=${account}/" $runscript
 sed -i "s/partition=compute/partition=${partition}/" $runscript
 sed -i "s/ntasks-per-node=128/ntasks-per-node=${numWorkers}/" $runscript
-#sed -i "s/LOG.UncertaintyAnalysis/LOG.${expID}/g" $runscript
+sed -i "s/constraint=256G/constraint=${memorySize}/" $runscript
 sed -i "s/expID/${expID}/g" $runscript
 sed -i "s/jdoe@mail.com/${email}/" $runscript
-#sed -i "s/job-name=runUncertaintyAnalysis/job-name=${expID}/" $runscript
 sed -i "s/runMLEandParmSpace.R/${runMLE}/" $runscript
-sed -i "s/runPlotAllRuns.R/${runPlot}/" $runscript
+if [ "${plotting}" = "true" ]; then
+	 sed -i "s/runPlotAllRuns.R/${runPlot}/" $runscript
+else
+	sed -i "s/source('runPlotAllRuns.R'); //" $runscript
+fi
 
 #############################################################################
 ############ Copying parameter ranges and scales ############################
@@ -158,6 +167,19 @@ fi
 
 if [ "$copyParmRangesAndScales" = "true" ]; then
 	for filename in 'parscale.RDS' 'sampleParmsParscale.csv' 'sampleParmsParscaleRanged.csv' 'sampleParmsParscaleRanged.RDS' 'sigma-indepParms.RDS' 'sigma.RDS'; do
+		file=workOutput/${copyID}/${filename}
+		if [ -e $file ]; then
+			cp ${file}  ${expDir}/
+		else
+			echo "File ${file} not found, exiting"
+			exit 1
+		fi
+	done
+fi
+
+
+if [ "$copySamplePoints" = "true" ]; then
+	for filename in 'samplePointsBase.RDS' 'samplePoints.RDS'; do
 		file=workOutput/${copyID}/${filename}
 		if [ -e $file ]; then
 			cp ${file}  ${expDir}/
