@@ -1,4 +1,5 @@
 IMPORTANT: NO WHITESPACE AT THE END OF FIELDS!,FRIDA Module,FRIDA Name,Index,FRIDA FQN,Unit
+From Chris,Energy Balance Model,ocean heat content change,[*],Energy Balance Model.ocean heat content change[*],YJ
 From Chris,Aerosol Forcing,Effective Radiative Forcing from Aerosol Radiation Interactions,[*],Aerosol Forcing.Effective Radiative Forcing from Aerosol Radiation Interactions[*],W/(metre^2)
 From Chris,Aerosol Forcing,Effective Radiative Forcing from Aerosol Cloud Interactions,[*],Aerosol Forcing.Effective Radiative Forcing from Aerosol Cloud Interactions[*],W/(metre^2)
 From Chris,CH4 Forcing,Atmospheric CH4 Concentration,[*],CH4 Forcing.Atmospheric CH4 Concentration[*],ppb
@@ -147,3 +148,5 @@ for SLR analysis,Sea level rise costs and impacts,Total loss of assets from SLR,
 for SLR analysis,Sea level rise costs and impacts,Productivity reduction factor from coastal flooding,[*],Sea level rise costs and impacts.Productivity reduction factor from coastal flooding[*],dmnl
 for SLR analysis,Sea level rise costs and impacts,Total people retreat costs,[*],Sea level rise costs and impacts.Total people retreat costs[*],bc$/year
 for SLR analysis,Sea level rise costs and impacts,Total asset retreat costs,[*],Sea level rise costs and impacts.Total asset retreat costs[*],bc$/year
+Useful econ vars,GDP,future time in recession,[*],GDP.future time in recession[*],
+Useful econ vars,GDP,future recession counter,[*],GDP.future recession counter[*],
