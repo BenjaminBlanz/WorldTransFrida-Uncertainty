@@ -1,11 +1,12 @@
-Climate.climate impact stoptime,1979
-Climate.switch sea level rise damage,1
-Government_Regulations.start_year,1980
+Climate.climate_impact_stoptime,1979
+Climate.switch_sea_level_rise_damage,1
+Government_Regulations.start_year,1979
 Government_Regulations.Retreat_as_SLR_adaptation_strategy,0
 Government_Regulations.Protection_as_SLR_adaptation_strategy,0
 Government_Regulations.No_SLR_adaptation_strategy,1
-Climate.switch sea level rise finance damage,1
-Climate.switch sea level rise productivity reduction damage,0
-Climate.switch sea level rise relocation cost damage,0
-Climate.switch sea level rise fatalities damage,0
-Climate.switch sea level rise protection cost damage,0
+Climate.switch_sea_level_rise_finance_damage,1
+Climate.switch_sea_level_rise_productivity_reduction_damage,0
+Climate.switch_sea_level_rise_relocation_cost_damage,0
+Climate.switch_sea_level_rise_fatalities_damage,0
+Climate.switch_sea_level_rise_protection_cost_damage,0
+Climate.switch_sea_level_rise_climate_risk_perception,0
