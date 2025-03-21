@@ -52,8 +52,8 @@ prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NU
 				sampleParms[newIdx,c('Variable')] <- integerParms$Variable[p.i] # e.g. 'Climate Units.selected climate case'
 				sampleParms[newIdx,c('Value','Min','Max')] <- 
 					c(integerParms$Value[p.i],
-						integerParms$Min[p.i]-0.5+.Machine$double.eps,
-						integerParms$Max[p.i]+0.5-.Machine$double.eps)
+						integerParms$Min[p.i]-0.5+1e-4,
+						integerParms$Max[p.i]+0.5-1e-4)
 					# c(23,0.5,100.5-.Machine$double.eps) # for 'Climate Units.selected climate case'
 				sampleParmsRowNames <- rownames(sampleParms)
 				sampleParmsRowNames[newIdx] <- as.character(as.numeric(sampleParmsRowNames[newIdx-1])+1)
