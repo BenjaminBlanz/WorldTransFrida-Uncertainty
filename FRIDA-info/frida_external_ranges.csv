@@ -4,6 +4,8 @@ Finance.loan maturation time[1],9,13
 Finance.sensitivity of defaults to changes in risky interest[1],0,13
 Finance.sensitivity of effect of sta on failure rate[1],0.35,0.85
 Finance.reporting delay[1],0.41,0.55
+Finance.max risk premium increase rate[1],0.015,0.015
+Finance.safe asset default rate threshold[1],0.015,0.015
 Demographics.sensitivity of fertility to literacy[1],-0.02,-0.0177
 Sea level rise costs and impacts.Increase factor for costs of reactive retreat[1],3,5
 Sea level rise costs and impacts.Asset demolition cost factor[1],0.025,0.075
