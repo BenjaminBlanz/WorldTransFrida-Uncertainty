@@ -43,6 +43,7 @@ prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NU
 		sampleParms <- sampleParms[-excludedIdc,]
 	}
 	# add the integer vars e.g. climate case
+	sampleParms$isInteger <- FALSE
 	if(!is.null(integerParms)){
 		cat('adding integer parms...')
 		for(p.i in 1:nrow(integerParms)){
@@ -51,7 +52,8 @@ prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NU
 				newIdx <- nrow(sampleParms)+1
 				sampleParms[newIdx,c('Variable')] <- integerParms$Variable[p.i] # e.g. 'Climate Units.selected climate case'
 				sampleParms[newIdx,c('Value','Min','Max')] <- 
-				c(integerParms$Value[p.i],integerParms$Min[p.i],integerParms$Max[p.i])
+					c(integerParms$Value[p.i],integerParms$Min[p.i],integerParms$Max[p.i])
+				sampleParms[newIdx,c('isInteger')] <- TRUE
 				sampleParmsRowNames <- rownames(sampleParms)
 				sampleParmsRowNames[newIdx] <- as.character(as.numeric(sampleParmsRowNames[newIdx-1])+1)
 				rownames(sampleParms) <- sampleParmsRowNames
