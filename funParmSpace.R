@@ -315,7 +315,6 @@ generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 	if(!ignoreExistingResults && file.exists(file.path(location.output,'samplePoints.RDS'))){
 		cat('Reading sampling points...')
 		samplePoints <- readRDS(file.path(location.output,'samplePoints.RDS'))
-		samplePoints.base <- readRDS(file.path(location.output,'samplePointsBase.RDS'))
 		cat('done\n')
 	} else {
 		cat('Generate sampling points using sobol sequence...')
@@ -350,11 +349,7 @@ generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 			}
 			samplePoints <- samplePoints[!duplicated(samplePoints),]
 		}
-		# if('Climate Units.selected climate case'%in%sampleParms$Variable){
-		# 	samplePoints[,'Climate Units.selected climate case'] <- round(samplePoints[,'Climate Units.selected climate case'])
-		# }
 		saveRDS(samplePoints,file.path(location.output,'samplePoints.RDS'))
-		saveRDS(samplePoints.base,file.path(location.output,'samplePointsBase.RDS'))
 		cat('done\n')
 	}
 	return(samplePoints)
