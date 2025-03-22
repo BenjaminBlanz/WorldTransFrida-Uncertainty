@@ -539,12 +539,12 @@ while(newMaxFound){
 																												ignoreExistingResults = T,
 																												integerParms = integerParms)
 	}
-	
+	cat('saving sampleParms and samplePoints...')
 	write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
 	saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
 	saveRDS(samplePoints,file.path(location.output,'samplePoints.RDS'))
-	# write.csv(samplePoints,file.path(location.output,'samplePoints.csv'))
-	
+	write.csv(samplePoints,file.path(location.output,'samplePoints.csv'))
+	cat('done\n')
 	
 	## write export spec ####
 	extraVarNamesForExport <- read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN
