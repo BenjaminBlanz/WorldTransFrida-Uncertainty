@@ -148,5 +148,5 @@ for SLR analysis,Sea level rise costs and impacts,Total loss of assets from SLR,
 for SLR analysis,Sea level rise costs and impacts,Productivity reduction factor from coastal flooding,[*],Sea level rise costs and impacts.Productivity reduction factor from coastal flooding[*],dmnl
 for SLR analysis,Sea level rise costs and impacts,Total people retreat costs,[*],Sea level rise costs and impacts.Total people retreat costs[*],bc$/year
 for SLR analysis,Sea level rise costs and impacts,Total asset retreat costs,[*],Sea level rise costs and impacts.Total asset retreat costs[*],bc$/year
-Useful econ vars,GDP,future time in recession,[*],GDP.future time in recession[*],
-Useful econ vars,GDP,future recession counter,[*],GDP.future recession counter[*],
+Useful econ vars,GDP,future time in recession,[*],GDP.future time in recession[*],Year
+Useful econ vars,GDP,future recession counter,[*],GDP.future recession counter[*],dmnl
