@@ -165,17 +165,17 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Employment.fraction of productivity gains translating to firing[1]",1,0,0,0,0,1,0,0,0,0,0,0.5,0.25,0.75
 "Employment.hiring to investment ratio[1]",0,0,0,0,0,1,0,0,0,0,0,0.454718325853551,0.1,0.75
 "Employment.initial productivity growth[1]",1,0,0,0,0,1,0,0,0,0,0,0.0258317400509399,0.01,0.03
-"Employment.initial unemployment rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.0460242472644432,0.03,0.1
+"Employment.initial unemployment rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.0614856366954347,0.03,0.1
 "Employment.Initial Wage Rate[1]",0,0,0,0,0,1,0,0,0,0,0,5695.75062986852,2000,10000
 "Employment.labour force participation fixed[1]",0,0,0,0,0,1,0,0,0,0,0,63.9386214645122,61.8,66
-"Employment.max change in fractional wage growth[1]",0,0,0,0,0,1,0,0,0,0,0,0.065987723745538,0,0.9
+"Employment.max change in fractional wage growth[1]",0,0,0,0,0,1,0,0,0,0,0,0.0689877237455,0,0.9
 "Employment.negotiation effectiveness[1]",1,0,0,0,0,1,0,0,0,0,0,1,0.5,1.5
 "Employment.productivity yield of exploratory investment[1]",1,0,0,0,0,1,0,0,0,0,0,1.947328313,0.9473283132336,2.9473283132336
 "Employment.productivity yield of non bank innovation[1]",1,0,0,0,0,1,0,0,0,0,0,0.132668695,0.05,0.25
 "Employment.profit threshold multiplier[1]",1,0,0,0,0,0,0,0,0,0,0,1,0.5,2
 "Employment.rent to investment ratio[1]",1,0,0,0,0,1,0,0,0,0,0,0.25,0.15,0.35
 "Employment.sensitivity of firing to profit discrepancy[1]",1,0,0,0,0,1,0,0,0,0,0,0.5,0.25,1
-"Employment.sensitivity of hiring to unemployment rate[1]",0,0,0,0,0,1,0,0,0,0,0,2,0.1,2
+"Employment.sensitivity of hiring to unemployment rate[1]",0,0,0,0,0,1,0,0,0,0,0,2.28968050025845,0.1,5
 "Employment.share of employment in agriculture intercept[1]",0,0,0,0,0,1,0,0,0,0,0,62.901759597299,-100,100
 "Employment.share of employment in agriculture slope[1]",0,0,0,0,0,1,0,0,0,0,0,-15.3331166860372,-50,1
 "Employment.share of employment in industry intercept[1]",0,0,0,0,0,1,0,0,0,0,0,-2.58133183549477,-100,100
@@ -303,7 +303,7 @@ Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Varia
 "Inflation.weight of fertilizer used per unit of crop production[1]",0,0,0,0,0,1,0,0,0,0,0,0.0178717567090785,0.001,2
 "Inflation.weight of grazing land inflation contribution[1]",0,0,0,0,0,1,0,0,0,0,0,0.0543838689604846,0.001,2
 "Inflation.weight of irrigation water used per unit of crop production inflation contribution[1]",0,0,0,0,0,1,0,0,0,0,0,0.0501917669680645,0.001,2
-"Inflation.weight of marginal energy cost inflation[1]",0,0,0,0,0,1,0,0,0,0,0,0.738081573935746,0.01,2
+"Inflation.weight of marginal energy cost inflation[1]",0,0,0,0,0,1,0,0,0,0,0,0.812232845424,0.01,2
 "Innovation.firms reference formation time[1]",0,0,0,0,0,1,0,0,0,0,0,79.3879038397535,40,100
 "Innovation.reference cash reserve growth rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.0486965577383913,0.03,0.08
 "Innovation.sensitivity of effect of cash reserve growth rate on firms innovation orientation[1]",0,0,0,0,0,1,0,0,0,0,0,-0.114483522217129,-0.3,-0.01
