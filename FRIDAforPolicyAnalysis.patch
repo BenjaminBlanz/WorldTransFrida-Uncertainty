@@ -1,7 +1,7 @@
-diff --git a/FRIDA Uncertainity Dashboard/FRIDA.stmx b/FRIDA Uncertainity Dashboard/FRIDA.stmx
+diff --git a/FRIDA.stmx b/FRIDA.stmx
 index a31e0f2..d36f25a 100644
---- a/FRIDA Uncertainity Dashboard/FRIDA.stmx	
-+++ b/FRIDA Uncertainity Dashboard/FRIDA.stmx	
+--- a/FRIDA.stmx	
++++ b/FRIDA.stmx	
 @@ -7,7 +7,7 @@
  		<vendor>isee systems, inc.</vendor>
  		<product version="3.8" isee:build_number="3578" isee:saved_by_v1="true" lang="en">Stella Architect</product>

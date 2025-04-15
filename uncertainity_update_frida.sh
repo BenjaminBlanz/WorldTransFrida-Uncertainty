@@ -8,9 +8,6 @@ function cleanup_uncertainty_repo() {
 
 	#remove all the stuff we don't need
 	rm -rf "./Data Processing"
-	rm -rf "./FRIDA Dashboard"
-	rm -rf "./FRIDA ILE"
-	rm -rf "./FRIDA Uncertainity Dashboard"
 	rm -r FRIDA.isdb
 	rm -f LICENSE
 	rm -f ReadMe.md
