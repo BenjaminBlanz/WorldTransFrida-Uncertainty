@@ -56,7 +56,6 @@ cat('\r  reading done                                                           
 
 # prep quantiles ####
 # determine the values of the desired quantiles in all of the variables
-plotWeightType <- 'equaly'
 if(!exists('logLike')&&plotWeightType %in% c('likelihood','logCutoff','linearly','completeEqually')){
 	# log like ####
 	cat(' reading log likelihoods...\n')
