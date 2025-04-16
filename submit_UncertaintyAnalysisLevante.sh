@@ -130,6 +130,12 @@ if [ "${plotting}" = "true" ]; then
 	sed -i "s/config.R/${config}/g" $runPlot
 fi
 
+# modify runDetermineRepresentativeSamples
+runRepSample = ${expID}_runDetermineRepresentativeSamples.R
+cp runDetermineRepresentativeSamples.R $runRepSample
+sed -i "s/config.R/${config}/g" $runRepSample
+sed -i "s/runInitialiseData.R/${runInit}/g" $runRepSample
+
 
 # Create the runscript from the template
 template='UncertaintyAnalysis.run'
