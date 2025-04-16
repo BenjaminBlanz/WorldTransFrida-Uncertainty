@@ -146,7 +146,7 @@ runFridaParmsByIndex <- function(runid,silent=T,policyMode=F){
 				logLike <- funLogLikelihood(resDat,resSigma)
 				# If the logLike is not NA but the run did not complete assign 
 				# lowest nonzero value. We use this when narrowing the parms space
-				if(is.na(runDat[[1]][nrow(calDat)])||logLike==-Inf){
+				if(is.na(runDat[[1]][nrow(runDat)])||logLike==-Inf){
 					logLike <- -.Machine$double.xmax+sum(!is.na(runDat[[1]]))*.Machine$double.eps
 				}
 			} else {
