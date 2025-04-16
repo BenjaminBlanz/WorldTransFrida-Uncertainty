@@ -62,10 +62,10 @@ sink()
 for(plotWeightType in plotWeightTypes){
 	# weighting ####
 	cat(sprintf('Plotting %s weighted\n',plotWeightType))
-	if(!exists('logLike')&&plotWeightType %in% c('likelihood','logCutoff','linearly','logLikelihood')){
+	if(plotWeightType %in% c('likelihood','logCutoff','linearly','logLikelihood','completeEqually')){
 		# log like ####
 		cat(' reading log likelihoods...\n')
-		logLike <- readPerVarFile(file.path(outputFolder,outputTypeFolders,'logLike'),outputType)$logLike
+		logLike <- readPerVarFile(file.path(outputFolder,outputTypeFolder,'logLike'),outputType)$logLike
 		completeRunsSoFar <- sum(logLike > -.Machine$double.xmax+(1000*.Machine$double.eps))
 		cat(sprintf('Collected %i sample log likes, %i runs in data where complete\n',
 								numSample,completeRunsSoFar))
@@ -85,7 +85,11 @@ for(plotWeightType in plotWeightTypes){
 	} else if(plotWeightType == 'equaly'){
 		# equal weighting
 		samplePoints$plotWeight <- rep(1,nrow(samplePoints))
-	} else if(plotWeightType == 'linearly'){
+	} else if(plotWeightType == 'completeEqually'){
+		# equal weighting of completed runs
+		samplePoints$plotWeight <- 0
+		samplePoints$plotWeight[samplePoints$logLike > -.Machine$double.xmax+(1000*.Machine$double.eps)] <- 1
+	}else if(plotWeightType == 'linearly'){
 		samplePoints$plotWeight <- order(logLike)/nrow(samplePoints)
 	} else {
 		stop('unknown plotWeightType\n'	)

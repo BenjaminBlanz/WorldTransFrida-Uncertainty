@@ -57,7 +57,7 @@ cat('\r  reading done                                                           
 # prep quantiles ####
 # determine the values of the desired quantiles in all of the variables
 plotWeightType <- 'equaly'
-if(!exists('logLike')&&plotWeightType %in% c('likelihood','logCutoff','linearly')){
+if(!exists('logLike')&&plotWeightType %in% c('likelihood','logCutoff','linearly','completeEqually')){
 	# log like ####
 	cat(' reading log likelihoods...\n')
 	logLike <- rep(NA,numSample)
@@ -86,6 +86,10 @@ if(plotWeightType=='likelihood'){
 } else if(plotWeightType == 'equaly'){
 	# equal weighting
 	samplePoints$plotWeight <- rep(1,nrow(samplePoints))
+} else if(plotWeightType == 'completeEqually'){
+	# equal weighting of completed runs
+	samplePoints$plotWeight <- 0
+	samplePoints$plotWeight[samplePoints$logLike > -.Machine$double.xmax+(1000*.Machine$double.eps)] <- 1
 } else if(plotWeightType == 'linearly'){
 	samplePoints$plotWeight <- order(logLike)/nrow(samplePoints)
 } else {
