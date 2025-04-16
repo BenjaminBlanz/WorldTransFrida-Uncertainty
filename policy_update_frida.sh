@@ -7,16 +7,9 @@ function cleanup_policy_repo() {
 	cd ./FRIDAforPolicyAnalysisGit
 
 	#remove all the stuff we don't need
-	rm -rf "./Data"
-	rm -rf "./Data Processing"
-	rm -rf "./FRIDA Dashboard"
-	rm -rf "./FRIDA ILE"
-	rm -rf "./FRIDA_Modules"
-	rm -rf "./FRIDA Uncertainity Dashboard/Graphics"
-	rm -r FRIDA.isdb
-	rm -r FRIDA.stmx
+	rm -rf "./Graphics"
 	rm -f LICENSE
-	rm -f ReadMe.md
+	rm -f README.md
 
 	git apply --verbose $PWD/../FRIDAforPolicyAnalysis.patch
 	cd ..
@@ -32,7 +25,7 @@ function cleanup_policy_repo() {
 if [ ! -d ./FRIDAforPolicyAnalysisGit ] ; then
 	#clone the FRIDA model so you always have the latest
 	echo "Cloning FRIDA from the main metno/WorldTransFRIDA repo"
-	git clone git@github.com:metno/WorldTransFRIDA.git FRIDAforPolicyAnalysisGit
+	git clone https://github.com/BenjaminBlanz/WorldTransFRIDA-SimpleDashboard.git FRIDAforPolicyAnalysisGit
 
 	cleanup_policy_repo
 
