@@ -58,7 +58,7 @@ calDat.col <- 'red'
 
 # sampling ####
 # number of samples for the sobol sequence across all dimensions
-numSample <- 2e4
+numSample <- 1e4
 # by default sobol sequence covers the entire range between min and max with 
 # equal density.
 # However we might want to ensure that there are similar number of points above and 
