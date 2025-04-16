@@ -131,7 +131,7 @@ if [ "${plotting}" = "true" ]; then
 fi
 
 # modify runDetermineRepresentativeSamples
-runRepSample = ${expID}_runDetermineRepresentativeSamples.R
+runRepSample=${expID}_runDetermineRepresentativeSamples.R
 cp runDetermineRepresentativeSamples.R $runRepSample
 sed -i "s/config.R/${config}/g" $runRepSample
 sed -i "s/runInitialiseData.R/${runInit}/g" $runRepSample
