@@ -8,6 +8,7 @@ soil carbon decay.temp response[1],57,60
 soil carbon decay.e0[1],290,310
 Forest.CO2 tree net primary production parameter[1],0.0008,0.001
 Grass.CO2 grass net primary production parameter[1],0.0008,0.001
+Circular Flow.yfrom,1.42,2.23
 Sea level rise costs and impacts.Increase factor for costs of reactive retreat[1],3,5
 Sea level rise costs and impacts.Asset demolition cost factor[1],0.025,0.075
 Sea level rise costs and impacts.Mobile assets fraction[1],0.2,0.3
