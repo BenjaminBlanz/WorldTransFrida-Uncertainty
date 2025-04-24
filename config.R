@@ -47,7 +47,7 @@ plotWidth <- 20
 plotHeight <- 20
 plotUnit <- 'cm'
 plotRes <- 150
-plotWeightTypes <- c('equaly')#,'logLikelihood')#,'linearly','logCutoff')#,'likelihood') #options are equaly, completeEqually, linear, logCutoff, likelihood
+plotWeightTypes <- c('completeEqually')#,'logLikelihood')#,'linearly','logCutoff')#,'likelihood') #options are equaly, completeEqually, linear, logCutoff, likelihood
 CIsToPlot <- c(0,0.67,0.95)
 CIsToPlot.lty <- c('solid','longdash','dotted')#,'dotdash','dotted')
 CIsToPlot.lwd <- c(3,1,1)
