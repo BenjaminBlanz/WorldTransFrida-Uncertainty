@@ -158,6 +158,7 @@ if [ "${plotting}" = "true" ]; then
 else
 	sed -i "s/source('runPlotAllRuns.R'); //" $runscript
 fi
+sed -i "s/runDetermineRepresentativeSamples.R/${runRepSample}/" $runscript
 
 #############################################################################
 ############ Copying parameter ranges and scales ############################
