@@ -9,10 +9,11 @@
 # always be used in the future, as these are the templates for this script!
 
 numWorkers=250
-numSamples=10000
+numSample=10000
 chunkSizePerWorker=100
-expID=UA_EMB_nS${numSamples}
-
+#### experiment id custom addition
+# experiment id at bottom of input section to include policy name by default
+expIDPreString='UA'
 
 ### SLURM settings
 # How long will it take approximately? Job will be killed after this time!
@@ -50,6 +51,8 @@ FRIDA='FRIDAforUncertaintyAnalysis'
 
 # These need to be located in the FRIDA-configs/ folder!
 policyFile='policy_EMB.csv'
+climateFeedbackFile='ClimateFeedback_On.csv'
+climateSTAOverrideFile='ClimateSTAOverride_Off.csv'
 
 # These need to be located in the FRIDA-info/ folder!
 infoFile='frida_info.csv'
@@ -57,13 +60,83 @@ externalRangesFile='frida_external_ranges.csv'
 excludeParmFile='frida_parameter_exclusion_list.csv'
 excludeVarFile='frida_variable_exclusion_list.csv'
 extraExportFile='frida_extra_variables_to_export_list.csv'
+
 ##############################################################################
 ########                 End of input section                      ###########
 ##############################################################################
 
+##############################################################################
+########            Overrides from command line                    ###########
+##############################################################################
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -s|--expIDPreString)
+      expIDPreString="$2"
+      ;;
+    -w|--numWorkers)
+      numWorkers="$2"
+      ;;
+    -n|--numSample)
+      numSample="$2"
+      ;;
+    -k|--chunkSizePerWorker)
+      chunkSizePerWorker="$2"
+      ;;
+    -x|--expID)
+      expID="$2"
+      ;;
+    -h|--hours)
+      hours="$2"
+      ;;
+    -m|--minutes)
+      minutes="$2"
+      ;;
+    -M|--memorySize)
+      memorySize="$2"
+      ;;
+    -a|--account)
+      account="$2"
+      ;;
+    -p|--partition)
+      partition="$2"
+      ;;
+    -e|--email)
+      partition="$2"
+      ;;
+    -c|--cid|--copyID)
+      copyID="$2"
+      ;;
+    --cpps|--copyParmRangesAndScales)
+      copyParmRangesAndScales="$2"
+      ;;
+    --cpsp|--copySamplePoints)
+      copySamplePoints="$2"
+      ;;
+    --frida|--FRIDA|--FRIDAforUncertaintyAnalysis)
+      FRIDAforUncertaintyAnalysis="$2"
+      ;;
+    --pol|--policyFile)
+      policyFile="$2"
+      ;;
+    --cfb|--climateFeedbackFile)
+      climateFeedbackFile="$2"
+      ;;
+    --sta|--climateSTAOverrideFile)
+      climateSTAOverrideFile="$2"
+      ;;
+    *)
+      printf "***************************\n"
+      printf "* Error: Invalid argument.*\n"
+      printf "***************************\n"
+      exit 1
+  esac
+  shift
+  shift
+done
 
+expID=${expIDPreString}-S${numSample}-${policyFile%.*}-${climateFeedbackFile%.*}-${climateSTAOverrideFile%.*}
 #############################################################################
-############ Preparing the R-scripts and the runscript ######################
+########     Preparing the R-scripts and the runscript             ##########
 #############################################################################
 
 ########
@@ -72,13 +145,15 @@ config=${expID}_config.R
 cp config.R $config
 
 sed -i "s/numWorkers <- parallel::detectCores()/numWorkers <- ${numWorkers}/" $config
-sed -i "s/numSample <- 1e4/numSample <- ${numSamples}/" $config
+sed -i "s/numSample <- 1e4/numSample <- ${numSample}/" $config
 sed -i "s/chunkSizePerWorker <- 100/chunkSizePerWorker <- ${chunkSizePerWorker}/" $config
 sed -i "s/file.path('workOutput',name.output)/file.path('workOutput','${expID}')/" $config
 sed -i "s/config.R/${config}/g" $config
 sed -i "s/FRIDAforUncertaintyAnalysis/${FRIDA}/" $config
 sed -i "s/frida_info.csv/${infoFile}/" $config
 sed -i "s/policy_EMB.csv/${policyFile}/" $config
+sed -i "s/ClimateFeedback_On.csv/${climateFeedbackFile}/" $config
+sed -i "s/ClimateSTAOverride_Off.csv/${climateSTAOverrideFile}/" $config
 sed -i "s/frida_external_ranges.csv/${externalRangesFile}/" $config
 sed -i "s/frida_parameter_exclusion_list.csv/${excludeParmFile}/" $config
 sed -i "s/frida_variable_exclusion_list.csv/${excludeVarFile}/" $config
@@ -140,7 +215,7 @@ sed -i "s/runInitialiseData.R/${runInit}/g" $runRepSample
 # Create the runscript from the template
 template='UncertaintyAnalysis.run'
 runscript="${expID}.run"
-#runscript="${expID}_numW=${numWorkers}_numS=${numSamples}_maxC=${maxConnections}.run"
+#runscript="${expID}_numW=${numWorkers}_numS=${numSample}_maxC=${maxConnections}.run"
 
 cp $template $runscript
 
@@ -200,4 +275,5 @@ fi
 #############################################################################
 #######                    Submit the Job                            ########
 #############################################################################
-sbatch $runscript
+#sbatch $runscript
+echo $runscript
