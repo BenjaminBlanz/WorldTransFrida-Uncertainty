@@ -82,9 +82,6 @@ while [ $# -gt 0 ]; do
     -k|--chunkSizePerWorker)
       chunkSizePerWorker="$2"
       ;;
-    -x|--expID)
-      expID="$2"
-      ;;
     -h|--hours)
       hours="$2"
       ;;
@@ -125,9 +122,7 @@ while [ $# -gt 0 ]; do
       climateSTAOverrideFile="$2"
       ;;
     *)
-      printf "***************************\n"
-      printf "* Error: Invalid argument.*\n"
-      printf "***************************\n"
+      printf "Error: Invalid argument: $1 \n"
       exit 1
   esac
   shift
