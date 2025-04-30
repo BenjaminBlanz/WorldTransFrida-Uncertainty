@@ -27,6 +27,7 @@ if(length(runFilesList)==0){
 }
 
 # collect time series ####
+cat('reading vars from run data...')
 defRun <- runFridaDefaultParms()
 yearsToRead <- rownames(defRun)
 # varsToRead.lst <- list()
@@ -52,11 +53,12 @@ for(f.i in 1:length(runFilesList)){
 	}
 	rm(parOutput)
 }
-cat('\r  reading done                                                            \n')
+cat('done\n')
 
 # prep quantiles ####
 # determine the values of the desired quantiles in all of the variables
-if(!exists('logLike')&&plotWeightType %in% c('likelihood','logCutoff','linearly','completeEqually')){
+cat('determining weights...\n')
+if(plotWeightType %in% c('likelihood','logCutoff','linearly','completeEqually')){
 	# log like ####
 	cat(' reading log likelihoods...\n')
 	logLike <- rep(NA,numSample)
@@ -104,6 +106,7 @@ for(var.i in 1:length(varsToRead)){
 																							 na.rm = T)
 	}
 }
+cat('...weights determined\n')
 
 # variances ####
 if(!treatVarsAsIndep){
@@ -121,6 +124,7 @@ for(var.i in 1:length(varsToRead)){
 rm(errors)
 
 # quantile min SSEs ###
+cat('determining samples that closest match the desired quantiles...')
 parMinSSEFun <- function(p.i){
 	minSSEidc <- rep(NA,length(subSample.TargetVars))
 	for(var.i in 1:length(varsToRead)){
@@ -154,10 +158,14 @@ cat('\n    ')
 repSample <- samplePoints[as.vector(minSSEidc),]
 colnames(repSample) <- gsub('\\[1\\]','',colnames(repSample))
 repSample <- repSample[,-which(colnames(repSample)=='plotWeight')]
-write.table(repSample,file.path(location.output,'uncertainty_parameters.csv'),
+cat('done\n')
+cat('writing out to subSampleParameterValues.csv ...')
+write.table(repSample,file.path(location.output,'subSampleParameterValues.csv'),
 						append = F,sep = ',',row.names = F)
+cat('done\n')
 
 # plot ####
+cat('plotting selected samples...')
 sqrtNumPlots <- sqrt(length(subSample.TargetVars))
 plotCols <- round(sqrtNumPlots)
 plotRows <- ceiling(sqrtNumPlots)
@@ -179,6 +187,7 @@ for(var.i in 1:length(subSample.TargetVars)){
 	}
 	dev.off()
 }
+cat('done\n')
 
 # the likelihood for the quantiles is the likelihood that the errors are from 
 # a distribution with the variance at median and a mean of the difference between the
