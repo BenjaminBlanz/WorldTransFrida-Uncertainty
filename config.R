@@ -199,7 +199,11 @@ file.copy('config.R',location.output,overwrite = T)
 
 # run setupTMPFS now, so that location.frida points to the one specific for this
 # configuration
-source('setupTMPFS.R')
+# but only do this if the executing process is not a worker running in its own work dir
+# we can detect this by the file not existing, as workers do not get this file
+if(file.exists('setupTMPFS.R')){
+	source('setupTMPFS.R')
+}
 
 # copy slected policy file and climate feedbacks config to frida
 cat(sprintf('Copying %s, %s, and %s to the frida directory.\n',
