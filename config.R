@@ -20,8 +20,6 @@ clusterType <- 'psock'
 writePerWorkerFiles <- TRUE
 doNotReturnRunDataSavePerWorkerOnly <- FALSE
 perVarOutputTypes <- c('RDS','csv')
-name.workDir <- 'workerDirs'
-name.workerDirBasename <- 'workDir_'
 
 #plotting ####
 #related things
@@ -129,8 +127,8 @@ policyFileName <- 'policy_EMB.csv'#'policy_100DollarCarbonTax.csv' #'policy_EMB.
 
 # locations and names ####
 # location of frida/stella for running
-location.frida <- './FRIDAforUncertaintyAnalysis'
-location.stella<- './Stella_Simulator_Linux'
+baselocation.frida <-location.frida <- './FRIDAforUncertaintyAnalysis'
+baselocation.stella <- location.stella<- './Stella_Simulator_Linux'
 # location frida/stella is stored while the above is located in tmpfs
 location.frida.storage <- './FRIDAforUncertaintyAnalysis-store'
 location.stella.storage <- './Stella_Simulator_Linux-store'
@@ -158,27 +156,35 @@ name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
 
 
 # execute config ####
-name.output <- paste0('N-',numSample,
-											'-ChS-',chunkSizePerWorker,
-											'-LCR-',likeCutoffRatio,
-											'-IgB-',ignoreParBounds,
-											'-FrB-',forceParBounds,
-											'-KcE-',kickParmsErrorRangeDet,
-											'-Sym-',symmetricRanges,
-											'-AAZ-',allowAssymetricToAvoidZeroRanges,
-											'-CFB-',climateFeedbacksOn,
-											'-Pol-',tools::file_path_sans_ext(policyFileName),
-											'-CTO-',climateSTAOverride)
+name.output <- 'dummyNameForSubmitSlurmScriptToOverwrite'
+# if this was not run by slurm, the above will not be overwritten and so we set a 
+# sensible output name. Otherwise name.output will be set by the slurm submit script
+if(name.output=='dummyNameForSubmitSlurmScriptToOverwrite'){
+	name.output <- paste0('N-',numSample,
+												'-ChS-',chunkSizePerWorker,
+												'-LCR-',likeCutoffRatio,
+												'-IgB-',ignoreParBounds,
+												'-FrB-',forceParBounds,
+												'-KcE-',kickParmsErrorRangeDet,
+												'-Sym-',symmetricRanges,
+												'-AAZ-',allowAssymetricToAvoidZeroRanges,
+												'-CFB-',climateFeedbacksOn,
+												'-Pol-',tools::file_path_sans_ext(policyFileName),
+												'-CTO-',climateSTAOverride)
+}
 location.output <- file.path('workOutput',name.output)
 location.output.base <- location.output
 # tmpfs location for the worker directories to not churn the hard drive
 # and be faster
 # typical options on linux are /dev/shm or /run/user/####/ where #### is the uid
 # if both of these are unavailable use notTMPFS or some other arbitrary location on disk
-#tmpfsBaseDir <- paste0('/run/user/',system('id -u',intern = T))
-tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T))
+# tmpfsBaseDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork')
+tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T),'/rwork')
 # tmpfsBaseDir <- 'notTMPFS'
-tmpfsDir <- file.path(tmpfsBaseDir,'rwork',name.output)
+tmpfsDir <- file.path(tmpfsBaseDir,name.output)
+
+name.workDir <- paste0('workerDirs-',name.output)
+name.workerDirBasename <- 'workDir_'
 
 
 cat(sprintf('Output folder: %s\n',location.output))

@@ -142,7 +142,7 @@ cp config.R $config
 sed -i "s/numWorkers <- parallel::detectCores()/numWorkers <- ${numWorkers}/" $config
 sed -i "s/numSample <- 1e4/numSample <- ${numSample}/" $config
 sed -i "s/chunkSizePerWorker <- 100/chunkSizePerWorker <- ${chunkSizePerWorker}/" $config
-sed -i "s/file.path('workOutput',name.output)/file.path('workOutput','${expID}')/" $config
+sed -i "s/name.output <- 'dummyNameForSubmitSlurmScriptToOverwrite'/name.output <- '${expID}'/" $config
 sed -i "s/config.R/${config}/g" $config
 sed -i "s/FRIDAforUncertaintyAnalysis/${FRIDA}/" $config
 sed -i "s/frida_info.csv/${infoFile}/" $config
