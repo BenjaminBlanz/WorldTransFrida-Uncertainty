@@ -203,6 +203,9 @@ file.copy('config.R',location.output,overwrite = T)
 # we can detect this by the file not existing, as workers do not get this file
 if(file.exists('setupTMPFS.R')){
 	source('setupTMPFS.R')
+} else {
+	location.frida <- paste0(baselocation.frida,'-',name.output)
+	location.stella <- paste0(baselocation.stella,'-',name.output)
 }
 
 # copy slected policy file and climate feedbacks config to frida
