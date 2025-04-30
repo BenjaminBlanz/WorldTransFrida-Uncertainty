@@ -256,7 +256,7 @@ fi
 
 
 if [ "$copySamplePoints" = "true" ]; then
-	for filename in 'samplePointsBase.RDS' 'samplePoints.RDS'; do
+	for filename in 'samplePoints.RDS'; do
 		file=workOutput/${copyID}/${filename}
 		if [ -e $file ]; then
 			cp ${file}  ${expDir}/
