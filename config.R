@@ -196,6 +196,11 @@ if(file.exists(location.output)){
 }
 # save the config to the output folder
 file.copy('config.R',location.output,overwrite = T)
+
+# run setupTMPFS now, so that location.frida points to the one specific for this
+# configuration
+source('setupTMPFS.R')
+
 # copy slected policy file and climate feedbacks config to frida
 cat(sprintf('Copying %s, %s, and %s to the frida directory.\n',
 						ifelse(climateFeedbacksOn,'ClimateFeedback_On.csv','ClimateFeedback_Off.csv'),
