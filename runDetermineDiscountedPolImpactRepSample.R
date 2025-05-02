@@ -4,7 +4,10 @@ source('config-RunDetermineRepresentiveSamples.R')
 # send off the baseline run
 expIDpreString <- 'discountedPolicyImpact'
 if(is.na(preexsistingBaselineFolder)){
-	baselineExpID <- paste0(expIDpreString,'_Baseline-S',numSample,'-',specFileForScenaro,'-ClimateFeedback_On-ClimateSTAOverride_Off')
+	baselineExpID <- paste0(expIDpreString,
+													'_Baseline-S',numSample,'-',
+													tools::file_path_sans_ext(specFileForScenaro),
+													'-ClimateFeedback_On-ClimateSTAOverride_Off')
 }
 statusFile <- file.path('workOutput',baselineExpID,'status')
 if(!file.exists(file.path('workOutput',baselineExpID))){
@@ -26,7 +29,8 @@ if(!file.exists(statusFile)||
 poldRunsExpIDpreSring <- ''
 polRuns <- data.frame(policyName=specFilesForPols,expID=NA,status=NA)
 for(pol.i in 1:length(specFilesForPols)){
-	expID <- paste0(expIDpreString,'-S',numSample,'-',polRuns$policyName[pol.i],'-ClimateFeedback_On-ClimateSTAOverride_Off')
+	expID <- paste0(expIDpreString,'-S',numSample,'-',
+									tools::file_path_sans_ext(polRuns$policyName[pol.i]),'-ClimateFeedback_On-ClimateSTAOverride_Off')
 	polRuns$expID[pol.i] <- expID
 	statusFile <- file.path('workOutput',expID,'status')
 	if(!file.exists(statusFile)){
