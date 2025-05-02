@@ -120,8 +120,8 @@ subSample.TargetVars <- c('demographics_real_gdp_per_person')
 subSample.sampleJointly <- FALSE
 
 # FRIDA config ####
-climateFeedbacksOn <- TRUE
-climateSTAOverride <- 'Off' #values are the suffixes of the corresponding files FRIDA-configs
+climateFeedbackSpecFile <- 'ClimateFeedback_On.csv'
+climateOverrideSpecFile <- 'ClimateSTAOverride_Off.csv'
 policyFileName <- 'policy_EMB.csv'#'policy_100DollarCarbonTax.csv' #'policy_EMB.csv'
 
 
@@ -168,9 +168,9 @@ if(name.output=='dummyNameForSubmitSlurmScriptToOverwrite'){
 												'-KcE-',kickParmsErrorRangeDet,
 												'-Sym-',symmetricRanges,
 												'-AAZ-',allowAssymetricToAvoidZeroRanges,
-												'-CFB-',climateFeedbacksOn,
+												'-CFB-',strsplit(tools::file_path_sans_ext(climateFeedbackSpecFile),'_')[[1]][2],
 												'-Pol-',tools::file_path_sans_ext(policyFileName),
-												'-CTO-',climateSTAOverride)
+												'-CTO-',strsplit(tools::file_path_sans_ext(climateOverrideSpecFile),'_')[[1]][2])
 }
 location.output <- file.path('workOutput',name.output)
 location.output.base <- location.output
@@ -210,12 +210,12 @@ if(file.exists('setupTMPFS.R')){
 
 # copy slected policy file and climate feedbacks config to frida
 cat(sprintf('Copying %s, %s, and %s to the frida directory.\n',
-						ifelse(climateFeedbacksOn,'ClimateFeedback_On.csv','ClimateFeedback_Off.csv'),
-						policyFileName,paste0('climateSTAOverride_',climateSTAOverride,'.csv')))
-file.copy(file.path(location.frida.configs,ifelse(climateFeedbacksOn,'ClimateFeedback_On.csv','ClimateFeedback_Off.csv')),
+						climateFeedbackSpecFile,
+						policyFileName,climateOverrideSpecFile))
+file.copy(file.path(location.frida.configs,climateFeedbackSpecFile),
 					file.path(location.frida,'Data','climateFeedbackSwitches.csv'),T)
 file.copy(file.path(location.frida.configs,policyFileName),
 					file.path(location.frida,'Data','policyParameters.csv'),T)
-file.copy(file.path(location.frida.configs,paste0('ClimateSTAOverride_',climateSTAOverride,'.csv')),
+file.copy(file.path(location.frida.configs,climateOverrideSpecFile),
 					file.path(location.frida,'Data','ClimateSTAOverride.csv'),T)
 
