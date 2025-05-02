@@ -222,6 +222,7 @@ sed -i "s/ntasks-per-node=128/ntasks-per-node=${numWorkers}/" $runscript
 sed -i "s/constraint=256G/constraint=${memorySize}/" $runscript
 sed -i "s/expID/${expID}/g" $runscript
 sed -i "s/jdoe@mail.com/${email}/" $runscript
+sed -i "s/config.R/${config}/" $runscript
 sed -i "s/runMLEandParmSpace.R/${runMLE}/" $runscript
 if [ "${plotting}" = "true" ]; then
 	 sed -i "s/runPlotAllRuns.R/${runPlot}/" $runscript
