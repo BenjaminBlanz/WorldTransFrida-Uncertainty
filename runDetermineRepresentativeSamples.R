@@ -8,6 +8,14 @@
 # desired quantile and the median
 
 source('config.R')
+
+# representative subsample ####
+subSample.NumSamplePerVar <- 11
+subSample.Ps <- seq(0.5/subSample.NumSamplePerVar,1-0.5/subSample.NumSamplePerVar,
+										length.out=subSample.NumSamplePerVar)
+subSample.TargetVars <- c('demographics_real_gdp_per_person')
+subSample.sampleJointly <- FALSE
+
 source('runInitialiseData.R')
 varsToRead <- colnames(calDat)
 
@@ -20,6 +28,9 @@ if(nrow(samplePoints)!=numSample){
 }
 cat('done\n')
 # for input
+
+ 
+
 location.runFiles <- file.path(location.output,'detectedParmSpace')
 runFilesList <- list.files(location.runFiles,pattern = 'workUnit-[0-9]+\\.RDS')
 if(length(runFilesList)==0){
@@ -157,6 +168,7 @@ cat('\n    ')
 
 repSample <- samplePoints[as.vector(minSSEidc),]
 colnames(repSample) <- gsub('\\[1\\]','',colnames(repSample))
+colnames(repSample) <- gsub('\\[1,','[*,',colnames(repSample))
 repSample <- repSample[,-which(colnames(repSample)=='plotWeight')]
 cat('done\n')
 cat('writing out to subSampleParameterValues.csv ...')
