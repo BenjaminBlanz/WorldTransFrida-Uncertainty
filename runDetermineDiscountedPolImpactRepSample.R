@@ -12,12 +12,10 @@ if(!file.exists(file.path('workOutput',baselineExpID))){
 							 '-n',numSample,
 							 '--pol',specFileForScenaro,
 							 '-s',paste0(expIDpreString,'_Baseline')))
-	setwd(aggDamWD)
 	stop('Baseline run has been submitted to SLURM, please restart this script once the baseline run has completed\n')
 }
 if(!file.exists(statusFile)||
 	 !readChar(statusFile,file.info(statusFile)$size-1)=='completed'){
-	setwd(aggDamWD)
 	stop('Baseline run has not completed yet. Run this script again once it has completed.\n')
 } else {
 	cat('Baseline completed continuing\n')
@@ -51,10 +49,8 @@ if(sum(polRuns$status=='not present')>0){
 								 '--cpps','true',
 								 '--cpsp','true'))
 	}
-	setwd(aggDamWD)
 	stop('Missing pol runs have been submitted to SLURM. Please restart this script once the pol runs have completed\n')
 } else if(sum(polRuns$status=='completed')<nrow(polRuns)){
-	setwd(aggDamWD)
 	stop('pol runs have not completed yet. Please restart this script when all of them have completed\n')
 } else {
 	cat('pol runs completed continuing\n')
