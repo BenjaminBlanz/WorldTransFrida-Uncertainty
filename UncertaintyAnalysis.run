@@ -21,7 +21,7 @@ function cleanup(){
   echo "FAILED! Cleaning up..."
   Rscript --max-connections=1024 -e "source('config.R'); source('cleanup.R')"
   mv expID_*.R workOutput/expID/
-  cat failed > workOutput/expID/status
+  echo failed > workOutput/expID/status
 }
 
 echo started > workOutput/expID/status
