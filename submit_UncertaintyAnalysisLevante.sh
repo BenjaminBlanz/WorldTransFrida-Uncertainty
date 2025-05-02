@@ -31,7 +31,7 @@ account=mh0033
 partition=compute
 
 # Enter Email here in case you want to receive a mail, when the job failed
-email=Testmailforscript@UncertaintyAnalysis.abc
+email=benjamin.blanz@uni-hamburg.de
 
 # Copy ranges from pre-existing work?
 # This should be the name of workOutput from which the files will be copied!
@@ -271,7 +271,7 @@ fi
 #############################################################################
 #######                    Submit the Job                            ########
 #############################################################################
-cat submitted > $expDir/status
+echo submitted > $expDir/status
 echo $runscript
 sbatch $runscript
 
