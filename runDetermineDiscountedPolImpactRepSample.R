@@ -72,7 +72,7 @@ for(pol.i in 1:length(specFilesForPols)){
 	policyValues[[specFilesForPols[pol.i]]] <- list()
 	for(v.i in 1:length(subSample.TargetVars)){
 		policyValues[[specFilesForPols[pol.i]]][[subSample.TargetVars[v.i]]] <- 
-			readRDS(file.path('workOutput',polRuns$expID[pol.i],'detectedParmSpace','PerVarFiles-RDS',paste0(subSample.TargetVars[v.i],'RDS')))
+			readRDS(file.path('workOutput',polRuns$expID[pol.i],'detectedParmSpace','PerVarFiles-RDS',paste0(subSample.TargetVars[v.i],'.RDS')))
 	}	
 }
 cat('done\n')
