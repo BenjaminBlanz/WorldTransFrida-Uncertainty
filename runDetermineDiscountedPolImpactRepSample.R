@@ -65,14 +65,14 @@ cat('reading vars from run data...')
 baselineValues <- list()
 for(v.i in 1:length(subSample.TargetVars)){
 	baselineValues[[subSample.TargetVars[v.i]]] <- 
-		readRDS(file.path(baselineExpID,'detectedParmSpace','PerVarFiles-RDS',subSample.TargetVars[v.i]))
+		readRDS(file.path(baselineExpID,'detectedParmSpace','PerVarFiles-RDS',paste0(subSample.TargetVars[v.i],'.RDS')))
 }
 policyValues <- list()
 for(pol.i in 1:length(specFilesForPols)){
 	policyValues[[specFilesForPols[pol.i]]] <- list()
 	for(v.i in 1:length(subSample.TargetVars)){
 		policyValues[[specFilesForPols[pol.i]]][[subSample.TargetVars[v.i]]] <- 
-			readRDS(file.path(polRuns$expID[pol.i],'detectedParmSpace','PerVarFiles-RDS',subSample.TargetVars[v.i]))
+			readRDS(file.path(polRuns$expID[pol.i],'detectedParmSpace','PerVarFiles-RDS',paste0(subSample.TargetVars[v.i],'RDS')))
 	}	
 }
 cat('done\n')
