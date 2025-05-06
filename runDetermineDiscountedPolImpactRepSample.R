@@ -91,7 +91,7 @@ for(pol.i in 1:length(specFilesForPols)){
 			baselineValues[[subSample.TargetVars[v.i]]]
 		policyDiffs[[specFilesForPols[pol.i]]][[subSample.TargetVars[v.i]]] <- diff
 		policyDiscountedDiffs[[specFilesForPols[pol.i]]][[subSample.TargetVars[v.i]]] <-
-			diff %*% deflator
+			as.matrix(diff) %*% as.matrix(deflator)
 		repSampleIdx[[specFilesForPols[pol.i]]][[subSample.TargetVars[v.i]]] <- c()
 		quantiles <- quantile(policyDiscountedDiffs[[specFilesForPols[pol.i]]][[subSample.TargetVars[v.i]]],
 													subSample.Ps,na.rm=T)
@@ -102,12 +102,12 @@ for(pol.i in 1:length(specFilesForPols)){
 	}	
 }
 
-samplePoints <- as.data.frame(readRDS(file.path(baselineExpID,'samplePoints.RDS')))
+samplePoints <- as.data.frame(readRDS(file.path('workOutput',baselineExpID,'samplePoints.RDS')))
 repSample <- samplePoints[unique(unlist(repSampleIdx)),]
 colnames(repSample) <- gsub('\\[1\\]','',colnames(repSample))
 colnames(repSample) <- gsub('\\[1,','[*,',colnames(repSample))
 
 cat('writing out to subSampleParameterValues.csv ...')
-write.table(repSample,file.path(location.output,'subSampleParameterValuesDPIS.csv'),
+write.table(repSample,file.path('workOutput',baselineExpID,'subSampleParameterValuesDPIS.csv'),
 						append = F,sep = ',',row.names = F)
 cat('done\n')
