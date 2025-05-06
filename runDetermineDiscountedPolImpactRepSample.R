@@ -108,6 +108,7 @@ colnames(repSample) <- gsub('\\[1\\]','',colnames(repSample))
 colnames(repSample) <- gsub('\\[1,','[*,',colnames(repSample))
 
 cat('writing out to subSampleParameterValues.csv ...')
-write.table(repSample,file.path('workOutput',baselineExpID,'subSampleParameterValuesDPIS.csv'),
+write.table(repSample,file.path('workOutput',baselineExpID,
+																paste0('subSampleParameterValuesDPIS-',paste0(tools::file_path_sans_ext(specFilesForPols),collapse = '-'),'.csv')),
 						append = F,sep = ',',row.names = F)
 cat('done\n')
