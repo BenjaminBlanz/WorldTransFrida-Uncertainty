@@ -3,7 +3,6 @@ numSample <- 2e4
 specFileForScenaro <- 'policy_EMB.csv'
 # spec files for policies to be evaluated in the chosen scenario
 specFilesForPols <- c('policy_300DollarCarbonTax.csv','policy_100DollarCarbonTax.csv')
-variablesToUseForPolStrength <- ''
 
 discountFactor <- 0.05
 
