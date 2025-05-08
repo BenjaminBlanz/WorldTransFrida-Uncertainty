@@ -8,6 +8,8 @@ if(is.na(preexsistingBaselineFolder)){
 													'_Baseline-S',numSample,'-',
 													tools::file_path_sans_ext(specFileForScenaro),
 													'-ClimateFeedback_On-ClimateSTAOverride_Off')
+} else {
+	baselineExpID <- basename(preexsistingBaselineFolder)
 }
 statusFile <- file.path('workOutput',baselineExpID,'status')
 if(!file.exists(file.path('workOutput',baselineExpID))){
