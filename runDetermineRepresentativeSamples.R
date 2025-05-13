@@ -7,6 +7,8 @@
 # a distribution with the variance at median and a mean of the difference between the
 # desired quantile and the median
 
+library('parallel')
+
 source('config.R')
 source('config-RunDetermineRepresentiveSamples.R')
 if(!is.na(preexsistingBaselineFolder)){
@@ -44,7 +46,7 @@ if(length(runFilesList)==0){
 }
 
 # collect time series ####
-cat('reading vars from run data...')
+cat('reading vars from run data...\n')
 defRun <- runFridaDefaultParms()
 yearsToRead <- rownames(defRun)
 # varsToRead.lst <- list()
