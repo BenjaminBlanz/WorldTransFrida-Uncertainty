@@ -11,12 +11,6 @@ library('parallel')
 source('initialise.R')
 source('config.R')
 
-if(!is.na(preexsistingBaselineFolder)){
-	location.output <- preexsistingBaselineFolder
-	cat(sprintf('Overriding output location:\n%s\n',location.output))
-}
-
-
 # representative subsample ####
 subSample.NumSamplePerVar <- 11
 subSample.Ps <- seq(0.5/subSample.NumSamplePerVar,1-0.5/subSample.NumSamplePerVar,
@@ -25,6 +19,12 @@ subSample.TargetVars <- c('demographics_real_gdp_per_person')
 subSample.sampleJointly <- FALSE
 
 source('config-RunDetermineRepresentiveSamples.R') #this config needs to overide the default stuff above
+
+if(!is.na(preexsistingBaselineFolder)){
+	location.output <- preexsistingBaselineFolder
+	cat(sprintf('Overriding output location:\n%s\n',location.output))
+}
+
 
 source('runInitialiseData.R')
 varsToRead <- colnames(calDat)
