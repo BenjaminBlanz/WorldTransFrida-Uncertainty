@@ -9,6 +9,10 @@
 
 source('config.R')
 source('config-RunDetermineRepresentiveSamples.R')
+if(!is.na(preexsistingBaselineFolder)){
+	location.output <- preexsistingBaselineFolder
+}
+
 
 # representative subsample ####
 subSample.NumSamplePerVar <- 11
