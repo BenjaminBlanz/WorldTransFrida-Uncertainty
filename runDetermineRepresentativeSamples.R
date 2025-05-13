@@ -10,8 +10,8 @@
 source('config.R')
 source('config-RunDetermineRepresentiveSamples.R')
 if(!is.na(preexsistingBaselineFolder)){
-	cat(
 	location.output <- preexsistingBaselineFolder
+	cat(sprintf('Overriding output location:\n%s\n',location.output))
 }
 
 
