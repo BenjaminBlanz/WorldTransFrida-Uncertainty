@@ -8,6 +8,7 @@
 # desired quantile and the median
 
 source('config.R')
+source('config-RunDetermineRepresentiveSamples.R')
 
 # representative subsample ####
 subSample.NumSamplePerVar <- 11
