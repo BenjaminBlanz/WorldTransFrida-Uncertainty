@@ -8,7 +8,7 @@
 # desired quantile and the median
 
 library('parallel')
-
+source('initialise.R')
 source('config.R')
 source('config-RunDetermineRepresentiveSamples.R')
 if(!is.na(preexsistingBaselineFolder)){
