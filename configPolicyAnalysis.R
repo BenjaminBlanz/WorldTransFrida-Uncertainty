@@ -39,8 +39,8 @@ perVarOutputTypes <- c('csv','RDS')
 
 # locations and names ####
 # location of frida/stella for running
-location.frida <- './FRIDAforPolicyAnalysis'
-location.stella<- './Stella_Simulator_Linux'
+baselocation.frida <-location.frida <- './FRIDAforPolicyAnalysis'
+baselocation.stella <- location.stella <- './Stella_Simulator_Linux'
 # location frida/stella is stored while the above is located in tmpfs
 location.frida.storage <- './FRIDAforPolicyAnalysis-store'
 location.stella.storage <- './Stella_Simulator_Linux-store'
