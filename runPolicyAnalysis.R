@@ -26,9 +26,9 @@ sink(file.path(location.output,'log.txt'),append=T,split=T)
 # read domain policies ####
 cat('Read policies...')
 pdp.lst <- list()
-for(singleDomainPolicyFile in list.files(location.singleDomainPoliciyFiles)){
+for(singleDomainPolicyFile in list.files(location.singleDomainPolicyFiles)){
 	pdp.lst[[tools::file_path_sans_ext(singleDomainPolicyFile)]] <-
-		read.csv(file.path(location.singleDomainPoliciyFiles,singleDomainPolicyFile))
+		read.csv(file.path(location.singleDomainPolicyFiles,singleDomainPolicyFile))
 }
 cat('done\nGenerate metadata...')
 subDomainNames <- names(pdp.lst)

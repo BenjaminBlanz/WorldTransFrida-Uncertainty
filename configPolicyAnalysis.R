@@ -54,7 +54,7 @@ name.frida_info <- 'frida_info.csv'
 name.frida_extra_variables_to_export_list <- 'frida_extra_variables_to_export_list.csv'
 
 
-location.singleDomainPoliciyFiles <- file.path('policy-singleDomainPolicyMatrices')
+location.singleDomainPolicyFiles <- file.path('policy-singleDomainPolicyMatrices')
 
 
 name.output <- gsub('\\.','_',paste0('N-',numInitialJointPol,'-nPr-',nullPolProb))
