@@ -136,6 +136,8 @@ runFridaParmsByIndex <- function(runid,silent=T,policyMode=F){
 									 file.path(location.frida,'FRIDA.stmx')),
 						 ignore.stdout = silent,ignore.stderr = silent,wait = T)
 			runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
+			# catch failed runs causing NAs in year variable and crash in the rownames assignment
+			runDat <- runDat[!is.na(runDat$year),]
 			origColNames <- unname(unlist(read.table(file.path(location.frida,'Data',name.fridaOutputFile),
 															 sep=',')[1,]))[-1]
 			colnames(runDat) <- cleanNames(colnames(runDat))
