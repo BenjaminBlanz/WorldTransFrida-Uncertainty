@@ -126,7 +126,9 @@ disk.free <- function(path = getwd()) {
 # 	calDat,resSigma
 runFridaParmsByIndex <- function(runid,silent=T,policyMode=F){
 	retlist <- vector(mode = "list", length = length(runid))
+	cat('\n')
 	for(i in runid){
+		cat(paste('\r',i))
 		if(i <= nrow(samplePoints)){
 			sink(file.path(location.frida,'lastRun.txt'))
 			cat(row.names(samplePoints)[i],'\n')
@@ -638,8 +640,9 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 				perVarDataIndices <- (run.i+(run.i-1)*(numSOW-1)):((run.i+(run.i-1)*(numSOW-1))+numSOW-1)
 				perVarData[[varName]][perVarDataIndices,'polID'] <- parOutput[[run.i]]$parmsIndex
 				perVarData[[varName]][perVarDataIndices,'sowID'] <- 1:numSOW
-				perVarData[[varName]][perVarDataIndices,3:ncol(perVarData[[varName]])] <- 
-																			 unname(t(parOutput[[run.i]]$runDat[,varsIdc.lst[[varName]]]))
+				varDataFromRun <- unname(t(parOutput[[run.i]]$runDat[,varsIdc.lst[[varName]]]))
+				# catches varDataFromRun being shorter than the output data frame
+				perVarData[[varName]][perVarDataIndices,3:(2+ncol(varDataFromRun))] <- varDataFromRun
 			} else{
 				perVarData[[varName]][run.i,] <- unname(unlist(c(parOutput[[run.i]]$parmsIndex,runDat[varName])))
 			}
