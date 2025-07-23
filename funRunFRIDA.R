@@ -136,11 +136,11 @@ runFridaParmsByIndex <- function(runid,silent=T,policyMode=F){
 									 file.path(location.frida,'FRIDA.stmx')),
 						 ignore.stdout = silent,ignore.stderr = silent,wait = T)
 			runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
-			# catch failed runs causing NAs in year variable and crash in the rownames assignment
-			runDat <- runDat[!is.na(runDat$year),]
 			origColNames <- unname(unlist(read.table(file.path(location.frida,'Data',name.fridaOutputFile),
 															 sep=',')[1,]))[-1]
 			colnames(runDat) <- cleanNames(colnames(runDat))
+			# catch failed runs causing NAs in year variable and crash in the rownames assignment
+			runDat <- runDat[!is.na(runDat$year),]
 			rownames(runDat) <- runDat$year
 			runDat <- runDat[,-1]
 			if(!policyMode){
@@ -640,7 +640,6 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 				perVarData[[varName]][perVarDataIndices,'sowID'] <- 1:numSOW
 				perVarData[[varName]][perVarDataIndices,3:ncol(perVarData[[varName]])] <- 
 																			 unname(t(parOutput[[run.i]]$runDat[,varsIdc.lst[[varName]]]))
-				
 			} else{
 				perVarData[[varName]][run.i,] <- unname(unlist(c(parOutput[[run.i]]$parmsIndex,runDat[varName])))
 			}
