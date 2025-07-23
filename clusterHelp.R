@@ -65,7 +65,7 @@ if(exists('cl')&&is.numeric(result)&&result==2){
 	}
 	
 	# start cluster
-	cat('start...')
+	cat('start cluster...')
 	if(clusterType=='fork'){
 		cl <- makeForkCluster(numWorkers)
 	} else if (clusterType=='psock'){
