@@ -142,7 +142,7 @@ runFridaParmsByIndex <- function(runid,silent=T,policyMode=F){
 															 sep=',')[1,]))[-1]
 			colnames(runDat) <- cleanNames(colnames(runDat))
 			# catch failed runs causing NAs in year variable and crash in the rownames assignment
-			runDat <- runDat[!is.na(runDat$year),]
+			runDat$year <- seq(runDat$year[1],length.out=nrow(runDat))
 			rownames(runDat) <- runDat$year
 			runDat <- runDat[,-1]
 			if(!policyMode){
@@ -713,9 +713,15 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 	}
 	for(f.i in 2:length(fileList)){
 		if(outputType=='csv'){
-			varData <- rbind(varData,read.csv(file.path(perVarSubfolder,fileList[f.i])))
+			# hack to deal with incomplete runs messing up column headers
+			# proper fix is in data generation, but this will make old results work
+			nextData <- read.csv(file.path(perVarSubfolder,fileList[f.i]))
+			colnames(nextData) <- colnames(varData)
+			varData <- rbind(varData,nextData)
 		} else if(outputType=='RDS'){
-			varData <- rbind(varData,readRDS(file.path(perVarSubfolder,fileList[f.i])))
+			nextData <- readRDS(file.path(perVarSubfolder,fileList[f.i]))
+			colnames(nextData) <- colnames(varData,nextData)
+			varData <- rbind(varData,)
 		}
 	}
 	varData <- sort_by(varData,varData[,1])
@@ -732,7 +738,7 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 	if(verbosity>0){cat('done\n')}
 	return(retVal)
 }
-mergePerVarFiles <- function(verbosity=1,parStrat=2){
+mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T){
 	if(verbosity>0){
 		cat('Merging per Var files\n')
 	}
@@ -767,12 +773,7 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2){
 				varData <- sort_by(varData,varData[,1])
 				colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
 				if(verbosity>0){cat('writing...')}
-				if(outputType=='csv'){
-					write.table(varData,file.path(outputTypeFolder,paste0(varName,'.csv')),
-											row.names = F,sep=',')
-				} else if(outputType=='RDS'){
-					saveRDS(varData,file.path(outputTypeFolder,paste0(varName,'.RDS')))
-				}
+				writePerVarFile(varData,file.path(outputTypeFolder,varName),compressCsv)
 				if(verbosity>0){cat('removing split files...')}
 				unlink(perVarSubfolder,recursive = T,force = T)
 				if(verbosity>0){cat('done\n')}
@@ -792,15 +793,22 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2){
 
 readPerVarFile <- function(fileNoExt,outputType){
 	if(outputType=='csv'){
+		if(!file.exists(paste0(fileNoExt,'.csv')) && 
+			 file.exists(paste0(fileNoExt,'.csv.gz'))){
+			system(paste('gunzip',paste0(fileNoExt,'.csv.gz')))
+		}
 		return(read.csv(paste0(fileNoExt,'.csv')))
 	} else if(outputType=='RDS'){
 		return(readRDS(paste0(fileNoExt,'.RDS')))
 	}
 }
-writePerVarFile <- function(varData,fileNoExt,outputType){
+writePerVarFile <- function(varData,fileNoExt,outputType,compressCsv=T){
 	if(outputType=='csv'){
 		write.table(varData,paste0(fileNoExt,'.csv'),
 								row.names = F,sep=',')
+		if(compressCsv){
+			system(paste('gzip',paste0(fileNoExt,'.csv')))
+		}
 	} else if(outputType=='RDS'){
 		saveRDS(varData,paste0(fileNoExt,'.RDS'))
 	}

@@ -210,7 +210,7 @@ cat(sprintf('\r    complete runs %i (%.2f%%), average chunk time %i sec (%.2f r/
 						'                                                                             '))
 
 # merge files ####
-mergePerVarFiles(verbosity = 1)
+mergePerVarFiles(verbosity = 1,compressCsv=compressCsv)
 
 
 

@@ -36,6 +36,8 @@ tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T))
 
 # output ####
 perVarOutputTypes <- c('csv','RDS')
+# gzip the merged csv files
+compressCsv <- TRUE
 
 # locations and names ####
 # location of frida/stella for running
