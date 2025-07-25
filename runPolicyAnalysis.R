@@ -211,12 +211,13 @@ cat(sprintf('\r    complete runs %i (%.2f%%), average chunk time %i sec (%.2f r/
 source('cleanup.R')
 
 # merge files ####
+origNumWorkers <- numWorkers
 numWorkers <- floor(parallel::detectCores()/3)
 skipExtraVars <- T
 source('clusterHelp.R')
 mergePerVarFiles(verbosity = 1,compressCsv=compressCsv)
 source('cleanup.R')
-
+numWorkers <- origNumWorkers
 
 
 
