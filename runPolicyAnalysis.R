@@ -111,7 +111,7 @@ for(domID in unique(pdpMeta$domID)){
 	singlePolicyArr[(jPA.idx+1):(jPA.idx+length(domCases)),as.character(domID)] <- jointPolicies$dplID[domCases]
 	jPA.idx <- jPA.idx+length(domCases)
 }
-
+cat('done\ngenerating sample points...')
 samplePoints <- generateSobolSequenceForSampleParms(sampleParms,
 																										numSample = numInitialJointPol,
 																										restretchSamplePoints = F,
@@ -123,6 +123,7 @@ numSample <- nrow(samplePoints)
 rownames(samplePoints) <- 1:numSample
 write.csv(samplePoints,file.path(location.output,'policySamplePoints.csv'))
 # hist(rowSums(!is.na(samplePoints)))
+cat('done\n')
 
 # cluster setup ####
 source('clusterHelp.R')
@@ -146,12 +147,11 @@ if(workUnitBoundaries[length(workUnitBoundaries)]!=numSample){
 workUnitBoundaries[length(workUnitBoundaries)] <- numSample+1
 cat('done\n')
 
+# run ####
 cat(sprintf('Run of %i runs split up into %i work units of size %i (%i per worker).\n',
 						numSample,length(workUnitBoundaries)-1,chunkSizePerWorker*numWorkers,chunkSizePerWorker))
 chunkTimes <- c()
 completeRunsSoFar <- 0
-
-# run ####
 i <- 0
 while(i<(length(workUnitBoundaries)-1)){
 	i <- i+1
