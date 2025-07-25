@@ -718,7 +718,7 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 	varData <- sort_by(varData,varData[,1])
 	colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
 	if(verbosity>0){cat('writing...')}
-	writePerVarFile(varData,outputTypeFolder,
+	writePerVarFile(varData,file.path(outputTypeFolder,varName),
 									outputType=outputType,compressCsv=compressCsv)
 	if(verbosity>0){cat('removing split files...')}
 	unlink(perVarSubfolder,recursive = T,force = T)
