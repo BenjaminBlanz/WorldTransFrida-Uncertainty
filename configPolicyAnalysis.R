@@ -58,7 +58,7 @@ name.frida_extra_variables_to_export_list <- 'frida_extra_variables_to_export_li
 
 location.singleDomainPolicyFiles <- file.path('policy-singleDomainPolicyMatrices')
 
-policyFiles <- cleanNames(list.files(location.singleDomainPolicyFiles))
+policyFiles <- list.files(location.singleDomainPolicyFiles)
 
 name.output <- gsub('\\.','_',paste0('N-',numInitialJointPol,'-nPr-',nullPolProb,'-polFiles-',
 																		 paste(cleanNames(tools::file_path_sans_ext(policyFiles)),collapse='-')))
