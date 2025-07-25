@@ -700,42 +700,29 @@ workerReadPerVarFiles <- function(i,outputType,perVarSubfolder,fileList){
 		return(readRDS(file.path(perVarSubfolder,fileList[i])))
 	}
 }
-workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verbosity=0){
+workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verbosity=0,
+																	 compressCsv=T){
 	varName <- varNames[v.i]
 	perVarSubfolder <- file.path(outputTypeFolder,varName)
 	fileList <- list.files(perVarSubfolder)
 	if(verbosity>0){cat(sprintf('Processing %i files of %s...',length(fileList),varName))}
 	if(verbosity>0){cat('reading and merging...')}
-	if(outputType=='csv'){
-		varData <- read.csv(file.path(perVarSubfolder,fileList[1]))
-	} else if(outputType=='RDS'){
-		varData <- readRDS(file.path(perVarSubfolder,fileList[1]))
-	}
+	varData <- readPerVarFile(file.path(perVarSubfolder,fileList[1],outputType))
 	for(f.i in 2:length(fileList)){
-		if(outputType=='csv'){
-			# hack to deal with incomplete runs messing up column headers
-			# proper fix is in data generation, but this will make old results work
-			nextData <- read.csv(file.path(perVarSubfolder,fileList[f.i]))
-			colnames(nextData) <- colnames(varData)
-			varData <- rbind(varData,nextData)
-		} else if(outputType=='RDS'){
-			nextData <- readRDS(file.path(perVarSubfolder,fileList[f.i]))
-			colnames(nextData) <- colnames(varData,nextData)
-			varData <- rbind(varData,)
-		}
+		nextData <- readPerVarFile(file.path(perVarSubfolder,fileList[f.i],outputType))
+		# hack to deal with incomplete runs messing up column headers
+		# proper fix is in data generation, but this will make old results work
+		colnames(nextData) <- colnames(varData)
+		varData <- rbind(varData,nextData)
 	}
 	varData <- sort_by(varData,varData[,1])
 	colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
 	if(verbosity>0){cat('writing...')}
-	if(outputType=='csv'){
-		retVal <- write.table(varData,file.path(outputTypeFolder,paste0(varName,'.csv')),
-													row.names = F,sep=',')
-	} else if(outputType=='RDS'){
-		retVal <- saveRDS(varData,file.path(outputTypeFolder,paste0(varName,'.RDS')))
-	}
+	writePerVarFile(varData,file.path(outputTypeFolder,varName),compressCsv)
 	if(verbosity>0){cat('removing split files...')}
 	unlink(perVarSubfolder,recursive = T,force = T)
 	if(verbosity>0){cat('done\n')}
+	gc()
 	return(retVal)
 }
 mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T){
@@ -783,15 +770,26 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T){
 			parLapply(cl,1:length(varNames),workerMergePerVarFiles,
 								outputType=outputType,
 								outputTypeFolder=outputTypeFolder,
-								varNames=varNames)
+								varNames=varNames,
+								compressCsv=compressCsv)
 			if(verbosity>0){cat('done\n')}
 		} else {
-			stop('unkown parSrat\n')
+			stop('unkown parStrat\n')
 		}
 	}
 }
 
-readPerVarFile <- function(fileNoExt,outputType){
+readPerVarFile <- function(file,outputType=NULL){
+	if(is.null(outputType)){
+		outputType <- tools::file_ext(file)
+		if(outputType==''){
+			stop('No outputType and no file ext\n')
+		}
+		if(outputType=='gz'){
+			outputType <- 'csv'
+		}
+	}
+	fileNoExt <- tools::file_path_sans_ext(file)
 	if(outputType=='csv'){
 		if(!file.exists(paste0(fileNoExt,'.csv')) && 
 			 file.exists(paste0(fileNoExt,'.csv.gz'))){
@@ -802,7 +800,18 @@ readPerVarFile <- function(fileNoExt,outputType){
 		return(readRDS(paste0(fileNoExt,'.RDS')))
 	}
 }
-writePerVarFile <- function(varData,fileNoExt,outputType,compressCsv=T){
+
+writePerVarFile <- function(varData,file,outputType=NULL,compressCsv=T){
+	if(is.null(outputType)){
+		outputType <- tools::file_ext(file)
+		if(outputType==''){
+			stop('No outputType and no file ext\n')
+		}
+		if(outputType=='gz'){
+			outputType <- 'csv'
+		}
+	}
+	fileNoExt <- tools::file_path_sans_ext(file)
 	if(outputType=='csv'){
 		write.table(varData,paste0(fileNoExt,'.csv'),
 								row.names = F,sep=',')
