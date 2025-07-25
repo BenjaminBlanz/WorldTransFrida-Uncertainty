@@ -111,7 +111,8 @@ for(domID in unique(pdpMeta$domID)){
 	singlePolicyArr[(jPA.idx+1):(jPA.idx+length(domCases)),as.character(domID)] <- jointPolicies$dplID[domCases]
 	jPA.idx <- jPA.idx+length(domCases)
 }
-cat('done\ngenerating sample points...')
+cat('done\n')
+# sample points generation is automatically verbose
 samplePoints <- generateSobolSequenceForSampleParms(sampleParms,
 																										numSample = numInitialJointPol,
 																										restretchSamplePoints = F,
@@ -123,7 +124,6 @@ numSample <- nrow(samplePoints)
 rownames(samplePoints) <- 1:numSample
 write.csv(samplePoints,file.path(location.output,'policySamplePoints.csv'))
 # hist(rowSums(!is.na(samplePoints)))
-cat('done\n')
 
 # cluster setup ####
 source('clusterHelp.R')
