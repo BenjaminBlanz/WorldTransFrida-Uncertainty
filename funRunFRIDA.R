@@ -724,7 +724,6 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 	unlink(perVarSubfolder,recursive = T,force = T)
 	if(verbosity>0){cat('done\n')}
 	gc()
-	return(retVal)
 }
 mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T){
 	if(verbosity>0){
