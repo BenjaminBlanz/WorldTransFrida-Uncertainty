@@ -212,7 +212,7 @@ source('cleanup.R')
 
 # merge files ####
 origNumWorkers <- numWorkers
-numWorkers <- floor(parallel::detectCores()/3)
+numWorkers <- numWorkersFileMerge
 skipExtraVars <- T
 source('clusterHelp.R')
 mergePerVarFiles(verbosity = 1,compressCsv=compressCsv)

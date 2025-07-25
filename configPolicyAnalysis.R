@@ -17,6 +17,7 @@ nullPolProb <- 0.5
 #	numWorkers <- min(parallel::detectCores(), 120)
 #}
 numWorkers <- parallel::detectCores()
+numWorkersFileMerge <- floor(numWorkers/3)
 # How large the chunks of work are, smaller means more frequent pauses to write out
 # itermediate results (and update the diagnostic output).
 chunkSizePerWorker <- 100
