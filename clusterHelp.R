@@ -114,6 +114,6 @@ if(exists('cl')&&is.numeric(result)&&result==2){
 		if(exists('sampleParms')){clusterExport(cl,list('sampleParms'))}
 		if(exists('calDat')){clusterExport(cl,list('calDat'))}
 		if(exists('resSigma')){clusterExport(cl,list('resSigma'))}
-		cat('done\n')
 	}
+	cat('done\n')
 }
