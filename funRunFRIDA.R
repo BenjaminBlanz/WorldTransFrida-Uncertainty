@@ -707,9 +707,9 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 	fileList <- list.files(perVarSubfolder)
 	if(verbosity>0){cat(sprintf('Processing %i files of %s...',length(fileList),varName))}
 	if(verbosity>0){cat('reading and merging...')}
-	varData <- readPerVarFile(file.path(perVarSubfolder,fileList[1],outputType))
+	varData <- readPerVarFile(file.path(perVarSubfolder,fileList[1]),outputType)
 	for(f.i in 2:length(fileList)){
-		nextData <- readPerVarFile(file.path(perVarSubfolder,fileList[f.i],outputType))
+		nextData <- readPerVarFile(file.path(perVarSubfolder,fileList[f.i]),outputType)
 		# hack to deal with incomplete runs messing up column headers
 		# proper fix is in data generation, but this will make old results work
 		colnames(nextData) <- colnames(varData)
