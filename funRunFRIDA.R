@@ -820,6 +820,8 @@ writePerVarFile <- function(varData,file,outputType=NULL,compressCsv=T){
 		}
 	} else if(outputType=='RDS'){
 		saveRDS(varData,paste0(fileNoExt,'.RDS'))
+	} else {
+		stop('No outputType\n')
 	}
 }
 
