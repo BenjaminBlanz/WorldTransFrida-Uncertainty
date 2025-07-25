@@ -208,7 +208,7 @@ cat(sprintf('\r    complete runs %i (%.2f%%), average chunk time %i sec (%.2f r/
 						chunkSizePerWorker/mean(chunkTimes,na.rm=T),
 						dseconds(round(sum(chunkTimes,na.rm=T))),
 						'                                                                             '))
-sourrce('cleanup.R')
+source('cleanup.R')
 
 # merge files ####
 numWorkers <- floor(parallel::detectCores()/3)
