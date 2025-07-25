@@ -58,8 +58,10 @@ name.frida_extra_variables_to_export_list <- 'frida_extra_variables_to_export_li
 
 location.singleDomainPolicyFiles <- file.path('policy-singleDomainPolicyMatrices')
 
+policyFiles <- cleanNames(list.files(location.singleDomainPolicyFiles))
 
-name.output <- gsub('\\.','_',paste0('N-',numInitialJointPol,'-nPr-',nullPolProb))
+name.output <- gsub('\\.','_',paste0('N-',numInitialJointPol,'-nPr-',nullPolProb,'-polFiles-',
+																		 paste(cleanNames(tools::file_path_sans_ext(policyFiles)),collapse='-')))
 location.output <- file.path(locaion.baseOutput,name.output)
 tmpfsDir <- file.path(tmpfsBaseDir,'rwork',name.output)
 dir.create(location.output,recursive = T,showWarnings = F)
