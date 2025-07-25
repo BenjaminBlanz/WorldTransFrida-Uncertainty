@@ -108,10 +108,12 @@ if(exists('cl')&&is.numeric(result)&&result==2){
 			file.copy(file.path(baseWD,location.frida.info,name.frida_info),getwd(),overwrite = T)
 		}
 	})
-	cat('extra vars...')
-	# copy extra vars if present (for restarting the cluster during testing)
-	if(exists('sampleParms')){clusterExport(cl,list('sampleParms'))}
-	if(exists('calDat')){clusterExport(cl,list('calDat'))}
-	if(exists('resSigma')){clusterExport(cl,list('resSigma'))}
-	cat('done\n')
+	if(!exists('skipExtraVars')){
+		cat('extra vars...')
+		# copy extra vars if present (for restarting the cluster during testing)
+		if(exists('sampleParms')){clusterExport(cl,list('sampleParms'))}
+		if(exists('calDat')){clusterExport(cl,list('calDat'))}
+		if(exists('resSigma')){clusterExport(cl,list('resSigma'))}
+		cat('done\n')
+	}
 }
