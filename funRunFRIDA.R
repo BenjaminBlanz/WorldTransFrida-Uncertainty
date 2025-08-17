@@ -485,7 +485,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			parOutput <-  unlist(parOutput, recursive = F)
 			saveRDS(parOutput,file.path(baseWD,location.output,paste0('workUnit-',i,'.RDS')))
 			if(!writePerWorkerFiles){
-				saveParOutputToPerVarFiles(parOutput=parOutput, workUnit=i)
+				saveParOutputToPerVarFiles(parOutput=parOutput, workUnit.i=i)
 			}
 			cat('\r   ')
 		}
@@ -607,6 +607,7 @@ loadClusterRuns <- function(location.output){
 
 saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 																			 verbosity=0){
+	if(!exists('compressCsv')){compressCsv<-T}
 	varNames <- unique(parOutput[[1]]$origColNames)
 	workUnitLength <- length(parOutput)
 	perVarData <- list()
@@ -660,32 +661,20 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 			}
 			dir.create(file.path(baseWD,location.output,'detectedParmSpace',paste0('PerVarFiles-',outputType),varName),
 								 showWarnings = F,recursive = T)
-			if(outputType=='RDS'){
-				saveRDS(perVarData[[varName]],
-								file.path(baseWD,location.output,'detectedParmSpace',paste0('PerVarFiles-',outputType),varName,
-													paste0(varName,'-',workUnit.i,'-',workerID,'.RDS')))
-			}
-			if(outputType=='csv'){
-				write.table(perVarData[[varName]],
-								file.path(baseWD,location.output,'detectedParmSpace',paste0('PerVarFiles-',outputType),varName,
-													paste0(varName,'-',workUnit.i,'-',workerID,'.csv')),row.names = F,sep = ',')
-			}
+			writePerVarFile(perVarData[[varName]],
+											file = file.path(baseWD,location.output,'detectedParmSpace',paste0('PerVarFiles-',outputType),varName,
+																			 paste0(varName,'-',workUnit.i,'-',workerID)),
+											outputType = outputType, compressCsv = compressCsv)
 		}
 		if(verbosity>0){
 			cat(sprintf('\rWriting logLike %s', rep(' ',100)))
 		}
 		dir.create(file.path(baseWD,location.output,'detectedParmSpace',paste0('PerVarFiles-',outputType),'logLike'),
 						 showWarnings = F,recursive = T)
-		if(outputType=='RDS'){
-				saveRDS(logLike,
-						file.path(baseWD,location.output,'detectedParmSpace',paste0('PerVarFiles-',outputType),'logLike',
-								paste0('logLike','-',workUnit.i,'-',workerID,'.RDS')))
-				}
-		if(outputType=='csv'){
-				write.table(logLike,
-								file.path(baseWD,location.output,'detectedParmSpace',paste0('PerVarFiles-',outputType),'logLike',
-									paste0('logLike','-',workUnit.i,'-',workerID,'.csv')),row.names = F,sep = ',')
-				}
+		writePerVarFile(logLike,
+										file.path(baseWD,location.output,'detectedParmSpace',paste0('PerVarFiles-',outputType),'logLike',
+															paste0('logLike','-',workUnit.i,'-',workerID)),
+										outputType = outputType, compressCsv = compressCsv)
 	}
 	if(verbosity>0){
 		cat('\n')
@@ -694,11 +683,7 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 }
 
 workerReadPerVarFiles <- function(i,outputType,perVarSubfolder,fileList){
-	if(outputType=='csv'){
-		return(read.csv(file.path(perVarSubfolder,fileList[i])))
-	} else if(outputType=='RDS'){
-		return(readRDS(file.path(perVarSubfolder,fileList[i])))
-	}
+	readPerVarFile(file.path(perVarSubfolder,fileList[i]))
 }
 workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verbosity=0,
 																	 compressCsv=T){
@@ -809,6 +794,7 @@ writePerVarFile <- function(varData,file,outputType=NULL,compressCsv=T){
 		}
 		if(outputType=='gz'){
 			outputType <- 'csv'
+			compressCsv <- T
 		}
 	}
 	fileNoExt <- tools::file_path_sans_ext(file)
