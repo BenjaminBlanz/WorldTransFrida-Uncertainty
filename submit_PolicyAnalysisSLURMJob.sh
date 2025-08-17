@@ -91,7 +91,7 @@ sed -i "s/jdoe@mail.com/${email}/" $runscript
 #############################################################################
 #######                    Submit the Job                            ########
 #############################################################################
-echo submitted > $locationOutput/status
+echo submitted > $locationOutput/workUnits/workUnit-${workUnitID}/status
 #echo $runscript
 sbatch $runscript
 
