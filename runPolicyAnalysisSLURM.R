@@ -152,7 +152,6 @@ while(i<(length(workUnitBoundaries)-1)){
 					file.path(location.output,'workUnits',paste0('workUnit-',i),'samplePoints.RDS'))
 	saveRDS(range(workUnit),file.path(location.output,'workUnits',paste0('workUnit-',i),'workUnitBoundary.RDS'))
 	write('prepared',file.path(location.output,'workUnits',paste0('workUnit-',i),'status.txt'))
-	write('prepared',file.path(location.output,'workUnits',paste0('workUnit-',i),'log.txt'),append=T)
 }
 
 cat('setup complete proceed with runPolicyAnalysisSLURMrunner.R\n')
