@@ -45,9 +45,7 @@ for(workUnitDir in workUnitDirs){
 					' -u ',unitID,
 					' -w ',numWorkers),
 					intern= F, wait = F)
-				status <- 'submitted'
-			} else {
-				status <- 'waiting'
+				status <- 'submitted (new)'
 			}
 		} else {
 			system(paste0('Rscript runPolicyAnalysisWorkUnit.R ',unitID))
