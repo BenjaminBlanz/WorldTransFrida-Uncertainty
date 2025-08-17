@@ -141,7 +141,7 @@ cat(sprintf('Run of %i runs split up into %i work units of size %i (%i per worke
 saveRDS(pdpMeta,file.path(location.output,'pdpMeta.RDS'))
 saveRDS(pdp.lst,file.path(location.output,'pdp.lst.RDS'))
 saveRDS(jointPolicies,file.path(location.output,'jointPolicies.RDS'))
-dir.create(file.path(location.output,'workUnits'))
+dir.create(file.path(location.output,'workUnits'),showWarnings = F)
 i <- 0
 while(i<(length(workUnitBoundaries)-1)){
 	i <- i+1
