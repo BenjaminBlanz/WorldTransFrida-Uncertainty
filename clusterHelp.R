@@ -15,7 +15,6 @@ if(!exists('location.output')){
 }
 
 # do not stop and start the cluster, instead just reinitialise
-Sys.sleep(1) # prevent race condition if the cluster was busy or sth.
 if(exists('cl')){
 	result <- try(clusterEvalQ(cl,1+1)[[1]],silent=T)
 }
