@@ -35,6 +35,9 @@ while [ $# -gt 0 ]; do
     -w|--numWorkers)
       numWorkers="$2"
       ;;
+    -s|--expID)
+      expID="$2"
+      ;;
     -u|--workUnitID)
       workUnitID="$2"
       ;;

@@ -42,6 +42,7 @@ for(workUnitDir in workUnitDirs){
 				numJobsQueued <- numJobsQueued + 1
 				system(paste0('./submit_PolicyAnalysisSLURMJob.sh',
 					' -o ',location.output,
+					' -s ',name.output,
 					' -u ',unitID,
 					' -w ',numWorkers),
 					intern= F, wait = F)
