@@ -93,5 +93,8 @@ sed -i "s/jdoe@mail.com/${email}/" $runscript
 #############################################################################
 echo submitted > $locationOutput/workUnits/workUnit-${workUnitID}/status.txt
 #echo $runscript
-sbatch $runscript
+if ! sbatch $runscript; then
+	# if the sbatch failed (e.g. bad username or whatever) set the status back to prepared
+	echo prepared > locationOutput/workUnits/workUnit-workUnitID/status.txt
+fi
 
