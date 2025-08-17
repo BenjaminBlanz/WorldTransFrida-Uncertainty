@@ -1,16 +1,16 @@
 #!/bin/bash
 #SBATCH --partition=compute
-#SBATCH --account=REPLACACCNAME
+#SBATCH --account=REPLACEME
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=128
 #SBATCH --constraint=256G
 #SBATCH --mem=0
 #SBATCH --time=01:00:00
-#SBATCH --output=workOutput/expID/LOG.expID_%j.log
-#SBATCH --error=workOutput/expID/LOG.expID_%j.log
+#SBATCH --output=locationOutput/workUnits/workUnit-workUnitID/LOG_%j.log
+#SBATCH --error=locationOutput/workUnits/workUnit-workUnitID/LOG_%j.log
 #SBATCH --mail-user=jdoe@mail.com
 #SBATCH --mail-type=END
-#SBATCH --job-name=expID
+#SBATCH --job-name=expID-unitID
 
 module load r/4.4.2-gcc-11.2.0
 
@@ -19,14 +19,14 @@ trap 'cleanup' ERR
 
 function cleanup(){
   echo "FAILED! Cleaning up..."
-  Rscript --max-connections=1024 -e "source('config.R'); source('cleanup.R')"
-  mv expID_*.R workOutput/expID/
-  echo failed > workOutput/expID/status
+  Rscript -e "source('configPolicyAnalysis.R'); source('cleanup.R')"
+  echo failed > locationOutput/workUnits/workUnit-workUnitID/status.txt
+  echo failed >> locationOutput/workUnits/workUnit-workUnitID/log.txt
 }
 
-echo started > workOutput/expID/status
-Rscript --max-connections=1024 -e "source('runPolicyAnalysis.R'); source('cleanup.R')"
-echo completed > workOutput/expID/status
+echo started > locationOutput/workUnits/workUnit-workUnitID/status.txt
+Rscript --max-connections=1024 runPolicyAnalysisWorkUnit.R workUnitID
+echo completed > locationOutput/workUnits/workUnit-workUnitID/status.txt
 
-mv expID_*.R workOutput/expID/
+mv expID_*.R locationOutput/
 

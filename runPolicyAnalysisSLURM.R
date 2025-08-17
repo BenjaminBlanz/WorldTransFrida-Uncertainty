@@ -141,23 +141,18 @@ cat(sprintf('Run of %i runs split up into %i work units of size %i (%i per worke
 saveRDS(pdpMeta,file.path(location.output,'pdpMeta.RDS'))
 saveRDS(pdp.lst,file.path(location.output,'pdp.lst.RDS'))
 saveRDS(jointPolicies,file.path(location.output,'jointPolicies.RDS'))
+dir.create(file.path(location.output,'workUnits'))
 i <- 0
 while(i<(length(workUnitBoundaries)-1)){
 	i <- i+1
 	workUnit <- workUnitBoundaries[i]:(workUnitBoundaries[i+1]-1)
-	dir.create(file.path(location.output,paste0('workunit-',i)),showWarnings = F)
-	# save the workunit to the workunitDir for processing by a SLURM job
-	system(paste0('ln -s ',file.path(baseWD,location.output,'pdpMeta.RDS'),' ',
-								file.path(baseWD,location.output,paste0('workunit-',i),'pdpMeta.RDS')))
-	system(paste0('ln -s ',file.path(baseWD,location.output,'pdp.lst.RDS'),' ',
-								file.path(baseWD,location.output,paste0('workunit-',i),'pdp.lst.RDS')))
-	system(paste0('ln -s ',file.path(baseWD,location.output,'jointPolicies.RDS'),' ',
-								file.path(baseWD,location.output,paste0('workunit-',i),'jointPolicies.RDS')))
+	dir.create(file.path(location.output,'workUnits',paste0('workUnit-',i)),showWarnings = F)
+	# save the workUnit to the workUnitDir for processing by a SLURM job
 	saveRDS(samplePoints[workUnit,],
-					file.path(location.output,paste0('workunit-',i),'samplePoints.RDS'))
-	saveRDS(range(workUnit),file.path(location.output,paste0('workunit-',i),'workUnitBoundary.RDS'))
-	write('prepared',file.path(location.output,paste0('workunit-',i),'status.txt'))
-	write('prepared',file.path(location.output,paste0('workunit-',i),'log.txt',append=T))
+					file.path(location.output,'workUnits',paste0('workUnit-',i),'samplePoints.RDS'))
+	saveRDS(range(workUnit),file.path(location.output,'workUnits',paste0('workUnit-',i),'workUnitBoundary.RDS'))
+	write('prepared',file.path(location.output,'workUnits',paste0('workUnit-',i),'status.txt'))
+	write('prepared',file.path(location.output,'workUnits',paste0('workUnit-',i),'log.txt'),append=T)
 }
 
 cat('setup complete proceed with runPolicyAnalysisSLURMrunner.R\n')

@@ -1,27 +1,45 @@
-# unitID will be replaced by the main runscript
+# workUnit.i has to be supplied in the environment at runtime
+# it can be supplied in a scripted context by invoking an -e argument
+# e.g.
+# Rscript runPolicyAnalysisWorkUnit.R 1
+args <- commandArgs(T)
+if(length(args)!=1 && !is.numeric(args)){
+	stop('Incorrect arg supplied as workUnit.i\n')
+}
+if(!file.exists(file.path(location.output,'workUnits',paste0('workUnit-',workUnit.i)))){
+	stop('Incorrect workUnit.i supplied as arg\n')
+}
+workUnit.i <- commandArgs(T)
+cat('initialising\n')
 source('initialise.R')
 source('configPolicyAnalysis.R')
-workUnit.i <- unitID
-name.workerDirBasename <- paste0(name.workerDirBasename,unitID,'_')
-setwd(file.path(location.baseOutput,expID,'workunit-unitID'))
+cat('location.output:\n')
+cat(paste0(location.output,'\n'))
+cat(sprintf('WorkUnit.i: %i\n',workUnit.i))
+write('running',file.path(location.output,'workUnits',paste0('workUnit-',workUnit.i),'status.txt'),append=T)
+name.workerDirBasename <- paste0(name.workerDirBasename,workUnit.i,'_')
 
 # start the cluster
-source('clusterHelp-expID-unitID.R')
-pdpMeta <- readRDS(file.path(location.baseOutput,expID,'pdpMeta.RDS'))
-pdp.lst <- readRDS(file.path(location.baseOutput,expID,'pdp.lst.RDS'))
-jointPolicies <- saveRDS(file.path(location.baseOutput,expID,'jointPolicies.RDS'))
+cat('starting cluster\n')
+source('clusterHelp.R')
+pdpMeta <- readRDS(file.path(location.output,'pdpMeta.RDS'))
+pdp.lst <- readRDS(file.path(location.output,'pdp.lst.RDS'))
+jointPolicies <- readRDS(file.path(location.output,'jointPolicies.RDS'))
 clusterExport(cl,list('pdpMeta',
 											'pdp.lst',
 											'jointPolicies',
 											'writePerWorkerFiles',
 											'perVarOutputTypes',
-											'doNotReturnRunDataSavePerWorkerOnly'))
+											'doNotReturnRunDataSavePerWorkerOnly',
+											'workUnit.i'))
 
-# load the sample points to evaluate/the workunit
-samplePoints <- readRDS('samplePoints-workunit-unitID.RDS')
+# load the sample points to evaluate/the workUnit
+cat('reading sample points\n')
+samplePoints <- readRDS(file.path(location.output,'workUnits',paste0('workUnit-',workUnit.i),'samplePoints.RDS'))
 workUnit <- 1:nrow(samplePoints)
 workerWorkUnits <- chunk(workUnit,numWorkers)
 # list of workers is provided by clusterHelp
+cat('writing per worker sample points\n')
 for(w.i in workers){
 	if(w.i <= length(workerWorkUnits) && !is.null(workerWorkUnits[[w.i]])){
 		saveRDS(samplePoints[workerWorkUnits[[w.i]],],
@@ -34,5 +52,9 @@ for(w.i in workers){
 gobble <- clusterEvalQ(cl,{
 	samplePoints <- readRDS('samplePoints.RDS')
 })
+cat('cluster runFridaParmsBySamplePoints\n')
 parOutput <- clusterEvalQ(cl,runFridaParmsBySamplePoints(policyMode=T))
-
+cat('cleanup\n')
+source('cleanup.R')
+write('done',file.path(location.output,'workUnits',paste0('workUnit-',workUnit.i),'status.txt'),append=T)
+cat('done\n')

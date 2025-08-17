@@ -2,6 +2,9 @@
 
 source('funParmSpace.R')
 
+expID <- 'testing'
+addAutoNameToExpID <- T
+
 # number of joint policy scenarios
 numInitialJointPol <- 1e5
 
@@ -13,20 +16,21 @@ numInitialJointPol <- 1e5
 nullPolProb <- 0.5
 
 # parallel ####
-#if(!exists('numWorkers')){
-#	numWorkers <- min(parallel::detectCores(), 120)
-#}
+useSLURM <- TRUE
+maxJobsQueue <- 10
 numWorkers <- parallel::detectCores()
 numWorkersFileMerge <- floor(numWorkers/3)
 # How large the chunks of work are, smaller means more frequent pauses to write out
 # itermediate results (and update the diagnostic output).
-chunkSizePerWorker <- 100
+chunkSizePerWorker <- 10
 # tyoe of cluster. PSOCK allows connections across a network
 # FORK forks the currently running process, but with copy on write memory
 # sharing
 clusterType <- 'psock'
-name.workerDirBasename <- 'policy-WorkerDir_'
+# name of the directory containing the policy worker dirs
 name.workDir <- 'policy-WorkDirs'
+# basename of the worker dirs within the above dir.
+name.workerDirBasename <- 'policy-WorkerDir_'
 # tmpfs location for the worker directories to not churn the hard drive
 # and be faster
 # typical options on linux are /dev/shm or /run/user/####/ where #### is the uid
@@ -43,6 +47,10 @@ compressCsv <- TRUE
 # locations and names ####
 # location of frida/stella for running
 baselocation.frida <-location.frida <- './FRIDAforPolicyAnalysis'
+# location for setting parameters for FRIDA
+# e.g. turnig climate feedbacks on or off
+# or policy
+location.frida.configs <- './FRIDA-configs'
 baselocation.stella <- location.stella <- './Stella_Simulator_Linux'
 # location frida/stella is stored while the above is located in tmpfs
 location.frida.storage <- './FRIDAforPolicyAnalysis-store'
@@ -61,8 +69,20 @@ location.singleDomainPolicyFiles <- file.path('policy-singleDomainPolicyMatrices
 
 policyFiles <- list.files(location.singleDomainPolicyFiles)
 
-name.output <- gsub('\\.','_',paste0('N-',numInitialJointPol,'-nPr-',nullPolProb,'-polFiles-',
+if(addAutoNameToExpID){
+	name.output <- gsub('\\.','_',paste0(expID,'-N-',numInitialJointPol,'-nPr-',nullPolProb,'-polFiles-',
 																		 paste(cleanNames(tools::file_path_sans_ext(policyFiles)),collapse='-')))
+} else {
+	name.output <- expID
+}
+name.workDir <- paste0(name.workDir,'-',name.output)
+expID <- name.output
 location.output <- file.path(locaion.baseOutput,name.output)
 tmpfsDir <- file.path(tmpfsBaseDir,'rwork',name.output)
 dir.create(location.output,recursive = T,showWarnings = F)
+
+# hardcoding this here, as the below code relies on it.
+# this should become standard also in uncertainty in the future
+# Do not change!
+writePerWorkerFiles <- TRUE
+doNotReturnRunDataSavePerWorkerOnly <- TRUE
