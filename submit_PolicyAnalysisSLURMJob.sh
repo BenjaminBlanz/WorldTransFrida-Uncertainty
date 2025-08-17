@@ -78,7 +78,7 @@ cp $template $runscript
 
 # Modify the template
 sed -i "s/time=01:00:00/time=0${hours}:${minutes}:00/" $runscript
-sed -i "s/account=REPLACACCNAME/account=${account}/" $runscript
+sed -i "s/account=REPLACEME/account=${account}/" $runscript
 sed -i "s/partition=compute/partition=${partition}/" $runscript
 sed -i "s/ntasks-per-node=128/ntasks-per-node=${numWorkers}/" $runscript
 sed -i "s/constraint=256G/constraint=${memorySize}/" $runscript
