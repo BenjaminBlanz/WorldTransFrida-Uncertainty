@@ -33,32 +33,28 @@ for(workUnitDir in workUnitDirs){
 	}
 	# check for already running process
 	status <- readLines(file.path(location.output,'workUnits',workUnitDir,'status.txt'))
-	if(status %in% c('submitted','started','running')){
+	if(status=='submitted'||status=='started'||status=='running'){
 		numJobsQueued <- numJobsQueued+1
-	} else {
-		if(status=='failed'){
-			write('failed, cleanup',file.path(location.output,'workUnits',workUnitDir,'log.txt',append=T))
-			write('prepared',file.path(location.output,'workUnits',workUnitDir,'log.txt',append=T))
-			cleanup(workUnitDir)
-			status=='prepared'
-		}
-		if(status=='prepared'){
-			# TODO: submit slurm job for this workUnit	
-			if(useSLURM){
-				if(numJonbsSent < maxJobsQueue){
-					numJobsQueued <- numJobsQueued + 1
-					system(paste0('./submit_PolicyAnalysisSLURMJob.sh',
-						' -o ',location.output,
-						' -u ',unitID,
-						' -w ',numWorkers),
-						intern= F, wait = F)
-				}
+	} else if(status=='prepared'){
+		# TODO: submit slurm job for this workUnit	
+		if(useSLURM){
+			if(numJobsQueued < maxJobsQueue){
+				numJobsQueued <- numJobsQueued + 1
+				system(paste0('./submit_PolicyAnalysisSLURMJob.sh',
+					' -o ',location.output,
+					' -u ',unitID,
+					' -w ',numWorkers),
+					intern= F, wait = F)
+				status <- 'submitted'
 			} else {
-				system(paste0('Rscript runPolicyAnalysisWorkUnit.R ',unitID))
+				status <- 'waiting'
 			}
+		} else {
+			system(paste0('Rscript runPolicyAnalysisWorkUnit.R ',unitID))
 		}
 	}
+	# other status e.g. failed is simply reported in the table
 	statuses[workUnitDir] <- status
 }
 cat("summary of work units' statuses\n")
-cat(print(table(statuses)))
+print(table(statuses))

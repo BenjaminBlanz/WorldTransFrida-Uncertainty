@@ -21,12 +21,10 @@ function cleanup(){
   echo "FAILED! Cleaning up..."
   Rscript -e "source('configPolicyAnalysis.R'); source('cleanup.R')"
   echo failed > locationOutput/workUnits/workUnit-workUnitID/status.txt
-  echo failed >> locationOutput/workUnits/workUnit-workUnitID/log.txt
 }
 
 echo started > locationOutput/workUnits/workUnit-workUnitID/status.txt
 Rscript --max-connections=1024 runPolicyAnalysisWorkUnit.R workUnitID
 echo completed > locationOutput/workUnits/workUnit-workUnitID/status.txt
 
-mv expID_*.R locationOutput/
 
