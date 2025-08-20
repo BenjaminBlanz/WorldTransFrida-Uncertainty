@@ -3,6 +3,9 @@
 source('initialise.R')
 source('configPolicyAnalysis.R')
 
+if(!exists('restartFailed')){
+	restartFailed <- F
+}
 
 # Check the setup
 # setup writes out sample points for the workers
@@ -35,21 +38,27 @@ for(workUnitDir in workUnitDirs){
 	status <- readLines(file.path(location.output,'workUnits',workUnitDir,'status.txt'))
 	if(status=='submitted'||status=='started'||status=='running'){
 		numJobsQueued <- numJobsQueued+1
-	} else if(status=='prepared'){
-		# TODO: submit slurm job for this workUnit	
-		if(useSLURM){
-			if(numJobsQueued < maxJobsQueue){
-				numJobsQueued <- numJobsQueued + 1
-				system(paste0('./submit_PolicyAnalysisSLURMJob.sh',
-					' -o ',location.output,
-					' -s ',name.output,
-					' -u ',unitID,
-					' -w ',numWorkers),
-					intern = T, wait = F,ignore.stdout = T)
-				status <- 'submitted (new)'
+	}	else {
+		if(status=='failed' & restartFailed){
+			status=='prepared'
+			write('prepared',file.path(location.output,'workUnits',paste0('workUnit-',i),'status.txt'))
+		}
+		if(status=='prepared'){
+			# TODO: submit slurm job for this workUnit	
+			if(useSLURM){
+				if(numJobsQueued < maxJobsQueue){
+					numJobsQueued <- numJobsQueued + 1
+					system(paste0('./submit_PolicyAnalysisSLURMJob.sh',
+						' -o ',location.output,
+						' -s ',name.output,
+						' -u ',unitID,
+						' -w ',numWorkers),
+						intern = T, wait = F,ignore.stdout = T)
+					status <- 'submitted (new)'
+				}
+			} else {
+				system(paste0('Rscript runPolicyAnalysisWorkUnit.R ',unitID))
 			}
-		} else {
-			system(paste0('Rscript runPolicyAnalysisWorkUnit.R ',unitID))
 		}
 	}
 	# other status e.g. failed is simply reported in the table
