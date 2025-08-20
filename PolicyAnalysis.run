@@ -10,7 +10,7 @@
 #SBATCH --error=locationOutput/workUnits/workUnit-workUnitID/LOG_%j.log
 #SBATCH --mail-user=jdoe@mail.com
 #SBATCH --mail-type=END
-#SBATCH --job-name=expID-workUnitID
+#SBATCH --job-name=workUnitID-of-expID
 
 module load r/4.4.2-gcc-11.2.0
 
