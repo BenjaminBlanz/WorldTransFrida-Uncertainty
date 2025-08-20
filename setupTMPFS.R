@@ -9,13 +9,18 @@ if(!exists('cl') &&
 	# create the tmpfsDir and link to workerDirs
 	dir.create(tmpfsDir,recursive = T,showWarnings = F)
 	system(paste('ln -s',tmpfsDir,name.workDir))
-	# set up the tmpfs for the single threaded runs
-	system(paste('cp -r',baselocation.frida,file.path(tmpfsDir,baselocation.frida)))
-	location.frida <- paste0(baselocation.frida,'-',name.output)
-	system(paste('ln -s',file.path(tmpfsDir,baselocation.frida),location.frida))
-	system(paste('cp -r',baselocation.stella,file.path(tmpfsDir,baselocation.stella)))
-	location.stella <- paste0(baselocation.stella,'-',name.output)
-	system(paste('ln -s',file.path(tmpfsDir,baselocation.stella),location.stella))
+	# set up the tmpfs for the single threaded runs only if workUnit.i does not exist
+	# workUnit.i existing is an indicator that we are running properlly multithreaded
+	# and do not want these links, as they can collide (causing errors) if we run
+	# parallel with multiple nodes.
+	if(!exists('workUnit.i')){
+		system(paste('cp -r',baselocation.frida,file.path(tmpfsDir,baselocation.frida)))
+		location.frida <- paste0(baselocation.frida,'-',name.output)
+		system(paste('ln -s',file.path(tmpfsDir,baselocation.frida),location.frida))
+		system(paste('cp -r',baselocation.stella,file.path(tmpfsDir,baselocation.stella)))
+		location.stella <- paste0(baselocation.stella,'-',name.output)
+		system(paste('ln -s',file.path(tmpfsDir,baselocation.stella),location.stella))
+	}
 	cat('done\n')
 } else {
 	cat('Using existing directories\n')
