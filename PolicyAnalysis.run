@@ -19,7 +19,7 @@ trap 'cleanup' ERR
 
 function cleanup(){
   echo "FAILED! Cleaning up..."
-  Rscript -e "source('configPolicyAnalysis.R'); source('cleanup.R')"
+  Rscript -e "source(source('initialise.R');source(configPolicyAnalysis.R'); source('cleanup.R')"
   echo failed > locationOutput/workUnits/workUnit-workUnitID/status.txt
 }
 
