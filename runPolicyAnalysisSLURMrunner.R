@@ -45,7 +45,7 @@ for(workUnitDir in workUnitDirs){
 					' -s ',name.output,
 					' -u ',unitID,
 					' -w ',numWorkers),
-					intern= F, wait = F)
+					intern = T, wait = F,ignore.stdout = T)
 				status <- 'submitted (new)'
 			}
 		} else {
