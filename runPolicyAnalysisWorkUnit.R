@@ -1,3 +1,6 @@
+cat('initialising\n')
+source('initialise.R')
+source('configPolicyAnalysis.R')
 # workUnit.i has to be supplied in the environment at runtime
 # it can be supplied in a scripted context by invoking an -e argument
 # e.g.
@@ -10,9 +13,6 @@ if(!file.exists(file.path(location.output,'workUnits',paste0('workUnit-',workUni
 	stop('Incorrect workUnit.i supplied as arg\n')
 }
 workUnit.i <- commandArgs(T)
-cat('initialising\n')
-source('initialise.R')
-source('configPolicyAnalysis.R')
 cat('location.output:\n')
 cat(paste0(location.output,'\n'))
 cat(sprintf('WorkUnit.i: %i\n',workUnit.i))
