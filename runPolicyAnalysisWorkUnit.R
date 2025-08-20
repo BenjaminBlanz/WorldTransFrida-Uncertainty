@@ -5,7 +5,7 @@ source('configPolicyAnalysis.R')
 # it can be supplied in a scripted context by invoking an -e argument
 # e.g.
 # Rscript runPolicyAnalysisWorkUnit.R 1
-workUnit.i <- commandArgs(T)
+workUnit.i <- as.numeric(commandArgs(T))
 if(length(workUnit.i)!=1 && !is.numeric(workUnit.i)){
 	stop('Incorrect arg supplied as workUnit.i\n')
 }
