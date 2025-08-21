@@ -1,8 +1,13 @@
 source('initialise.R')
 source('configPolicyAnalysis.R')
-# merge files ####
+numWorkersArg <- as.numeric(commandArgs(T))
 origNumWorkers <- numWorkers
-numWorkers <- numWorkersFileMerge
+if(length(numWorkersArg)!=1 && !is.numeric(numWorkersArg)){
+	numWorkers <- numWorkersFileMerge
+} else {
+	numWorkers <- numWorkersArg
+}
+# merge files ####
 skipExtraVars <- T
 source('clusterHelp.R')
 mergePerVarFiles(verbosity = 1,compressCsv=compressCsv)
