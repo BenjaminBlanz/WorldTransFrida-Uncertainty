@@ -7,20 +7,28 @@ if(!exists('cl') &&
 	source('cleanup.R')
 	cat('Setting up directories...')	
 	# create the tmpfsDir and link to workerDirs
+	# include workunit.i in the filenames so multiple instances can work side by side
+	if(exists('workUnit.i')){
+		tmpfsDir <- paste0(origTmpfsDir,'-workUnit-',workUnit.i)
+		workDirLocation.frida <- paste0(baselocation.frida,'-',workUnit.i)
+		workDirLocation.stella <- paste0(baselocation.stella,'-',workUnit.i)
+		name.workDir <- paste0(name.workDir,'-',workUnit.i)
+	} else {
+		workDirLocation.frida <- baselocation.frida
+		workDirLocation.stella <- baselocation.stella
+	}
 	dir.create(tmpfsDir,recursive = T,showWarnings = F)
 	system(paste('ln -s',tmpfsDir,name.workDir))
-	system(paste('cp -r',baselocation.frida,file.path(tmpfsDir,baselocation.frida)))
-	system(paste('cp -r',baselocation.stella,file.path(tmpfsDir,baselocation.stella)))
-	# set up the tmpfs for the single threaded runs only if workUnit.i does not exist
-	# workUnit.i existing is an indicator that we are running properlly multithreaded
-	# and do not want these links, as they can collide (causing errors) if we run
-	# parallel with multiple nodes.
-	if(!exists('workUnit.i')){
-		location.frida <- paste0(baselocation.frida,'-',name.output)
-		system(paste('ln -s',file.path(tmpfsDir,baselocation.frida),location.frida))
-		location.stella <- paste0(baselocation.stella,'-',name.output)
-		system(paste('ln -s',file.path(tmpfsDir,baselocation.stella),location.stella))
+	system(paste('cp -r',baselocation.frida,file.path(tmpfsDir,workDirLocation.frida)))
+	system(paste('cp -r',baselocation.stella,file.path(tmpfsDir,workDirLocation.stella)))
+	location.frida <- paste0(baselocation.frida,'-',name.output)
+	location.stella <- paste0(baselocation.stella,'-',name.output)
+	if(exists('workUnit.i')){
+		location.frida <- paste0(location.frida,'-',workUnit.i)
+		location.stella <- paste0(location.stella,'-',workUnit.i)
 	}
+	system(paste('ln -s',file.path(tmpfsDir,workDirLocation.frida),location.frida))
+	system(paste('ln -s',file.path(tmpfsDir,workDirLocation.stella),location.stella))
 	cat('done\n')
 } else {
 	cat('Using existing directories\n')

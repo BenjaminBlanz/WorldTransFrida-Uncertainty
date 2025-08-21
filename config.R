@@ -174,9 +174,9 @@ location.output.base <- location.output
 # tmpfsBaseDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork')
 tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T),'/rwork')
 # tmpfsBaseDir <- 'notTMPFS'
-tmpfsDir <- file.path(tmpfsBaseDir,name.output)
+origTmpfsDir <- tmpfsDir <- file.path(tmpfsBaseDir,name.output)
 
-name.workDir <- paste0('workerDirs-',name.output)
+origName.workDir <- name.workDir <- paste0('workerDirs-',name.output)
 name.workerDirBasename <- 'workDir_'
 
 

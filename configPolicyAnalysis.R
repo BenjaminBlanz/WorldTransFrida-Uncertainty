@@ -28,15 +28,15 @@ chunkSizePerWorker <- 10
 # sharing
 clusterType <- 'psock'
 # name of the directory containing the policy worker dirs
-name.workDir <- 'policy-WorkDirs'
+origName.workDir <- name.workDir <- 'policy-WorkDirs'
 # basename of the worker dirs within the above dir.
 name.workerDirBasename <- 'policy-WorkerDir_'
 # tmpfs location for the worker directories to not churn the hard drive
 # and be faster
 # typical options on linux are /dev/shm or /run/user/####/ where #### is the uid
 # if both of these are unavailable use notTMPFS or some other arbitrary location on disk
-# tmpfsBaseDir <- paste0('/run/user/',system('id -u',intern = T))
-tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T))
+# tmpfsBaseDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork')
+tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T),'/rwork')
 # tmpfsBaseDir <- 'notTMPFS'
 
 # output ####
@@ -78,7 +78,7 @@ if(addAutoNameToExpID){
 name.workDir <- paste0(name.workDir,'-',name.output)
 expID <- name.output
 location.output <- file.path(locaion.baseOutput,name.output)
-tmpfsDir <- file.path(tmpfsBaseDir,'rwork',name.output)
+origTmpfsDir <- tmpfsDir <- file.path(tmpfsBaseDir,name.output)
 dir.create(location.output,recursive = T,showWarnings = F)
 
 # hardcoding this here, as the below code relies on it.

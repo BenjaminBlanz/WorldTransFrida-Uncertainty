@@ -10,12 +10,16 @@ cat('done\n')
 cat('cleaning up directories...')
 # single threaded tmpfs cleanup ####
 location.frida <- paste0(baselocation.frida,'-',name.output)
+location.stella <- paste0(baselocation.stella,'-',name.output)
+if(exists('workUnit.i')){
+	location.frida <- paste0(location.frida,'-',workUnit.i)
+	location.stella <- paste0(location.stella,'-',workUnit.i)
+}
 # use %in% list.files instead of file.exists as file.exists will return FALSE for dangling links
 if(basename(location.frida)%in%list.files(dirname(baselocation.frida))){
 	system(paste('rm -rf', location.frida))
 	location.frida <- baselocation.frida
 }
-location.stella <- paste0(baselocation.stella,'-',name.output)
 if(basename(location.stella)%in%list.files(dirname(location.stella))){
 	system(paste('rm -rf', location.stella))
 	location.stella <- baselocation.stella
