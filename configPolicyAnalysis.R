@@ -19,7 +19,7 @@ nullPolProb <- 0.5
 useSLURM <- TRUE
 maxJobsQueue <- 10
 numWorkers <- parallel::detectCores()
-numWorkersFileMerge <- floor(numWorkers/3)
+numWorkersFileMerge <- floor(numWorkers/2)
 # How large the chunks of work are, smaller means more frequent pauses to write out
 # itermediate results (and update the diagnostic output).
 # smaller also means increaseing the total number of files, which can cause file system 
