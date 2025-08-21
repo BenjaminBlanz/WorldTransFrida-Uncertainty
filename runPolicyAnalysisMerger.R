@@ -1,4 +1,5 @@
-
+source('initialise.R')
+source('configPolicyAnalysis.R')
 # merge files ####
 origNumWorkers <- numWorkers
 numWorkers <- numWorkersFileMerge
