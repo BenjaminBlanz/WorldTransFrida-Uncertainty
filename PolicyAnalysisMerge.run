@@ -6,11 +6,11 @@
 #SBATCH --constraint=256G
 #SBATCH --mem=0
 #SBATCH --time=11:00:00
-#SBATCH --output=locationOutput/workUnits/workUnit-workUnitID/LOG_%j.log
-#SBATCH --error=locationOutput/workUnits/workUnit-workUnitID/LOG_%j.log
+#SBATCH --output=policy-workOutput/MERGELOG_%j.log
+#SBATCH --error=policy-workOutput/MERGELOG_%j.log
 #SBATCH --mail-user=jdoe@mail.com
 #SBATCH --mail-type=END
-#SBATCH --job-name=workUnitID-of-expID
+#SBATCH --job-name=merge-of-expID
 
 module load r/4.4.2-gcc-11.2.0
 
