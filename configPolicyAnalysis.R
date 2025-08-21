@@ -2,7 +2,7 @@
 
 source('funParmSpace.R')
 
-expID <- 'testing'
+expID <- 'testing2'
 addAutoNameToExpID <- T
 
 # number of joint policy scenarios
@@ -22,7 +22,9 @@ numWorkers <- parallel::detectCores()
 numWorkersFileMerge <- floor(numWorkers/3)
 # How large the chunks of work are, smaller means more frequent pauses to write out
 # itermediate results (and update the diagnostic output).
-chunkSizePerWorker <- 10
+# smaller also means increaseing the total number of files, which can cause file system 
+# slow down.
+chunkSizePerWorker <- 50
 # tyoe of cluster. PSOCK allows connections across a network
 # FORK forks the currently running process, but with copy on write memory
 # sharing
