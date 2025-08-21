@@ -774,7 +774,10 @@ readPerVarFile <- function(file,outputType=NULL){
 			outputType <- 'csv'
 		}
 	}
-	fileNoExt <- tools::file_path_sans_ext(file)
+	# remove file extensions
+	fileNoExt <- gsub('\\.gz','',file)
+	fileNoExt <- gsub('\\.csv','',fileNoExt)
+	fileNoExt <- gsub('\\.RDS','',fileNoExt)
 	if(outputType=='csv'){
 		if(!file.exists(paste0(fileNoExt,'.csv')) && 
 			 file.exists(paste0(fileNoExt,'.csv.gz'))){
@@ -797,7 +800,10 @@ writePerVarFile <- function(varData,file,outputType=NULL,compressCsv=T){
 			compressCsv <- T
 		}
 	}
-	fileNoExt <- tools::file_path_sans_ext(file)
+	# remove file extensions
+	fileNoExt <- gsub('\\.gz','',file)
+	fileNoExt <- gsub('\\.csv','',fileNoExt)
+	fileNoExt <- gsub('\\.RDS','',fileNoExt)
 	if(outputType=='csv'){
 		write.table(varData,paste0(fileNoExt,'.csv'),
 								row.names = F,sep=',')
