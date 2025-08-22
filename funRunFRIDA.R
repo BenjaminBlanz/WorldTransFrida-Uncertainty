@@ -43,7 +43,7 @@ prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NU
 		sampleParms <- sampleParms[-excludedIdc,]
 	}
 	# add the integer vars e.g. climate case
-	sampleParms$isInteger <- FALSE
+	sampleParms$isInteger <- rep(FALSE,nrow(sampleParms))
 	if(!is.null(integerParms)){
 		cat('adding integer parms...')
 		for(p.i in 1:nrow(integerParms)){
