@@ -706,14 +706,37 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 	fileList <- list.files(perVarSubfolder)
 	if(verbosity>0){cat(sprintf('Processing %i files of %s...',length(fileList),varName))}
 	if(verbosity>0){cat('reading and merging...')}
+	
 	varData <- readPerVarFile(file.path(perVarSubfolder,fileList[1]),outputType)
+	# numRows <- numSample
+	# skipCols <- c(1)
+	# if('sowID' %in% colnames(varDataTemplate)){
+	# 	numRows <- numRows * length(unique(varDataTemplate$sowID))
+	# 	skipCols <- c(1,2)
+	# }
+	# dataFramePreallocateString <- paste0('varData <- data.frame(id=rep(1.1,',numSample,')')
+	# if('sowID' %in% colnames(varDataTemplate)){
+	# 	dataFramePreallocateString <- paste0(dataFramePreallocateString,',\'sowID\'=rep(1.1,',numRows,')')
+	# }
+	# for(colname in colnames(varDataTemplate[,-skipCols])){
+	# 	dataFramePreallocateString <- paste0(dataFramePreallocateString,
+	# 																			 ',\'',colname,'\'=rep(1.1,',numRows,')')
+	# }
+	# dataFramePreallocateString <- paste0(dataFramePreallocateString,')')
+	# eval(parse(text=dataFramePreallocateString))
+	# upToRow <- 0
+	# tic()
+	# varData <- varDataTemplate
 	for(f.i in 2:length(fileList)){
 		nextData <- readPerVarFile(file.path(perVarSubfolder,fileList[f.i]),outputType)
 		# hack to deal with incomplete runs messing up column headers
 		# proper fix is in data generation, but this will make old results work
 		colnames(nextData) <- colnames(varData)
-		varData <- rbind(varData,nextData)
+		varData <- base::rbind(varData,nextData)
+		# varData[(upToRow+1):(upToRow+nrow(nextData)),] <- nextData
+		# upToRow <- upToRow + nrow(nextData)
 	}
+	# toc()
 	varData <- sort_by(varData,varData[,1])
 	colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
 	if(verbosity>0){cat('writing...')}
