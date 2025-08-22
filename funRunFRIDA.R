@@ -393,7 +393,9 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 		clusterExport(cl,list('location.output','baseWD','sampleParms',
 													'chunkSizePerWorker','runFridaParmsBySamplePoints',
 													'calDat','resSigma',
-													'runFridaParmsByIndex','writePerWorkerFiles'))
+													'runFridaParmsByIndex','writePerWorkerFiles',
+													'treatVarsAsIndep','perVarOutputTypes',
+													'doNotReturnRunDataSavePerWorkerOnly'))
 	}
 	# plot setup 
 	if(plotDatWhileRunning & !plotPerChunk){
@@ -465,7 +467,15 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			# write the samplePoints of the work units to the worker directories
 			for(w.i in workers){
 				if(w.i <= length(workerWorkUnits) && !is.null(workerWorkUnits[[w.i]])){
-					saveRDS(samplePoints[workerWorkUnits[[w.i]],],
+					workerSamplePoints <- array(samplePoints[workerWorkUnits[[w.i]],],
+																			dim=c(length(workerWorkUnits[[w.i]]),ncol(samplePoints)))
+					colnames(workerSamplePoints) <- colnames(samplePoints)
+					if(ncol(samplePoints)>1){
+						rownames(workerSamplePoints) <- rownames(samplePoints[workerWorkUnits[[w.i]],])
+					} else {
+						rownames(workerSamplePoints) <- names(samplePoints[workerWorkUnits[[w.i]],])
+					}
+					saveRDS(workerSamplePoints,
 									file.path(name.workDir,paste0(name.workerDirBasename,w.i),'samplePoints.RDS'))
 				} else {
 					saveRDS(samplePoints[c(),],
