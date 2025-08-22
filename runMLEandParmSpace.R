@@ -411,6 +411,7 @@ while(newMaxFound){
 		cat('Not reading manual ranges, as ignoreParBounds==TRUE\n')
 	} else {
 		manualBorders <- read.csv(file.path(location.frida.info,name.frida_external_ranges))
+		manualBorders <- manualBorders[manualBorders$Variable %in% sampleParms$Variable,]
 		cat(sprintf('applying manual ranges for %i parameters...',nrow(manualBorders)))
 		if(nrow(manualBorders)>0){
 			for(r.i in 0:nrow(manualBorders)){
