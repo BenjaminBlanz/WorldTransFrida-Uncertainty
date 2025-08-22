@@ -55,7 +55,11 @@ prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NU
 					c(integerParms$Value[p.i],integerParms$Min[p.i],integerParms$Max[p.i])
 				sampleParms[newIdx,c('isInteger')] <- TRUE
 				sampleParmsRowNames <- rownames(sampleParms)
-				sampleParmsRowNames[newIdx] <- as.character(as.numeric(sampleParmsRowNames[newIdx-1])+1)
+				if(nrow(sampleParms)>1){
+					sampleParmsRowNames[newIdx] <- as.character(as.numeric(sampleParmsRowNames[newIdx-1])+1)
+				} else {
+					sampleParmsRowNames[newIdx] <- 1
+				}
 				rownames(sampleParms) <- sampleParmsRowNames
 			}
 		}
