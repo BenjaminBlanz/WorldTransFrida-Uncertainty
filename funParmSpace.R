@@ -317,7 +317,7 @@ generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 		samplePoints <- readRDS(file.path(location.output,'samplePoints.RDS'))
 		cat('done\n')
 	} else {
-		if(nrow(samplePoints)==1){
+		if(nrow(sampleParms)==1){
 			samplePoints.base <- seq(0,1,length.out=numSample)
 		} else {
 			cat('Generate sampling points using sobol sequence...')
@@ -340,7 +340,7 @@ generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 		}
 		samplePoints <- funStretchSamplePoints(samplePoints.base,sampleParms,
 																					 restretchSamplePoints)
-		if(sum(duplicated(samplePoints.base))>0){
+		if(sum(duplicated(samplePoints))>0){
 			stop('Not enough possible combinations in specified parameters to satisfy numSample\n')
 		}
 		colnames(samplePoints) <- sampleParms$Variable
