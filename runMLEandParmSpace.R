@@ -413,7 +413,7 @@ while(newMaxFound){
 		manualBorders <- read.csv(file.path(location.frida.info,name.frida_external_ranges))
 		cat(sprintf('applying manual ranges for %i parameters...',nrow(manualBorders)))
 		if(nrow(manualBorders)>0){
-			for(r.i in 1:nrow(manualBorders)){
+			for(r.i in 0:nrow(manualBorders)){
 				sp.i <- which(sampleParms$Variable==manualBorders$Variable[r.i])
 				if(!is.na(manualBorders$Min[r.i])){
 					sampleParms$Min[sp.i] <- border.coefs[sp.i,'Min'] <- manualBorders$Min[r.i]
@@ -457,8 +457,8 @@ while(newMaxFound){
 	} else {
 		for(direction in c('Min','Max')){
 			sampleParms[[paste0(direction,'NotDeterminedBorder')]] <- notDeterminedBorders[,direction]
-			sampleParms[[paste0(direction,'BorderLogLikeError')]] <- NA
-			sampleParms[[paste0(direction,'KickParmsErrorRangeDet')]] <- FALSE
+			sampleParms[[paste0(direction,'BorderLogLikeError')]] <- rep(NA,nrow(sampleParms))
+			sampleParms[[paste0(direction,'KickParmsErrorRangeDet')]] <- rep(FALSE,nrow(sampleParms))
 			sampleParms[[paste0(direction,'BoundByAuthors')]] <- sampleParms[[direction]]==parBounds[,direction]
 		}
 	}
