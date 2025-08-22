@@ -35,6 +35,7 @@ def createSampling3(n_samples, startvalue, minvalue, maxvalue):
     p1vs=samples_cont[:,0]*(maxvalue-minvalue) + minvalue
     startYears = np.linspace(2025,2100,16)    
     indices = (samples_cont[:,1] * len(startYears)).astype(int)
+    np.where(indices == len(startYears),indices-1,indices)
     sYs = startYears[indices.flatten()]
 
     s1ds=np.zeros(n_samples)
@@ -45,6 +46,7 @@ def createSampling3(n_samples, startvalue, minvalue, maxvalue):
         maxDuration=2150-sYs[i]-10
         choices = np.linspace(5, maxDuration, int((maxDuration-5)/5)+1)
         idx = (samples_cont[i,2] * len(choices)).astype(int)
+        if idx == len(choices): idx+=-1
         s1ds[i] = choices[idx]
             
         p1ds[i] = 2150 - sYs[i] - s1ds[i] 
@@ -63,6 +65,7 @@ def createSampling6(n_samples, startvalue, minvalue, maxvalue):
     
     startYears = np.linspace(2025,2100,16)    
     indices = (samples_cont[:,2] * len(startYears)).astype(int)
+    np.where(indices == len(startYears),indices-1,indices)
     sYs = startYears[indices.flatten()]
         
     s2ds=np.zeros(n_samples)
@@ -76,16 +79,19 @@ def createSampling6(n_samples, startvalue, minvalue, maxvalue):
         maxDuration=2150-sYs[i]-25
         choices = np.linspace(5, maxDuration, int((maxDuration-5)/5)+1)
         idx = (samples_cont[i,3] * len(choices)).astype(int)
+        if idx == len(choices): idx+=-1
         s1ds[i] = choices[idx]
         
         maxDuration=2150-sYs[i]-s1ds[i]-15
         choices = np.linspace(10, maxDuration, int((maxDuration-10)/5)+1)
         idx = (samples_cont[i,4] * len(choices)).astype(int)
+        if idx == len(choices): idx+=-1
         p1ds[i] = choices[idx]
         
         maxDuration=2150-sYs[i]-s1ds[i]-p1ds[i] - 10
         choices = np.linspace(5, maxDuration, int((maxDuration-5)/5)+1)
         idx = (samples_cont[i,5] * len(choices)).astype(int)
+        if idx == len(choices): idx+=-1
         s2ds[i] = choices[idx]
         
         p2ds[i] = 2150 - sYs[i] - s1ds[i] - p1ds[i] - s2ds[i]  
