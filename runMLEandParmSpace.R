@@ -12,7 +12,8 @@ cat(paste0(
 sink()
 sink(file.path(location.output,'log.txt'),append=T,split=T)
 source('runInitialiseData.R')
-continue <- readline(paste0('Output location created. Move any files to be used here\n', location.output,'\nHit ENTER when done.\n'))
+continue <- readline(paste0('Output location created. Move any files to be used here\n',
+														location.output,'\nHit ENTER when done.\n'))
 # read covariance matrix used for baseNegLL
 if(treatVarsAsIndep&&
 	 file.exists(file.path(location.output,'sigma-indepParms.RDS'))){
@@ -537,6 +538,19 @@ while(newMaxFound){
 																												restretchSamplePoints,
 																												ignoreExistingResults = T,
 																												integerParms = integerParms)
+	}
+	# apply baseline parms
+	if(!is.na(name.baselineParmFile)&&name.baselineParmFile!=''){
+		baselineParms <- read.csv(file.path(location.frida.configs,name.baselineParmFile))
+		if(nrow(baselineParms)>1){
+			stop('baseline parms may only be a single set (line)\n')
+		}
+		colnames(baselineParms) <- cleanNames(colnames(baselineParms))
+		for(par in colnames(baselineParms)){
+			if(!par%in%colnames(samplePoints)){
+				samplePoints[[par]] <- baselineParms[par]
+			}
+		}
 	}
 	cat('saving sampleParms and samplePoints...')
 	write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))

@@ -55,6 +55,13 @@ CIsToPlot.col <- c(NA,gray(0.7,0.5),gray(0.8,0.5))
 calDat.col <- 'red'
 
 # sampling ####
+# file that contains the baseline parametrisation of the model
+# which is applied before the sample points. I.e. sample points override the
+# baseline parametrisation, but if a parameter is not present in the samplePoints, but
+# is present in the baseline parms it will be used.
+# If this is left empty, no baseline parms are applied (the ones within the model
+# files will be used).
+name.baselineParmFile <- NA
 # number of samples for the sobol sequence across all dimensions
 numSample <- 1e4
 # by default sobol sequence covers the entire range between min and max with 
