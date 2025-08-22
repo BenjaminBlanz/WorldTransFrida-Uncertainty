@@ -318,7 +318,9 @@ generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 		cat('done\n')
 	} else {
 		if(nrow(sampleParms)==1){
-			samplePoints.base <- seq(0,1,length.out=numSample)
+			samplePoints.base <- array(seq(0,1,length.out=numSample),dim=c(numSample,1))
+			colnames(samplePoints.base) <- sampleParms[1,1]
+			rownames(samplePoints.base) <- 1:numSample
 		} else {
 			cat('Generate sampling points using sobol sequence...')
 			# sobolSequence.points generates points on the unit interval for each var
