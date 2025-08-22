@@ -64,12 +64,12 @@ policyTypes = [policyTypes[i] for i in newIndices]
 
 
 ############### Create the new files #####################################
+directory = "./PolicyFolder"
 
 # Delete existing Folder?
 if not os.path.exists(directory): os.makedirs(directory)
 else:
     # Delete existing files!
-    directory = "./PolicyFolder"
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
         # Check if it's a file (and not a directory)
