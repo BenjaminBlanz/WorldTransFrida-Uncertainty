@@ -87,7 +87,7 @@ writeFRIDAInput <- function(variables,values,policyMode=F){
 	}
 	if(policyMode){
 		sink(file.path(location.frida,'Data',name.fridaInputFile))
-		for(domID in 1:length(values)){
+		for(domID in names(values)){
 			if(!is.na(values[domID])){
 				dplID <- values[domID]
 				sdmID <- jointPolicies$sdmID[jointPolicies$domID==domID & 
@@ -781,9 +781,10 @@ readPerVarFile <- function(file,outputType=NULL){
 	if(outputType=='csv'){
 		if(!file.exists(paste0(fileNoExt,'.csv')) && 
 			 file.exists(paste0(fileNoExt,'.csv.gz'))){
-			system(paste('gunzip',paste0(fileNoExt,'.csv.gz')))
+			return(read.csv(gzfile(paste0(fileNoExt,'.csv.gz'))))
 		}
 		return(read.csv(paste0(fileNoExt,'.csv')))
+		
 	} else if(outputType=='RDS'){
 		return(readRDS(paste0(fileNoExt,'.RDS')))
 	}
