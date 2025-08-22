@@ -415,14 +415,19 @@ while(newMaxFound){
 		if(nrow(manualBorders)>0){
 			for(r.i in 0:nrow(manualBorders)){
 				sp.i <- which(sampleParms$Variable==manualBorders$Variable[r.i])
-				if(!is.na(manualBorders$Min[r.i])){
-					sampleParms$Min[sp.i] <- border.coefs[sp.i,'Min'] <- manualBorders$Min[r.i]
-					notDeterminedBorders[sp.i,'Min'] <- FALSE
+				if(length(sp.i)==1){
+					if(!is.na(manualBorders$Min[r.i])){
+						sampleParms$Min[sp.i] <- border.coefs[sp.i,'Min'] <- manualBorders$Min[r.i]
+						notDeterminedBorders[sp.i,'Min'] <- FALSE
+					}
+					if(!is.na(manualBorders$Max[r.i])){
+						sampleParms$Max[sp.i] <- border.coefs[sp.i,'Max'] <- manualBorders$Max[r.i]
+						notDeterminedBorders[sp.i,'Max'] <- FALSE
+					}
+				} else if (length(sp.i)>1){
+					stop('Multiple parms with same name\n')
 				}
-				if(!is.na(manualBorders$Max[r.i])){
-					sampleParms$Max[sp.i] <- border.coefs[sp.i,'Max'] <- manualBorders$Max[r.i]
-					notDeterminedBorders[sp.i,'Max'] <- FALSE
-				}
+				# if the parm is not present at all do nothing
 			}
 		}
 		write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
