@@ -42,8 +42,9 @@ tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T),'/rwork')
 # tmpfsBaseDir <- 'notTMPFS'
 
 # output ####
-perVarOutputTypes <- c('csv','RDS')
-# gzip the merged csv files
+# valid types are 'RDS' and 'csv'
+perVarOutputTypes <- c('RDS') #'csv'
+# gzip the csv files
 compressCsv <- TRUE
 
 # locations and names ####
