@@ -547,13 +547,17 @@ while(newMaxFound){
 	# apply baseline parms
 	if(!is.na(name.baselineParmFile)&&name.baselineParmFile!=''){
 		baselineParms <- read.csv(file.path(location.frida.configs,name.baselineParmFile))
+		baselineParmsNames <- unname(unlist(read.table(file.path(location.frida.configs,name.baselineParmFile),nrows = 1,sep=',')))
+		baselineParmsNames <- gsub('([^\\]])$','\\1\\[1\\]',baselineParmsNames,perl=T)
+		baselineParmsNames <- gsub('\\[\\*','\\[1',baselineParmsNames,perl=T)
 		if(nrow(baselineParms)>1){
 			stop('baseline parms may only be a single set (line)\n')
 		}
-		colnames(baselineParms) <- cleanNames(colnames(baselineParms))
-		for(par in colnames(baselineParms)){
-			if(!par%in%colnames(samplePoints)){
-				samplePoints[[par]] <- baselineParms[par]
+		for(par.i in 1:length(colnames(baselineParms))){
+			if(!baselineParmsNames[par.i]%in%colnames(samplePoints)){
+				newcol <- array(baselineParms[par.i],dim=c(nrow(samplePoints),1))
+				colnames(newcol) <- baselineParmsNames[par.i]
+				samplePoints <- base::cbind(samplePoints,newcol)
 			}
 		}
 	}
