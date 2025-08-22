@@ -12,8 +12,7 @@ cat(paste0(
 sink()
 sink(file.path(location.output,'log.txt'),append=T,split=T)
 source('runInitialiseData.R')
-continue <- readline(paste0('Output location created. Move any files to be used here\n',
-														location.output,'\nHit ENTER when done.\n'))
+continue <- readline(paste0('Output location created. Move any files to be used here\n',location.output,'\nHit ENTER when done.\n'))
 # read covariance matrix used for baseNegLL
 if(treatVarsAsIndep&&
 	 file.exists(file.path(location.output,'sigma-indepParms.RDS'))){
