@@ -159,7 +159,7 @@ while(newMaxFound){
 			useOrdersOfMagGuesses <- F
 			iterations <- iterations+1
 		}
-		parscale.parvect <- parscale[1:nrow(sampleParms)]
+		parscale.parvect <- parscale[0:nrow(sampleParms)]
 		parscale.resSigmaVect <- parscale[(nrow(sampleParms)+1):length(jParVect)]
 		cat('done\n')
 		
@@ -170,9 +170,9 @@ while(newMaxFound){
 		problemCasesIdc <- which(is.infinite(parscale)|is.na(parscale))
 		problemCasesIdc.parVect <- which(is.infinite(parscale.parvect)|is.na(parscale.parvect))
 		problemCasesIdc.resSigmaVect <- which(is.infinite(parscale.resSigmaVect)|is.na(parscale.resSigmaVect))
-		cat(sprintf('%i parscales could not be determined.',length(problemCasesIdc)))
+		cat(sprintf('%i parscales could not be determined.\n',length(problemCasesIdc)))
 		if(length(problemCasesIdc.resSigmaVect)>0){
-			cat(sprintf('  %i in resSigmaVect, guesses will be used',
+			cat(sprintf('  %i in resSigmaVect, guesses will be used\n',
 									length(problemCasesIdc.resSigmaVect)))
 			parscale.resSigmaVect[problemCasesIdc.resSigmaVect] <- 
 				10^ordersOfMagGuesses.resSigmaVect[problemCasesIdc.resSigmaVect]
