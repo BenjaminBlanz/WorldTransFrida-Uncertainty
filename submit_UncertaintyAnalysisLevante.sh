@@ -53,6 +53,7 @@ FRIDA='FRIDAforUncertaintyAnalysis'
 policyFile='policy_EMB.csv'
 climateFeedbackFile='ClimateFeedback_On.csv'
 climateSTAOverrideFile='ClimateSTAOverride_Off.csv'
+baselineParmFile=''
 
 # These need to be located in the FRIDA-info/ folder!
 infoFile='frida_info.csv'
@@ -121,6 +122,9 @@ while [ $# -gt 0 ]; do
     --sta|--climateSTAOverrideFile)
       climateSTAOverrideFile="$2"
       ;;
+    --blp|--baselineParmFile)
+      baselineParmFile="$2"
+      ;;
     *)
       printf "Error: Invalid argument: $1 \n"
       exit 1
@@ -129,7 +133,7 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-expID=${expIDPreString}-S${numSample}-${policyFile%.*}-${climateFeedbackFile%.*}-${climateSTAOverrideFile%.*}
+expID=${expIDPreString}-S${numSample}-${policyFile%.*}-${climateFeedbackFile%.*}-${climateSTAOverrideFile%.*}-${baselineParmFile%.*}
 #############################################################################
 ########     Preparing the R-scripts and the runscript             ##########
 #############################################################################
@@ -149,6 +153,7 @@ sed -i "s/frida_info.csv/${infoFile}/" $config
 sed -i "s/policy_EMB.csv/${policyFile}/" $config
 sed -i "s/ClimateFeedback_On.csv/${climateFeedbackFile}/" $config
 sed -i "s/ClimateSTAOverride_Off.csv/${climateSTAOverrideFile}/" $config
+sed -i "s/^name.baselineParmFile <-*/name.baselineParmFile <- ${climateSTAOverrideFile}/" $config
 sed -i "s/frida_external_ranges.csv/${externalRangesFile}/" $config
 sed -i "s/frida_parameter_exclusion_list.csv/${excludeParmFile}/" $config
 sed -i "s/frida_variable_exclusion_list.csv/${excludeVarFile}/" $config
