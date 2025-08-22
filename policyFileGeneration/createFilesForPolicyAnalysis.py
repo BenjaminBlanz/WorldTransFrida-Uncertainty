@@ -17,8 +17,13 @@ discountRate=0.04
 # this will take around 10-15 min on Levante interactive node.
 # For testing set this to  something like 1024 and 8
 # (the SobolSequence sampler complains if the number is not a power of 2)
-Nprior=int(2**15) 
-Nselect=64
+
+# These are the samples per 6 variable policy
+# -> For a 3 parameter policy the number of samples is divided by 2
+# -> For a 1 parameter policy the number of samples is divided by 4
+exp = 6
+Nprior_base=int(2**(exp+9)) 
+Nselect_base=int(2**exp)
 
 ###################################################
 
@@ -97,6 +102,12 @@ for i, policy in enumerate(policyList):
     
 
     if polType in ['ThreeParm', 'SixParm']:
+        if polType == 'SixParm':
+            Nprior = Nprior_base
+            Nselect = Nselect_base
+        else:
+            Nprior = int(Nprior_base/2)
+            Nselect = int(Nselect_base/2)
         sortedSamples, sortedGraphicals, sorted_idx, time = createSamplingOrderedByDPS(Nprior,
                                                                                        startvalue,
                                                                                        minvalue,
@@ -144,7 +155,7 @@ for i, policy in enumerate(policyList):
 
 
     elif polType in ['OneParm', 'DivBy5Parm']:
-    
+        Nselect = int(Nselect_base/4)
         if fileExists:
 
             # check how many variables are already in that file
