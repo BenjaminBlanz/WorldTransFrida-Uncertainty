@@ -342,9 +342,6 @@ generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 		}
 		samplePoints <- funStretchSamplePoints(samplePoints.base,sampleParms,
 																					 restretchSamplePoints)
-		if(sum(duplicated(samplePoints))>0){
-			stop('Not enough possible combinations in specified parameters to satisfy numSample\n')
-		}
 		colnames(samplePoints) <- sampleParms$Variable
 		if(!is.null(integerParms)){
 			cat('rounding integer parms...')
@@ -357,6 +354,14 @@ generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 				}
 			}
 			samplePoints <- samplePoints[!duplicated(samplePoints),]
+		}
+		if(nrow(sampleParms)==1){
+			samplePoints <- array(samplePoints,dim=c(numSample,1))
+			colnames(samplePoints) <- sampleParms[1,1]
+			rownames(samplePoints) <- 1:numSample
+		}
+		if(sum(duplicated(samplePoints))>0){
+			stop('Not enough possible combinations in specified parameters to satisfy numSample\n')
 		}
 		saveRDS(samplePoints,file.path(location.output,'samplePoints.RDS'))
 		cat('done\n')
