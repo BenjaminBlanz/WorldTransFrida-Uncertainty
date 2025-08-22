@@ -317,12 +317,16 @@ generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 		samplePoints <- readRDS(file.path(location.output,'samplePoints.RDS'))
 		cat('done\n')
 	} else {
-		cat('Generate sampling points using sobol sequence...')
-		# sobolSequence.points generates points on the unit interval for each var
-		# transformed, so vars are in rows samples in cols, makes the next steps easier
-		samplePoints.base <- sobolSequence.points(nrow(sampleParms),31,numSample) 
-		if(sum(duplicated(samplePoints.base))>0){
-			stop('Not enough unique sample points. Check the sobol generation\n')
+		if(nrow(samplePoints)==1){
+			samplePoints.base <- seq(0,1,length.out=numSample)
+		} else {
+			cat('Generate sampling points using sobol sequence...')
+			# sobolSequence.points generates points on the unit interval for each var
+			# transformed, so vars are in rows samples in cols, makes the next steps easier
+			samplePoints.base <- sobolSequence.points(nrow(sampleParms),31,numSample) 
+			if(sum(duplicated(samplePoints.base))>0){
+				stop('Not enough unique sample points. Check the sobol generation\n')
+			}
 		}
 		if(nullProb>0){
 			samplePoints.base[samplePoints.base<=nullProb] <- NA
@@ -336,6 +340,9 @@ generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 		}
 		samplePoints <- funStretchSamplePoints(samplePoints.base,sampleParms,
 																					 restretchSamplePoints)
+		if(sum(duplicated(samplePoints.base))>0){
+			stop('Not enough possible combinations in specified parameters to satisfy numSample\n')
+		}
 		colnames(samplePoints) <- sampleParms$Variable
 		if(!is.null(integerParms)){
 			cat('rounding integer parms...')
