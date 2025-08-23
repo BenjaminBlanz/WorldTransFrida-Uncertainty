@@ -728,6 +728,7 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 	if(verbosity>0){cat('removing split files...')}
 	unlink(perVarSubfolder,recursive = T,force = T)
 	if(verbosity>0){cat('done\n')}
+	rm(list=c('varData','filesContents.lst'))
 	gc()
 }
 mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T){
