@@ -10,7 +10,7 @@ if(length(numWorkersArg)!=1 && !is.numeric(numWorkersArg)){
 # merge files ####
 skipExtraVars <- T
 source('clusterHelp.R')
-mergePerVarFiles(verbosity = 1,parStrat=1,compressCsv=compressCsv)
+mergePerVarFiles(verbosity = 1,parStrat=2,compressCsv=compressCsv)
 source('cleanup.R')
 numWorkers <- origNumWorkers
 
