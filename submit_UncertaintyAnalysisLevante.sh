@@ -110,8 +110,8 @@ while [ $# -gt 0 ]; do
     --cpsp|--copySamplePoints)
       copySamplePoints="$2"
       ;;
-    --frida|--FRIDA|--FRIDAforUncertaintyAnalysis)
-      FRIDAforUncertaintyAnalysis="$2"
+    --frida|--FRIDA)
+      FRIDA="$2"
       ;;
     --pol|--policyFile)
       policyFile="$2"
