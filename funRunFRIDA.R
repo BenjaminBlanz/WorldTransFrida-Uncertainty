@@ -707,36 +707,19 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 	if(verbosity>0){cat(sprintf('Processing %i files of %s...',length(fileList),varName))}
 	if(verbosity>0){cat('reading and merging...')}
 	
-	varData <- readPerVarFile(file.path(perVarSubfolder,fileList[1]),outputType)
-	# numRows <- numSample
-	# skipCols <- c(1)
-	# if('sowID' %in% colnames(varDataTemplate)){
-	# 	numRows <- numRows * length(unique(varDataTemplate$sowID))
-	# 	skipCols <- c(1,2)
-	# }
-	# dataFramePreallocateString <- paste0('varData <- data.frame(id=rep(1.1,',numSample,')')
-	# if('sowID' %in% colnames(varDataTemplate)){
-	# 	dataFramePreallocateString <- paste0(dataFramePreallocateString,',\'sowID\'=rep(1.1,',numRows,')')
-	# }
-	# for(colname in colnames(varDataTemplate[,-skipCols])){
-	# 	dataFramePreallocateString <- paste0(dataFramePreallocateString,
-	# 																			 ',\'',colname,'\'=rep(1.1,',numRows,')')
-	# }
-	# dataFramePreallocateString <- paste0(dataFramePreallocateString,')')
-	# eval(parse(text=dataFramePreallocateString))
-	# upToRow <- 0
-	# tic()
-	# varData <- varDataTemplate
+	filesContents.lst <- list()
+	filesContents.lst[[1]] <- readPerVarFile(file.path(perVarSubfolder,fileList[1]),outputType)
 	for(f.i in 2:length(fileList)){
-		nextData <- readPerVarFile(file.path(perVarSubfolder,fileList[f.i]),outputType)
+		filesContents.lst[[f.i]] <- readPerVarFile(file.path(perVarSubfolder,fileList[f.i]),outputType)
 		# hack to deal with incomplete runs messing up column headers
 		# proper fix is in data generation, but this will make old results work
-		colnames(nextData) <- colnames(varData)
-		varData <- base::rbind(varData,nextData)
-		# varData[(upToRow+1):(upToRow+nrow(nextData)),] <- nextData
-		# upToRow <- upToRow + nrow(nextData)
+		colnames(filesContents.lst[[f.i]]) <- colnames(filesContents.lst[[1]])
 	}
-	# toc()
+	rbindStr <- paste0('varData <- base::rbind(filesContents.lst[[',
+										 paste(1:length(filesContents.lst),
+										 			collapse = ']],filesContents.lst[['),
+										 ']])')
+	eval(parse(text=rbindStr))
 	varData <- sort_by(varData,varData[,1])
 	colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
 	if(verbosity>0){cat('writing...')}
@@ -777,12 +760,19 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T){
 				if(verbosity>0){cat('merging...')}
 				varData <- filesContents.lst[[1]]
 				for(i in 2:length(filesContents.lst)){
-					varData <- rbind(varData,filesContents.lst[[i]])
+					colnames(filesContents.lst[[i]]) <- colnames(varData)
 				}
+				rbindStr <- paste0('varData <- base::rbind(filesContents.lst[[',
+													 paste(1:length(filesContents.lst),
+													 			collapse = ']],filesContents.lst[['),
+													 ']])')
+				eval(parse(text=rbindStr))
 				varData <- sort_by(varData,varData[,1])
 				colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
 				if(verbosity>0){cat('writing...')}
-				writePerVarFile(varData,file.path(outputTypeFolder,varName),compressCsv)
+				writePerVarFile(varData,file.path(outputTypeFolder,varName),
+												outputType = outputType,
+												compressCsv = compressCsv)
 				if(verbosity>0){cat('removing split files...')}
 				unlink(perVarSubfolder,recursive = T,force = T)
 				if(verbosity>0){cat('done\n')}
