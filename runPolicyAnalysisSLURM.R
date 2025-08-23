@@ -89,7 +89,6 @@ for(pfID in pdpMeta$pfID){
 	)
 	maxPolID <- maxPolID+pdpMeta$numSDP[pfID]
 }
-write.csv(jointPolicies,file.path(location.output,'policyIdentifierList.csv'))
 
 sampleParms <- data.frame(Variable=pdpMeta$domID,
 													Value=rep(0,nrow(pdpMeta)),
@@ -108,6 +107,8 @@ for(domID in unique(pdpMeta$domID)){
 	singlePolicyArr[(jPA.idx+1):(jPA.idx+length(domCases)),as.character(domID)] <- jointPolicies$dplID[domCases]
 	jPA.idx <- jPA.idx+length(domCases)
 }
+
+write.csv(jointPolicies,file.path(location.output,'policyIdentifierList.csv'))
 cat('done\n')
 # sample points generation is automatically verbose
 samplePoints <- generateSobolSequenceForSampleParms(sampleParms,
