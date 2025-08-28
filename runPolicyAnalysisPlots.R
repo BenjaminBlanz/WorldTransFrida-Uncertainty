@@ -5,7 +5,7 @@ figuresFolder <- file.path(location.output,'figures')
 dir.create(figuresFolder,showWarnings = F,recursive = T)
 plt.w <- 30
 plt.h <- 30
-plt.r <- 600
+plt.r <- 300
 plt.u <- 'cm'
 
 filters <- list()
@@ -30,13 +30,14 @@ vars$gdpgr[,3:(ncol(vars$gdpgr)-1)] <- (vars$gdpgr[,4:(ncol(vars$gdpgr))] - vars
 vars$gdpgr[,ncol(vars$gdpgr)] <- NA
 
 #define filter
+# the filter defines the things we keep
 filter <- complete.cases(vars$sta)
 for(var in names(filters)){
 	filter <- filter & rowSums(abs(vars[[var]][,-c(1,2)]) > filters[[var]],na.rm = T) == 0 
 }
 # apply filters
 numPolID <- length(unique(vars$sta[,'polID']))
-polIDsToRemove <- unique(vars$sta[filter,'polID'])
+polIDsToRemove <- unique(vars$sta[!filter,'polID'])
 filterInclSow <- vars$sta[,'polID'] %in% polIDsToRemove
 for(var in names(vars)){
 	vars[[var]] <- vars[[var]][filterInclSow,]
@@ -45,9 +46,13 @@ gc(verbose=F)
 cat(sprintf('Filters applied: %i removed , %i remain\n',length(polIDsToRemove),numPolID-length(polIDsToRemove)))
 
 # selecting run
-# highest GDP in 2150, that stays below 2deg
-idxOfSubSel <- which.max(vars$gdp[['2150']][vars$sta[['2150']]<2 & vars$gdp$sowID==5])
-selRun <- rownames(vars$gdp[vars$sta[['2150']]<2 & vars$gdp$sowID==5,])[idxOfSubSel]
+# highest GDP in 2150, that stays below 2deg, in median
+# idxOfSubSel <- which.max(vars$gdp[['2150']][vars$sta[['2150']]<2 & vars$gdp$sowID==5])
+# selRun <- rownames(vars$gdp[vars$sta[['2150']]<2 & vars$gdp$sowID==5,])[idxOfSubSel]
+
+# highest GDP in 2150, that stays below 2deg and has no more than 10 years in recession, in median
+idxOfSubSel <- which.max(vars$gdp[['2150']][vars$sta[['2150']]<2 & vars$rdu[['2150']]<10 & vars$gdp$sowID==5])
+selRun <- rownames(vars$gdp[vars$sta[['2150']]<2 & vars$rdu[['2150']]<10 & vars$gdp$sowID==5,])[idxOfSubSel]
 
 # highest real gdp in 2075
 # idxOfSubSel <- which.max(vars$gdp[['2075']][vars$gdp$sowID==5])
@@ -75,6 +80,7 @@ for(domID in colnames(samplePoints)){
 		selPolDescStrs <-c(selPolDescStrs, pdp.lst[[pdpName]][pdp.lst[[pdpName]]$polID==sdpID,2])
 	}
 }
+write(selPolDescStrs,file.path(figuresFolder,'selRunPolDesc.csv'))
 
 # plot ####
 plotLims <- list()
