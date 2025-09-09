@@ -398,7 +398,8 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 													'doNotReturnRunDataSavePerWorkerOnly'))
 	}
 	# plot setup 
-	if(plotDatWhileRunning & !plotPerChunk){
+	if(plotDatWhileRunning){
+		plotCape <- capabilities()
 		if(!(plotCape['X11']|plotCape['aqua'])){
 			ncols <- ncol(calDat)
 			sqrtNcols <- sqrt(ncols)
@@ -554,20 +555,21 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			subPlotLocations.chk <- funPlotDat(calDat,calDat.impExtrValue,yaxPad = yaxPad,
 																				 shadowIncompleteYears=F)
 			for(dat.i in 1:ncol(calDat)){
+				varName <- colnames(calDat)[dat.i]
 				par(mfg = which(subPlotLocations.chk==dat.i,arr.ind = T))
 				xlims <- c(min(as.numeric(rownames(calDat)))-0.5,
 									 max(as.numeric(rownames(calDat)))+0.5)
 				yrange <- range(calDat[[dat.i]],na.rm=T)
 				ylims <- c(yrange[1]-abs(diff(yrange))*yaxPad,
 									 yrange[2]+abs(diff(yrange))*yaxPad)
-				plot(rownames(calDat),calDat[[dat.i]],type='n',
+				plot(rownames(calDat),calDat[[dat.i]],type='n',col='red',pch='.',
 						 xaxt='n',yaxt='n',
 						 xaxs='i',yaxs='i',
 						 xlim=xlims,
 						 ylim=ylims)
 				for(l in 1:length(parOutput)){
 					runLL <- parOutput[[l]]$logLike
-					lines(rownames(parOutput[[l]]$runDat),parOutput[[l]]$runDat[[dat.i]],
+					lines(rownames(parOutput[[l]]$runDat),parOutput[[l]]$runDat[[varName]],
 								col=adjustcolor(1,min(1,max(plotMinAlpha,
 																						1/(abs(runLL-baseLL)+1)
 																						))))
