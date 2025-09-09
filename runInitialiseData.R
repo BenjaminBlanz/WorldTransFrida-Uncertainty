@@ -5,8 +5,6 @@
 # 2024 Benjamin Blanz
 # 
 
-library(caret,quietly=T,warn.conflicts = F) # to find linear combinations and remove them in the calib dat
-library(matrixcalc,quietly=T,warn.conflicts = F) # to test positive definitnes of cov matrix
 #library(imputeTS,quietly=T,warn.conflicts = F) # used for interpolating missing values # Only needed for interpolation after MLE, fails for R v4.4 on Levante
 
 if(!exists('runFridaDefaultParms')){
@@ -111,7 +109,8 @@ cat('\n')
 calDat <- calDat.afterImpute[,-exclude.idc]
 
 # remove manual exclusion list ####
-if(file.exists(file.path(location.frida.info,name.frida_variable_exclusion_list))&&file.size(file.path(location.frida.info,name.frida_variable_exclusion_list))>0){
+if(file.exists(file.path(location.frida.info,name.frida_variable_exclusion_list))
+	 &&file.size(file.path(location.frida.info,name.frida_variable_exclusion_list))>0){
 	manExclusionList <- read.csv(file.path(location.frida.info,name.frida_variable_exclusion_list))
 	exclude.idc <- c(exclude.idc,which(varsForExport.fridaNames.orig %in% manExclusionList$Variable))
 	cat(paste('  Excluding because of manual exclusion list',manExclusionList$Variable,'\n'))

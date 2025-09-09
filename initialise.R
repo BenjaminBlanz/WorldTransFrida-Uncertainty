@@ -6,6 +6,8 @@ suppressPackageStartupMessages({
 	library(lubridate) # deals with times
 	library(cNORM) # wighted quantiles
 	library(spatstat.explore,quietly=T,warn.conflicts = F) # used for the quantile.density function
+	library(caret,quietly=T,warn.conflicts = F) # to find linear combinations and remove them in the calib dat
+	library(matrixcalc,quietly=T,warn.conflicts = F) # to test positive definitnes of cov matrix
 })
 
 source('funRunFRIDA.R')
