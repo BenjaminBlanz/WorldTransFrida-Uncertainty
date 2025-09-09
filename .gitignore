@@ -24,9 +24,11 @@ samples*ForBilly.csv
 *.log
 UA_*
 *.DS_Store
-FRIDAforUncertaintyAnalysis
+FRIDAforUncertaintyAnalysis*
 FRIDAforUncertaintyAnalysisGit
 FRIDAforPolicyAnalysis
 FRIDAforPolicyAnalysisGit
 policy-workOutput
 policy-singleDomainPolicyMatrices
+workerDirs*
+Stella_Simulator_Linux-*
