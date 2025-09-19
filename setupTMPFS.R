@@ -1,25 +1,35 @@
-# clean up first
-if(!exists('cl')<0&&try(clusterEvalQ(cl,1+1)[[1]],silent=T)!=2){
-	if(file.exists(name.workDir)){
-		source('cleanup.R')
-	}
+
+# if there is a cluster running, we must already have setup the TMPFS,
+# so do nothing further.
+if(!exists('cl') &&
+	 try(clusterEvalQ(cl,1+1)[[1]],silent=T)!=2){
+	# clean up first
+	source('cleanup.R')
+	cat('Setting up directories...')	
 	# create the tmpfsDir and link to workerDirs
-	if(!file.exists(tmpfsDir)){
-		dir.create(tmpfsDir,recursive = T,showWarnings = F)
+	# include workunit.i in the filenames so multiple instances can work side by side
+	if(exists('workUnit.i')){
+		tmpfsDir <- paste0(origTmpfsDir,'-workUnit-',workUnit.i)
+		workDirLocation.frida <- paste0(baselocation.frida,'-',workUnit.i)
+		workDirLocation.stella <- paste0(baselocation.stella,'-',workUnit.i)
+		name.workDir <- paste0(name.workDir,'-',workUnit.i)
+	} else {
+		workDirLocation.frida <- baselocation.frida
+		workDirLocation.stella <- baselocation.stella
 	}
-	if(!file.exists(name.workDir)){
-		system(paste('ln -s',tmpfsDir,name.workDir))
+	dir.create(tmpfsDir,recursive = T,showWarnings = F)
+	system(paste('ln -s',tmpfsDir,name.workDir))
+	system(paste('cp -r',baselocation.frida,file.path(tmpfsDir,workDirLocation.frida)))
+	system(paste('cp -r',baselocation.stella,file.path(tmpfsDir,workDirLocation.stella)))
+	location.frida <- paste0(baselocation.frida,'-',name.output)
+	location.stella <- paste0(baselocation.stella,'-',name.output)
+	if(exists('workUnit.i')){
+		location.frida <- paste0(location.frida,'-',workUnit.i)
+		location.stella <- paste0(location.stella,'-',workUnit.i)
 	}
-	
-	# set up the tmpfs for the single threaded runs
-	if(!file.exists(location.frida.storage)){
-		system(paste('mv',location.frida,location.frida.storage))
-		system(paste('cp -r',location.frida.storage,file.path(tmpfsDir,location.frida)))
-		system(paste('ln -s',file.path(tmpfsDir,location.frida),location.frida))
-	}
-	if(!file.exists(location.stella.storage)){
-		system(paste('mv',location.stella,location.stella.storage))
-		system(paste('cp -r',location.stella.storage,file.path(tmpfsDir,location.stella)))
-		system(paste('ln -s',file.path(tmpfsDir,location.stella),location.stella))
-	}
+	system(paste('ln -s',file.path(tmpfsDir,workDirLocation.frida),location.frida))
+	system(paste('ln -s',file.path(tmpfsDir,workDirLocation.stella),location.stella))
+	cat('done\n')
+} else {
+	cat('Using existing directories\n')
 }

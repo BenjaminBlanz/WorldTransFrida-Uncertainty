@@ -20,8 +20,6 @@ clusterType <- 'psock'
 writePerWorkerFiles <- TRUE
 doNotReturnRunDataSavePerWorkerOnly <- FALSE
 perVarOutputTypes <- c('RDS','csv')
-name.workDir <- 'workerDirs'
-name.workerDirBasename <- 'workDir_'
 
 #plotting ####
 #related things
@@ -47,7 +45,7 @@ plotWidth <- 20
 plotHeight <- 20
 plotUnit <- 'cm'
 plotRes <- 150
-plotWeightTypes <- c('equaly')#,'logLikelihood')#,'linearly','logCutoff')#,'likelihood') #options are equal, linear, logCutoff, likelihood
+plotWeightTypes <- c('completeEqually')#,'logLikelihood')#,'linearly','logCutoff')#,'likelihood') #options are equaly, completeEqually, linear, logCutoff, likelihood
 CIsToPlot <- c(0,0.67,0.95)
 CIsToPlot.lty <- c('solid','longdash','dotted')#,'dotdash','dotted')
 CIsToPlot.lwd <- c(3,1,1)
@@ -57,6 +55,13 @@ CIsToPlot.col <- c(NA,gray(0.7,0.5),gray(0.8,0.5))
 calDat.col <- 'red'
 
 # sampling ####
+# file that contains the baseline parametrisation of the model
+# which is applied before the sample points. I.e. sample points override the
+# baseline parametrisation, but if a parameter is not present in the samplePoints, but
+# is present in the baseline parms it will be used.
+# If this is left empty, no baseline parms are applied (the ones within the model
+# files will be used).
+name.baselineParmFile <- NA
 # number of samples for the sobol sequence across all dimensions
 numSample <- 1e4
 # by default sobol sequence covers the entire range between min and max with 
@@ -114,24 +119,16 @@ if(!exists('skipParMLE')){
 	skipParMLE <- T
 }
 
-# representative subsample ####
-subSample.NumSamplePerVar <- 11
-subSample.Ps <- seq(0.5/subSample.NumSamplePerVar,1-0.5/subSample.NumSamplePerVar,
-									 length.out=subSample.NumSamplePerVar)
-subSample.TargetVars <- c('energy_balance_model_surface_temperature_anomaly',
-												 'demographics_real_gdp_per_person')
-subSample.sampleJointly <- FALSE
-
 # FRIDA config ####
-climateFeedbacksOn <- TRUE
-climateSTAOverride <- 'Off' #values are the suffixes of the corresponding files FRIDA-configs
+climateFeedbackSpecFile <- 'ClimateFeedback_On.csv'
+climateOverrideSpecFile <- 'ClimateSTAOverride_Off.csv'
 policyFileName <- 'policy_EMB.csv'#'policy_100DollarCarbonTax.csv' #'policy_EMB.csv'
 
 
 # locations and names ####
 # location of frida/stella for running
-location.frida <- './FRIDAforUncertaintyAnalysis'
-location.stella<- './Stella_Simulator_Linux'
+baselocation.frida <-location.frida <- './FRIDAforUncertaintyAnalysis'
+baselocation.stella <- location.stella<- './Stella_Simulator_Linux'
 # location frida/stella is stored while the above is located in tmpfs
 location.frida.storage <- './FRIDAforUncertaintyAnalysis-store'
 location.stella.storage <- './Stella_Simulator_Linux-store'
@@ -159,27 +156,35 @@ name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
 
 
 # execute config ####
-name.output <- paste0('N-',numSample,
-											'-ChS-',chunkSizePerWorker,
-											'-LCR-',likeCutoffRatio,
-											'-IgB-',ignoreParBounds,
-											'-FrB-',forceParBounds,
-											'-KcE-',kickParmsErrorRangeDet,
-											'-Sym-',symmetricRanges,
-											'-AAZ-',allowAssymetricToAvoidZeroRanges,
-											'-CFB-',climateFeedbacksOn,
-											'-Pol-',tools::file_path_sans_ext(policyFileName),
-											'-CTO-',climateSTAOverride)
+name.output <- 'dummyNameForSubmitSlurmScriptToOverwrite'
+# if this was not run by slurm, the above will not be overwritten and so we set a 
+# sensible output name. Otherwise name.output will be set by the slurm submit script
+if(name.output=='dummyNameForSubmitSlurmScriptToOverwrite'){
+	name.output <- paste0('N-',numSample,
+												'-ChS-',chunkSizePerWorker,
+												'-LCR-',likeCutoffRatio,
+												'-IgB-',ignoreParBounds,
+												'-FrB-',forceParBounds,
+												'-KcE-',kickParmsErrorRangeDet,
+												'-Sym-',symmetricRanges,
+												'-AAZ-',allowAssymetricToAvoidZeroRanges,
+												'-CFB-',strsplit(tools::file_path_sans_ext(climateFeedbackSpecFile),'_')[[1]][2],
+												'-Pol-',tools::file_path_sans_ext(policyFileName),
+												'-CTO-',strsplit(tools::file_path_sans_ext(climateOverrideSpecFile),'_')[[1]][2])
+}
 location.output <- file.path('workOutput',name.output)
 location.output.base <- location.output
 # tmpfs location for the worker directories to not churn the hard drive
 # and be faster
 # typical options on linux are /dev/shm or /run/user/####/ where #### is the uid
 # if both of these are unavailable use notTMPFS or some other arbitrary location on disk
-#tmpfsBaseDir <- paste0('/run/user/',system('id -u',intern = T))
-tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T))
+# tmpfsBaseDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork')
+tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T),'/rwork')
 # tmpfsBaseDir <- 'notTMPFS'
-tmpfsDir <- file.path(tmpfsBaseDir,'rwork',name.output)
+origTmpfsDir <- tmpfsDir <- file.path(tmpfsBaseDir,name.output)
+
+origName.workDir <- name.workDir <- paste0('workerDirs-',name.output)
+name.workerDirBasename <- 'workDir_'
 
 
 cat(sprintf('Output folder: %s\n',location.output))
@@ -191,14 +196,26 @@ if(file.exists(location.output)){
 }
 # save the config to the output folder
 file.copy('config.R',location.output,overwrite = T)
+
+# run setupTMPFS now, so that location.frida points to the one specific for this
+# configuration
+# but only do this if the executing process is not a worker running in its own work dir
+# we can detect this by the file not existing, as workers do not get this file
+if(file.exists('setupTMPFS.R')){
+	source('setupTMPFS.R')
+} else {
+	location.frida <- paste0(baselocation.frida,'-',name.output)
+	location.stella <- paste0(baselocation.stella,'-',name.output)
+}
+
 # copy slected policy file and climate feedbacks config to frida
 cat(sprintf('Copying %s, %s, and %s to the frida directory.\n',
-						ifelse(climateFeedbacksOn,'ClimateFeedback_On.csv','ClimateFeedback_Off.csv'),
-						policyFileName,paste0('climateSTAOverride_',climateSTAOverride,'.csv')))
-file.copy(file.path(location.frida.configs,ifelse(climateFeedbacksOn,'ClimateFeedback_On.csv','ClimateFeedback_Off.csv')),
+						climateFeedbackSpecFile,
+						policyFileName,climateOverrideSpecFile))
+file.copy(file.path(location.frida.configs,climateFeedbackSpecFile),
 					file.path(location.frida,'Data','climateFeedbackSwitches.csv'),T)
 file.copy(file.path(location.frida.configs,policyFileName),
 					file.path(location.frida,'Data','policyParameters.csv'),T)
-file.copy(file.path(location.frida.configs,paste0('ClimateSTAOverride_',climateSTAOverride,'.csv')),
+file.copy(file.path(location.frida.configs,climateOverrideSpecFile),
 					file.path(location.frida,'Data','ClimateSTAOverride.csv'),T)
 

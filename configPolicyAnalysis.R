@@ -2,6 +2,9 @@
 
 source('funParmSpace.R')
 
+expID <- 'testing2'
+addAutoNameToExpID <- T
+
 # number of joint policy scenarios
 numInitialJointPol <- 1e5
 
@@ -13,34 +16,45 @@ numInitialJointPol <- 1e5
 nullPolProb <- 0.5
 
 # parallel ####
-#if(!exists('numWorkers')){
-#	numWorkers <- min(parallel::detectCores(), 120)
-#}
+useSLURM <- TRUE
+maxJobsQueue <- 10
 numWorkers <- parallel::detectCores()
+numWorkersFileMerge <- floor(numWorkers/2)
 # How large the chunks of work are, smaller means more frequent pauses to write out
 # itermediate results (and update the diagnostic output).
-chunkSizePerWorker <- 100
+# smaller also means increaseing the total number of files, which can cause file system 
+# slow down.
+chunkSizePerWorker <- 50
 # tyoe of cluster. PSOCK allows connections across a network
 # FORK forks the currently running process, but with copy on write memory
 # sharing
 clusterType <- 'psock'
+# name of the directory containing the policy worker dirs
+origName.workDir <- name.workDir <- 'policy-WorkDirs'
+# basename of the worker dirs within the above dir.
 name.workerDirBasename <- 'policy-WorkerDir_'
-name.workDir <- 'policy-WorkDirs'
 # tmpfs location for the worker directories to not churn the hard drive
 # and be faster
 # typical options on linux are /dev/shm or /run/user/####/ where #### is the uid
 # if both of these are unavailable use notTMPFS or some other arbitrary location on disk
-tmpfsBaseDir <- paste0('/run/user/',system('id -u',intern = T))
-# tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T))
+# tmpfsBaseDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork')
+tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T),'/rwork')
 # tmpfsBaseDir <- 'notTMPFS'
 
 # output ####
-perVarOutputTypes <- c('csv','RDS')
+# valid types are 'RDS' and 'csv'
+perVarOutputTypes <- c('RDS') #'csv'
+# gzip the csv files
+compressCsv <- TRUE
 
 # locations and names ####
 # location of frida/stella for running
-location.frida <- './FRIDAforPolicyAnalysis'
-location.stella<- './Stella_Simulator_Linux'
+baselocation.frida <-location.frida <- './FRIDAforPolicyAnalysis'
+# location for setting parameters for FRIDA
+# e.g. turnig climate feedbacks on or off
+# or policy
+location.frida.configs <- './FRIDA-configs'
+baselocation.stella <- location.stella <- './Stella_Simulator_Linux'
 # location frida/stella is stored while the above is located in tmpfs
 location.frida.storage <- './FRIDAforPolicyAnalysis-store'
 location.stella.storage <- './Stella_Simulator_Linux-store'
@@ -54,10 +68,24 @@ name.frida_info <- 'frida_info.csv'
 name.frida_extra_variables_to_export_list <- 'frida_extra_variables_to_export_list.csv'
 
 
-location.singleDomainPoliciyFiles <- file.path('policy-singleDomainPolicyMatrices')
+location.singleDomainPolicyFiles <- file.path('policy-singleDomainPolicyMatrices')
 
+policyFiles <- list.files(location.singleDomainPolicyFiles)
 
-name.output <- gsub('\\.','_',paste0('N-',numInitialJointPol,'-nPr-',nullPolProb))
+if(addAutoNameToExpID){
+	name.output <- gsub('\\.','_',paste0(expID,'-N-',numInitialJointPol,'-nPr-',nullPolProb,'-polFiles-',
+																		 paste(cleanNames(tools::file_path_sans_ext(policyFiles)),collapse='-')))
+} else {
+	name.output <- expID
+}
+name.workDir <- paste0(name.workDir,'-',name.output)
+expID <- name.output
 location.output <- file.path(locaion.baseOutput,name.output)
-tmpfsDir <- file.path(tmpfsBaseDir,'rwork',name.output)
+origTmpfsDir <- tmpfsDir <- file.path(tmpfsBaseDir,name.output)
 dir.create(location.output,recursive = T,showWarnings = F)
+
+# hardcoding this here, as the below code relies on it.
+# this should become standard also in uncertainty in the future
+# Do not change!
+writePerWorkerFiles <- TRUE
+doNotReturnRunDataSavePerWorkerOnly <- TRUE

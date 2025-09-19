@@ -315,15 +315,20 @@ generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 	if(!ignoreExistingResults && file.exists(file.path(location.output,'samplePoints.RDS'))){
 		cat('Reading sampling points...')
 		samplePoints <- readRDS(file.path(location.output,'samplePoints.RDS'))
-		samplePoints.base <- readRDS(file.path(location.output,'samplePointsBase.RDS'))
 		cat('done\n')
 	} else {
-		cat('Generate sampling points using sobol sequence...')
-		# sobolSequence.points generates points on the unit interval for each var
-		# transformed, so vars are in rows samples in cols, makes the next steps easier
-		samplePoints.base <- sobolSequence.points(nrow(sampleParms),31,numSample) 
-		if(sum(duplicated(samplePoints.base))>0){
-			stop('Not enough unique sample points. Check the sobol generation\n')
+		if(nrow(sampleParms)==1){
+			samplePoints.base <- array(seq(0,1,length.out=numSample),dim=c(numSample,1))
+			colnames(samplePoints.base) <- sampleParms[1,1]
+			rownames(samplePoints.base) <- 1:numSample
+		} else {
+			cat('Generate sampling points using sobol sequence...')
+			# sobolSequence.points generates points on the unit interval for each var
+			# transformed, so vars are in rows samples in cols, makes the next steps easier
+			samplePoints.base <- sobolSequence.points(nrow(sampleParms),31,numSample) 
+			if(sum(duplicated(samplePoints.base))>0){
+				stop('Not enough unique sample points. Check the sobol generation\n')
+			}
 		}
 		if(nullProb>0){
 			samplePoints.base[samplePoints.base<=nullProb] <- NA
@@ -332,8 +337,8 @@ generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 				(samplePoints.base[!is.na(samplePoints.base)]-nullProb)/(1-nullProb)
 		}
 		if(!is.null(integerParms)){
-			sampleParms[sampleParms$Variable==integerParms$Variable,c('Max')] <- 
-				sampleParms[sampleParms$Variable==integerParms$Variable,c('Max')] + 1
+			sampleParms[sampleParms$Variable %in% integerParms$Variable,c('Max')] <- 
+				sampleParms[sampleParms$Variable %in% integerParms$Variable,c('Max')] + 1
 		}
 		samplePoints <- funStretchSamplePoints(samplePoints.base,sampleParms,
 																					 restretchSamplePoints)
@@ -350,11 +355,15 @@ generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 			}
 			samplePoints <- samplePoints[!duplicated(samplePoints),]
 		}
-		# if('Climate Units.selected climate case'%in%sampleParms$Variable){
-		# 	samplePoints[,'Climate Units.selected climate case'] <- round(samplePoints[,'Climate Units.selected climate case'])
-		# }
+		if(nrow(sampleParms)==1){
+			samplePoints <- array(samplePoints,dim=c(numSample,1))
+			colnames(samplePoints) <- sampleParms[1,1]
+			rownames(samplePoints) <- 1:numSample
+		}
+		if(sum(duplicated(samplePoints))>0){
+			stop('Not enough possible combinations in specified parameters to satisfy numSample\n')
+		}
 		saveRDS(samplePoints,file.path(location.output,'samplePoints.RDS'))
-		saveRDS(samplePoints.base,file.path(location.output,'samplePointsBase.RDS'))
 		cat('done\n')
 	}
 	return(samplePoints)

@@ -12,8 +12,7 @@ cat(paste0(
 sink()
 sink(file.path(location.output,'log.txt'),append=T,split=T)
 source('runInitialiseData.R')
-continue <- readline(paste0('Output location created. Move any files to be used here\n', location.output,'\nHit ENTER when done.\n'))
-source('setupTMPFS.R')
+continue <- readline(paste0('Output location created. Move any files to be used here\n',location.output,'\nHit ENTER when done.\n'))
 # read covariance matrix used for baseNegLL
 if(treatVarsAsIndep&&
 	 file.exists(file.path(location.output,'sigma-indepParms.RDS'))){
@@ -160,7 +159,7 @@ while(newMaxFound){
 			useOrdersOfMagGuesses <- F
 			iterations <- iterations+1
 		}
-		parscale.parvect <- parscale[1:nrow(sampleParms)]
+		parscale.parvect <- parscale[0:nrow(sampleParms)]
 		parscale.resSigmaVect <- parscale[(nrow(sampleParms)+1):length(jParVect)]
 		cat('done\n')
 		
@@ -171,9 +170,9 @@ while(newMaxFound){
 		problemCasesIdc <- which(is.infinite(parscale)|is.na(parscale))
 		problemCasesIdc.parVect <- which(is.infinite(parscale.parvect)|is.na(parscale.parvect))
 		problemCasesIdc.resSigmaVect <- which(is.infinite(parscale.resSigmaVect)|is.na(parscale.resSigmaVect))
-		cat(sprintf('%i parscales could not be determined.',length(problemCasesIdc)))
+		cat(sprintf('%i parscales could not be determined.\n',length(problemCasesIdc)))
 		if(length(problemCasesIdc.resSigmaVect)>0){
-			cat(sprintf('  %i in resSigmaVect, guesses will be used',
+			cat(sprintf('  %i in resSigmaVect, guesses will be used\n',
 									length(problemCasesIdc.resSigmaVect)))
 			parscale.resSigmaVect[problemCasesIdc.resSigmaVect] <- 
 				10^ordersOfMagGuesses.resSigmaVect[problemCasesIdc.resSigmaVect]
@@ -412,18 +411,24 @@ while(newMaxFound){
 		cat('Not reading manual ranges, as ignoreParBounds==TRUE\n')
 	} else {
 		manualBorders <- read.csv(file.path(location.frida.info,name.frida_external_ranges))
+		manualBorders <- manualBorders[manualBorders$Variable %in% sampleParms$Variable,]
 		cat(sprintf('applying manual ranges for %i parameters...',nrow(manualBorders)))
 		if(nrow(manualBorders)>0){
-			for(r.i in 1:nrow(manualBorders)){
+			for(r.i in 0:nrow(manualBorders)){
 				sp.i <- which(sampleParms$Variable==manualBorders$Variable[r.i])
-				if(!is.na(manualBorders$Min[r.i])){
-					sampleParms$Min[sp.i] <- border.coefs[sp.i,'Min'] <- manualBorders$Min[r.i]
-					notDeterminedBorders[sp.i,'Min'] <- FALSE
+				if(length(sp.i)==1){
+					if(!is.na(manualBorders$Min[r.i])){
+						sampleParms$Min[sp.i] <- border.coefs[sp.i,'Min'] <- manualBorders$Min[r.i]
+						notDeterminedBorders[sp.i,'Min'] <- FALSE
+					}
+					if(!is.na(manualBorders$Max[r.i])){
+						sampleParms$Max[sp.i] <- border.coefs[sp.i,'Max'] <- manualBorders$Max[r.i]
+						notDeterminedBorders[sp.i,'Max'] <- FALSE
+					}
+				} else if (length(sp.i)>1){
+					stop('Multiple parms with same name\n')
 				}
-				if(!is.na(manualBorders$Max[r.i])){
-					sampleParms$Max[sp.i] <- border.coefs[sp.i,'Max'] <- manualBorders$Max[r.i]
-					notDeterminedBorders[sp.i,'Max'] <- FALSE
-				}
+				# if the parm is not present at all do nothing
 			}
 		}
 		write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
@@ -458,8 +463,8 @@ while(newMaxFound){
 	} else {
 		for(direction in c('Min','Max')){
 			sampleParms[[paste0(direction,'NotDeterminedBorder')]] <- notDeterminedBorders[,direction]
-			sampleParms[[paste0(direction,'BorderLogLikeError')]] <- NA
-			sampleParms[[paste0(direction,'KickParmsErrorRangeDet')]] <- FALSE
+			sampleParms[[paste0(direction,'BorderLogLikeError')]] <- rep(NA,nrow(sampleParms))
+			sampleParms[[paste0(direction,'KickParmsErrorRangeDet')]] <- rep(FALSE,nrow(sampleParms))
 			sampleParms[[paste0(direction,'BoundByAuthors')]] <- sampleParms[[direction]]==parBounds[,direction]
 		}
 	}
@@ -521,7 +526,9 @@ while(newMaxFound){
 	parVect <- sampleParms$Value
 	names(parVect) <- sampleParms$Variable
 	maxLLike <- -negLLike(parVect)
-	if(-baseNegLL!=maxLLike){stop('call ghostbusters\n')}
+	if(-baseNegLL!=maxLLike) {
+		cat(sprintf('Would have called ghostbusters... -baseNegLL=%10f, maxLLike=%10f\n', -baseNegLL, maxLLike))
+	}
 	
 	## sample points ####
 	# add the integer parms back
@@ -537,12 +544,29 @@ while(newMaxFound){
 																												ignoreExistingResults = T,
 																												integerParms = integerParms)
 	}
-	
+	# apply baseline parms
+	if(!is.na(name.baselineParmFile)&&name.baselineParmFile!=''){
+		baselineParms <- read.csv(file.path(location.frida.configs,name.baselineParmFile))
+		baselineParmsNames <- unname(unlist(read.table(file.path(location.frida.configs,name.baselineParmFile),nrows = 1,sep=',')))
+		baselineParmsNames <- gsub('([^\\]])$','\\1\\[1\\]',baselineParmsNames,perl=T)
+		baselineParmsNames <- gsub('\\[\\*','\\[1',baselineParmsNames,perl=T)
+		if(nrow(baselineParms)>1){
+			stop('baseline parms may only be a single set (line)\n')
+		}
+		for(par.i in 1:length(colnames(baselineParms))){
+			if(!baselineParmsNames[par.i]%in%colnames(samplePoints)){
+				newcol <- array(baselineParms[par.i],dim=c(nrow(samplePoints),1))
+				colnames(newcol) <- baselineParmsNames[par.i]
+				samplePoints <- base::cbind(samplePoints,newcol)
+			}
+		}
+	}
+	cat('saving sampleParms and samplePoints...')
 	write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
 	saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
 	saveRDS(samplePoints,file.path(location.output,'samplePoints.RDS'))
-	# write.csv(samplePoints,file.path(location.output,'samplePoints.csv'))
-	
+	write.csv(samplePoints,file.path(location.output,'samplePoints.csv'))
+	cat('done\n')
 	
 	## write export spec ####
 	extraVarNamesForExport <- read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN

@@ -15,7 +15,6 @@ if(!exists('location.output')){
 }
 
 # do not stop and start the cluster, instead just reinitialise
-Sys.sleep(1) # prevent race condition if the cluster was busy or sth.
 if(exists('cl')){
 	result <- try(clusterEvalQ(cl,1+1)[[1]],silent=T)
 }
@@ -65,7 +64,7 @@ if(exists('cl')&&is.numeric(result)&&result==2){
 	}
 	
 	# start cluster
-	cat('start...')
+	cat('start cluster...')
 	if(clusterType=='fork'){
 		cl <- makeForkCluster(numWorkers)
 	} else if (clusterType=='psock'){
@@ -108,10 +107,12 @@ if(exists('cl')&&is.numeric(result)&&result==2){
 			file.copy(file.path(baseWD,location.frida.info,name.frida_info),getwd(),overwrite = T)
 		}
 	})
-	cat('extra vars...')
-	# copy extra vars if present (for restarting the cluster during testing)
-	if(exists('sampleParms')){clusterExport(cl,list('sampleParms'))}
-	if(exists('calDat')){clusterExport(cl,list('calDat'))}
-	if(exists('resSigma')){clusterExport(cl,list('resSigma'))}
+	if(!exists('skipExtraVars')){
+		cat('extra vars...')
+		# copy extra vars if present (for restarting the cluster during testing)
+		if(exists('sampleParms')){clusterExport(cl,list('sampleParms'))}
+		if(exists('calDat')){clusterExport(cl,list('calDat'))}
+		if(exists('resSigma')){clusterExport(cl,list('resSigma'))}
+	}
 	cat('done\n')
 }

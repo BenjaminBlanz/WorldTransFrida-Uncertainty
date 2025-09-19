@@ -2,15 +2,6 @@ diff --git a/FRIDA.stmx b/FRIDA.stmx
 index 50900c0..a2cef7d 100644
 --- a/FRIDA.stmx
 +++ b/FRIDA.stmx
-@@ -7,7 +7,7 @@
- 		<vendor>isee systems, inc.</vendor>
- 		<product version="3.8" isee:build_number="3578" isee:saved_by_v1="true" lang="en">Stella Architect</product>
- 	</header>
--	<sim_specs isee:sim_duration="0" isee:run_prefix="Run" isee:simulation_delay="0" isee:restore_on_start="false" isee:save_interval="1" method="RK4" time_units="Year" isee:instantaneous_flows="false" isee:ignore_module_errors="false" isee:strict_units="false" isee:loop_scores="false" isee:loop_exhaustive_allowed="1000">
-+	<sim_specs isee:sim_duration="0" isee:run_prefix="Run" isee:simulation_delay="0" isee:restore_on_start="false" isee:save_interval="1" method="RK4" time_units="Year" isee:instantaneous_flows="false" isee:ignore_module_errors="false" isee:strict_units="false" isee:loop_scores="false" isee:loop_exhaustive_allowed="1000" isee:analyze_mode="false">
- 		<start>1980</start>
- 		<stop>Simulation_End</stop>
- 		<dt reciprocal="true">8</dt>
 @@ -79,7 +79,14 @@
  	<isee:number_format_extenders/>
  	<default_format scale_by="1"/>

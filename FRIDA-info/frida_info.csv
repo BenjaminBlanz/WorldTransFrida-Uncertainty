@@ -1,737 +1,729 @@
-Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Variable,External Parameter,Internal Calibration Parameter,No Sensi,Parameter,Policy,Unit,Value,Min,Max
-"Simulation End",0,0,0,0,0,0,1,0,0,0,2150,2023,2200
-"Animal Products Demand.average daily demand per capita in 1980[1]",0,0,0,0,0,1,0,0,0,0,377.763038651953,350,400
-"Animal Products Demand.elasticity of demand to GDP[1]",0,0,0,0,0,1,0,0,0,0,0.398392964876698,0,1
-"Animal Products Demand.growth rate of socioeconomic effect[1]",0,0,0,0,0,1,0,0,0,0,-5.97659679187918,-7.5,-2.5
-"Animal Products Demand.initial share of demand from consumption domain[1]",0,0,0,0,0,1,0,0,0,0,0.17785654811108,0.15,0.3
-"Animal Products Demand.maximum effect of additional environmental consciousness[1]",1,0,0,0,0,0,0,0,0,0,0.5,0.25,0.75
-"Animal Products Demand.normal sensitivity of personal norm to climate risk[1]",0,0,0,0,0,1,0,0,0,0,-0.539168518858367,-2,-0.01
-"Animal Products Demand.range of socioeconomic effect[1]",1,0,0,0,0,0,0,0,0,0,1,0.5,1.5
-"Animal Products Demand.reference GDP per person for socioeconomic effect[1]",0,0,0,0,1,0,0,0,0,0,40000,35000,45000
-"Animal Products Demand.sensitivity of demand to relative scarcity[1]",0,0,0,0,0,1,0,0,0,0,0.513105792960793,0,1
-"Animal Products Demand.sensitivity of personal norm to consumption risk[1]",0,0,0,0,0,1,0,0,0,0,-0.731307305449605,-2,-0.1
-"Animal Products Demand.sensitivity of personal norm to social value[1]",0,0,0,0,0,1,0,0,0,0,0.998463390740021,0.1,2
-"Animal Products Demand.sensitivity of social value perception[1]",0,0,0,0,0,1,0,0,0,0,1.29363878627903,0.1,2
-"Animal Products Demand.time horizon for long term perception[1]",0,0,0,0,0,1,0,0,0,0,55.5016287320391,20,100
-"Animal Products Demand.time horizon for short term perception[1]",0,0,0,0,0,1,0,0,0,0,5.71580941364724,1,20
-"Animal Products Demand.time to adjust consumption pattern[1]",0,0,0,0,0,1,0,0,0,0,4.3197942959022,1,10
-"Animal Products Demand.time to adjust desired demand from accessibility[1]",0,0,0,0,0,1,0,0,0,0,1.0258931993514,1,5
-"Animal Products Demand.time to adjust value perception[1]",0,0,0,0,0,1,0,0,0,0,5.00203760193562,1,10
-"Animal Products Demand.time to observe consequences[1]",0,0,0,0,0,1,0,0,0,0,25.0084399606373,10,30
-"Animal Products Demand.time to perceive average consumption[1]",0,0,0,0,0,1,0,0,0,0,2.85872025323181,1,5
-"Climate Risk Perception.additional time horizon of reference climate extremes exposure[1]",0,0,0,0,0,1,0,0,0,0,51.0952027298084,10,100
-"Climate Risk Perception.additional time horizon of reference SLR flooding exposure[1]",0,0,0,0,0,1,0,0,0,0,48.0481328069786,10,100
-"Climate Risk Perception.maximum effect of additional environmental consciousness on climate information sensitivity[1]",1,0,0,0,0,0,0,0,0,0,0.5,0.25,0.75
-"Climate Risk Perception.maximum effect of additional environmental consciousness on reference time horizon[1]",1,0,0,0,0,0,0,0,0,0,5,2.5,7.5
-"Climate Risk Perception.minimum reference for SLR flooding exposure[1]",1,0,0,0,0,0,0,0,0,0,10,5,15
-"Climate Risk Perception.normal additional time horizon of reference temperature anomaly[1]",0,0,0,0,0,1,0,0,0,0,10.0528228428386,10,100
-"Climate Risk Perception.normal sensitivity to climate information[1]",0,0,0,0,0,1,0,0,0,0,0.504395896216198,0,1
-"Climate Risk Perception.sensitivity to climatic events exposure[1]",0,0,0,0,0,1,0,0,0,0,0.534713154373705,0,1
-"Climate Risk Perception.time to perceive climate extremes exposure[1]",0,0,0,0,0,1,0,0,0,0,3.92167072438823,1,10
-"Climate Risk Perception.time to perceive SLR flooding exposure[1]",0,0,0,0,0,1,0,0,0,0,3.03895267564342,1,10
-"Climate Risk Perception.time to report and perceive climate information[1]",0,0,0,0,0,1,0,0,0,0,6.13805899892639,1,10
-"Total Food Demand.average daily demand per capita in 1980[1]",0,0,0,0,0,1,0,0,0,0,2439.14460954741,2300,2500
-"Total Food Demand.elasticity of demand to GDP[1]",0,0,0,0,0,1,0,0,0,0,0.28442726895672,0,1
-"Total Food Demand.growth rate of socioeconomic effect[1]",0,0,0,0,0,1,0,0,0,0,-4.96945045477866,-7.5,-2.5
-"Total Food Demand.range of socioeconomic effect[1]",1,0,0,0,0,0,0,0,0,0,1,0.5,1.5
-"Total Food Demand.reference GDP per person for socioeconomic effect[1]",0,0,0,0,1,0,0,0,0,0,50000,45000,55000
-"Total Food Demand.sensitivity of demand to scarcity[1]",0,0,0,0,0,1,0,0,0,0,0.509262893265083,0,1
-"Total Food Demand.sensitivity of personal norm to climate risk[1]",0,0,0,0,0,1,0,0,0,0,-0.115833955801314,-2,-0.01
-"Total Food Demand.sensitivity of personal norm to consumption risk[1]",0,0,0,0,0,1,0,0,0,0,-0.762537775574747,-2,-0.1
-"Total Food Demand.sensitivity of personal norm to social value[1]",0,0,0,0,0,1,0,0,0,0,0.911394423965517,0.1,2
-"Total Food Demand.sensitivity of social value perception[1]",0,0,0,0,0,1,0,0,0,0,1.12988701375632,0.1,2
-"Total Food Demand.time horizon for long term perception[1]",0,0,0,0,0,1,0,0,0,0,55.4133138338667,20,100
-"Total Food Demand.time horizon for short term perception[1]",0,0,0,0,0,1,0,0,0,0,2.41325544430903,1,20
-"Total Food Demand.time to adjust consumption pattern[1]",0,0,0,0,0,1,0,0,0,0,1.86155580615495,1,10
-"Total Food Demand.time to adjust desired demand from accessibility[1]",0,0,0,0,0,1,0,0,0,0,1.60194947837275,1,5
-"Total Food Demand.time to adjust value perception[1]",0,0,0,0,0,1,0,0,0,0,5.02861988432261,1,10
-"Total Food Demand.time to observe consequences[1]",0,0,0,0,0,1,0,0,0,0,6.64990856127302,5,30
-"Total Food Demand.time to perceive average consumption[1]",0,0,0,0,0,1,0,0,0,0,2.44455741760626,1,5
-"Behavioral Choices.switch animal products fraction policy",0,0,0,0,0,0,0,0,1,0,0,0,1
-"Behavioral Choices.switch aquatic animal products fraction policy",0,0,0,0,0,0,0,0,1,0,0,0,1
-"Behavioral Choices.switch energy demand policy",0,0,0,0,0,0,0,0,1,0,0,0,1
-"Behavioral Choices.switch environmental consciousness policy",0,0,0,0,0,0,0,0,1,0,0,0,1
-"Behavioral Choices.switch food demand policy",0,0,0,0,0,0,0,0,1,0,0,0,1
-"Climate.climate impact stoptime",0,0,0,0,0,0,1,0,0,0,2025,1979,2130
-"Climate.switch behavioral impact",0,0,0,0,0,0,1,0,0,0,1,0,1
-"Climate.switch concrete impact",0,0,0,0,0,0,1,0,0,0,1,0,1
-"Climate.switch demography damage",0,0,0,0,0,0,1,0,0,0,1,0,1
-"Climate.switch energy damage",0,0,0,0,0,0,1,0,0,0,1,0,1
-"Climate.switch finance damage",0,0,0,0,0,0,1,0,0,0,1,0,1
-"Climate.switch government damage",0,0,0,0,0,0,1,0,0,0,1,0,1
-"Climate.switch internal to climate land carbon impact",0,0,0,0,0,0,1,0,0,0,1,0,1
-"Climate.switch labor damage",0,0,0,0,0,0,1,0,0,0,1,0,1
-"Climate.switch landuse damage",0,0,0,0,0,0,1,0,0,0,1,0,1
-"Climate.switch sea level rise damage",0,0,0,0,0,0,1,0,0,0,1,0,1
-"Climate.switch sea level rise fatalities damage",0,0,0,0,0,0,1,0,0,0,1,0,1
-"Climate.switch sea level rise finance damage",0,0,0,0,0,0,1,0,0,0,1,0,1
-"Climate.switch sea level rise productivity reduction damage",0,0,0,0,0,0,1,0,0,0,1,0,1
-"Climate.switch sea level rise protection cost damage",0,0,0,0,0,0,1,0,0,0,1,0,1
-"Climate.switch sea level rise relocation cost damage",0,0,0,0,0,0,1,0,0,0,1,0,1
-"Emissions.baseline Food and Land use CH4 emissions[1]",0,0,0,0,0,1,0,0,0,0,46.7098266259576,40,60
-"Emissions.baseline Food and Land Use N2O emissions[1]",0,0,0,0,0,1,0,0,0,0,3691.19740990857,2000,4000
-"Emissions.baseline GDP per person[1]",0,0,0,0,0,1,0,0,0,0,7.508917812,5,15
-"Emissions.baseline HFC134a eq per person[1]",0,0,0,0,0,1,0,0,0,0,0.00152911881560677,0,0.02
-"Emissions.baseline N2O per person[1]",0,0,0,0,0,1,0,0,0,0,0.000132942470536747,0,0.0002
-"Emissions.baseline non fossil CH4 per person[1]",0,0,0,0,0,1,0,0,0,0,0.00981195479395444,0,0.05
-"Emissions.desulphurisation rate of energy related emissions[1, Gas]",0,0,0,0,0,1,0,0,0,0,-0.0361797285928523,-0.1,0
-"Emissions.desulphurisation rate of energy related emissions[1, Oil]",0,0,0,0,0,1,0,0,0,0,-0.0188666699148905,-0.1,0
-"Emissions.desulphurisation rate of energy related emissions[1, Coal]",0,0,0,0,0,1,0,0,0,0,-0.0383582127304921,-0.1,0
-"Emissions.effective CDD logistic speed[1]",0,0,0,0,0,1,0,0,0,0,3.34499805495326,0,10
-"Emissions.Initial Fossil Energy CH4 Intensity[1, Gas]",0,0,0,0,0,1,0,0,0,0,28.9345478534253,5,50
-"Emissions.Initial Fossil Energy CH4 Intensity[1, Oil]",0,0,0,0,0,1,0,0,0,0,19.0025146824999,5,50
-"Emissions.Initial Fossil Energy CH4 Intensity[1, Coal]",0,0,0,0,0,1,0,0,0,0,34.4451718431361,5,50
-"Emissions.Initial Fossil Energy N2O Intensity[1, Gas]",0,0,0,0,0,1,0,0,0,0,226.848954704993,50,500
-"Emissions.Initial Fossil Energy N2O Intensity[1, Oil]",0,0,0,0,0,1,0,0,0,0,277.709310218157,50,500
-"Emissions.Initial Fossil Energy N2O Intensity[1, Coal]",0,0,0,0,0,1,0,0,0,0,499.639768375586,50,500
-"Emissions.Initial Fossil Energy Sulfur Intensity[1, Gas]",0,0,0,0,0,1,0,0,0,0,40.041761579119,5,50
-"Emissions.Initial Fossil Energy Sulfur Intensity[1, Oil]",0,0,0,0,0,1,0,0,0,0,12.5311771546941,5,50
-"Emissions.Initial Fossil Energy Sulfur Intensity[1, Coal]",0,0,0,0,0,1,0,0,0,0,48.4416379781151,5,50
-"Emissions.MtCH4 emission per PCal animal products 1980[1]",0,0,0,0,0,1,0,0,0,0,0.117148779927286,0,0.3
-"Emissions.MtN2O emission per PCal animal products 1980[1]",0,0,0,0,0,1,0,0,0,0,0.00256924857836404,0,0.01
-"Emissions.rate of change in energy related CH4 emissions[1, Gas]",0,0,0,0,0,1,0,0,0,0,-0.0722212629576704,-0.2,0
-"Emissions.rate of change in energy related CH4 emissions[1, Oil]",0,0,0,0,0,1,0,0,0,0,-0.0447143748160744,-0.2,0
-"Emissions.rate of change in energy related CH4 emissions[1, Coal]",0,0,0,0,0,1,0,0,0,0,-0.00146366448317569,-0.2,0
-"Emissions.rate of change in energy related N2O emissions[1, Gas]",0,0,0,0,0,1,0,0,0,0,-0.0176993617033169,-0.05,0
-"Emissions.rate of change in energy related N2O emissions[1, Oil]",0,0,0,0,0,1,0,0,0,0,-0.00869805586799937,-0.05,0
-"Emissions.rate of change in energy related N2O emissions[1, Coal]",0,0,0,0,0,1,0,0,0,0,-0.023197225810528,-0.05,0
-"Emissions.rate of decline in MtCH4 emission per PCal animal products[1]",0,0,0,0,0,1,0,0,0,0,0.0140009683559439,0,0.018
-"Emissions.rate of decline in MtN2O emission per PCal animal products[1]",0,0,0,0,0,1,0,0,0,0,0.00137867223604397,0,0.02
-"Emissions.rate of decline in tN2O emission per tN fertilizer[1]",0,0,0,0,0,1,0,0,0,0,0.00596260172254414,0,0.02
-"Emissions.sensitivity of HFC134a eq per person to relative CDD[1]",0,0,0,0,0,1,0,0,0,0,8.09022641255435,1,10
-"Emissions.sensitivity of non fossil CH4 per person to GDP per capita[1]",0,0,0,0,0,1,0,0,0,0,0,-1,1
-"Emissions.sensitivity of Other N2O per person to GDP per capita[1]",0,0,0,0,0,1,0,0,0,0,-0.275015555994815,-1,1
-"Emissions.tN2O emission per tN fertilizer 1980[1]",0,0,0,0,0,1,0,0,0,0,0.0255426788719578,0,0.1
-"Energy Balance Model.T effect on population exposure to record breaking indices[1]",0,0,1,0,1,0,0,0,0,0,0.72065224,0.5655407,0.87576371
-"Energy Balance Model.T2 effect on population exposure to record breaking indices[1]",0,0,1,0,1,0,0,0,0,0,-0.024831,-0.04022107,-0.00944092
-"Sea Level.Include MICI behaviour",0,0,0,0,0,0,1,0,0,0,0,0,1
-"Sea Level.initial sea level anomaly from AntIS[1]",0,0,0,0,1,0,1,0,0,0,-0.00182,-0.005,0.01
-"Sea Level.initial sea level anomaly from GrIS[1]",0,0,0,0,1,0,1,0,0,0,-0.0028,-0.01,0
-"Sea Level.initial sea level anomaly from LWS[1]",0,0,0,0,1,1,1,0,0,0,-0.00539470633599259,-0.1,0.1
-"Sea Level.initial sea level anomaly from MG[1]",0,0,0,0,1,0,1,0,0,0,-0.0035,-0.005,-0.001
-"Sea Level.initial thermosteric sea level anomaly[1]",0,0,0,0,1,0,1,0,0,0,-0.008,-0.015,-0.005
-"Sea Level.Initial water storage from water impoundment",0,0,0,0,1,1,1,0,0,0,3950000000000,2500000000000,5500000000000
-"Sea Level.scale factor Antarctic ice sheet[1]",0,0,1,0,1,0,0,0,0,0,0.5,0,1
-"Sea Level.scale factor Greenland ice sheet[1]",0,0,1,0,1,0,0,0,0,0,0.5,0,1
-"Sea Level.scale factor mountain glaciers[1]",0,0,1,0,1,0,0,0,0,0,0.5,0,1
-"Sea Level.scale factor thermosteric SLR[1]",0,0,1,0,1,0,0,0,0,0,0.5,0,1
-"Sea Level.Water catchment per GW of hydropower[1]",0,0,0,0,0,1,0,0,0,0,3001315083.20837,2000000000,5000000000
-"Terrestrial Carbon Balance.Global peatland carbon uptake rate[1]",0,0,0,0,0,1,0,0,0,0,0.299954605,0.1,0.3
-"Demographics.1 to 20 mortality alpha[1]",0,0,0,0,0,1,0,0,0,0,0.521882267359878,0,3
-"Demographics.1 to 20 mortality gamma[1]",0,0,0,0,0,1,0,0,0,0,-1.5827265718578,-3,0
-"Demographics.20 to 40 mortality alpha[1]",0,0,0,0,0,1,0,0,0,0,1.75431761212387,0,3
-"Demographics.20 to 40 mortality gamma[1]",0,0,0,0,0,1,0,0,0,0,-0.718942993661345,-3,0
-"Demographics.40 to 60 mortality alpha[1]",0,0,0,0,0,1,0,0,0,0,0.81055002129211,0,3
-"Demographics.40 to 60 mortality gamma[1]",0,0,0,0,0,1,0,0,0,0,-0.63152254750013,-3,0
-"Demographics.60 to 65 mortality alpha[1]",0,0,0,0,0,1,0,0,0,0,0.942279130474126,0,3
-"Demographics.60 to 65 mortality gamma[1]",0,0,0,0,0,1,0,0,0,0,-0.654989239944643,-3,0
-"Demographics.65 to 75 mortality alpha[1]",0,0,0,0,0,1,0,0,0,0,1.076681733,0,3
-"Demographics.65 to 75 mortality gamma[1]",0,0,0,0,0,1,0,0,0,0,-0.644522938598286,-3,0
-"Demographics.averaging time[1]",0,0,0,0,0,1,0,0,0,0,7,7,20
-"Demographics.Cold mortality sensitivity to T[1]",0,0,1,0,1,0,0,0,0,0,-0.018991789,-0.01974,-0.01825
-"Demographics.Cold mortality sensitivity to T2[1]",0,0,1,0,1,0,0,0,0,0,0.001940396,0.00183,0.00206
-"Demographics.effect of GDP on female population literacy percentage constant[1]",0,0,0,0,0,1,0,0,0,0,-0.480993429103833,-5,5
-"Demographics.effect of GDP on female population literacy percentage scale factor[1]",0,0,0,0,0,1,0,0,0,0,3.50341638903122,0,5
-"Demographics.Hot mortality sensitivity to T[1]",0,0,1,0,1,0,0,0,0,0,0.031995745,0.02646,0.03702
-"Demographics.Hot mortality sensitivity to T2[1]",0,0,1,0,1,0,0,0,0,0,-0.000613013,-0.00183,0.000693
-"Demographics.infant mortality alpha[1]",0,0,0,0,0,1,0,0,0,0,0.794998128560624,0,2
-"Demographics.infant mortality gamma[1]",0,0,0,0,0,1,0,0,0,0,-1.54362576073659,-3,0
-"Demographics.initial average relative nominal gdp per person[1]",0,0,0,0,0,1,0,0,0,0,0.836977789295941,0.5,1
-"Demographics.initial fertility[1]",0,0,0,0,0,1,0,0,0,0,3.867447174,0,10
-"Demographics.Over 75 mortality alpha[1]",0,0,0,0,0,1,0,0,0,0,0.507668341,0,3
-"Demographics.Over 75 mortality gamma[1]",0,0,0,0,0,1,0,0,0,0,-0.480078351762982,-3,0
-"Demographics.sensitivity of fertility to inverse GDP per person[1]",0,0,0,0,0,1,0,0,0,0,-0.459418839026179,-2,0
-"Demographics.sensitivity of fertility to literacy[1]",0,0,0,0,0,1,0,0,0,0,-0.018845205,-0.05,0
-"Demographics.time to change fertility[1]",0,0,0,0,0,1,0,0,0,0,23.99454405,15,25
-"Circular Flow.consumption habits adjustment time[1]",1,0,0,0,0,1,0,0,0,0,1.464111314,0.5,2.5
-"Circular Flow.desired savings as multiple of profits[1]",0,0,0,0,0,1,0,0,0,0,11.959643088224,2,20
-"Circular Flow.desired savings as multiple of wages[1]",0,0,0,0,0,1,0,0,0,0,1.73520197811103,1,5
-"Circular Flow.fraction of income to consumption[1]",1,0,0,0,0,1,0,0,0,0,0.75,0.65,0.85
-"Circular Flow.fraction of owner income to consumption[1]",1,0,0,0,0,1,0,0,0,0,0.75,0.65,0.85
-"Circular Flow.initial firms checking accounts[1]",0,0,0,0,0,1,0,0,0,0,5003.53414951,4000,6000
-"Circular Flow.initial owner savings[1]",0,0,0,0,0,1,0,0,0,0,46357.0465153,30000,60000
-"Circular Flow.initial worker savings[1]",0,0,0,0,0,1,0,0,0,0,22209.0362704,20000,30000
-"Circular Flow.minimum fraction of income to consumption[1]",1,0,0,0,0,1,0,0,0,0,0.35,0.25,0.45
-"Circular Flow.normal bottom 40 wages[1]",0,0,0,0,0,1,0,0,0,0,0.112361832107313,0.05,0.15
-"Circular Flow.profit tax rate[1]",0,0,0,0,0,1,0,0,0,0,0.327443333564517,0,0.4
-"Circular Flow.time for bottom 40 to be affected[1]",0,0,0,0,0,1,0,0,0,0,20,1,20
-"Circular Flow.time for inflation to change consumption[1]",0,0,0,0,0,1,0,0,0,1,1,0.5,2
-"Circular Flow.time to consider desired savings[1]",0,0,0,0,0,1,0,0,0,0,1.68505580860359,1,10
-"Circular Flow.time to pay out profits[1]",0,0,0,0,0,1,0,0,0,0,2.41900072499316,1,5
-"Circular Flow.time to reach savings goal[1]",0,0,0,0,0,1,0,0,0,0,4.76244896094109,1,5
-"Circular Flow.wage tax rate[1]",0,0,0,0,0,1,0,0,0,0,0.218514085704368,0.1,0.3
-"Circular Flow.xfinish[1]",0,0,0,0,0,1,0,0,0,0,1.83924954720287,1,2
-"Circular Flow.xmiddle[1]",0,0,0,0,0,1,0,0,0,0,0.798639728206527,0.5,1.5
-"Circular Flow.xspeed[1]",0,0,0,0,0,1,0,0,0,0,11.0612046289175,1,16
-"Circular Flow.xstart[1]",0,0,0,0,0,1,0,0,0,0,0.063144440403097,0,1
-"Circular Flow.yfrom[1]",0,0,0,0,0,1,0,0,0,0,1.39617351302856,1.1,2
-"Circular Flow.yto[1]",0,0,0,0,0,1,0,0,0,0,0.565293587864245,0,1
-"Employment.average development completion time[1]",1,0,0,0,0,1,0,0,0,0,5,4,6
-"Employment.fraction of productivity gains translating to firing[1]",1,0,0,0,0,1,0,0,0,0,0.5,0.25,0.75
-"Employment.hiring to investment ratio[1]",0,0,0,0,0,1,0,0,0,0,0.453576692359076,0.1,0.75
-"Employment.initial productivity growth[1]",1,0,0,0,0,1,0,0,0,0,0.0268379400227628,0.01,0.03
-"Employment.initial unemployment rate[1]",0,0,0,0,0,1,0,0,0,0,0.0517521320695013,0.03,0.1
-"Employment.Initial Wage Rate[1]",0,0,0,0,0,1,0,0,0,0,5569.25785906402,2000,10000
-"Employment.labour force participation fixed[1]",0,0,0,0,0,1,0,0,0,0,63.9533581236645,61.8,66
-"Employment.max change in fractional wage growth[1]",0,0,0,0,0,1,0,0,0,0,0.0651860521548508,0,0.9
-"Employment.max firing percentage[1]",0,0,0,0,0,1,0,0,0,0,0.0440130495610323,0.03,0.1
-"Employment.negotiation effectiveness[1]",1,0,0,0,0,1,0,0,0,0,1,0.5,1.5
-"Employment.productivity yield of exploratory investment[1]",1,0,0,0,0,1,0,0,0,0,1.947328313,0.9473283132336,2.9473283132336
-"Employment.productivity yield of non bank innovation[1]",1,0,0,0,0,1,0,0,0,0,0.132668695,0.05,0.25
-"Employment.profit threshold multiplier[1]",1,0,0,0,0,0,0,0,0,0,1,0.5,2
-"Employment.rent to investment ratio[1]",1,0,0,0,0,1,0,0,0,0,0.25,0.15,0.35
-"Employment.sensitivity of firing to profit discrepancy[1]",1,0,0,0,0,1,0,0,0,0,0.5,0.25,1
-"Employment.sensitivity of hiring to unemployment rate[1]",0,0,0,0,0,1,0,0,0,0,1.54823562878133,0.1,2
-"Employment.share of employment in agriculture intercept[1]",0,0,0,0,0,1,0,0,0,0,62.901759597299,-100,100
-"Employment.share of employment in agriculture slope[1]",0,0,0,0,0,1,0,0,0,0,-15.3331166860372,-50,1
-"Employment.share of employment in industry intercept[1]",0,0,0,0,0,1,0,0,0,0,-2.58133183549477,-100,100
-"Employment.share of employment in industry slope[1]",0,0,0,0,0,1,0,0,0,0,2.9310559170307,0,10
-"Employment.share of employment in services intercept[1]",0,0,0,0,0,1,0,0,0,0,-30.7387076354652,-100,100
-"Employment.share of employment in services slope[1]",0,0,0,0,0,1,0,0,0,0,7.49845788086441,0,10
-"Employment.Temperature effect on high exposure productivity[1]",0,0,1,0,1,0,0,0,0,0,-6.13282138,-25,4
-"Employment.Temperature effect on low exposure productivity[1]",0,0,1,0,1,0,0,0,0,0,-2.08262027,-16,5
-"Employment.Temperature squared effect on high exposure productivity[1]",0,0,1,0,1,0,0,0,0,0,-1.06197873,-1.5,1
-"Employment.Temperature squared effect on low exposure productivity[1]",0,0,1,0,1,0,0,0,0,0,-1.56936859,-2,0.1
-"Employment.threshold unemployment rate[1]",0,0,0,0,0,1,0,0,0,0,0.124716634418707,0.04,0.15
-"Employment.time for defaults to affect firing[1]",1,0,0,0,0,1,0,0,0,0,1,0.5,1.5
-"Employment.time for productivity to affect firing[1]",1,0,0,0,0,1,0,0,0,0,5,3,7
-"Employment.time seeking employees[1]",0,0,0,0,0,1,0,0,0,0,1.41696813703378,1,3
-"Employment.time to fire from missed profits[1]",1,0,0,0,0,1,0,0,0,0,1,0.5,1.5
-"Employment.Urgency with which wage growth is demanded[1]",1,0,0,0,0,1,0,0,0,0,2,1,3
-"Employment.wage adjustment negotiation time[1]",1,0,0,0,0,1,0,0,0,0,1.999714633,1,3
-"Finance.average time private refinances debt[1]",1,0,0,0,0,1,0,0,0,0,3,2,4
-"Finance.bank expectation formation time[1]",0,0,0,0,0,1,0,0,0,0,2.55210712772329,2,20
-"Finance.desired asset to liability ratio[1]",1,0,0,0,0,1,0,0,0,0,1.08,1.01,1.11
-"Finance.elasticity of bankruptcy rate on risk premium[1]",0,0,0,0,0,1,0,0,0,0,2.8515154846553,2.5,5
-"Finance.elasticity of desired bank growth rate to changes in lending standards[1]",0,0,0,0,0,1,0,0,0,0,2.03807159642058,1,10
-"Finance.exploration effect midpoint[1]",0,0,0,0,0,1,0,0,0,0,1.2,0.8,1.6
-"Finance.exploratory premium[1]",1,0,0,0,0,1,0,0,0,0,2,2,4
-"Finance.exponential effect of interest on defaults[1]",0,0,0,0,0,1,0,0,0,0,9.049245183,9,10
-"Finance.initial annual bank negative profit fractional growth[1]",0,0,0,0,0,1,0,0,0,0,0.14,0.05,0.35
-"Finance.initial bad loans[1]",0,0,0,0,0,1,0,0,0,0,202.031071557794,180,300
-"Finance.initial bank investment growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.0439330111702498,0,0.1
-"Finance.initial fraction of safe loans financing innovation[1]",1,0,0,0,0,1,0,0,0,0,0.03,0.01,0.05
-"Finance.initial fraction of safe loans that are exploratory[1]",1,0,0,0,0,1,0,0,0,0,0.02,0.001,0.05
-"Finance.initial good loans[1]",0,0,0,0,0,1,0,0,0,0,8240.06768880644,7500,8500
-"Finance.initial investment growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.045367825,0.01,0.1
-"Finance.initial net bank asset fractional growth[1]",0,0,0,0,0,1,0,0,0,0,0.155,0.1,0.22
-"Finance.initial non energy bank investment[1]",0,0,0,0,0,1,0,0,0,0,3851.97629060219,3000,5000
-"Finance.initial risk premium[1]",0,0,0,0,0,1,0,0,0,0,0.0185327119002396,0.01,0.05
-"Finance.Initial safe assets[1]",0,0,0,0,0,1,0,0,0,0,72569.1999314293,60000,100000
-"Finance.innovation effect midpoint[1]",1,0,0,0,0,1,0,0,0,0,1.2,0.8,1.6
-"Finance.loan maturation time[1]",0,0,0,0,0,1,0,0,0,0,10.1537647212335,3,30
-"Finance.max change in bank investment as fraction of normal[1]",0,0,0,0,0,1,0,0,0,0,0.999999976470528,0.1,1
-"Finance.max change in failure rate[1]",0,0,0,0,0,1,0,0,0,0,0.0590331365006087,0.02,0.1
-"Finance.max change in lending standards[1]",0,0,0,0,0,1,0,0,0,0,0.120092950728545,0,1
-"Finance.max risk premium increase rate[1]",0,0,0,0,1,0,0,0,0,0,0.035,0.01,0.15
-"Finance.maximum default rate from interest rate increases[1]",1,0,0,0,0,0,0,0,0,0,0.15,0.1,0.5
-"Finance.minimum reference stranded energy capital[1]",0,0,0,0,0,1,0,0,0,0,1.5,0.5,2.5
-"Finance.normal bank profit payment fraction[1]",1,0,0,0,0,0,0,0,0,0,1,0,2
-"Finance.normal exploration rate[1]",1,0,0,0,0,0,0,0,0,0,0.03,0.01,0.05
-"Finance.normal failure rate[1]",0,0,0,0,0,1,0,0,0,0,0.0150033473442084,0.01,0.05
-"Finance.normal growth rate of GDP growth rate[1]",1,0,0,0,0,0,0,0,0,0,1,0.5,1.5
-"Finance.normal safe loans failure rate[1]",1,0,0,0,0,0,0,0,0,0,0.03,0,0.1
-"Finance.reference formation time[1]",1,0,0,0,0,1,0,0,0,0,80,60,100
-"Finance.renegotiation time[1]",1,0,0,0,0,1,0,0,0,0,1,1,1.5
-"Finance.reporting delay[1]",0,0,0,0,0,1,0,0,0,0,0.557438886480119,0.125,1.5
-"Finance.scale of exploratory loan failure[1]",1,0,0,0,0,1,0,0,0,0,7.504574501,6,9
-"Finance.sensitivity of bank exploration to profit decline[1]",1,0,0,0,0,1,0,0,0,0,0.501962557,0.2,0.8
-"Finance.sensitivity of bank profit payment to net asset growth[1]",1,0,0,0,0,1,0,0,0,0,1.1,0.5,1.5
-"Finance.sensitivity of defaults to changes in risky interest[1]",0,0,0,0,0,1,0,0,0,0,11.89928999,11,13.3
-"Finance.sensitivity of effect of sta on failure rate[1]",0,0,0,0,0,1,0,0,0,0,0.572786478649781,0.1,1.1
-"Finance.sensitivity of effect of stranded energy capital on other assets[1]",0,0,0,0,0,1,0,0,0,0,2,1,3
-"Finance.sensitivity of exploratory loan failure to GDP growth[1]",1,0,0,0,0,1,0,0,0,0,1.05,0.5,1.5
-"Finance.sensitivity of failure rate to investment to gdp ratio[1]",0,0,0,0,0,1,0,0,0,0,0.0609146432112289,0.06,0.12
-"Finance.sensitivity of investment and GDP difference[1]",1,0,0,0,0,1,0,0,0,0,2.217074111,1,3
-"Finance.stranded energy capital reference formation time[1]",0,0,0,0,0,1,0,0,0,0,50,10,110
-"Finance.strength of effect of recent GDP growth on lending standards[1]",0,0,0,0,0,1,0,0,0,0,-0.232135598795891,-1,-0.11
-"Finance.time for safe loans that will fail to actually fail[1]",0,0,0,0,0,1,0,0,0,0,11.1311074042744,3,30
-"Finance.time to change lending standards[1]",0,0,0,0,0,1,0,0,0,0,1.06771247495424,0.5,1.5
-"Finance.time to measure changes in risky interest[1]",0,0,0,0,0,0,0,0,0,1,1,0.8,1.2
-"Finance.tolerance of the cap on default rate from interest rate increases[1]",0,0,0,0,1,0,0,0,0,0,0.06,0.01,0.11
-"Finance.tolerance of the cap on indicated risk premium[1]",1,0,0,0,0,0,0,0,0,0,0.01,0.005,0.015
-"GDP.initial nominal GDP growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.029992375,0,0.05
-"GDP.initial real GDP growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.0378863989105273,0,0.05
-"Government.average time government refinances debt[1]",1,0,0,0,0,1,0,0,0,0,7,5,10
-"Government.averaging time to adjust tax based on income[1]",0,0,0,0,0,1,0,0,0,0,2.28099394601465,1,3
-"Government.banks threshold for perceiving gov debt as risky[1]",1,0,0,0,0,0,0,0,0,0,1,0.8,1.5
-"Government.baseline interest[1]",1,0,0,0,0,0,0,0,0,0,0.02,0.01,0.03
-"Government.central bank adjustment time[1]",1,0,0,0,0,1,0,0,0,0,1.5,0.5,2
-"Government.central bank interest rate reactivity[1]",1,0,0,0,0,1,0,0,0,0,1,0.8,1.2
-"Government.curvature effect of debt to GDP ratio on government spending[1]",0,0,0,0,0,1,0,0,0,0,10,9,11
-"Government.effect end effect of debt to GDP ratio on government spending[1]",1,0,0,0,0,1,0,0,0,0,2,1.6,2.4
-"Government.effect start effect of debt to GDP ratio on government spending[1]",1,0,0,0,0,1,0,0,0,0,1,0.5,1.8
-"Government.fraction of wages as child transfer payments[1]",0,0,0,0,0,1,0,0,0,0,0.0824119478469878,0,1
-"Government.fraction of wages as pension[1]",0,0,0,0,0,1,0,0,0,0,0.374566700660406,0,1
-"Government.fraction of wages as unemployment payments[1]",0,0,0,0,0,1,0,0,0,0,0.249829592285828,0,1
-"Government.GDP perception time[1]",0,0,0,0,0,1,0,0,0,0,2.17316066037567,1,3
-"Government.historical minimum effect of deb to GDP ratio on government spending[1]",1,0,0,0,0,0,0,0,0,0,0.9,0.5,1
-"Government.inflation weight[1]",1,0,0,0,0,1,0,0,0,0,1.33,1.2,1.4
-"Government.initial government debt[1]",0,0,0,0,0,1,0,0,0,0,9712.9001009413,0,25000
-"Government.initial perceived GDP[1]",0,0,0,0,0,1,0,0,0,0,20970.4,20000,22000
-"Government.initial safe interest[1]",0,0,0,0,0,1,0,0,0,0,0.0330464757458191,0,0.2
-"Government.initial smoothed total public tax income[1]",0,0,0,0,0,1,0,0,0,0,2635.2,2200,2900
-"Government.maximum effect of debt to GDP ratio on government spending[1]",0,0,0,0,0,1,0,0,0,0,1.23920781827243,1.2,1.5
-"Government.normal share of public expenditure available for investment and consumption to consumption[1]",0,0,0,0,0,1,0,0,0,0,0.834964400848686,0.7,0.92
-"Government.sensitivity of banks gov debt risk perception[1]",1,0,0,0,0,1,0,0,0,0,0.1,0.05,0.15
-"Government.sensitivity of STA on public consumption[1]",0,0,0,0,0,1,0,0,0,0,0.0654000951715641,0,0.2
-"Government.solvency support adjustment time[1]",1,0,0,0,0,1,0,0,0,0,1,0.5,1.5
-"Government.time for government spending to change[1]",0,0,0,0,0,1,0,0,0,0,3.12888717930535,1,5
-"Government.time for government to change transfers[1]",0,0,0,0,0,1,0,0,0,0,5,3,10
-"Government.time to measure unemployment[1]",0,0,0,0,0,1,0,0,0,0,1,0.5,1.5
-"Government.unemployment weight[1]",1,0,0,0,0,1,0,0,0,0,0.33,0.2,0.4
-"Inflation.Agriculture share of GDP intercept[1]",0,0,0,0,0,1,0,0,0,0,3.62013559340907,0,100
-"Inflation.agriculture share of GDP slope[1]",0,0,0,0,0,1,0,0,0,0,-2.28521098871544,-10,1
-"Inflation.agriculture share of GDP starting point determinant[1]",0,0,0,0,0,1,0,0,0,0,19.853545173348,0,20
-"Inflation.deflation adjustment time[1]",0,0,0,0,0,1,0,0,0,0,3.53212686942959,3,10
-"Inflation.inflation adjustment time[1]",1,0,0,0,0,1,0,0,0,0,0.632571426842737,0.25,2.5
-"Inflation.initial animal products demand growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.02,0,0.1
-"Inflation.initial animal products production growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.035,0,0.1
-"Inflation.initial crop demand growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.02,0,0.1
-"Inflation.initial crop supply growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.02,0,0.1
-"Inflation.initial employed growth[1]",0,0,0,0,0,1,0,0,0,0,-0.014951251,-0.05,0.05
-"Inflation.initial energy demand growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.02,0,0.1
-"Inflation.initial energy supply growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.02,0,0.1
-"Inflation.initial growth rate in cropland[1]",0,0,0,0,0,1,0,0,0,0,0.00275,0,0.1
-"Inflation.initial growth rate in grazing land[1]",0,0,0,0,0,1,0,0,0,0,0.001,0,0.1
-"Inflation.initial income growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.020044647,0,0.1
-"Inflation.initial inflation index[1]",0,0,0,0,0,1,0,0,0,0,0.392124170676222,0.35,0.55
-"Inflation.initial inflation rate[1]",0,0,0,0,0,1,0,0,0,0,0.0529539890799932,0,0.1
-"Inflation.time to measure growth rate",0,0,0,0,0,1,0,0,0,0,2,1.5,2.5
-"Inflation.weight of cropland inflation contribution[1]",0,0,0,0,0,1,0,0,0,0,0.102822577,0.001,2
-"Inflation.weight of fertilizer used per unit of crop production[1]",0,0,0,0,0,1,0,0,0,0,0.005994537,0.001,2
-"Inflation.weight of grazing land inflation contribution[1]",0,0,0,0,0,1,0,0,0,0,0.056234969,0.001,2
-"Inflation.weight of irrigation water used per unit of crop production inflation contribution[1]",0,0,0,0,0,1,0,0,0,0,0.046270179,0.001,2
-"Inflation.weight of marginal energy cost inflation[1]",0,0,0,0,0,1,0,0,0,0,0.7,0.01,2
-"Innovation.cash reserve growth threshold for no decline in innovation[1]",1,0,0,0,0,0,0,0,0,0,0,-0.1,0.1
-"Innovation.initial cash reserve growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.37,0.2,0.5
-"Innovation.initial firms innovation orientation[1]",1,0,0,0,0,1,0,0,0,0,0.5,0.2,0.8
-"Innovation.initial net cash flow growth rate[1]",0,0,0,0,0,1,0,0,0,0,-0.590282336,-1,1
-"Innovation.normal cash reserve growth rate[1]",0,0,0,0,0,1,0,0,0,0,0.05,0.01,0.11
-"Innovation.normal time to decrease innovation orientation[1]",0,0,0,0,0,1,0,0,0,0,10.0558855693026,5,20
-"Innovation.sensitivity of firms innovation orientation to cash deceleration[1]",0,0,0,0,0,1,0,0,0,0,1.01478793929433,0,20
-"Innovation.sensitivity of innovation decrease to cash growth[1]",0,0,0,0,0,1,0,0,0,0,9.98672531592705,0,20
-"Coastal Assets.Coastal zone divestment threshold[1]",1,0,0,0,0,1,0,0,0,0,0.95,0.9,1
-"Coastal Assets.Effective flood height at which only half the investment would be made[1]",1,0,0,0,0,1,0,0,0,0,1,0.5,3
-"Coastal Assets.Fraction of assets that has to stay at the coast[1]",1,0,0,0,0,1,0,0,0,0,0.5,0.2,0.8
-"Coastal Assets.Fraction of storm damages that is repaired[1]",1,0,0,0,0,1,0,0,0,0,0.9,0.75,1
-"Coastal Assets.Initial fraction of assets that are on the coast[1]",0,0,0,0,1,0,1,0,0,0,0.13,0.12,0.14
-"Coastal Assets.Maxmium fraction of assets destroyed in a storm surge[1]",1,0,0,0,0,1,0,0,0,0,0.3,0.2,0.4
-"Coastal Assets.Proactive retreat time scale[1]",1,0,0,0,0,1,0,0,0,0,10,5,25
-"Coastal population.Fatality rate in flood events[1]",0,0,0,0,0,1,0,0,0,0,0.01,0.005,0.02
-"Sea level rise adaptation.Average value of land in coastal zones in 1980[1]",0,0,0,0,0,1,0,0,0,0,0.005,0.004,0.006
-"Sea level rise adaptation.Fraction of dike construction cost for maintenance annually[1]",1,0,0,0,0,1,0,0,0,0,0.02,0.015,0.03
-"Sea level rise adaptation.Maximum fraction of coastal GDP spent for flood protection annually[1]",1,0,0,0,0,1,0,0,0,0,0.03,0.01,0.05
-"Sea level rise adaptation.reference opportunity cost rate[1]",1,0,0,0,0,1,0,0,0,0,0.04,0.03,0.05
-"Sea level rise adaptation.reference protection cost[1]",0,0,0,0,0,1,0,0,0,0,0.00746,0.0062,0.00867
-"Sea level rise adaptation.Time to increase flood protection height[1]",1,0,0,0,0,1,0,0,0,0,10,5,25
-"Sea level rise costs and impacts.Asset demolition cost factor[1]",1,0,0,0,0,1,0,0,0,0,0.05,0.025,0.075
-"Sea level rise costs and impacts.Asset relocation cost factor[1]",1,0,0,0,0,1,0,0,0,0,0.1,0.05,0.15
-"Sea level rise costs and impacts.Increase factor for costs of reactive retreat[1]",1,0,0,0,0,1,0,0,0,0,4,3,5
-"Sea level rise costs and impacts.Mobile assets fraction[1]",1,0,0,0,0,1,0,0,0,0,0.25,0.2,0.3
-"Sea level rise costs and impacts.Not depreciated fraction of assets at time of retreat[1]",1,0,0,0,0,1,0,0,0,0,0.1,0,0.2
-"Sea level rise costs and impacts.Relative productivity loss of people being flooded[1]",1,0,0,0,0,1,0,0,0,0,0.96,0.9,0.99
-"energy demand.CDD linear coefficient[1]",0,0,1,0,1,0,0,0,0,0,287.8469604,230,330
-"energy demand.effect of GDP on per person use of energy alpha[1]",0,0,0,0,0,1,0,0,0,0,0.440910819219664,0.235,0.49
-"energy demand.effect of GDP on per person use of energy beta[1]",0,0,0,0,0,1,0,0,0,0,0.829342698167643,0,2
-"energy demand.energy use per CDD[1]",0,0,1,0,1,0,0,0,0,0,0.000875,0.0004,0.01
-"energy demand.Energy use per HDD[1]",0,0,1,0,1,0,0,0,0,0,0.002,0.0001,0.01
-"energy demand.HDD exponential coefficient[1]",0,0,1,0,1,0,0,0,0,0,-0.232561095,-0.5,-0.01
-"energy demand.initial aggregate per unit energy prices[1]",0,0,0,0,0,1,0,0,0,0,0.127905189074687,0.05,0.2
-"energy demand.initial reference aggregate per unit energy prices[1]",0,0,0,0,0,1,0,0,0,0,0.131977750392959,0,0.2
-"energy demand.normal per person use of energy[1]",0,0,0,0,0,1,0,0,0,0,7.28622727706416,7,8
-"energy demand.reference change in energy prices[1]",0,0,0,0,0,1,0,0,0,0,0.00470375506756259,0.001,0.012
-"energy demand.reference formation time[1]",0,0,0,0,0,1,0,0,0,0,5,3,10
-"energy demand.sensitivity of effect of energy prices on demand[1]",0,0,0,0,0,1,0,0,0,0,0.00700051703462756,0.001,1
-"energy demand.time for competition to change prices[1]",0,0,0,0,0,1,0,0,0,0,7,5,10
-"energy investments.adaptive energy investments differntiating factor[1]",0,0,0,0,0,1,0,0,0,0,-4.15270007361085,-15,0
-"energy investments.adaptive energy investments integrating factor[1]",0,0,0,0,0,1,0,0,0,0,-2.3319332319455,-7,0
-"energy investments.adaptive energy investments proportional factor[1]",0,0,0,0,0,1,0,0,0,0,-10.0862977296706,-50,0
-"energy investments.baseline energy investments[1]",0,0,0,0,0,1,0,0,0,0,857228000000,100000000000,1000000000000
-"energy investments.cost perception time[1]",0,0,0,0,0,1,0,0,0,0,1,0.5,2
-"energy investments.historical cost adjustment[1, Coal fuel extraction, 1]",0,0,0,0,0,1,0,0,0,0,0.692702563780874,0.05,4
-"energy investments.historical cost adjustment[1, Coal fuel extraction, 2]",0,0,0,0,0,1,0,0,0,0,0.698439949678573,0.05,4
-"energy investments.historical cost adjustment[1, Coal fuel extraction, 3]",0,0,0,0,0,1,0,0,0,0,0.703844810350017,0.05,4
-"energy investments.historical cost adjustment[1, Coal fuel extraction, 4]",0,0,0,0,0,1,0,0,0,0,0.70787497628669,0.05,4
-"energy investments.historical cost adjustment[1, Coal fuel extraction, 5]",0,0,0,0,0,1,0,0,0,0,0.658598178976356,0.05,4
-"energy investments.historical cost adjustment[1, Coal fuel extraction, 6]",0,0,0,0,0,1,0,0,0,0,0.449469640668064,0.05,4
-"energy investments.historical cost adjustment[1, Coal fuel extraction, 7]",0,0,0,0,0,1,0,0,0,0,0.585667278459284,0.05,4
-"energy investments.historical cost adjustment[1, Coal fuel extraction, 8]",0,0,0,0,0,1,0,0,0,0,0.702177215412748,0.05,4
-"energy investments.historical cost adjustment[1, Coal fuel extraction, 9]",0,0,0,0,0,1,0,0,0,0,0.712133714948575,0.05,4
-"energy investments.historical cost adjustment[1, Coal energy conversion, 1]",0,0,0,0,0,1,0,0,0,0,0.687016880651213,0.05,4
-"energy investments.historical cost adjustment[1, Coal energy conversion, 2]",0,0,0,0,0,1,0,0,0,0,0.706675647442782,0.05,4
-"energy investments.historical cost adjustment[1, Coal energy conversion, 3]",0,0,0,0,0,1,0,0,0,0,0.707314989010917,0.05,4
-"energy investments.historical cost adjustment[1, Coal energy conversion, 4]",0,0,0,0,0,1,0,0,0,0,0.705026160103561,0.05,4
-"energy investments.historical cost adjustment[1, Coal energy conversion, 5]",0,0,0,0,0,1,0,0,0,0,0.642192554913513,0.05,4
-"energy investments.historical cost adjustment[1, Coal energy conversion, 6]",0,0,0,0,0,1,0,0,0,0,0.437800273322608,0.05,4
-"energy investments.historical cost adjustment[1, Coal energy conversion, 7]",0,0,0,0,0,1,0,0,0,0,0.61742156048867,0.05,4
-"energy investments.historical cost adjustment[1, Coal energy conversion, 8]",0,0,0,0,0,1,0,0,0,0,0.498639418813829,0.05,4
-"energy investments.historical cost adjustment[1, Coal energy conversion, 9]",0,0,0,0,0,1,0,0,0,0,0.484051481728103,0.05,4
-"energy investments.historical cost adjustment[1, Oil fuel extraction, 1]",0,0,0,0,0,1,0,0,0,0,0.106744302816979,0.05,4
-"energy investments.historical cost adjustment[1, Oil fuel extraction, 2]",0,0,0,0,0,1,0,0,0,0,0.0903701462381572,0.05,4
-"energy investments.historical cost adjustment[1, Oil fuel extraction, 3]",0,0,0,0,0,1,0,0,0,0,0.105595239772284,0.05,4
-"energy investments.historical cost adjustment[1, Oil fuel extraction, 4]",0,0,0,0,0,1,0,0,0,0,0.117248765840063,0.05,4
-"energy investments.historical cost adjustment[1, Oil fuel extraction, 5]",0,0,0,0,0,1,0,0,0,0,0.101122339827407,0.05,4
-"energy investments.historical cost adjustment[1, Oil fuel extraction, 6]",0,0,0,0,0,1,0,0,0,0,0.123588770303826,0.05,4
-"energy investments.historical cost adjustment[1, Oil fuel extraction, 7]",0,0,0,0,0,1,0,0,0,0,0.119498965712042,0.05,4
-"energy investments.historical cost adjustment[1, Oil fuel extraction, 8]",0,0,0,0,0,1,0,0,0,0,0.12229475604927,0.05,4
-"energy investments.historical cost adjustment[1, Oil fuel extraction, 9]",0,0,0,0,0,1,0,0,0,0,0.160151669083188,0.05,4
-"energy investments.historical cost adjustment[1, Oil energy conversion, 1]",0,0,0,0,0,1,0,0,0,0,0.0973001129280827,0.05,4
-"energy investments.historical cost adjustment[1, Oil energy conversion, 2]",0,0,0,0,0,1,0,0,0,0,0.0813959875305376,0.05,4
-"energy investments.historical cost adjustment[1, Oil energy conversion, 3]",0,0,0,0,0,1,0,0,0,0,0.0969198498625489,0.05,4
-"energy investments.historical cost adjustment[1, Oil energy conversion, 4]",0,0,0,0,0,1,0,0,0,0,0.109734495305998,0.05,4
-"energy investments.historical cost adjustment[1, Oil energy conversion, 5]",0,0,0,0,0,1,0,0,0,0,0.0817747036034515,0.05,4
-"energy investments.historical cost adjustment[1, Oil energy conversion, 6]",0,0,0,0,0,1,0,0,0,0,0.133534608339251,0.05,4
-"energy investments.historical cost adjustment[1, Oil energy conversion, 7]",0,0,0,0,0,1,0,0,0,0,0.150511429885248,0.05,4
-"energy investments.historical cost adjustment[1, Oil energy conversion, 8]",0,0,0,0,0,1,0,0,0,0,0.120340212243371,0.05,4
-"energy investments.historical cost adjustment[1, Oil energy conversion, 9]",0,0,0,0,0,1,0,0,0,0,0.139481304601419,0.05,4
-"energy investments.historical cost adjustment[1, Gas fuel extraction, 1]",0,0,0,0,0,1,0,0,0,0,0.310417979851591,0.05,4
-"energy investments.historical cost adjustment[1, Gas fuel extraction, 2]",0,0,0,0,0,1,0,0,0,0,0.302626350986653,0.05,4
-"energy investments.historical cost adjustment[1, Gas fuel extraction, 3]",0,0,0,0,0,1,0,0,0,0,0.295170522240054,0.05,4
-"energy investments.historical cost adjustment[1, Gas fuel extraction, 4]",0,0,0,0,0,1,0,0,0,0,0.367254219161968,0.05,4
-"energy investments.historical cost adjustment[1, Gas fuel extraction, 5]",0,0,0,0,0,1,0,0,0,0,0.333199115427041,0.05,4
-"energy investments.historical cost adjustment[1, Gas fuel extraction, 6]",0,0,0,0,0,1,0,0,0,0,0.321639780586562,0.05,4
-"energy investments.historical cost adjustment[1, Gas fuel extraction, 7]",0,0,0,0,0,1,0,0,0,0,0.3070594721367,0.05,4
-"energy investments.historical cost adjustment[1, Gas fuel extraction, 8]",0,0,0,0,0,1,0,0,0,0,0.318744751478005,0.05,4
-"energy investments.historical cost adjustment[1, Gas fuel extraction, 9]",0,0,0,0,0,1,0,0,0,0,0.363321603686882,0.05,4
-"energy investments.historical cost adjustment[1, Gas energy conversion, 1]",0,0,0,0,0,1,0,0,0,0,0.271779266285337,0.05,4
-"energy investments.historical cost adjustment[1, Gas energy conversion, 2]",0,0,0,0,0,1,0,0,0,0,0.300521830628829,0.05,4
-"energy investments.historical cost adjustment[1, Gas energy conversion, 3]",0,0,0,0,0,1,0,0,0,0,0.283875338305658,0.05,4
-"energy investments.historical cost adjustment[1, Gas energy conversion, 4]",0,0,0,0,0,1,0,0,0,0,0.384851998553175,0.05,4
-"energy investments.historical cost adjustment[1, Gas energy conversion, 5]",0,0,0,0,0,1,0,0,0,0,0.352239233697391,0.05,4
-"energy investments.historical cost adjustment[1, Gas energy conversion, 6]",0,0,0,0,0,1,0,0,0,0,0.346619902506258,0.05,4
-"energy investments.historical cost adjustment[1, Gas energy conversion, 7]",0,0,0,0,0,1,0,0,0,0,0.325573601094009,0.05,4
-"energy investments.historical cost adjustment[1, Gas energy conversion, 8]",0,0,0,0,0,1,0,0,0,0,0.360883497088336,0.05,4
-"energy investments.historical cost adjustment[1, Gas energy conversion, 9]",0,0,0,0,0,1,0,0,0,0,0.440821035213695,0.05,4
-"energy investments.historical cost adjustment[1, Hydropower, 1]",0,0,0,0,0,1,0,0,0,0,1.20532755189481,0.05,4
-"energy investments.historical cost adjustment[1, Hydropower, 2]",0,0,0,0,0,1,0,0,0,0,1.00774898923357,0.05,4
-"energy investments.historical cost adjustment[1, Hydropower, 3]",0,0,0,0,0,1,0,0,0,0,1.01064772448248,0.05,4
-"energy investments.historical cost adjustment[1, Hydropower, 4]",0,0,0,0,0,1,0,0,0,0,1.29645672253961,0.05,4
-"energy investments.historical cost adjustment[1, Hydropower, 5]",0,0,0,0,0,1,0,0,0,0,0.962268017133408,0.05,4
-"energy investments.historical cost adjustment[1, Hydropower, 6]",0,0,0,0,0,1,0,0,0,0,0.561625871358571,0.05,4
-"energy investments.historical cost adjustment[1, Hydropower, 7]",0,0,0,0,0,1,0,0,0,0,0.405216604429415,0.05,4
-"energy investments.historical cost adjustment[1, Hydropower, 8]",0,0,0,0,0,1,0,0,0,0,0.334007521908081,0.05,4
-"energy investments.historical cost adjustment[1, Hydropower, 9]",0,0,0,0,0,1,0,0,0,0,0.371337603228064,0.05,4
-"energy investments.historical cost adjustment[1, Nuclear, 1]",0,0,0,0,0,1,0,0,0,0,0.260942790906085,0.05,4
-"energy investments.historical cost adjustment[1, Nuclear, 2]",0,0,0,0,0,1,0,0,0,0,0.380831091656255,0.05,4
-"energy investments.historical cost adjustment[1, Nuclear, 3]",0,0,0,0,0,1,0,0,0,0,0.44371741578771,0.05,4
-"energy investments.historical cost adjustment[1, Nuclear, 4]",0,0,0,0,0,1,0,0,0,0,0.56694597660818,0.05,4
-"energy investments.historical cost adjustment[1, Nuclear, 5]",0,0,0,0,0,1,0,0,0,0,0.719956817960477,0.05,4
-"energy investments.historical cost adjustment[1, Nuclear, 6]",0,0,0,0,0,1,0,0,0,0,0.552377965579511,0.05,4
-"energy investments.historical cost adjustment[1, Nuclear, 7]",0,0,0,0,0,1,0,0,0,0,0.520021663219785,0.05,4
-"energy investments.historical cost adjustment[1, Nuclear, 8]",0,0,0,0,0,1,0,0,0,0,0.505880295744843,0.05,4
-"energy investments.historical cost adjustment[1, Nuclear, 9]",0,0,0,0,0,1,0,0,0,0,0.521756475535143,0.05,4
-"energy investments.historical cost adjustment[1, Bio, 1]",0,0,0,0,0,1,0,0,0,0,0.491202251445296,0.05,4
-"energy investments.historical cost adjustment[1, Bio, 2]",0,0,0,0,0,1,0,0,0,0,0.510606999322271,0.05,4
-"energy investments.historical cost adjustment[1, Bio, 3]",0,0,0,0,0,1,0,0,0,0,0.702357777075802,0.05,4
-"energy investments.historical cost adjustment[1, Bio, 4]",0,0,0,0,0,1,0,0,0,0,0.795557431225949,0.05,4
-"energy investments.historical cost adjustment[1, Bio, 5]",0,0,0,0,0,1,0,0,0,0,0.796315443705442,0.05,4
-"energy investments.historical cost adjustment[1, Bio, 6]",0,0,0,0,0,1,0,0,0,0,0.375665453328794,0.05,4
-"energy investments.historical cost adjustment[1, Bio, 7]",0,0,0,0,0,1,0,0,0,0,0.374804060896594,0.05,4
-"energy investments.historical cost adjustment[1, Bio, 8]",0,0,0,0,0,1,0,0,0,0,0.41266557279061,0.05,4
-"energy investments.historical cost adjustment[1, Bio, 9]",0,0,0,0,0,1,0,0,0,0,0.43145104559858,0.05,4
-"energy investments.historical cost adjustment[1, Solar, 1]",0,0,0,0,0,1,0,0,0,0,0.506126813297951,0.05,4
-"energy investments.historical cost adjustment[1, Solar, 2]",0,0,0,0,0,1,0,0,0,0,0.46387776093723,0.05,4
-"energy investments.historical cost adjustment[1, Solar, 3]",0,0,0,0,0,1,0,0,0,0,0.493302570604706,0.05,4
-"energy investments.historical cost adjustment[1, Solar, 4]",0,0,0,0,0,1,0,0,0,0,0.239856873342269,0.05,4
-"energy investments.historical cost adjustment[1, Solar, 5]",0,0,0,0,0,1,0,0,0,0,0.168047046924994,0.05,4
-"energy investments.historical cost adjustment[1, Solar, 6]",0,0,0,0,0,1,0,0,0,0,0.238378462306935,0.05,4
-"energy investments.historical cost adjustment[1, Solar, 7]",0,0,0,0,0,1,0,0,0,0,0.22140011488651,0.05,4
-"energy investments.historical cost adjustment[1, Solar, 8]",0,0,0,0,0,1,0,0,0,0,0.163160378489664,0.05,4
-"energy investments.historical cost adjustment[1, Solar, 9]",0,0,0,0,0,1,0,0,0,0,0.15080049820851,0.05,4
-"energy investments.historical cost adjustment[1, Wind, 1]",0,0,0,0,0,1,0,0,0,0,0.464205370661012,0.05,4
-"energy investments.historical cost adjustment[1, Wind, 2]",0,0,0,0,0,1,0,0,0,0,0.47368073761856,0.05,4
-"energy investments.historical cost adjustment[1, Wind, 3]",0,0,0,0,0,1,0,0,0,0,0.432340073024779,0.05,4
-"energy investments.historical cost adjustment[1, Wind, 4]",0,0,0,0,0,1,0,0,0,0,0.416835384791114,0.05,4
-"energy investments.historical cost adjustment[1, Wind, 5]",0,0,0,0,0,1,0,0,0,0,0.135025385328565,0.05,4
-"energy investments.historical cost adjustment[1, Wind, 6]",0,0,0,0,0,1,0,0,0,0,0.134481755621959,0.05,4
-"energy investments.historical cost adjustment[1, Wind, 7]",0,0,0,0,0,1,0,0,0,0,0.118998558616633,0.05,4
-"energy investments.historical cost adjustment[1, Wind, 8]",0,0,0,0,0,1,0,0,0,0,0.161455002392657,0.05,4
-"energy investments.historical cost adjustment[1, Wind, 9]",0,0,0,0,0,1,0,0,0,0,0.117249444646596,0.05,4
-"energy investments.historical cost adjustment smoothing time[1]",0,0,0,0,0,1,0,0,0,0,0.5,0.25,0.75
-"energy investments.initial perceived marginal energy supply cost[1]",0,0,0,0,0,1,0,0,0,0,0.013519257868552,0.001,0.05
-"energy investments.initial relative supply missmatch[1]",0,0,0,0,0,1,0,0,0,0,0.0119480789089314,-0.5,0.5
-"energy investments.priority spread[1]",0,0,0,0,0,1,0,0,0,0,33.4346914588317,10,50
-"energy investments.Relative Energy Supply Mismatch Buffer[1]",0,0,0,0,0,1,0,0,0,0,0.01,0,0.05
-"energy investments.sensitivity of cost adjustment to relative stranded capital[1]",0,0,0,0,0,1,0,0,0,0,99.3064854309593,50,150
-"energy investments.sensitivity of effect of perceived marginal energy supply cost on investment[1]",0,0,0,0,0,1,0,0,0,0,0.158479000594704,0,1
-"energy investments.shape",0,0,0,0,0,1,1,0,0,0,1,1,3
-"energy investments.time to consider stranded capital[1]",0,0,0,0,0,1,0,0,0,0,3,2,5
-"energy investments.time to perceive energy supply missmatch[1]",1,0,0,0,0,0,0,0,0,0,1,0.25,5
-"Damages.Exponent of Capital Damage Function[1]",0,0,1,0,0,1,0,0,0,0,2,1,3
-"Damages.Slope of Capital Damage Function[1]",0,0,1,0,0,1,0,0,0,0,0.00005096093,0,8
-"efficiency reduction in power plants.effect of STA on hydropower energy capacity efficiency quadratic[1]",0,0,1,0,1,0,0,0,0,0,-0.53155579,-1.32875391,2.74922918
-"efficiency reduction in power plants.effect of STA on hydropower energy capacity efficiency slope[1]",0,0,1,0,1,0,0,0,0,0,-0.24704396,-1.09012669,0
-"efficiency reduction in power plants.effect of STA on river cooled thermal power energy capacity efficiency quadratic[1]",0,0,1,0,1,0,0,0,0,0,-0.53405196,-0.75,-0.12655722
-"fossil energy coal.carbon intensity in btu[1]",0,0,0,0,0,1,0,0,0,0,0.0268311344149649,0.01,0.03
-"fossil energy coal.depreciation rate of fossil energy capital[1]",1,0,0,0,0,0,0,0,0,0,0.025,0,0.05
-"fossil energy coal.Depreciation rate of Fuel Extraction Capital[1]",1,0,0,0,0,0,0,0,0,0,0.05,0,0.1
-"fossil energy coal.Elasticity of Substitution in Fossil Energy Output[1]",1,0,0,0,0,0,0,0,0,0,0.3,0.2,0.4
-"fossil energy coal.Fossil Energy Capital Scaling Parameter[1]",0,0,0,0,0,1,0,0,0,0,0.540023395110686,0.2,2
-"fossil energy coal.Initial extraction costs[1]",0,0,0,0,0,1,0,0,0,0,112982460324.935,10000000000,1000000000000
-"fossil energy coal.initial fossil energy capital[1]",0,0,0,0,0,1,0,0,0,0,606320744638.284,1000000000,5000000000000
-"fossil energy coal.initial fossil extraction knowledge[1]",0,0,0,0,0,1,0,0,0,0,98.2206885658572,90,160
-"fossil energy coal.initial fossil fuel extraction capital[1]",0,0,0,0,0,1,0,0,0,0,1605665984037.09,1000000000,50000000000000
-"fossil energy coal.learning elasticity of the resource sector[1]",1,0,0,0,0,0,0,0,0,0,0.4,0.2,0.6
-"fossil energy coal.learning time in resource sector[1]",1,0,0,0,0,0,0,0,0,0,30.49493995,20,40
-"fossil energy coal.maximum increase of capital coefficient in fossil resource sector[1]",1,0,0,0,0,0,0,0,0,0,256.08,200,300
-"fossil energy coal.Primary Fossil Energy Scaling Parameter[1]",0,0,0,0,0,1,0,0,0,0,1.890483806,0.1,3
-"fossil energy coal.productivity per extractionknowledge[1]",0,0,0,0,0,1,0,0,0,0,0.00154685159612705,0.0001,0.003
-"fossil energy coal.reference formation time[1]",0,0,0,0,0,1,0,0,0,0,48.2945730076659,15,100
-"fossil energy coal.sensitivity of effect of capital to fuel ratio on stranded capital[1]",0,0,0,0,0,1,0,0,0,0,1.20295342244004,0.5,5
-"fossil energy coal.share of primary energy in fossil energy[1]",1,0,0,0,0,0,0,0,0,0,0.5,0.4,0.6
-"fossil energy coal.Slope of cost curve[1]",0,0,0,0,0,1,0,0,0,0,1120002673028.11,70000000000,7000000000000
-"fossil energy coal.TFP in 1980[1]",0,0,0,0,0,1,0,0,0,0,0.148,0.12,0.4
-"fossil energy coal.TFP Max[1]",1,0,0,0,0,1,0,0,0,0,0.185,0.1,0.4
-"fossil energy coal.TFP Max Ramp Year[1]",0,0,0,0,0,1,0,0,0,0,2014.19649004732,2000,2200
-"fossil energy coal.TFP Ramp Speed[1]",0,0,0,0,0,1,0,0,0,0,0.096154629803442,0,1
-"fossil energy coal.TFP Slope Start[1]",0,0,0,0,0,1,0,0,0,0,1980.10935406248,1980,2010
-"fossil energy coal.time to strand capital[1]",0,0,0,0,0,1,0,0,0,0,2,1,3
-"fossil energy gas.carbon intensity in btu[1]",0,0,0,0,0,1,0,0,0,0,0.0155906383693566,0.01,0.03
-"fossil energy gas.depreciation rate of fossil energy capital[1]",1,0,0,0,0,0,0,0,0,0,0.025,0,0.05
-"fossil energy gas.Depreciation rate of Fuel Extraction Capital[1]",1,0,0,0,0,0,0,0,0,0,0.05,0,0.1
-"fossil energy gas.Elasticity of Substitution in Fossil Energy Output[1]",1,0,0,0,0,0,0,0,0,0,0.3,0.2,0.4
-"fossil energy gas.Fossil Energy Capital Scaling Parameter[1]",0,0,0,0,0,1,0,0,0,0,0.6021238238441,0.001,2
-"fossil energy gas.Initial extraction costs[1]",0,0,0,0,0,1,0,0,0,0,133349218643.114,10000000000,1000000000000
-"fossil energy gas.initial fossil energy capital[1]",0,0,0,0,0,1,0,0,0,0,316098589434.029,1000000000,5000000000000
-"fossil energy gas.initial fossil extraction knowledge[1]",0,0,0,0,0,1,0,0,0,0,125.089180941446,90,160
-"fossil energy gas.initial fossil fuel extraction capital[1]",0,0,0,0,0,1,0,0,0,0,1787843804960.95,1000000000,50000000000000
-"fossil energy gas.learning elasticity of the resource sector[1]",1,0,0,0,0,0,0,0,0,0,0.4,0.2,0.6
-"fossil energy gas.learning time in resource sector[1]",1,0,0,0,0,0,0,0,0,0,30.49493995,20,40
-"fossil energy gas.maximum increase of capital coefficient in fossil resource sector[1]",1,0,0,0,0,0,0,0,0,0,256.08,200,300
-"fossil energy gas.Primary Fossil Energy Scaling Parameter[1]",0,0,0,0,0,1,0,0,0,0,1.12013244,0.001,2
-"fossil energy gas.productivity per extractionknowledge[1]",0,0,0,0,0,1,0,0,0,0,0.000462407437833753,0.0001,0.003
-"fossil energy gas.reference formation time[1]",0,0,0,0,0,1,0,0,0,0,53.3676344708472,15,100
-"fossil energy gas.sensitivity of effect of capital to fuel ratio on stranded capital[1]",0,0,0,0,0,1,0,0,0,0,1.50021404441388,0.5,5
-"fossil energy gas.share of primary energy in fossil energy[1]",1,0,0,0,0,0,0,0,0,0,0.5,0.4,0.6
-"fossil energy gas.Slope of cost curve[1]",1,0,0,0,0,0,0,0,0,0,129686391403.903,70000000000,7000000000000
-"fossil energy gas.TFP in 1980[1]",0,0,0,0,0,1,0,0,0,0,0.241551023,0.12,0.4
-"fossil energy gas.TFP Max[1]",1,0,0,0,0,1,0,0,0,0,0.295,0.1,0.4
-"fossil energy gas.TFP Max Ramp Year[1]",0,0,0,0,0,1,0,0,0,0,2012.31662327854,2000,2200
-"fossil energy gas.TFP Ramp Speed[1]",0,0,0,0,0,1,0,0,0,0,0.140331413372688,0,1
-"fossil energy gas.TFP Slope Start[1]",0,0,0,0,0,1,0,0,0,0,1980.11622192939,1980,2010
-"fossil energy gas.time to strand capital[1]",0,0,0,0,0,1,0,0,0,0,2,1,3
-"fossil energy oil.carbon intensity in btu[1]",0,0,0,0,0,1,0,0,0,0,0.0195541027745992,0.01,0.03
-"fossil energy oil.depreciation rate of fossil energy capital[1]",1,0,0,0,0,0,0,0,0,0,0.025,0,0.05
-"fossil energy oil.Depreciation rate of Fuel Extraction Capital[1]",1,0,0,0,0,0,0,0,0,0,0.05,0,0.1
-"fossil energy oil.Elasticity of Substitution in Fossil Energy Output[1]",1,0,0,0,0,0,0,0,0,0,0.3,0.2,0.4
-"fossil energy oil.Fossil Energy Capital Scaling Parameter[1]",0,0,0,0,0,1,0,0,0,0,0.4,0.001,2
-"fossil energy oil.Initial extraction costs[1]",0,0,0,0,0,1,0,0,0,0,128976435942.381,10000000000,1000000000000
-"fossil energy oil.initial fossil energy capital[1]",0,0,0,0,0,1,0,0,0,0,1540421983564.83,1000000000,5000000000000
-"fossil energy oil.initial fossil extraction knowledge[1]",0,0,0,0,0,1,0,0,0,0,151.811939740684,90,160
-"fossil energy oil.initial fossil fuel extraction capital[1]",0,0,0,0,0,1,0,0,0,0,6040475848221.44,1000000000,50000000000000
-"fossil energy oil.learning elasticity of the resource sector[1]",1,0,0,0,0,0,0,0,0,0,0.4,0.2,0.6
-"fossil energy oil.learning time in resource sector[1]",1,0,0,0,0,0,0,0,0,0,30.49493995,20,40
-"fossil energy oil.maximum increase of capital coefficient in fossil resource sector[1]",1,0,0,0,0,0,0,0,0,0,256.08,200,300
-"fossil energy oil.Primary Fossil Energy Scaling Parameter[1]",0,0,0,0,0,1,0,0,0,0,1.999999587,0.001,2.99999958734975
-"fossil energy oil.productivity per extractionknowledge[1]",0,0,0,0,0,1,0,0,0,0,0.000310450433301044,0.0001,0.003
-"fossil energy oil.reference formation time[1]",0,0,0,0,0,1,0,0,0,0,50.1680871022133,15,100
-"fossil energy oil.sensitivity of effect of capital to fuel ratio on stranded capital[1]",0,0,0,0,0,1,0,0,0,0,0.824731242941135,0.5,5
-"fossil energy oil.share of primary energy in fossil energy[1]",1,0,0,0,0,0,0,0,0,0,0.5,0.4,0.6
-"fossil energy oil.Slope of cost curve[1]",0,0,0,0,0,1,0,0,0,0,145416408869.738,70000000000,7000000000000
-"fossil energy oil.TFP in 1980[1]",0,0,0,0,0,1,0,0,0,0,0.141258869,0.12,0.4
-"fossil energy oil.TFP Max[1]",1,0,0,0,0,1,0,0,0,0,0.17,0.1,0.4
-"fossil energy oil.TFP Max Ramp Year[1]",0,0,0,0,0,1,0,0,0,0,2012.01874017096,2000,2200
-"fossil energy oil.TFP Ramp Speed[1]",0,0,0,0,0,1,0,0,0,0,0.100250345617374,0,1
-"fossil energy oil.TFP Slope Start[1]",0,0,0,0,0,1,0,0,0,0,1980.40980640034,1980,2010
-"fossil energy oil.time to strand capital[1]",0,0,0,0,0,1,0,0,0,0,2,1,3
-"nuclear energy.baseline nuclear energy capacity efficiency[1]",0,0,0,0,0,1,0,0,0,0,7.5,6.5,8.5
-"nuclear energy.depreciation rate of Nuclear capital[1]",1,0,0,0,0,0,0,0,0,0,0.02,0,0.1
-"nuclear energy.Floor Costs[1]",0,0,0,0,0,1,0,0,0,0,1610.17712052244,1000,3000
-"nuclear energy.Initial Installation Costs[1]",0,0,0,0,0,1,0,0,0,0,2690.35149710682,500,3000
-"nuclear energy.Initial Nuclear Capacity[1]",0,0,0,0,0,1,0,0,0,0,97.55917166,50,150
-"nuclear energy.Learning Rate[1]",1,0,0,0,0,1,0,0,0,0,0.187056047987987,0.01,0.4
-"nuclear energy.stepping on toes parameter[1]",1,0,0,0,0,1,0,0,0,0,0.170413693291279,0.1,0.5
-"nuclear energy.time to perceive changes in construction[1]",1,0,0,0,0,0,0,0,0,0,1,0.5,5
-"bio fuel energy.bio fuel primary energy content[1]",0,0,0,0,0,1,0,0,0,0,0.0000194448550463192,0.000001,0.0001
-"bio fuel energy.depreciation rate of bio capital[1]",1,0,0,0,0,0,0,0,0,0,0.05,0,0.1
-"bio fuel energy.Floor Costs[1]",0,0,0,0,0,1,0,0,0,0,2026419.77665288,1000000,1000000000
-"bio fuel energy.Initial biofuel production Capacity[1]",0,0,0,0,0,1,0,0,0,0,5,0.001,10
-"bio fuel energy.Initial Installation Costs[1]",0,0,0,0,0,1,0,0,0,0,1180011005.00319,100000000,100000000000
-"bio fuel energy.Learning Rate[1]",1,0,0,0,0,1,0,0,0,0,0.0113670945828493,0.01,0.4
-"bio fuel energy.PCal per Mt of fuel[1]",0,0,0,0,1,0,0,0,0,0,4,3,5
-"bio fuel energy.relative carbon intensity of biofuels to petroleum fuels[1]",0,0,0,0,1,0,0,0,0,0,0.65,0.45,0.85
-"bio fuel energy.stepping on toes parameter[1]",1,0,0,0,0,1,0,0,0,0,0.465901536891852,0.1,0.5
-"bio fuel energy.time to perceive changes in construction[1]",1,0,0,0,0,0,0,0,0,0,1,0.25,5
-"hydropower energy.Base Hydropower Installation Costs[1]",0,0,0,0,0,1,0,0,0,0,100.782762152956,10,5000
-"hydropower energy.baseline hydropower energy capacity efficiency[1]",0,0,0,0,0,1,0,0,0,0,3.845734268,2,5
-"hydropower energy.depreciation rate of hydropower capital[1]",1,0,0,0,0,0,0,0,0,0,0.01,0,0.1
-"hydropower energy.Initial Hydropower Capacity[1]",0,0,0,0,0,1,0,0,0,0,478.7768037,250,550
-"hydropower energy.Slope of Hydropower Installation Costs wrt Capacity[1]",0,0,0,0,0,1,0,0,0,0,0.0000016961588744506,1e-7,0.0001
-"solar energy.Initial Solar Energy Installation Costs[1]",0,0,0,0,0,1,0,0,0,0,4360,100,100000
-"solar energy.reference formation time[1]",0,0,0,0,0,1,0,0,0,0,10,5,20
-"solar energy.reference share of cost for grid storage[1]",0,0,0,0,0,1,0,0,0,0,0.6,0,1
-"solar energy.Renewable Energy Floor Costs[1]",0,0,0,0,0,1,0,0,0,0,56.8789301342692,1,500
-"solar energy.sensitivity of renewable floor costs to grid storage needs[1]",0,0,0,0,0,1,0,0,0,0,5.24739870091156,2,10
-"solar energy.sensitivity of renewable floor costs to grid storage needs non linear part[1]",0,0,0,0,0,1,0,0,0,0,-5.19737826759427,-46,-3
-"solar energy.Solar Energy Full Load Hours[1]",0,0,0,0,0,1,0,0,0,0,1718.04718076878,1200,1850
-"solar energy.Solar Energy Learning Rate[1]",1,0,0,0,0,1,0,0,0,0,0.139,0.05,0.4
-"solar energy.stepping on toes parameter in renewable energy sector[1]",1,0,0,0,0,1,0,0,0,0,0.497651910391243,0.1,1
-"solar energy.time to perceive changes in construction[1]",1,0,0,0,0,0,0,0,0,0,1,0.25,5
-"wind energy.Initial Wind Energy Installation Costs[1]",0,0,0,0,0,1,0,0,0,0,4539.59027066954,100,100000
-"wind energy.reference formation time[1]",0,0,0,0,0,1,0,0,0,0,10,5,20
-"wind energy.reference share of cost for grid storage[1]",0,0,0,0,0,1,0,0,0,0,0.6,0,1
-"wind energy.Renewable Energy Floor Costs[1]",0,0,0,0,0,1,0,0,0,0,10.7625137672432,1,500
-"wind energy.sensitivity of renewable floor costs to grid storage needs[1]",0,0,0,0,0,1,0,0,0,0,4.98859229638072,2,10
-"wind energy.sensitivity of renewable floor costs to grid storage needs non linear part[1]",0,0,0,0,0,1,0,0,0,0,-5.35052370577506,-46,-3
-"wind energy.stepping on toes parameter in renewable energy sector[1]",1,0,0,0,0,1,0,0,0,0,0.5,0.1,1
-"wind energy.time to perceive changes in construction[1]",1,0,0,0,0,0,0,0,0,0,1,0.25,5
-"wind energy.Wind Energy Full Load Hours[1]",0,0,0,0,1,0,0,0,0,0,1840.17030236206,1650,1850
-"wind energy.Wind Energy Learning Rate[1]",1,0,0,0,0,1,0,0,0,0,0.113320005451525,0.05,0.4
-"Government Regulations.calibration period government debt to GDP ratio target[1]",1,0,0,0,0,0,0,0,0,0,1.2,1,1.5
-"Government Regulations.debt to gdp level start year",0,0,0,0,0,0,0,0,1,0,2025,2025,2100
-"Government Regulations.government debt to GDP ratio target",0,0,0,0,0,0,0,0,1,0,1.2,0.5,2
-"Government Regulations.historical inflation goal[1]",1,0,0,0,0,0,0,0,0,0,0.02,0.01,0.04
-"Government Regulations.historical unemployment goal[1]",1,0,0,0,0,0,0,0,0,0,0.05,0.02,0.08
-"Government Regulations.inflation goal policy",0,0,0,0,0,0,0,0,1,0,0.02,0,0.1
-"Government Regulations.max change per year in inflation",0,0,0,0,0,0,0,0,1,0,0.001,0.0001,0.02
-"Government Regulations.max change per year in unemployment",0,0,0,0,0,0,0,0,1,0,0.001,0.0001,0.02
-"Government Regulations.minimum percentage of taxes spent by government",0,0,0,0,0,0,0,0,1,0,0.9,0.5,1
-"Government Regulations.Moratorium on fossil energy year",0,0,0,0,0,0,0,0,1,0,2150,2070,2150
-"Government Regulations.profit tax policy",0,0,0,0,0,0,0,0,1,0,0.327,0,1
-"Government Regulations.profit tax policy start year",0,0,0,0,0,0,0,0,1,0,2025,2025,2100
-"Government Regulations.SLR adaptation start year",0,0,0,0,0,0,0,0,1,0,2025,2025,2100
-"Government Regulations.switch animal product efficiency policy",0,0,0,0,0,0,0,0,1,0,0,0,1
-"Government Regulations.switch irrigation fraction policy",0,0,0,0,0,0,0,0,1,0,0,0,1
-"Government Regulations.switch non agricultural water use policy",0,0,0,0,0,0,0,0,1,0,0,0,1
-"Government Regulations.switch profit tax policy",0,0,0,0,0,0,0,0,1,0,0,0,1
-"Government Regulations.switch wage tax policy",0,0,0,0,0,0,0,0,1,0,0,0,1
-"Government Regulations.time for government to change the debt to GDP ratio target",0,0,0,0,0,0,0,0,1,0,10,5,50
-"Government Regulations.time to implement profit tax policy",0,0,0,0,0,0,0,0,1,0,5,5,75
-"Government Regulations.time to implement wage tax policy",0,0,0,0,0,0,0,0,1,0,5,5,75
-"Government Regulations.time to implement wealth tax policy",0,0,0,0,0,0,0,0,1,0,5,5,75
-"Government Regulations.time to start central bank inflation policy",0,0,0,0,0,0,0,0,1,0,2025,2025,2075
-"Government Regulations.time to start central bank unemployment policy",0,0,0,0,0,0,0,0,1,0,2025,2025,2075
-"Government Regulations.unemployment goal policy",0,0,0,0,0,0,0,0,1,0,0.05,0,0.15
-"Government Regulations.wage tax policy",0,0,0,0,0,0,0,0,1,0,0.218,0.05,0.5
-"Government Regulations.wage tax policy start year",0,0,0,0,0,0,0,0,1,0,2025,2025,2100
-"Government Regulations.wealth tax policy",0,0,0,0,0,0,0,0,1,0,0,0,0.02
-"Government Regulations.wealth tax policy start year",0,0,0,0,0,0,0,0,1,0,2025,2025,2100
-"Animal Products.Animal Products Yield in 1980[1]",0,0,0,0,0,1,0,0,0,0,0.905695751577825,0.6,1
-"Animal Products.aquatic animal product share 1980[1]",0,0,0,0,0,1,0,0,0,0,0.060978509080844,0.059,0.061
-"Animal Products.average animal product growth efficiency[1]",0,0,0,0,0,1,0,0,0,0,0.158556222765917,0.01,0.25
-"Animal Products.averaging time[1]",1,0,0,0,0,0,0,0,0,0,4.86108528084057,2,8
-"Animal Products.desired animal products reserve capacity[1]",0,0,0,0,0,1,0,0,0,0,0.0730663168930987,0,0.1
-"Animal Products.elasticity of aquatic animal product share to GDP per person[1]",0,0,0,0,0,1,0,0,0,0,0.3927547306698,0,1
-"Animal Products.normal rate of change in grazing land yield[1]",0,0,0,0,0,1,0,0,0,0,0.0495491289306329,0.01,0.1
-"Animal Products.sensitivity of rate of change in animal products balance to growth rate in yield[1]",0,0,0,0,0,1,0,0,0,0,-84.2082305110113,-100,0
-"Crop.crop prod linear CO2 effect[1]",0,0,0,0,1,0,0,0,0,0,0.04688,0.0465156,0.0472444
-"Crop.crop prod linear temp effect[1]",0,0,0,0,1,0,0,0,0,0,31.07,30.5574,31.5826
-"Crop.crop prod squared temp effect[1]",0,0,0,0,1,0,0,0,0,0,-1.11,-1.12588,-1.09412
-"Crop.desired crop reserve capacity[1]",0,0,0,0,0,1,0,0,0,0,0.00904843522834254,0,0.1
-"Crop.fertilizer use crop yield parameter[1]",0,0,0,0,0,1,0,0,0,0,0.0166667132489498,0.00001,0.1
-"Crop.harvest index for energy crops[1]",0,0,0,0,0,1,0,0,0,0,0.94354183537263,0.6,0.95
-"Crop.harvest index for feed crops[1]",0,0,0,0,0,1,0,0,0,0,0.799479064093028,0.5,0.8
-"Crop.initial crop yield[1]",0,0,0,0,0,1,0,0,0,0,5.90242907197977,5.5,6.5
-"Crop.irrigation crop yield parameter[1]",0,0,0,0,0,1,0,0,0,0,2.5,2.5,9
-"Crop.normal harvest index for food crops[1]",0,0,0,0,0,1,0,0,0,0,0.449922146050117,0.4,0.45
-"Crop.rel change in crop productivity intercept[1]",0,0,0,0,1,0,0,0,0,0,-235.8,-239.948,-231.652
-"Crop.sensitivity of effect of crop residue production on field fraction[1]",0,0,0,0,0,1,0,0,0,0,0.559682992447628,0,0.75
-"Crop.sensitivity of effect of crop yield on harvest index[1]",0,0,0,0,0,1,0,0,0,0,0.0993697795186493,0.05,0.1
-"Crop.soil carbon crop yield parameter[1]",0,0,0,0,0,1,0,0,0,0,0.0181034489639068,1e-8,0.2
-"Crop.tolerance of the cap on harvest index and residue on field fraction[1]",0,0,0,0,0,1,0,0,0,0,0.0491236688482393,0.03,0.08
-"Crop.UNIT GtC per PCal crop[1]",0,0,0,0,1,0,0,0,0,1,0.000220559,0.000220559,0.00027385
-"Food Demand.animal product demand per person 1980",0,0,0,0,0,0,1,0,0,0,0.147979444,0,1
-"Food Demand.crops used for non energy other per person[1]",0,0,0,0,0,1,0,0,0,0,0.557664331757457,0,1
-"Food Demand.crops used for seed or lost per person 1980[1]",0,0,0,0,0,1,0,0,0,0,0.12405112567208,0,1
-"Food Demand.direct food demand per person per day 1980",0,0,0,0,0,0,1,0,0,0,2497.716401,2000,3000
-"Food Demand.elasticity of animal product demand to GDP per person",0,0,0,0,0,0,1,0,0,0,0.60029083,0,2
-"Food Demand.elasticity of crops used for non energy other to GDP per person[1]",0,0,0,0,0,1,0,0,0,0,0.358913556751464,0,2
-"Food Demand.elasticity of crops used for seed or lost to GDP per person[1]",0,0,0,0,0,1,0,0,0,0,0.403710751923314,0,2
-"Food Demand.elasticity of food demand to GDP per person",0,0,0,0,0,0,1,0,0,0,0.3,0,2
-"Food Demand.initial crop demand for feed offset[1]",0,0,0,0,0,1,0,0,0,0,0.979334379798308,0.9,0.98
-"Food Demand.switch use GDP for food demand",0,0,0,0,0,0,1,0,0,0,0,0,1
-"Food Demand.time to change crop demand components[1]",0,0,0,0,0,1,0,0,0,0,7.11435578450624,5,20
-"Food Demand.time to change demand for feed[1]",0,0,0,0,0,1,0,0,0,0,9.91776163948711,1,10
-"Forest.CO2 tree net primary production parameter[1]",0,0,0,0,0,1,0,0,0,0,0.001,0.0005,0.001
-"Forest.forest aboveground biomass 1980[1]",0,0,0,0,0,1,0,0,0,0,546.9907432,450,700
-"Forest.STA maximum aboveground biomass per area parameter[1]",0,0,0,0,0,1,0,0,0,0,0.253488316,0.2,0.35
-"Forest.STA squared maximum aboveground biomass per area parameter[1]",0,0,0,0,0,1,0,0,0,0,-0.048709811,-0.08,-0.02
-"Forest.STA squared tree net primary production parameter[1]",0,0,0,0,0,1,0,0,0,0,-0.023015026,-0.05,-0.01
-"Forest.STA tree net primary production parameter[1]",0,0,0,0,0,1,0,0,0,0,0.125348729,0.01,0.13
-"Forest.tree net primary production in 1980[1]",0,0,0,0,0,1,0,0,0,0,0.008320717,0.005,0.01
-"Forest.Young mature forest biomass ratio[1]",0,0,0,0,0,1,0,0,0,0,0.558925781,0.3,0.7
-"Freshwater.average deep groundwater infiltration time[1]",0,0,0,0,0,1,0,0,0,0,100,20,200
-"Freshwater.base fraction of cropland irrigated[1]",0,0,0,0,0,1,0,0,0,0,0.166729115896786,0,0.3
-"Freshwater.elasticity of non agricultural water withdrawal per capita to GDP per person[1]",0,0,0,0,0,1,0,0,0,0,0.012253081389571,0.01,0.5
-"Freshwater.initial available water supply[1]",0,0,0,0,0,1,0,0,0,0,48246098833498.5,30000000000000,120000000000000
-"Freshwater.initial fraction of unsustainable water withdrawal[1]",0,0,0,0,0,1,0,0,0,0,0.0502730435024784,0,0.3
-"Freshwater.non agricultural water withdrawal 1980[1]",0,0,0,0,0,1,0,0,0,0,171761592.558156,50000000,400000000
-"Freshwater.rate of change in irrigation efficiency[1]",0,0,0,0,0,1,0,0,0,0,0.00372794603538341,0,0.01
-"Freshwater.rate of change in technological water discovery[1]",0,0,0,0,0,1,0,0,0,0,-0.0185761099378173,-0.02,0
-"Freshwater.sensitivity of effect of available water supply on land irrigated[1]",0,0,0,0,0,1,0,0,0,0,0.941904940003108,0.5,1.5
-"Freshwater.sensitivity of fraction of cropland irrigated indicated to GDP per person[1]",0,0,0,0,0,1,0,0,0,0,0.616356215421174,0.01,1
-"Freshwater.sensitivity of pressure to expand water supply to available water supply[1]",0,0,0,0,0,1,0,0,0,0,-2.95018714699453,-3,0
-"Freshwater.sensitivity of surface temperature anomaly on water used per Mtcrop[1]",0,0,1,0,0,1,0,0,0,0,0.064352435,0.02,0.1
-"Freshwater.technological water discovery 1980[1]",0,0,0,0,0,1,0,0,0,0,30517624424.2402,10000000000,1000000000000
-"Freshwater.water withdrawal per MHa irrigated 1980[1]",0,0,0,0,0,1,0,0,0,0,9363163131.6479,1000000000,100000000000
-"Grass.CO2 grass net primary production parameter[1]",0,0,0,0,0,1,0,0,0,0,0.000963654,0.0005,0.001
-"Grass.grass net primary production in 1980[1]",0,0,0,0,0,1,0,0,0,0,0.005,0.0025,0.005
-"Grass.GtC per PCal of grazing multiplier[1]",0,0,0,0,0,1,0,0,0,0,0.315778805,0.2,0.6
-"Grass.STA grass net primary production parameter[1]",0,0,0,0,0,1,0,0,0,0,0.126281692,0.01,0.13
-"Grass.STA squared grass net primary production parameter[1]",0,0,0,0,0,1,0,0,0,0,-0.034654395,-0.05,-0.01
-"Land Nutrients.elasticity of effect of animal products on manure fertilizer use[1]",0,0,0,0,0,1,0,0,0,0,0.0959191949191156,0.01,1.5
-"Land Nutrients.man made fertilizer use 1980[1]",0,0,0,0,1,0,0,0,0,0,60.6,58,64
-"Land Nutrients.manure fertilizer use 1980[1]",0,0,0,0,1,0,0,0,0,0,22.96867648,20,25
-"Land Nutrients.maximum desired growth in fertilizer use[1]",0,0,0,0,0,1,0,0,0,0,0.05,0,0.05
-"Land Nutrients.reference fertilizer use[1]",1,0,0,0,0,0,0,0,0,0,85,60,120
-"Land Nutrients.sensitivity demand to relative use[1]",0,0,0,0,0,1,0,0,0,0,-0.0213584370007258,-0.5,-0.001
-"Land Nutrients.sensitivity of fertilizer use to crop balance with reserves[1]",0,0,0,0,0,1,0,0,0,0,-1.85176246649688,-10,-0.2
-"Land Nutrients.time to change fertilizer use[1]",0,0,0,0,0,1,0,0,0,0,2.99698165573539,2,5
-"Land Use.cropland expansion time[1]",0,0,0,0,0,1,0,0,0,0,2.8583135667647,1,10
-"Land Use.elasticity of effect of animal products yield on fraction of grassland degrading[1]",0,0,0,0,0,1,0,0,0,0,0.71169825126579,0.2,2
-"Land Use.elasticity of effect of crop yield on fraction cropland degrading[1]",0,0,0,0,0,1,0,0,0,0,0.865419479633545,0.2,2
-"Land Use.forest recovery time[1]",0,0,0,0,0,1,0,0,0,0,64.15611703,50,70
-"Land Use.fraction cropland degrading 1980[1]",0,0,0,0,0,1,0,0,0,0,0.00005,0,0.0001
-"Land Use.fraction of depleting cropland to grassland[1]",0,0,0,0,0,1,0,0,0,0,0.412935967443594,0.2,0.8
-"Land Use.fraction of grassland degrading 1980[1]",0,0,0,0,0,1,0,0,0,0,0.00001,0,0.0001
-"Land Use.fraction of grassland for grazing[1]",0,0,0,0,0,1,0,0,0,0,0.674591677510883,0.6,0.8
-"Land Use.fraction of new cropland from forests[1]",0,0,0,0,0,1,0,0,0,0,0.510822653898351,0.2,0.8
-"Land Use.normal average cutting time[1]",0,0,0,0,0,1,0,0,0,0,590.626329235798,100,1000
-"Land Use.normal average time cropland in use[1]",0,0,0,0,0,1,0,0,0,0,968.269078594081,100,1000
-"Land Use.percent of forest recovering in 1980[1]",0,0,0,0,0,1,0,0,0,0,0.0863712557409344,0.01,0.5
-"Land Use.sensitivity of crop land use time to cropland size[1]",0,0,0,0,0,1,0,0,0,0,0.192047856708857,0,10
-"Land Use.sensitivity of cutting time to forest size[1]",0,0,0,0,0,1,0,0,0,0,1.60873225747901,0,5
-"Land Use.sensitivity of effect of animal products balance on grassland expansion rate[1]",0,0,0,0,0,1,0,0,0,0,-0.154644615512353,-1,0
-"Land Use.sensitivity of effect of crop balance on crop land expansion rate[1]",0,0,0,0,0,1,0,0,0,0,-0.309577549663146,-1,0
-"Land Use.time to close grassland gap[1]",0,0,0,0,0,1,0,0,0,0,8.51099251856245,2,10
-"cropland soil carbon.cropland soil carbon 1980[1]",0,0,0,0,0,1,0,0,0,0,106.352147,80,150
-"degraded land soil carbon.degraded land productivity reduction factor[1]",0,0,0,0,1,0,0,0,0,0,0.05,0.01,0.1
-"forest soil carbon.forest soil carbon initialisation[1]",0,0,0,0,0,1,0,0,0,0,799.9965225,400,950
-"forest soil carbon.Young forest soil carbon reduction factor[1]",0,0,0,0,0,1,0,0,0,0,0.862530531,0.5,1
-"grassland soil carbon.grassland soil carbon 1980[1]",0,0,0,0,0,1,0,0,0,0,330,330,500
-"soil carbon decay.cropland litter input share slow soil carbon[1]",0,0,0,0,0,1,0,0,0,0,0.016233165,0.01,0.02
-"soil carbon decay.cropland slow soil carbon historic share[1]",0,0,0,0,0,1,0,0,0,0,0.374742551,0.3,0.4
-"soil carbon decay.e0[1]",0,0,0,0,0,1,0,0,0,0,290.0287445,290,320
-"soil carbon decay.grassland litter input share slow soil carbon[1]",0,0,0,0,0,1,0,0,0,0,0.018249348,0.01,0.02
-"soil carbon decay.grassland slow soil carbon historic share[1]",0,0,0,0,0,1,0,0,0,0,0.4,0.3,0.4
-"soil carbon decay.mature forest litter input share slow soil carbon[1]",0,0,0,0,0,1,0,0,0,0,0.02136525,0.015,0.025
-"soil carbon decay.mature forest slow soil carbon historic share[1]",0,0,0,0,0,1,0,0,0,0,0.399614252,0.3,0.4
-"soil carbon decay.natural decay rate fast soil carbon[1]",0,0,0,0,0,1,0,0,0,0,0.025,0.025,0.035
-"soil carbon decay.natural decay rate litter carbon[1]",0,0,0,0,0,1,0,0,0,0,0.600513407,0.6,0.8
-"soil carbon decay.natural decay rate slow soil carbon[1]",0,0,0,0,0,1,0,0,0,0,0.000808824,0.0008,0.0012
-"soil carbon decay.temp response[1]",0,0,0,0,0,1,0,0,0,0,60,40,60
-"soil carbon decay.young forest litter input share slow soil carbon[1]",0,0,0,0,0,1,0,0,0,0,0.011729817,0.01,0.025
-"soil carbon decay.young forest slow soil carbon historic share[1]",0,0,0,0,0,1,0,0,0,0,0.3,0.3,0.4
-"Concrete.BASE AVERAGE LIFETIME OF BUILDINGS[1]",0,0,0,0,0,1,0,0,0,0,115.309006352437,75,200
-"Concrete.BASE AVERAGE LIFETIME OF INFRASTRUCTURE[1]",0,0,0,0,0,1,0,0,0,0,25,25,150
-"Concrete.CLIMATE IMPACT ON CONCRETE LIFETIME[1]",0,0,1,0,0,0,0,0,0,0,-0.075,-0.15,-0.05
-"Concrete.CO2 INTENSITY OF INFRASTRUCTURE CONCRETE[1]",0,0,0,0,1,1,0,0,0,0,0.07,0.07,0.164
-"Concrete.CO2 INTENSITY OF RS BUILDINGS CONCRETE[1]",0,0,0,0,1,1,0,0,0,0,0.0585221156311479,0.05,0.163
-"Concrete.CONCRETE PER m2 UFA[1]",0,0,0,0,1,0,0,0,0,0,0.998,0.452,1.43
-"Concrete.GAP ADJUSTMENT TIME FOR BUILDINGS[1]",1,0,0,0,0,1,0,0,0,0,13.9260948345179,0.5,20
-"Concrete.GAP ADJUSTMENT TIME FOR INFRASTRUCTURE[1]",1,0,0,0,0,1,0,0,0,0,9.96999123908307,0.5,10
-"Concrete.INFRA ALPHA[1]",1,0,0,0,0,1,0,0,0,0,-27235.0941605342,-40000,-5000
-"Concrete.INFRA BETA[1]",1,0,0,0,0,1,0,0,0,0,-37.3680135607164,-40,-5
-"Concrete.INFRA GAMMA[1]",1,0,0,0,0,1,0,0,0,0,6.61569213989495,4.48,6.824
-"Concrete.INIT CONCRETE IN NEW BUILDINGS[1]",1,0,0,0,0,1,0,0,0,0,12666.3005103963,1000,70000
-"Concrete.INIT CONCRETE IN NEW INFRASTRUCTURE[1]",1,0,0,0,0,1,0,0,0,0,2838.18417582776,1000,16000
-"Concrete.INIT CONCRETE IN OLD BUILDINGS[1]",1,0,0,0,0,1,0,0,0,0,54769.4016691214,20000,80000
-"Concrete.INIT CONCRETE IN OLD INFRASTRUCTURE[1]",1,0,0,0,0,1,0,0,0,0,14990.5225486193,1000,15000
-"Concrete.INTERCEPT[1]",1,0,0,0,0,1,0,0,0,0,165310,165310,322082
-"Concrete.NORMAL CONCRETE DETERIORATION RATE[1]",0,0,0,0,0,1,0,0,0,0,0.0142483549785972,0.001,0.1
-"Concrete.TIME TO ADJUST DESIRED FLOOR AREA[1]",1,0,0,0,0,1,0,0,0,0,6.33255854211754,2,30
-"Concrete.TIME TO ADJUST DESIRED INFRASTRUCTURE AREA[1]",1,0,0,0,0,1,0,0,0,0,1,1,10
-"Concrete.UFA alpha[1]",1,0,0,0,0,1,0,0,0,0,29.3981092227848,1,45
-"Concrete.UFA intercept[1]",1,0,0,0,0,1,0,0,0,0,-237.396109005807,-300,-50
+Variable,Assumption,Calibrated Output,Climate Impact Parameter,Explanatory Variable,External Parameter,Internal Calibration Parameter,No Sensi,Output,Parameter,Policy,Unit,Value,Min,Max
+"Simulation End",0,0,0,0,0,0,1,0,0,0,0,2150,2023,2200
+"Animal Products Demand.average daily demand per capita in 1980[1]",0,0,0,0,0,1,0,0,0,0,0,376.215025587086,350,400
+"Animal Products Demand.elasticity of demand to GDP[1]",0,0,0,0,0,1,0,0,0,0,0,0.349012375980477,0,1
+"Animal Products Demand.growth rate of socioeconomic effect[1]",0,0,0,0,0,1,0,0,0,0,0,-4.87065698552652,-7.5,-2.5
+"Animal Products Demand.initial share of demand from consumption domain[1]",0,0,0,0,0,1,0,0,0,0,0,0.178579728422547,0.15,0.3
+"Animal Products Demand.maximum effect of additional environmental consciousness[1]",1,0,0,0,0,0,0,0,0,0,0,0.5,0.25,0.75
+"Animal Products Demand.normal sensitivity of personal norm to climate risk[1]",0,0,0,0,0,1,0,0,0,0,0,-0.406981535128116,-1,-0.01
+"Animal Products Demand.range of socioeconomic effect[1]",1,0,0,0,0,0,0,0,0,0,0,1,0.5,1.5
+"Animal Products Demand.reference GDP per person for socioeconomic effect[1]",0,0,0,0,1,0,0,0,0,0,0,40000,35000,45000
+"Animal Products Demand.sensitivity of demand to relative scarcity[1]",0,0,0,0,0,1,0,0,0,0,0,0.451123658177203,0,1
+"Animal Products Demand.sensitivity of personal norm to consumption risk[1]",0,0,0,0,0,1,0,0,0,0,0,-0.723804346469237,-1,-0.1
+"Animal Products Demand.sensitivity of personal norm to social value[1]",0,0,0,0,0,1,0,0,0,0,0,0.974113071330717,0.1,1
+"Animal Products Demand.sensitivity of social value perception[1]",0,0,0,0,0,1,0,0,0,0,0,1.41609954382117,0.1,2
+"Animal Products Demand.time horizon for long term perception[1]",0,0,0,0,0,1,0,0,0,0,0,55.4508307301875,20,100
+"Animal Products Demand.time horizon for short term perception[1]",0,0,0,0,0,1,0,0,0,0,0,5.52520495175963,1,20
+"Animal Products Demand.time to adjust consumption pattern[1]",0,0,0,0,0,1,0,0,0,0,0,4.43740527243423,1,10
+"Animal Products Demand.time to adjust desired demand from accessibility[1]",0,0,0,0,0,1,0,0,0,0,0,1.0258931993514,1,5
+"Animal Products Demand.time to adjust value perception[1]",0,0,0,0,0,1,0,0,0,0,0,4.38637838836956,3,50
+"Animal Products Demand.time to observe consequences[1]",0,0,0,0,0,1,0,0,0,0,0,25.0081155809568,10,30
+"Animal Products Demand.time to perceive average consumption[1]",0,0,0,0,0,1,0,0,0,0,0,2.85717522329896,1,5
+"Climate Risk Perception.additional time horizon of reference climate extremes exposure[1]",0,0,0,0,0,1,0,0,0,0,0,51.3273572077805,10,100
+"Climate Risk Perception.additional time horizon of reference SLR flooding exposure[1]",0,0,0,0,0,1,0,0,0,0,0,48.1554221451876,10,100
+"Climate Risk Perception.maximum effect of additional environmental consciousness on climate information sensitivity[1]",1,0,0,0,0,0,0,0,0,0,0,0.5,0.25,0.75
+"Climate Risk Perception.maximum effect of additional environmental consciousness on reference time horizon[1]",1,0,0,0,0,0,0,0,0,0,0,5,2.5,7.5
+"Climate Risk Perception.minimum reference for SLR flooding exposure[1]",1,0,0,0,0,0,0,0,0,0,0,10,5,15
+"Climate Risk Perception.normal additional time horizon of reference temperature anomaly[1]",0,0,0,0,0,1,0,0,0,0,0,10.0947438528098,10,100
+"Climate Risk Perception.normal sensitivity to climate information[1]",0,0,0,0,0,1,0,0,0,0,0,0.428871284003314,0,1
+"Climate Risk Perception.sensitivity to climatic events exposure[1]",0,0,0,0,0,1,0,0,0,0,0,0.430081026703445,0,1
+"Climate Risk Perception.time to perceive climate extremes exposure[1]",0,0,0,0,0,1,0,0,0,0,0,4.96484260562089,1,10
+"Climate Risk Perception.time to perceive SLR flooding exposure[1]",0,0,0,0,0,1,0,0,0,0,0,3.58579044095443,1,10
+"Climate Risk Perception.time to report and perceive climate information[1]",0,0,0,0,0,1,0,0,0,0,0,6.83612517029621,1,10
+"Total Food Demand.average daily demand per capita in 1980[1]",0,0,0,0,0,1,0,0,0,0,0,2466.16104927555,2300,2500
+"Total Food Demand.elasticity of demand to GDP[1]",0,0,0,0,0,1,0,0,0,0,0,0.254358958772649,0,1
+"Total Food Demand.growth rate of socioeconomic effect[1]",0,0,0,0,0,1,0,0,0,0,0,-4.64895981794011,-7.5,-2.5
+"Total Food Demand.range of socioeconomic effect[1]",1,0,0,0,0,0,0,0,0,0,0,1,0.5,1.5
+"Total Food Demand.reference GDP per person for socioeconomic effect[1]",0,0,0,0,1,0,0,0,0,0,0,50000,45000,55000
+"Total Food Demand.sensitivity of demand to scarcity[1]",0,0,0,0,0,1,0,0,0,0,0,0.511723624302329,0,1
+"Total Food Demand.sensitivity of personal norm to climate risk[1]",0,0,0,0,0,1,0,0,0,0,0,-0.134328332771508,-1,-0.01
+"Total Food Demand.sensitivity of personal norm to consumption risk[1]",0,0,0,0,0,1,0,0,0,0,0,-0.797522111650804,-1,-0.1
+"Total Food Demand.sensitivity of personal norm to social value[1]",0,0,0,0,0,1,0,0,0,0,0,0.935938976487161,0.1,1
+"Total Food Demand.sensitivity of social value perception[1]",0,0,0,0,0,1,0,0,0,0,0,1.21544240291107,0.1,2
+"Total Food Demand.time horizon for long term perception[1]",0,0,0,0,0,1,0,0,0,0,0,55.5391539349965,20,100
+"Total Food Demand.time horizon for short term perception[1]",0,0,0,0,0,1,0,0,0,0,0,2.36815898181088,1,20
+"Total Food Demand.time to adjust consumption pattern[1]",0,0,0,0,0,1,0,0,0,0,0,1,1,10
+"Total Food Demand.time to adjust desired demand from accessibility[1]",0,0,0,0,0,1,0,0,0,0,0,1.22985155285855,1,5
+"Total Food Demand.time to adjust value perception[1]",0,0,0,0,0,1,0,0,0,0,0,4.25095395897896,3,50
+"Total Food Demand.time to observe consequences[1]",0,0,0,0,0,1,0,0,0,0,0,7.43228905745963,5,30
+"Total Food Demand.time to perceive average consumption[1]",0,0,0,0,0,1,0,0,0,0,0,1.11542399636206,1,5
+"Behavioral Choices.switch animal products fraction policy",0,0,0,0,0,0,0,0,0,1,0,0,0,1
+"Behavioral Choices.switch aquatic animal products fraction policy",0,0,0,0,0,0,0,0,0,1,0,0,0,1
+"Behavioral Choices.switch energy demand policy",0,0,0,0,0,0,0,0,0,1,0,0,0,1
+"Behavioral Choices.switch environmental consciousness policy",0,0,0,0,0,0,0,0,0,1,0,0,0,1
+"Behavioral Choices.switch food demand policy",0,0,0,0,0,0,0,0,0,1,0,0,0,1
+"Climate.climate impact stoptime",0,0,0,0,0,0,1,0,0,0,0,1979,1979,2130
+"Climate.switch behavioral impact",0,0,0,0,0,0,1,0,0,0,0,1,0,1
+"Climate.switch concrete impact",0,0,0,0,0,0,1,0,0,0,0,1,0,1
+"Climate.switch demography damage",0,0,0,0,0,0,1,0,0,0,0,1,0,1
+"Climate.switch energy damage",0,0,0,0,0,0,1,0,0,0,0,1,0,1
+"Climate.switch finance damage",0,0,0,0,0,0,1,0,0,0,0,1,0,1
+"Climate.switch government damage",0,0,0,0,0,0,1,0,0,0,0,1,0,1
+"Climate.switch internal to climate land carbon impact",0,0,0,0,0,0,1,0,0,0,0,1,0,1
+"Climate.switch labor damage",0,0,0,0,0,0,1,0,0,0,0,1,0,1
+"Climate.switch landuse damage",0,0,0,0,0,0,1,0,0,0,0,1,0,1
+"Climate.switch sea level rise climate risk perception",0,0,0,0,0,0,1,0,0,0,0,1,0,1
+"Climate.switch sea level rise damage",0,0,0,0,0,0,1,0,0,0,0,1,0,1
+"Climate.switch sea level rise fatalities damage",0,0,0,0,0,0,1,0,0,0,0,1,0,1
+"Climate.switch sea level rise finance damage",0,0,0,0,0,0,1,0,0,0,0,1,0,1
+"Climate.switch sea level rise productivity reduction damage",0,0,0,0,0,0,1,0,0,0,0,1,0,1
+"Climate.switch sea level rise protection cost damage",0,0,0,0,0,0,1,0,0,0,0,1,0,1
+"Climate.switch sea level rise relocation cost damage",0,0,0,0,0,0,1,0,0,0,0,1,0,1
+"Emissions.baseline Food and Land use CH4 emissions[1]",0,0,0,0,0,1,0,0,0,0,0,46.7098266259576,40,60
+"Emissions.baseline Food and Land Use N2O emissions[1]",0,0,0,0,0,1,0,0,0,0,0,3691.19740990857,2000,4000
+"Emissions.baseline GDP per person[1]",0,0,0,0,0,1,0,0,0,0,0,7.508917812,5,15
+"Emissions.baseline HFC134a eq per person[1]",0,0,0,0,0,1,0,0,0,0,0,0.00152911881560677,0,0.02
+"Emissions.baseline N2O per person[1]",0,0,0,0,0,1,0,0,0,0,0,0.000132942470536747,0,0.0002
+"Emissions.baseline non fossil CH4 per person[1]",0,0,0,0,0,1,0,0,0,0,0,0.00981195479395444,0,0.05
+"Emissions.desulphurisation rate of energy related emissions[1, Gas]",0,0,0,0,0,1,0,0,0,0,0,-0.0361797285928523,-0.1,0
+"Emissions.desulphurisation rate of energy related emissions[1, Oil]",0,0,0,0,0,1,0,0,0,0,0,-0.0188666699148905,-0.1,0
+"Emissions.desulphurisation rate of energy related emissions[1, Coal]",0,0,0,0,0,1,0,0,0,0,0,-0.0383582127304921,-0.1,0
+"Emissions.effective CDD logistic speed[1]",0,0,0,0,0,1,0,0,0,0,0,3.34499805495326,0,10
+"Emissions.Initial Fossil Energy CH4 Intensity[1, Gas]",0,0,0,0,0,1,0,0,0,0,0,28.9345478534253,5,50
+"Emissions.Initial Fossil Energy CH4 Intensity[1, Oil]",0,0,0,0,0,1,0,0,0,0,0,19.0025146824999,5,50
+"Emissions.Initial Fossil Energy CH4 Intensity[1, Coal]",0,0,0,0,0,1,0,0,0,0,0,34.4451718431361,5,50
+"Emissions.Initial Fossil Energy N2O Intensity[1, Gas]",0,0,0,0,0,1,0,0,0,0,0,226.848954704993,50,500
+"Emissions.Initial Fossil Energy N2O Intensity[1, Oil]",0,0,0,0,0,1,0,0,0,0,0,277.709310218157,50,500
+"Emissions.Initial Fossil Energy N2O Intensity[1, Coal]",0,0,0,0,0,1,0,0,0,0,0,499.639768375586,50,500
+"Emissions.Initial Fossil Energy Sulfur Intensity[1, Gas]",0,0,0,0,0,1,0,0,0,0,0,40.041761579119,5,50
+"Emissions.Initial Fossil Energy Sulfur Intensity[1, Oil]",0,0,0,0,0,1,0,0,0,0,0,12.5311771546941,5,50
+"Emissions.Initial Fossil Energy Sulfur Intensity[1, Coal]",0,0,0,0,0,1,0,0,0,0,0,48.4416379781151,5,50
+"Emissions.MtCH4 emission per PCal animal products 1980[1]",0,0,0,0,0,1,0,0,0,0,0,0.117148779927286,0,0.3
+"Emissions.MtN2O emission per PCal animal products 1980[1]",0,0,0,0,0,1,0,0,0,0,0,0.00256924857836404,0,0.01
+"Emissions.rate of change in energy related CH4 emissions[1, Gas]",0,0,0,0,0,1,0,0,0,0,0,-0.0722212629576704,-0.2,0
+"Emissions.rate of change in energy related CH4 emissions[1, Oil]",0,0,0,0,0,1,0,0,0,0,0,-0.0447143748160744,-0.2,0
+"Emissions.rate of change in energy related CH4 emissions[1, Coal]",0,0,0,0,0,1,0,0,0,0,0,-0.00146366448317569,-0.2,0
+"Emissions.rate of change in energy related N2O emissions[1, Gas]",0,0,0,0,0,1,0,0,0,0,0,-0.0176993617033169,-0.05,0
+"Emissions.rate of change in energy related N2O emissions[1, Oil]",0,0,0,0,0,1,0,0,0,0,0,-0.00869805586799937,-0.05,0
+"Emissions.rate of change in energy related N2O emissions[1, Coal]",0,0,0,0,0,1,0,0,0,0,0,-0.023197225810528,-0.05,0
+"Emissions.rate of decline in MtCH4 emission per PCal animal products[1]",0,0,0,0,0,1,0,0,0,0,0,0.0140009683559439,0,0.018
+"Emissions.rate of decline in MtN2O emission per PCal animal products[1]",0,0,0,0,0,1,0,0,0,0,0,0.00137867223604397,0,0.02
+"Emissions.rate of decline in tN2O emission per tN fertilizer[1]",0,0,0,0,0,1,0,0,0,0,0,0.00596260172254414,0,0.02
+"Emissions.sensitivity of HFC134a eq per person to relative CDD[1]",0,0,0,0,0,1,0,0,0,0,0,8.09022641255435,1,10
+"Emissions.sensitivity of non fossil CH4 per person to GDP per capita[1]",0,0,0,0,0,1,0,0,0,0,0,0,-1,1
+"Emissions.sensitivity of Other N2O per person to GDP per capita[1]",0,0,0,0,0,1,0,0,0,0,0,-0.275015555994815,-1,1
+"Emissions.tN2O emission per tN fertilizer 1980[1]",0,0,0,0,0,1,0,0,0,0,0,0.0255426788719578,0,0.1
+"Sea Level.Include MICI behaviour",0,0,0,0,0,0,1,0,0,0,0,0,0,1
+"Sea Level.initial sea level anomaly from AntIS[1]",0,0,0,0,1,0,1,0,0,0,0,-0.00182,-0.005,0.01
+"Sea Level.initial sea level anomaly from GrIS[1]",0,0,0,0,1,0,1,0,0,0,0,-0.0028,-0.01,0
+"Sea Level.initial sea level anomaly from LWS[1]",0,0,0,0,1,1,1,0,0,0,0,-0.00532349732035439,-0.1,0.1
+"Sea Level.initial sea level anomaly from MG[1]",0,0,0,0,1,0,1,0,0,0,0,-0.0035,-0.005,-0.001
+"Sea Level.initial thermosteric sea level anomaly[1]",0,0,0,0,1,0,1,0,0,0,0,-0.008,-0.015,-0.005
+"Sea Level.Initial water storage from water impoundment",0,0,0,0,1,1,1,0,0,0,0,3950000000000,2500000000000,5500000000000
+"Sea Level.scale factor Antarctic ice sheet[1]",0,0,1,0,1,0,0,0,0,0,0,0.5,0,1
+"Sea Level.scale factor Greenland ice sheet[1]",0,0,1,0,1,0,0,0,0,0,0,0.5,0,1
+"Sea Level.scale factor mountain glaciers[1]",0,0,1,0,1,0,0,0,0,0,0,0.5,0,1
+"Sea Level.scale factor thermosteric SLR[1]",0,0,1,0,1,0,0,0,0,0,0,0.5,0,1
+"Sea Level.Water catchment per GW of hydropower[1]",0,0,0,0,0,1,0,0,0,0,0,3000967487.44708,2000000000,5000000000
+"Terrestrial Carbon Balance.Global peatland carbon uptake rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.299954605,0.1,0.3
+"Demographics.1 to 20 mortality alpha[1]",0,0,0,0,0,1,0,0,0,0,0,0.509664010101724,0,3
+"Demographics.1 to 20 mortality gamma[1]",0,0,0,0,0,1,0,0,0,0,0,-1.6600887557018,-3,0
+"Demographics.20 to 40 mortality alpha[1]",0,0,0,0,0,1,0,0,0,0,0,1.73425845327561,0,3
+"Demographics.20 to 40 mortality gamma[1]",0,0,0,0,0,1,0,0,0,0,0,-0.768847799914535,-3,0
+"Demographics.40 to 60 mortality alpha[1]",0,0,0,0,0,1,0,0,0,0,0,0.799577591516758,0,3
+"Demographics.40 to 60 mortality gamma[1]",0,0,0,0,0,1,0,0,0,0,0,-0.704331319619958,-3,0
+"Demographics.60 to 65 mortality alpha[1]",0,0,0,0,0,1,0,0,0,0,0,0.972528515477681,0,3
+"Demographics.60 to 65 mortality gamma[1]",0,0,0,0,0,1,0,0,0,0,0,-0.698924628252629,-3,0
+"Demographics.65 to 75 mortality alpha[1]",0,0,0,0,0,1,0,0,0,0,0,1.09139038213875,0,3
+"Demographics.65 to 75 mortality gamma[1]",0,0,0,0,0,1,0,0,0,0,0,-0.696338365907746,-3,0
+"Demographics.averaging time[1]",0,0,0,0,0,1,0,0,0,0,0,7,7,20
+"Demographics.effect of GDP on female population literacy percentage constant[1]",0,0,0,0,0,1,0,0,0,0,0,-1.18404692170427,-5,5
+"Demographics.effect of GDP on female population literacy percentage scale factor[1]",0,0,0,0,0,1,0,0,0,0,0,4.3771710217966,0,5
+"Demographics.infant mortality alpha[1]",0,0,0,0,0,1,0,0,0,0,0,0.750394564495844,0,2
+"Demographics.infant mortality gamma[1]",0,0,0,0,0,1,0,0,0,0,0,-1.44726010839169,-3,0
+"Demographics.initial average relative real gdp per person[1]",0,0,0,0,0,1,0,0,0,0,0,0.833323168072644,0.5,1
+"Demographics.initial fertility[1]",0,0,0,0,0,1,0,0,0,0,0,3.86548518260393,0,10
+"Demographics.Over 75 mortality alpha[1]",0,0,0,0,0,1,0,0,0,0,0,0.501025513144929,0,3
+"Demographics.Over 75 mortality gamma[1]",0,0,0,0,0,1,0,0,0,0,0,-0.521727360380367,-3,0
+"Demographics.sensitivity of fertility to inverse GDP per person[1]",0,0,0,0,0,1,0,0,0,0,0,-0.416987950973114,-2,0
+"Demographics.sensitivity of fertility to literacy[1]",0,0,0,0,0,1,0,0,0,0,0,-0.018845205,-0.05,0
+"Demographics.time to change fertility[1]",0,0,0,0,0,1,0,0,0,0,0,23.9972099925095,15,25
+"Circular Flow.consumption habits adjustment time[1]",1,0,0,0,0,1,0,0,0,0,0,1.464111314,0.5,2.5
+"Circular Flow.desired savings as multiple of profits[1]",0,0,0,0,0,1,0,0,0,0,0,12.0061535532014,2,20
+"Circular Flow.desired savings as multiple of wages[1]",0,0,0,0,0,1,0,0,0,0,0,1.19760938234432,1,5
+"Circular Flow.fraction of income to consumption[1]",1,0,0,0,0,1,0,0,0,0,0,0.75,0.65,0.85
+"Circular Flow.fraction of owner income to consumption[1]",1,0,0,0,0,1,0,0,0,0,0,0.75,0.65,0.85
+"Circular Flow.initial firms checking accounts[1]",0,0,0,0,0,1,0,0,0,0,0,5003.53414951,4000,10000
+"Circular Flow.initial owner savings[1]",0,0,0,0,0,1,0,0,0,0,0,46357.0465153,30000,60000
+"Circular Flow.initial worker savings[1]",0,0,0,0,0,1,0,0,0,0,0,22209.0362704,20000,30000
+"Circular Flow.minimum fraction of income to consumption[1]",1,0,0,0,0,1,0,0,0,0,0,0.35,0.25,0.45
+"Circular Flow.normal bottom 40 wages[1]",0,0,0,0,0,1,0,0,0,0,0,0.115583999962909,0.05,0.15
+"Circular Flow.profit tax rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.334795866407069,0,0.4
+"Circular Flow.time for bottom 40 to be affected[1]",0,0,0,0,0,1,0,0,0,0,0,2.71713962769918,1,20
+"Circular Flow.time for inflation to change consumption[1]",0,0,0,0,0,1,0,0,0,0,1,1,0.5,2
+"Circular Flow.time to consider desired savings[1]",0,0,0,0,0,1,0,0,0,0,0,2.37308188895326,1,10
+"Circular Flow.time to pay out profits[1]",0,0,0,0,0,1,0,0,0,0,0,2.52172418404836,1,5
+"Circular Flow.time to reach savings goal[1]",0,0,0,0,0,1,0,0,0,0,0,4.98074684444826,1,5
+"Circular Flow.wage tax rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.213245509607868,0.1,0.3
+"Circular Flow.xfinish[1]",0,0,0,0,0,1,0,0,0,0,0,1.46654779942244,1,2
+"Circular Flow.xmiddle[1]",0,0,0,0,0,1,0,0,0,0,0,0.7433791877887,0.5,1.5
+"Circular Flow.xspeed[1]",0,0,0,0,0,1,0,0,0,0,0,14.6643169927886,1,50
+"Circular Flow.xstart[1]",0,0,0,0,0,1,0,0,0,0,0,0.0366895585426691,0,1
+"Circular Flow.yfrom[1]",0,0,0,0,0,1,0,0,0,0,0,1.67205935445357,1.1,2
+"Circular Flow.yto[1]",0,0,0,0,0,1,0,0,0,0,0,0.579171144362919,0,1
+"Employment.average development completion time[1]",1,0,0,0,0,1,0,0,0,0,0,5,4,6
+"Employment.fraction of productivity gains translating to firing[1]",1,0,0,0,0,1,0,0,0,0,0,0.5,0.25,0.75
+"Employment.hiring to investment ratio[1]",0,0,0,0,0,1,0,0,0,0,0,0.454718325853551,0.1,0.75
+"Employment.initial productivity growth[1]",1,0,0,0,0,1,0,0,0,0,0,0.0258317400509399,0.01,0.03
+"Employment.initial unemployment rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.0614856366954347,0.03,0.1
+"Employment.Initial Wage Rate[1]",0,0,0,0,0,1,0,0,0,0,0,5695.75062986852,2000,10000
+"Employment.labour force participation fixed[1]",0,0,0,0,0,1,0,0,0,0,0,63.9386214645122,61.8,66
+"Employment.max change in fractional wage growth[1]",0,0,0,0,0,1,0,0,0,0,0,0.0689877237455,0,0.9
+"Employment.negotiation effectiveness[1]",1,0,0,0,0,1,0,0,0,0,0,1,0.5,1.5
+"Employment.productivity yield of exploratory investment[1]",1,0,0,0,0,1,0,0,0,0,0,1.947328313,0.9473283132336,2.9473283132336
+"Employment.productivity yield of non bank innovation[1]",1,0,0,0,0,1,0,0,0,0,0,0.132668695,0.05,0.25
+"Employment.profit threshold multiplier[1]",1,0,0,0,0,0,0,0,0,0,0,1,0.5,2
+"Employment.rent to investment ratio[1]",1,0,0,0,0,1,0,0,0,0,0,0.25,0.15,0.35
+"Employment.sensitivity of firing to profit discrepancy[1]",1,0,0,0,0,1,0,0,0,0,0,0.5,0.25,1
+"Employment.sensitivity of hiring to unemployment rate[1]",0,0,0,0,0,1,0,0,0,0,0,2.28968050025845,0.1,5
+"Employment.share of employment in agriculture intercept[1]",0,0,0,0,0,1,0,0,0,0,0,62.901759597299,-100,100
+"Employment.share of employment in agriculture slope[1]",0,0,0,0,0,1,0,0,0,0,0,-15.3331166860372,-50,1
+"Employment.share of employment in industry intercept[1]",0,0,0,0,0,1,0,0,0,0,0,-2.58133183549477,-100,100
+"Employment.share of employment in industry slope[1]",0,0,0,0,0,1,0,0,0,0,0,2.9310559170307,0,10
+"Employment.share of employment in services intercept[1]",0,0,0,0,0,1,0,0,0,0,0,-30.7387076354652,-100,100
+"Employment.share of employment in services slope[1]",0,0,0,0,0,1,0,0,0,0,0,7.49845788086441,0,10
+"Employment.Temperature effect on high exposure productivity[1]",0,0,1,0,1,0,0,0,0,0,0,-6.13282138,-25,4
+"Employment.Temperature effect on low exposure productivity[1]",0,0,1,0,1,0,0,0,0,0,0,-2.08262027,-16,5
+"Employment.Temperature squared effect on high exposure productivity[1]",0,0,1,0,1,0,0,0,0,0,0,-1.06197873,-1.5,1
+"Employment.Temperature squared effect on low exposure productivity[1]",0,0,1,0,1,0,0,0,0,0,0,-1.56936859,-2,0.1
+"Employment.threshold unemployment rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.0991787525880569,0.04,0.15
+"Employment.time for defaults to affect firing[1]",1,0,0,0,0,1,0,0,0,0,0,1,0.5,1.5
+"Employment.time for productivity to affect firing[1]",1,0,0,0,0,1,0,0,0,0,0,5,3,7
+"Employment.time seeking employees[1]",0,0,0,0,0,1,0,0,0,0,0,1.41675579163574,1,3
+"Employment.time to fire from missed profits[1]",1,0,0,0,0,1,0,0,0,0,0,1,0.5,1.5
+"Employment.Urgency with which wage growth is demanded[1]",1,0,0,0,0,1,0,0,0,0,0,2,1,3
+"Employment.wage adjustment negotiation time[1]",1,0,0,0,0,1,0,0,0,0,0,1.999714633,1,3
+"Finance.average time private refinances debt[1]",1,0,0,0,0,1,0,0,0,0,0,3,2,4
+"Finance.bank desired asset to liability ratio[1]",1,0,0,0,0,1,0,0,0,0,0,1.1,1.01,1.21
+"Finance.bank reference formation time[1]",1,0,0,0,0,1,0,0,0,0,0,80,20,100
+"Finance.effect of default rate on lending standards curvature[1]",0,0,0,0,0,1,0,0,0,0,0,4.00407024369583,1,10
+"Finance.effect of default rate on lending standards range[1]",0,0,0,0,0,1,0,0,0,0,0,1.94742064616041,0.5,5
+"Finance.effect of lending standards on failure rate curvature[1]",0,0,0,0,0,1,0,0,0,0,0,5.91542891023683,1,10
+"Finance.effect of lending standards on failure rate range[1]",0,0,0,0,0,1,0,0,0,0,0,2.95036620976155,0.5,10
+"Finance.elasticity of bankruptcy rate on risk premium[1]",0,0,0,0,0,1,0,0,0,0,0,2.96025826515849,2.5,5
+"Finance.elasticity of desired bank growth rate to changes in lending standards[1]",0,0,0,0,0,1,0,0,0,0,0,2.98312748185925,0,10
+"Finance.equity gap above min effect[1]",0,0,0,0,0,1,0,0,0,0,0,0.433728485607813,-50,0.5
+"Finance.equity gap below max effect[1]",0,0,0,0,0,1,0,0,0,0,0,3.10546015389887,1.2,10
+"Finance.equity gap effect max x magnitude[1]",0,0,0,0,0,1,0,0,0,0,0,0.169777247127836,0.05,0.2
+"Finance.equity ratio gap effect above exponent[1]",0,0,0,0,0,1,0,0,0,0,0,-1.13226853323907,-10,-1
+"Finance.equity ratio gap effect below exponent[1]",0,0,0,0,0,1,0,0,0,0,0,1.07079537366798,1,10
+"Finance.exploration effect midpoint[1]",0,0,0,0,0,1,0,0,0,0,0,1.21134805959858,0.8,1.6
+"Finance.exploratory premium[1]",1,0,0,0,0,1,0,0,0,0,0,2,2,4
+"Finance.exponential effect of interest on defaults[1]",0,0,0,0,0,1,0,0,0,0,0,9.049245183,8,12
+"Finance.failure rate floor[1]",1,0,0,0,0,0,0,0,0,0,0,0.002,0.001,0.003
+"Finance.government bailout assets to liabilities threshold[1]",1,0,0,0,0,0,0,0,0,0,0,1.04,1.02,1.06
+"Finance.initial annual bank negative profit fractional growth[1]",0,0,0,0,0,1,0,0,0,0,0,0.14,0.05,0.35
+"Finance.initial bad loans[1]",0,0,0,0,0,1,0,0,0,0,0,202.031071557794,180,300
+"Finance.initial bank investment growth rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.0836275699207085,0,0.2
+"Finance.initial fraction of safe loans financing innovation[1]",1,0,0,0,0,1,0,0,0,0,0,0.03,0.01,0.05
+"Finance.initial fraction of safe loans that are exploratory[1]",1,0,0,0,0,1,0,0,0,0,0,0.02,0.001,0.05
+"Finance.initial good loans[1]",0,0,0,0,0,1,0,0,0,0,0,8240.06768880644,7500,8500
+"Finance.initial net bank asset fractional growth[1]",0,0,0,0,0,1,0,0,0,0,0,0.155,0.1,0.22
+"Finance.initial non energy bank investment[1]",0,0,0,0,0,1,0,0,0,0,0,3000,1000,5000
+"Finance.initial risk premium[1]",0,0,0,0,0,1,0,0,0,0,0,0.0284093110372649,0.01,0.05
+"Finance.Initial safe assets[1]",0,0,0,0,0,1,0,0,0,0,0,72569.1999314293,60000,100000
+"Finance.loan maturation time[1]",0,0,0,0,0,1,0,0,0,0,0,11.560506434293,3,30
+"Finance.max change in failure rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.0758533243476001,0.02,0.5
+"Finance.max change in lending standards[1]",0,0,0,0,0,1,0,0,0,0,0,0.227265506831574,0,1
+"Finance.max risk premium increase rate[1]",0,0,0,0,1,0,0,0,0,0,0,0.015,0.01,0.15
+"Finance.maximum default rate from interest rate increases[1]",1,0,0,0,0,0,0,0,0,0,0,0.15,0.1,0.5
+"Finance.minimum reference stranded energy capital[1]",0,0,0,0,0,1,0,0,0,0,0,1.5,0.5,2.5
+"Finance.normal bank profit payment fraction[1]",1,0,0,0,0,0,0,0,0,0,0,1,0,2
+"Finance.normal exploration rate[1]",1,0,0,0,0,0,0,0,0,0,0,0.0369117820963221,0.01,0.05
+"Finance.normal failure rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.0366772752025615,0.01,0.08
+"Finance.normal growth rate of GDP growth rate[1]",1,0,0,0,0,0,0,0,0,0,0,1,0.5,1.5
+"Finance.normal rate of converting safe loans to safe loans for financing innovation[1]",0,0,0,0,0,1,0,0,0,0,0,0.03,0.02,0.04
+"Finance.renegotiation time[1]",1,0,0,0,0,1,0,0,0,0,0,1,1,1.5
+"Finance.reporting delay[1]",0,0,0,0,0,1,0,0,0,0,0,0.475468387137114,0.125,1.5
+"Finance.safe asset default rate threshold[1]",0,0,0,0,0,1,0,0,0,0,0,0.015,0,0.05
+"Finance.scale of exploratory loan failure[1]",1,0,0,0,0,1,0,0,0,0,0,7.50780807793014,6,9
+"Finance.sensitivity of bank exploration to profit decline[1]",1,0,0,0,0,1,0,0,0,0,0,0.501962557,0.2,0.8
+"Finance.sensitivity of bank profit payment to net asset growth[1]",1,0,0,0,0,1,0,0,0,0,0,1.1,0.5,1.5
+"Finance.sensitivity of defaults to changes in risky interest[1]",0,0,0,0,0,1,0,0,0,0,0,11.89928999,10,13.3
+"Finance.sensitivity of effect of safe default rate on lending standards[1]",0,0,0,0,0,1,0,0,0,0,0,0.150971040563369,0.01,0.2
+"Finance.sensitivity of effect of sta on failure rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.566684064319974,0.1,1.1
+"Finance.sensitivity of effect of stranded energy capital on other assets[1]",0,0,0,0,0,1,0,0,0,0,0,2.15638540234467,1,5
+"Finance.sensitivity of exploratory loan failure to GDP growth[1]",1,0,0,0,0,1,0,0,0,0,0,1.04850929725399,0.5,1.5
+"Finance.sensitivity of failure rate to investment to gdp ratio[1]",0,0,0,0,0,1,0,0,0,0,0,0.170408256374284,0.1,0.5
+"Finance.sensitivity of investment and GDP difference[1]",1,0,0,0,0,1,0,0,0,0,0,2.217074111,1,3
+"Finance.stranded energy capital reference formation time[1]",0,0,0,0,0,1,0,0,0,0,0,50,10,110
+"Finance.time for safe loans that will fail to actually fail[1]",0,0,0,0,0,1,0,0,0,0,0,13.751943326343,3,30
+"Finance.time to change lending standards[1]",0,0,0,0,0,1,0,0,0,0,0,1.14041208323877,0.5,2
+"Finance.time to measure changes in risky interest[1]",0,0,0,0,0,0,0,0,0,0,1,1,0.8,1.2
+"Finance.tolerance of the cap on default rate from interest rate increases[1]",0,0,0,0,1,0,0,0,0,0,0,0.06,0.01,0.11
+"Finance.tolerance of the cap on indicated risk premium[1]",1,0,0,0,0,0,0,0,0,0,0,0.01,0.005,0.015
+"GDP.initial nominal GDP growth rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.0414868952469566,0,0.1
+"GDP.initial real GDP growth rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.0236863127624338,0,0.05
+"Government.average time government refinances debt[1]",1,0,0,0,0,1,0,0,0,0,0,7,5,10
+"Government.averaging time to adjust tax based on income[1]",0,0,0,0,0,1,0,0,0,0,0,2.28422196055125,1,3
+"Government.banks threshold for perceiving gov debt as risky[1]",1,0,0,0,0,0,0,0,0,0,0,1,0.8,1.5
+"Government.baseline interest[1]",1,0,0,0,0,0,0,0,0,0,0,0.02,0.01,0.03
+"Government.central bank adjustment time[1]",1,0,0,0,0,1,0,0,0,0,0,1.5,0.5,2
+"Government.central bank interest rate reactivity[1]",1,0,0,0,0,1,0,0,0,0,0,1,0.8,1.2
+"Government.curvature effect of debt to GDP ratio on government spending[1]",0,0,0,0,0,1,0,0,0,0,0,10,9,11
+"Government.effect end effect of debt to GDP ratio on government spending[1]",1,0,0,0,0,1,0,0,0,0,0,2,1.6,2.4
+"Government.effect start effect of debt to GDP ratio on government spending[1]",1,0,0,0,0,1,0,0,0,0,0,1,0.5,1.8
+"Government.fraction of wages as child transfer payments[1]",0,0,0,0,0,1,0,0,0,0,0,0.0824119478469878,0,1
+"Government.fraction of wages as pension[1]",0,0,0,0,0,1,0,0,0,0,0,0.374566700660406,0,1
+"Government.fraction of wages as unemployment payments[1]",0,0,0,0,0,1,0,0,0,0,0,0.249829592285828,0,1
+"Government.historical minimum effect of deb to GDP ratio on government spending[1]",1,0,0,0,0,0,0,0,0,0,0,0.9,0.5,1
+"Government.inflation weight[1]",1,0,0,0,0,1,0,0,0,0,0,1.33,1.2,1.4
+"Government.initial government debt[1]",0,0,0,0,0,1,0,0,0,0,0,9712.9001009413,0,25000
+"Government.initial measured GDP[1]",0,0,0,0,0,1,0,0,0,0,0,20970.4,20000,22000
+"Government.initial safe interest[1]",0,0,0,0,0,1,0,0,0,0,0,0.038554397007985,0,0.2
+"Government.initial smoothed total public tax income[1]",0,0,0,0,0,1,0,0,0,0,0,2635.2,2200,2900
+"Government.maximum effect of debt to GDP ratio on government spending[1]",0,0,0,0,0,1,0,0,0,0,0,1.24457793533462,1.2,1.5
+"Government.normal share of public expenditure available for investment and consumption to consumption[1]",0,0,0,0,0,1,0,0,0,0,0,0.834964400848686,0.7,0.92
+"Government.sensitivity of banks gov debt risk perception[1]",1,0,0,0,0,1,0,0,0,0,0,0.1,0.05,0.15
+"Government.sensitivity of STA on public consumption[1]",0,0,0,0,0,1,0,0,0,0,0,0.0705869015143734,0,0.2
+"Government.solvency support adjustment time[1]",1,0,0,0,0,1,0,0,0,0,0,1,0.5,1.5
+"Government.time for government spending to change[1]",0,0,0,0,0,1,0,0,0,0,0,3.12888717930535,1,5
+"Government.time for government to change transfers[1]",0,0,0,0,0,1,0,0,0,0,0,5,3,10
+"Government.time to measure unemployment[1]",0,0,0,0,0,1,0,0,0,0,0,1,0.5,1.5
+"Government.unemployment weight[1]",1,0,0,0,0,1,0,0,0,0,0,0.33,0.2,0.4
+"Inflation.Agriculture share of GDP intercept[1]",0,0,0,0,0,1,0,0,0,0,0,3.44861681058744,0,100
+"Inflation.agriculture share of GDP slope[1]",0,0,0,0,0,1,0,0,0,0,0,-2.28814519206221,-10,1
+"Inflation.agriculture share of GDP starting point determinant[1]",0,0,0,0,0,1,0,0,0,0,0,19.8770195984429,0,20
+"Inflation.deflation adjustment time[1]",0,0,0,0,0,1,0,0,0,0,0,3.82527832406061,2.5,10
+"Inflation.inflation adjustment time[1]",1,0,0,0,0,1,0,0,0,0,0,1.45058032478617,0.25,1.5
+"Inflation.initial animal products demand growth rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.02,0,0.1
+"Inflation.initial animal products production growth rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.035,0,0.1
+"Inflation.initial crop demand growth rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.02,0,0.1
+"Inflation.initial crop supply growth rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.02,0,0.1
+"Inflation.initial employed growth[1]",0,0,0,0,0,1,0,0,0,0,0,-0.014951251,-0.05,0.05
+"Inflation.initial energy demand growth rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.02,0,0.1
+"Inflation.initial energy supply growth rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.02,0,0.1
+"Inflation.initial growth rate in cropland[1]",0,0,0,0,0,1,0,0,0,0,0,0.00275,0,0.1
+"Inflation.initial growth rate in grazing land[1]",0,0,0,0,0,1,0,0,0,0,0,0.001,0,0.1
+"Inflation.initial income growth rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.020044647,0,0.1
+"Inflation.initial inflation index[1]",0,0,0,0,0,1,0,0,0,0,0,0.382993181667638,0.35,0.55
+"Inflation.initial inflation rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.0613770977264824,0,0.1
+"Inflation.time to measure growth rate[1]",0,0,0,0,0,1,0,0,0,0,0,2,1.5,2.5
+"Inflation.weight of cropland inflation contribution[1]",0,0,0,0,0,1,0,0,0,0,0,0.0944956053433003,0.001,2
+"Inflation.weight of fertilizer used per unit of crop production[1]",0,0,0,0,0,1,0,0,0,0,0,0.0178717567090785,0.001,2
+"Inflation.weight of grazing land inflation contribution[1]",0,0,0,0,0,1,0,0,0,0,0,0.0543838689604846,0.001,2
+"Inflation.weight of irrigation water used per unit of crop production inflation contribution[1]",0,0,0,0,0,1,0,0,0,0,0,0.0501917669680645,0.001,2
+"Inflation.weight of marginal energy cost inflation[1]",0,0,0,0,0,1,0,0,0,0,0,0.812232845424,0.01,2
+"Innovation.firms reference formation time[1]",0,0,0,0,0,1,0,0,0,0,0,79.3879038397535,40,100
+"Innovation.reference cash reserve growth rate[1]",0,0,0,0,0,1,0,0,0,0,0,0.0486965577383913,0.03,0.08
+"Innovation.sensitivity of effect of cash reserve growth rate on firms innovation orientation[1]",0,0,0,0,0,1,0,0,0,0,0,-0.114483522217129,-0.3,-0.01
+"Innovation.time for firms to adjust innovation orientation[1]",0,0,0,0,0,1,0,0,0,0,0,3.00465422052076,2,5
+"Coastal Assets.Coastal zone divestment threshold[1]",1,0,0,0,0,1,0,0,0,0,0,0.95,0.9,1
+"Coastal Assets.Effective flood height at which only half the investment would be made[1]",1,0,0,0,0,1,0,0,0,0,0,1,0.5,3
+"Coastal Assets.Fraction of assets that has to stay at the coast[1]",1,0,0,0,0,1,0,0,0,0,0,0.5,0.2,0.8
+"Coastal Assets.Fraction of storm damages that is repaired[1]",1,0,0,0,0,1,0,0,0,0,0,0.9,0.75,1
+"Coastal Assets.Initial fraction of assets that are on the coast[1]",0,0,0,0,1,0,1,0,0,0,0,0.13,0.12,0.14
+"Coastal Assets.Maxmium fraction of assets destroyed in a storm surge[1]",1,0,0,0,0,1,0,0,0,0,0,0.3,0.2,0.4
+"Coastal Assets.Proactive retreat time scale[1]",1,0,0,0,0,1,0,0,0,0,0,10,5,25
+"Coastal population.Fatality rate in flood events[1]",0,0,0,0,0,1,0,0,0,0,0,0.01,0.005,0.02
+"Sea level rise adaptation.Average value of land in coastal zones in 1980[1]",0,0,0,0,0,1,0,0,0,0,0,0.005,0.004,0.006
+"Sea level rise adaptation.Fraction of dike construction cost for maintenance annually[1]",1,0,0,0,0,1,0,0,0,0,0,0.02,0.015,0.03
+"Sea level rise adaptation.Maximum fraction of coastal GDP spent for flood protection annually[1]",1,0,0,0,0,1,0,0,0,0,0,0.03,0.01,0.05
+"Sea level rise adaptation.reference opportunity cost rate[1]",1,0,0,0,0,1,0,0,0,0,0,0.04,0.03,0.05
+"Sea level rise adaptation.reference protection cost[1]",0,0,0,0,0,1,0,0,0,0,0,0.00746,0.0062,0.00867
+"Sea level rise adaptation.Time to increase flood protection height[1]",1,0,0,0,0,1,0,0,0,0,0,10,5,25
+"Sea level rise costs and impacts.Asset demolition cost factor[1]",1,0,0,0,0,1,0,0,0,0,0,0.05,0.025,0.075
+"Sea level rise costs and impacts.Asset relocation cost factor[1]",1,0,0,0,0,1,0,0,0,0,0,0.1,0.05,0.15
+"Sea level rise costs and impacts.Increase factor for costs of reactive retreat[1]",1,0,0,0,0,1,0,0,0,0,0,4,3,5
+"Sea level rise costs and impacts.Mobile assets fraction[1]",1,0,0,0,0,1,0,0,0,0,0,0.25,0.2,0.3
+"Sea level rise costs and impacts.Not depreciated fraction of assets at time of retreat[1]",1,0,0,0,0,1,0,0,0,0,0,0.1,0,0.2
+"Sea level rise costs and impacts.Relative productivity loss of people being flooded[1]",1,0,0,0,0,1,0,0,0,0,0,0.96,0.9,0.99
+"energy demand.CDD linear coefficient[1]",0,0,1,0,1,0,0,0,0,0,0,287.8469604,230,330
+"energy demand.effect of GDP on per person use of energy alpha[1]",0,0,0,0,0,1,0,0,0,0,0,0.440927472974025,0.235,0.49
+"energy demand.effect of GDP on per person use of energy beta[1]",0,0,0,0,0,1,0,0,0,0,0,0.829381614417765,0,2
+"energy demand.energy use per CDD[1]",0,0,1,0,1,0,0,0,0,0,0,0.000875,0.0004,0.01
+"energy demand.Energy use per HDD[1]",0,0,1,0,1,0,0,0,0,0,0,0.002,0.0001,0.01
+"energy demand.HDD exponential coefficient[1]",0,0,1,0,1,0,0,0,0,0,0,-0.232561095,-0.5,-0.01
+"energy demand.initial aggregate per unit energy prices[1]",0,0,0,0,0,1,0,0,0,0,0,0.127905189074687,0.05,0.2
+"energy demand.initial reference aggregate per unit energy prices[1]",0,0,0,0,0,1,0,0,0,0,0,0.131977750392959,0,0.2
+"energy demand.normal per person use of energy[1]",0,0,0,0,0,1,0,0,0,0,0,7.28653965140683,7,8
+"energy demand.reference change in energy prices[1]",0,0,0,0,0,1,0,0,0,0,0,0.00470375506756259,0.001,0.012
+"energy demand.reference formation time[1]",0,0,0,0,0,1,0,0,0,0,0,5,3,10
+"energy demand.sensitivity of effect of energy prices on demand[1]",0,0,0,0,0,1,0,0,0,0,0,0.00700103121560733,0.001,1
+"energy demand.time for competition to change prices[1]",0,0,0,0,0,1,0,0,0,0,0,7,5,10
+"energy investments.adaptive energy investments differntiating factor[1]",0,0,0,0,0,1,0,0,0,0,0,-4.15270007361085,-15,0
+"energy investments.adaptive energy investments integrating factor[1]",0,0,0,0,0,1,0,0,0,0,0,-2.3319332319455,-7,0
+"energy investments.adaptive energy investments proportional factor[1]",0,0,0,0,0,1,0,0,0,0,0,-10.0862977296706,-50,0
+"energy investments.baseline energy investments[1]",0,0,0,0,0,1,0,0,0,0,0,857228000000,100000000000,1000000000000
+"energy investments.cost perception time[1]",0,0,0,0,0,1,0,0,0,0,0,1,0.5,2
+"energy investments.historical cost adjustment[1, Coal fuel extraction, 1]",0,0,0,0,0,1,0,0,0,0,0,0.692706396258843,0.05,4
+"energy investments.historical cost adjustment[1, Coal fuel extraction, 2]",0,0,0,0,0,1,0,0,0,0,0,0.698438435720046,0.05,4
+"energy investments.historical cost adjustment[1, Coal fuel extraction, 3]",0,0,0,0,0,1,0,0,0,0,0,0.703840225942572,0.05,4
+"energy investments.historical cost adjustment[1, Coal fuel extraction, 4]",0,0,0,0,0,1,0,0,0,0,0,0.707874304553672,0.05,4
+"energy investments.historical cost adjustment[1, Coal fuel extraction, 5]",0,0,0,0,0,1,0,0,0,0,0,0.658599716134188,0.05,4
+"energy investments.historical cost adjustment[1, Coal fuel extraction, 6]",0,0,0,0,0,1,0,0,0,0,0,0.449461175560656,0.05,4
+"energy investments.historical cost adjustment[1, Coal fuel extraction, 7]",0,0,0,0,0,1,0,0,0,0,0,0.585667132773644,0.05,4
+"energy investments.historical cost adjustment[1, Coal fuel extraction, 8]",0,0,0,0,0,1,0,0,0,0,0,0.702179094346287,0.05,4
+"energy investments.historical cost adjustment[1, Coal fuel extraction, 9]",0,0,0,0,0,1,0,0,0,0,0,0.712133240770509,0.05,4
+"energy investments.historical cost adjustment[1, Coal energy conversion, 1]",0,0,0,0,0,1,0,0,0,0,0,0.687016565324781,0.05,4
+"energy investments.historical cost adjustment[1, Coal energy conversion, 2]",0,0,0,0,0,1,0,0,0,0,0,0.706678324542195,0.05,4
+"energy investments.historical cost adjustment[1, Coal energy conversion, 3]",0,0,0,0,0,1,0,0,0,0,0,0.707311684092829,0.05,4
+"energy investments.historical cost adjustment[1, Coal energy conversion, 4]",0,0,0,0,0,1,0,0,0,0,0,0.705021692850058,0.05,4
+"energy investments.historical cost adjustment[1, Coal energy conversion, 5]",0,0,0,0,0,1,0,0,0,0,0,0.642198250767298,0.05,4
+"energy investments.historical cost adjustment[1, Coal energy conversion, 6]",0,0,0,0,0,1,0,0,0,0,0,0.437805032168854,0.05,4
+"energy investments.historical cost adjustment[1, Coal energy conversion, 7]",0,0,0,0,0,1,0,0,0,0,0,0.617425791874819,0.05,4
+"energy investments.historical cost adjustment[1, Coal energy conversion, 8]",0,0,0,0,0,1,0,0,0,0,0,0.498637618809006,0.05,4
+"energy investments.historical cost adjustment[1, Coal energy conversion, 9]",0,0,0,0,0,1,0,0,0,0,0,0.484051290176034,0.05,4
+"energy investments.historical cost adjustment[1, Oil fuel extraction, 1]",0,0,0,0,0,1,0,0,0,0,0,0.106743635398227,0.05,4
+"energy investments.historical cost adjustment[1, Oil fuel extraction, 2]",0,0,0,0,0,1,0,0,0,0,0,0.0903712436821014,0.05,4
+"energy investments.historical cost adjustment[1, Oil fuel extraction, 3]",0,0,0,0,0,1,0,0,0,0,0,0.105595683490499,0.05,4
+"energy investments.historical cost adjustment[1, Oil fuel extraction, 4]",0,0,0,0,0,1,0,0,0,0,0,0.117249778031264,0.05,4
+"energy investments.historical cost adjustment[1, Oil fuel extraction, 5]",0,0,0,0,0,1,0,0,0,0,0,0.101121584363454,0.05,4
+"energy investments.historical cost adjustment[1, Oil fuel extraction, 6]",0,0,0,0,0,1,0,0,0,0,0,0.12358903797902,0.05,4
+"energy investments.historical cost adjustment[1, Oil fuel extraction, 7]",0,0,0,0,0,1,0,0,0,0,0,0.119499247402166,0.05,4
+"energy investments.historical cost adjustment[1, Oil fuel extraction, 8]",0,0,0,0,0,1,0,0,0,0,0,0.122298165326987,0.05,4
+"energy investments.historical cost adjustment[1, Oil fuel extraction, 9]",0,0,0,0,0,1,0,0,0,0,0,0.160147743357501,0.05,4
+"energy investments.historical cost adjustment[1, Oil energy conversion, 1]",0,0,0,0,0,1,0,0,0,0,0,0.0973014328320194,0.05,4
+"energy investments.historical cost adjustment[1, Oil energy conversion, 2]",0,0,0,0,0,1,0,0,0,0,0,0.0813988774325402,0.05,4
+"energy investments.historical cost adjustment[1, Oil energy conversion, 3]",0,0,0,0,0,1,0,0,0,0,0,0.0969212916913669,0.05,4
+"energy investments.historical cost adjustment[1, Oil energy conversion, 4]",0,0,0,0,0,1,0,0,0,0,0,0.10973844319488,0.05,4
+"energy investments.historical cost adjustment[1, Oil energy conversion, 5]",0,0,0,0,0,1,0,0,0,0,0,0.0817680342230103,0.05,4
+"energy investments.historical cost adjustment[1, Oil energy conversion, 6]",0,0,0,0,0,1,0,0,0,0,0,0.133533505083865,0.05,4
+"energy investments.historical cost adjustment[1, Oil energy conversion, 7]",0,0,0,0,0,1,0,0,0,0,0,0.150513157079381,0.05,4
+"energy investments.historical cost adjustment[1, Oil energy conversion, 8]",0,0,0,0,0,1,0,0,0,0,0,0.120342242683728,0.05,4
+"energy investments.historical cost adjustment[1, Oil energy conversion, 9]",0,0,0,0,0,1,0,0,0,0,0,0.139482518705194,0.05,4
+"energy investments.historical cost adjustment[1, Gas fuel extraction, 1]",0,0,0,0,0,1,0,0,0,0,0,0.310426569752346,0.05,4
+"energy investments.historical cost adjustment[1, Gas fuel extraction, 2]",0,0,0,0,0,1,0,0,0,0,0,0.302629414590604,0.05,4
+"energy investments.historical cost adjustment[1, Gas fuel extraction, 3]",0,0,0,0,0,1,0,0,0,0,0,0.295171467516595,0.05,4
+"energy investments.historical cost adjustment[1, Gas fuel extraction, 4]",0,0,0,0,0,1,0,0,0,0,0,0.367254071622624,0.05,4
+"energy investments.historical cost adjustment[1, Gas fuel extraction, 5]",0,0,0,0,0,1,0,0,0,0,0,0.333196190310252,0.05,4
+"energy investments.historical cost adjustment[1, Gas fuel extraction, 6]",0,0,0,0,0,1,0,0,0,0,0,0.321642602870021,0.05,4
+"energy investments.historical cost adjustment[1, Gas fuel extraction, 7]",0,0,0,0,0,1,0,0,0,0,0,0.307057547837492,0.05,4
+"energy investments.historical cost adjustment[1, Gas fuel extraction, 8]",0,0,0,0,0,1,0,0,0,0,0,0.318741884384207,0.05,4
+"energy investments.historical cost adjustment[1, Gas fuel extraction, 9]",0,0,0,0,0,1,0,0,0,0,0,0.363322558924885,0.05,4
+"energy investments.historical cost adjustment[1, Gas energy conversion, 1]",0,0,0,0,0,1,0,0,0,0,0,0.271773143794298,0.05,4
+"energy investments.historical cost adjustment[1, Gas energy conversion, 2]",0,0,0,0,0,1,0,0,0,0,0,0.300526390829011,0.05,4
+"energy investments.historical cost adjustment[1, Gas energy conversion, 3]",0,0,0,0,0,1,0,0,0,0,0,0.283874177968931,0.05,4
+"energy investments.historical cost adjustment[1, Gas energy conversion, 4]",0,0,0,0,0,1,0,0,0,0,0,0.38485366310613,0.05,4
+"energy investments.historical cost adjustment[1, Gas energy conversion, 5]",0,0,0,0,0,1,0,0,0,0,0,0.352240524757277,0.05,4
+"energy investments.historical cost adjustment[1, Gas energy conversion, 6]",0,0,0,0,0,1,0,0,0,0,0,0.346612940404098,0.05,4
+"energy investments.historical cost adjustment[1, Gas energy conversion, 7]",0,0,0,0,0,1,0,0,0,0,0,0.325576454522977,0.05,4
+"energy investments.historical cost adjustment[1, Gas energy conversion, 8]",0,0,0,0,0,1,0,0,0,0,0,0.360881384873027,0.05,4
+"energy investments.historical cost adjustment[1, Gas energy conversion, 9]",0,0,0,0,0,1,0,0,0,0,0,0.440823716181988,0.05,4
+"energy investments.historical cost adjustment[1, Hydropower, 1]",0,0,0,0,0,1,0,0,0,0,0,1.20533285183729,0.05,4
+"energy investments.historical cost adjustment[1, Hydropower, 2]",0,0,0,0,0,1,0,0,0,0,0,1.00774561112128,0.05,4
+"energy investments.historical cost adjustment[1, Hydropower, 3]",0,0,0,0,0,1,0,0,0,0,0,1.01064668992287,0.05,4
+"energy investments.historical cost adjustment[1, Hydropower, 4]",0,0,0,0,0,1,0,0,0,0,0,1.29645572088451,0.05,4
+"energy investments.historical cost adjustment[1, Hydropower, 5]",0,0,0,0,0,1,0,0,0,0,0,0.962265910516414,0.05,4
+"energy investments.historical cost adjustment[1, Hydropower, 6]",0,0,0,0,0,1,0,0,0,0,0,0.561623864703614,0.05,4
+"energy investments.historical cost adjustment[1, Hydropower, 7]",0,0,0,0,0,1,0,0,0,0,0,0.40521391005127,0.05,4
+"energy investments.historical cost adjustment[1, Hydropower, 8]",0,0,0,0,0,1,0,0,0,0,0,0.334006601228682,0.05,4
+"energy investments.historical cost adjustment[1, Hydropower, 9]",0,0,0,0,0,1,0,0,0,0,0,0.371334913534304,0.05,4
+"energy investments.historical cost adjustment[1, Nuclear, 1]",0,0,0,0,0,1,0,0,0,0,0,0.260935303644196,0.05,4
+"energy investments.historical cost adjustment[1, Nuclear, 2]",0,0,0,0,0,1,0,0,0,0,0,0.380832851859967,0.05,4
+"energy investments.historical cost adjustment[1, Nuclear, 3]",0,0,0,0,0,1,0,0,0,0,0,0.443719805022886,0.05,4
+"energy investments.historical cost adjustment[1, Nuclear, 4]",0,0,0,0,0,1,0,0,0,0,0,0.566944799924545,0.05,4
+"energy investments.historical cost adjustment[1, Nuclear, 5]",0,0,0,0,0,1,0,0,0,0,0,0.719957815322374,0.05,4
+"energy investments.historical cost adjustment[1, Nuclear, 6]",0,0,0,0,0,1,0,0,0,0,0,0.55238371824729,0.05,4
+"energy investments.historical cost adjustment[1, Nuclear, 7]",0,0,0,0,0,1,0,0,0,0,0,0.52002271980234,0.05,4
+"energy investments.historical cost adjustment[1, Nuclear, 8]",0,0,0,0,0,1,0,0,0,0,0,0.505881689720639,0.05,4
+"energy investments.historical cost adjustment[1, Nuclear, 9]",0,0,0,0,0,1,0,0,0,0,0,0.521757027032862,0.05,4
+"energy investments.historical cost adjustment[1, Bio, 1]",0,0,0,0,0,1,0,0,0,0,0,0.491204845411585,0.05,4
+"energy investments.historical cost adjustment[1, Bio, 2]",0,0,0,0,0,1,0,0,0,0,0,0.510604250735145,0.05,4
+"energy investments.historical cost adjustment[1, Bio, 3]",0,0,0,0,0,1,0,0,0,0,0,0.702359609014621,0.05,4
+"energy investments.historical cost adjustment[1, Bio, 4]",0,0,0,0,0,1,0,0,0,0,0,0.79555896659318,0.05,4
+"energy investments.historical cost adjustment[1, Bio, 5]",0,0,0,0,0,1,0,0,0,0,0,0.796315542050132,0.05,4
+"energy investments.historical cost adjustment[1, Bio, 6]",0,0,0,0,0,1,0,0,0,0,0,0.375666436863034,0.05,4
+"energy investments.historical cost adjustment[1, Bio, 7]",0,0,0,0,0,1,0,0,0,0,0,0.374804002024867,0.05,4
+"energy investments.historical cost adjustment[1, Bio, 8]",0,0,0,0,0,1,0,0,0,0,0,0.412662098150831,0.05,4
+"energy investments.historical cost adjustment[1, Bio, 9]",0,0,0,0,0,1,0,0,0,0,0,0.431450653177863,0.05,4
+"energy investments.historical cost adjustment[1, Solar, 1]",0,0,0,0,0,1,0,0,0,0,0,0.506134604428092,0.05,4
+"energy investments.historical cost adjustment[1, Solar, 2]",0,0,0,0,0,1,0,0,0,0,0,0.463885536323176,0.05,4
+"energy investments.historical cost adjustment[1, Solar, 3]",0,0,0,0,0,1,0,0,0,0,0,0.493306368709536,0.05,4
+"energy investments.historical cost adjustment[1, Solar, 4]",0,0,0,0,0,1,0,0,0,0,0,0.23985564194717,0.05,4
+"energy investments.historical cost adjustment[1, Solar, 5]",0,0,0,0,0,1,0,0,0,0,0,0.168044908595115,0.05,4
+"energy investments.historical cost adjustment[1, Solar, 6]",0,0,0,0,0,1,0,0,0,0,0,0.238380732663824,0.05,4
+"energy investments.historical cost adjustment[1, Solar, 7]",0,0,0,0,0,1,0,0,0,0,0,0.221402018731376,0.05,4
+"energy investments.historical cost adjustment[1, Solar, 8]",0,0,0,0,0,1,0,0,0,0,0,0.163160685145769,0.05,4
+"energy investments.historical cost adjustment[1, Solar, 9]",0,0,0,0,0,1,0,0,0,0,0,0.150799496670872,0.05,4
+"energy investments.historical cost adjustment[1, Wind, 1]",0,0,0,0,0,1,0,0,0,0,0,0.464207513977874,0.05,4
+"energy investments.historical cost adjustment[1, Wind, 2]",0,0,0,0,0,1,0,0,0,0,0,0.473685438371917,0.05,4
+"energy investments.historical cost adjustment[1, Wind, 3]",0,0,0,0,0,1,0,0,0,0,0,0.432335547248651,0.05,4
+"energy investments.historical cost adjustment[1, Wind, 4]",0,0,0,0,0,1,0,0,0,0,0,0.416838694278498,0.05,4
+"energy investments.historical cost adjustment[1, Wind, 5]",0,0,0,0,0,1,0,0,0,0,0,0.135022991875322,0.05,4
+"energy investments.historical cost adjustment[1, Wind, 6]",0,0,0,0,0,1,0,0,0,0,0,0.134484632803659,0.05,4
+"energy investments.historical cost adjustment[1, Wind, 7]",0,0,0,0,0,1,0,0,0,0,0,0.118999539676596,0.05,4
+"energy investments.historical cost adjustment[1, Wind, 8]",0,0,0,0,0,1,0,0,0,0,0,0.161459506029771,0.05,4
+"energy investments.historical cost adjustment[1, Wind, 9]",0,0,0,0,0,1,0,0,0,0,0,0.117246451326717,0.05,4
+"energy investments.historical cost adjustment smoothing time[1]",0,0,0,0,0,1,0,0,0,0,0,0.5,0.25,0.75
+"energy investments.initial perceived marginal energy supply cost[1]",0,0,0,0,0,1,0,0,0,0,0,0.013519257868552,0.001,0.05
+"energy investments.initial relative supply missmatch[1]",0,0,0,0,0,1,0,0,0,0,0,0.0119480789089314,-0.5,0.5
+"energy investments.priority spread[1]",0,0,0,0,0,1,0,0,0,0,0,33.4346914588317,10,50
+"energy investments.Relative Energy Supply Mismatch Buffer[1]",0,0,0,0,0,1,0,0,0,0,0,0.01,0,0.05
+"energy investments.sensitivity of cost adjustment to relative stranded capital[1]",0,0,0,0,0,1,0,0,0,0,0,99.307746077223,50,150
+"energy investments.sensitivity of effect of perceived marginal energy supply cost on investment[1]",0,0,0,0,0,1,0,0,0,0,0,0.158464377889841,0,1
+"energy investments.shape",0,0,0,0,0,1,1,0,0,0,0,1,1,3
+"energy investments.time to consider stranded capital[1]",0,0,0,0,0,1,0,0,0,0,0,3,2,5
+"energy investments.time to perceive energy supply missmatch[1]",1,0,0,0,0,0,0,0,0,0,0,1,0.25,5
+"Damages.Exponent of Capital Damage Function[1]",0,0,1,0,0,1,0,0,0,0,0,2,1,3
+"Damages.Slope of Capital Damage Function[1]",0,0,1,0,0,1,0,0,0,0,0,0.00005096093,0,8
+"fossil energy coal.carbon intensity in btu[1]",0,0,0,0,0,1,0,0,0,0,0,0.0268283966298724,0.01,0.03
+"fossil energy coal.depreciation rate of fossil energy capital[1]",1,0,0,0,0,0,0,0,0,0,0,0.025,0,0.05
+"fossil energy coal.Depreciation rate of Fuel Extraction Capital[1]",1,0,0,0,0,0,0,0,0,0,0,0.05,0,0.1
+"fossil energy coal.Elasticity of Substitution in Fossil Energy Output[1]",1,0,0,0,0,0,0,0,0,0,0,0.3,0.2,0.4
+"fossil energy coal.Fossil Energy Capital Scaling Parameter[1]",0,0,0,0,0,1,0,0,0,0,0,0.53999286900611,0.2,2
+"fossil energy coal.Initial extraction costs[1]",0,0,0,0,0,1,0,0,0,0,0,112986924437.916,10000000000,1000000000000
+"fossil energy coal.initial fossil energy capital[1]",0,0,0,0,0,1,0,0,0,0,0,606304812595.07,1000000000,5000000000000
+"fossil energy coal.initial fossil extraction knowledge[1]",0,0,0,0,0,1,0,0,0,0,0,98.1885756675626,90,160
+"fossil energy coal.initial fossil fuel extraction capital[1]",0,0,0,0,0,1,0,0,0,0,0,1605647005806.59,1000000000,50000000000000
+"fossil energy coal.learning elasticity of the resource sector[1]",1,0,0,0,0,0,0,0,0,0,0,0.4,0.2,0.6
+"fossil energy coal.learning time in resource sector[1]",1,0,0,0,0,0,0,0,0,0,0,30.49493995,20,40
+"fossil energy coal.maximum increase of capital coefficient in fossil resource sector[1]",1,0,0,0,0,0,0,0,0,0,0,256.08,200,300
+"fossil energy coal.Primary Fossil Energy Scaling Parameter[1]",0,0,0,0,0,1,0,0,0,0,0,1.890483806,0.1,3
+"fossil energy coal.productivity per extractionknowledge[1]",0,0,0,0,0,1,0,0,0,0,0,0.00154687602919208,0.0001,0.003
+"fossil energy coal.reference formation time[1]",0,0,0,0,0,1,0,0,0,0,0,48.2946331956694,15,100
+"fossil energy coal.sensitivity of effect of capital to fuel ratio on stranded capital[1]",0,0,0,0,0,1,0,0,0,0,0,1.20296666760254,0.5,5
+"fossil energy coal.share of primary energy in fossil energy[1]",1,0,0,0,0,0,0,0,0,0,0,0.5,0.4,0.6
+"fossil energy coal.Slope of cost curve[1]",0,0,0,0,0,1,0,0,0,0,0,1120004233275.19,70000000000,7000000000000
+"fossil energy coal.TFP in 1980[1]",0,0,0,0,0,1,0,0,0,0,0,0.148,0.12,0.4
+"fossil energy coal.TFP Max[1]",1,0,0,0,0,1,0,0,0,0,0,0.185,0.1,0.4
+"fossil energy coal.TFP Max Ramp Year[1]",0,0,0,0,0,1,0,0,0,0,0,2014.19595799873,2000,2200
+"fossil energy coal.TFP Ramp Speed[1]",0,0,0,0,0,1,0,0,0,0,0,0.0961352133314515,0,1
+"fossil energy coal.TFP Slope Start[1]",0,0,0,0,0,1,0,0,0,0,0,1980.10935406248,1980,2010
+"fossil energy coal.time to strand capital[1]",0,0,0,0,0,1,0,0,0,0,0,2,1,3
+"fossil energy gas.carbon intensity in btu[1]",0,0,0,0,0,1,0,0,0,0,0,0.0155921398451567,0.01,0.03
+"fossil energy gas.depreciation rate of fossil energy capital[1]",1,0,0,0,0,0,0,0,0,0,0,0.025,0,0.05
+"fossil energy gas.Depreciation rate of Fuel Extraction Capital[1]",1,0,0,0,0,0,0,0,0,0,0,0.05,0,0.1
+"fossil energy gas.Elasticity of Substitution in Fossil Energy Output[1]",1,0,0,0,0,0,0,0,0,0,0,0.3,0.2,0.4
+"fossil energy gas.Fossil Energy Capital Scaling Parameter[1]",0,0,0,0,0,1,0,0,0,0,0,0.602129498440882,0.001,2
+"fossil energy gas.Initial extraction costs[1]",0,0,0,0,0,1,0,0,0,0,0,133346221583.493,10000000000,1000000000000
+"fossil energy gas.initial fossil energy capital[1]",0,0,0,0,0,1,0,0,0,0,0,316121627747.096,1000000000,5000000000000
+"fossil energy gas.initial fossil extraction knowledge[1]",0,0,0,0,0,1,0,0,0,0,0,125.085622176257,90,160
+"fossil energy gas.initial fossil fuel extraction capital[1]",0,0,0,0,0,1,0,0,0,0,0,1787846671447.9,1000000000,50000000000000
+"fossil energy gas.learning elasticity of the resource sector[1]",1,0,0,0,0,0,0,0,0,0,0,0.4,0.2,0.6
+"fossil energy gas.learning time in resource sector[1]",1,0,0,0,0,0,0,0,0,0,0,30.49493995,20,40
+"fossil energy gas.maximum increase of capital coefficient in fossil resource sector[1]",1,0,0,0,0,0,0,0,0,0,0,256.08,200,300
+"fossil energy gas.Primary Fossil Energy Scaling Parameter[1]",0,0,0,0,0,1,0,0,0,0,0,1.12013244,0.001,2
+"fossil energy gas.productivity per extractionknowledge[1]",0,0,0,0,0,1,0,0,0,0,0,0.000462329288946041,0.0001,0.003
+"fossil energy gas.reference formation time[1]",0,0,0,0,0,1,0,0,0,0,0,53.3700310430715,15,100
+"fossil energy gas.sensitivity of effect of capital to fuel ratio on stranded capital[1]",0,0,0,0,0,1,0,0,0,0,0,1.50019049038747,0.5,5
+"fossil energy gas.share of primary energy in fossil energy[1]",1,0,0,0,0,0,0,0,0,0,0,0.5,0.4,0.6
+"fossil energy gas.Slope of cost curve[1]",1,0,0,0,0,0,0,0,0,0,0,129688377071.244,70000000000,7000000000000
+"fossil energy gas.TFP in 1980[1]",0,0,0,0,0,1,0,0,0,0,0,0.241551023,0.12,0.4
+"fossil energy gas.TFP Max[1]",1,0,0,0,0,1,0,0,0,0,0,0.295,0.1,0.4
+"fossil energy gas.TFP Max Ramp Year[1]",0,0,0,0,0,1,0,0,0,0,0,2012.31779648327,2000,2200
+"fossil energy gas.TFP Ramp Speed[1]",0,0,0,0,0,1,0,0,0,0,0,0.140326764089777,0,1
+"fossil energy gas.TFP Slope Start[1]",0,0,0,0,0,1,0,0,0,0,0,1980.11622192939,1980,2010
+"fossil energy gas.time to strand capital[1]",0,0,0,0,0,1,0,0,0,0,0,2,1,3
+"fossil energy oil.carbon intensity in btu[1]",0,0,0,0,0,1,0,0,0,0,0,0.0195554682948381,0.01,0.03
+"fossil energy oil.depreciation rate of fossil energy capital[1]",1,0,0,0,0,0,0,0,0,0,0,0.025,0,0.05
+"fossil energy oil.Depreciation rate of Fuel Extraction Capital[1]",1,0,0,0,0,0,0,0,0,0,0,0.05,0,0.1
+"fossil energy oil.Elasticity of Substitution in Fossil Energy Output[1]",1,0,0,0,0,0,0,0,0,0,0,0.3,0.2,0.4
+"fossil energy oil.Fossil Energy Capital Scaling Parameter[1]",0,0,0,0,0,1,0,0,0,0,0,0.400423072253559,0.001,2
+"fossil energy oil.Initial extraction costs[1]",0,0,0,0,0,1,0,0,0,0,0,128982166985.646,10000000000,1000000000000
+"fossil energy oil.initial fossil energy capital[1]",0,0,0,0,0,1,0,0,0,0,0,1540479930002.83,1000000000,5000000000000
+"fossil energy oil.initial fossil extraction knowledge[1]",0,0,0,0,0,1,0,0,0,0,0,151.806293376611,90,160
+"fossil energy oil.initial fossil fuel extraction capital[1]",0,0,0,0,0,1,0,0,0,0,0,6040472706270.08,1000000000,50000000000000
+"fossil energy oil.learning elasticity of the resource sector[1]",1,0,0,0,0,0,0,0,0,0,0,0.4,0.2,0.6
+"fossil energy oil.learning time in resource sector[1]",1,0,0,0,0,0,0,0,0,0,0,30.49493995,20,40
+"fossil energy oil.maximum increase of capital coefficient in fossil resource sector[1]",1,0,0,0,0,0,0,0,0,0,0,256.08,200,300
+"fossil energy oil.Primary Fossil Energy Scaling Parameter[1]",0,0,0,0,0,1,0,0,0,0,0,1.999999587,0.001,2.99999958734975
+"fossil energy oil.productivity per extractionknowledge[1]",0,0,0,0,0,1,0,0,0,0,0,0.000310398513781438,0.0001,0.003
+"fossil energy oil.reference formation time[1]",0,0,0,0,0,1,0,0,0,0,0,50.1678173353981,15,100
+"fossil energy oil.sensitivity of effect of capital to fuel ratio on stranded capital[1]",0,0,0,0,0,1,0,0,0,0,0,0.82459244799401,0.5,5
+"fossil energy oil.share of primary energy in fossil energy[1]",1,0,0,0,0,0,0,0,0,0,0,0.5,0.4,0.6
+"fossil energy oil.Slope of cost curve[1]",0,0,0,0,0,1,0,0,0,0,0,145414782322.463,70000000000,7000000000000
+"fossil energy oil.TFP in 1980[1]",0,0,0,0,0,1,0,0,0,0,0,0.141258869,0.12,0.4
+"fossil energy oil.TFP Max[1]",1,0,0,0,0,1,0,0,0,0,0,0.17,0.1,0.4
+"fossil energy oil.TFP Max Ramp Year[1]",0,0,0,0,0,1,0,0,0,0,0,2012.01775759512,2000,2200
+"fossil energy oil.TFP Ramp Speed[1]",0,0,0,0,0,1,0,0,0,0,0,0.100284427165088,0,1
+"fossil energy oil.TFP Slope Start[1]",0,0,0,0,0,1,0,0,0,0,0,1980.40980640034,1980,2010
+"fossil energy oil.time to strand capital[1]",0,0,0,0,0,1,0,0,0,0,0,2,1,3
+"nuclear energy.baseline nuclear energy capacity efficiency[1]",0,0,0,0,0,1,0,0,0,0,0,7.5,6.5,8.5
+"nuclear energy.depreciation rate of Nuclear capital[1]",1,0,0,0,0,0,0,0,0,0,0,0.02,0,0.1
+"nuclear energy.Floor Costs[1]",0,0,0,0,0,1,0,0,0,0,0,1610.17712052244,1000,3000
+"nuclear energy.Initial Installation Costs[1]",0,0,0,0,0,1,0,0,0,0,0,2690.35149710682,500,3000
+"nuclear energy.Initial Nuclear Capacity[1]",0,0,0,0,0,1,0,0,0,0,0,97.55917166,50,150
+"nuclear energy.Learning Rate[1]",1,0,0,0,0,1,0,0,0,0,0,0.187056047987987,0.01,0.4
+"nuclear energy.stepping on toes parameter[1]",1,0,0,0,0,1,0,0,0,0,0,0.170413693291279,0.1,0.5
+"nuclear energy.time to perceive changes in construction[1]",1,0,0,0,0,0,0,0,0,0,0,1,0.5,5
+"bio fuel energy.bio fuel primary energy content[1]",0,0,0,0,0,1,0,0,0,0,0,0.0000194444124741148,0.000001,0.0001
+"bio fuel energy.depreciation rate of bio capital[1]",1,0,0,0,0,0,0,0,0,0,0,0.05,0,0.1
+"bio fuel energy.Floor Costs[1]",0,0,0,0,0,1,0,0,0,0,0,2067408.17373183,1000000,1000000000
+"bio fuel energy.Initial biofuel production Capacity[1]",0,0,0,0,0,1,0,0,0,0,0,5,0.001,10
+"bio fuel energy.Initial Installation Costs[1]",0,0,0,0,0,1,0,0,0,0,0,1180011478.13519,100000000,100000000000
+"bio fuel energy.Learning Rate[1]",1,0,0,0,0,1,0,0,0,0,0,0.0112324255608402,0.01,0.4
+"bio fuel energy.PCal per Mt of fuel[1]",0,0,0,0,1,0,0,0,0,0,0,4,3,5
+"bio fuel energy.relative carbon intensity of biofuels to petroleum fuels[1]",0,0,0,0,1,0,0,0,0,0,0,0.65,0.45,0.85
+"bio fuel energy.stepping on toes parameter[1]",1,0,0,0,0,1,0,0,0,0,0,0.465906558512743,0.1,0.5
+"bio fuel energy.time to perceive changes in construction[1]",1,0,0,0,0,0,0,0,0,0,0,1,0.25,5
+"hydropower energy.Base Hydropower Installation Costs[1]",0,0,0,0,0,1,0,0,0,0,0,100.781099617102,10,5000
+"hydropower energy.baseline hydropower energy capacity efficiency[1]",0,0,0,0,0,1,0,0,0,0,0,3.845734268,2,5
+"hydropower energy.depreciation rate of hydropower capital[1]",1,0,0,0,0,0,0,0,0,0,0,0.01,0,0.1
+"hydropower energy.Initial Hydropower Capacity[1]",0,0,0,0,0,1,0,0,0,0,0,478.7768037,250,550
+"hydropower energy.Slope of Hydropower Installation Costs wrt Capacity[1]",0,0,0,0,0,1,0,0,0,0,0,0.00000169650622912592,1e-7,0.0001
+"solar energy.Initial Solar Energy Installation Costs[1]",0,0,0,0,0,1,0,0,0,0,0,4355.27725285347,100,100000
+"solar energy.reference formation time[1]",0,0,0,0,0,1,0,0,0,0,0,10,5,20
+"solar energy.reference share of cost for grid storage[1]",0,0,0,0,0,1,0,0,0,0,0,0.6,0,1
+"solar energy.Renewable Energy Floor Costs[1]",0,0,0,0,0,1,0,0,0,0,0,50.5482944559918,1,500
+"solar energy.sensitivity of renewable floor costs to grid storage needs[1]",0,0,0,0,0,1,0,0,0,0,0,5.24737796667638,2,10
+"solar energy.sensitivity of renewable floor costs to grid storage needs non linear part[1]",0,0,0,0,0,1,0,0,0,0,0,-5.19750102684353,-46,-3
+"solar energy.Solar Energy Full Load Hours[1]",0,0,0,0,0,1,0,0,0,0,0,1693.28449634399,1200,1850
+"solar energy.Solar Energy Learning Rate[1]",1,0,0,0,0,1,0,0,0,0,0,0.139,0.05,0.4
+"solar energy.stepping on toes parameter in renewable energy sector[1]",1,0,0,0,0,1,0,0,0,0,0,0.497651910391243,0.1,1
+"solar energy.time to perceive changes in construction[1]",1,0,0,0,0,0,0,0,0,0,0,1,0.25,5
+"wind energy.Initial Wind Energy Installation Costs[1]",0,0,0,0,0,1,0,0,0,0,0,4539.5189445888,100,100000
+"wind energy.reference formation time[1]",0,0,0,0,0,1,0,0,0,0,0,10,5,20
+"wind energy.reference share of cost for grid storage[1]",0,0,0,0,0,1,0,0,0,0,0,0.6,0,1
+"wind energy.Renewable Energy Floor Costs[1]",0,0,0,0,0,1,0,0,0,0,0,12.1609429118296,1,500
+"wind energy.sensitivity of renewable floor costs to grid storage needs[1]",0,0,0,0,0,1,0,0,0,0,0,4.98785416359998,2,10
+"wind energy.sensitivity of renewable floor costs to grid storage needs non linear part[1]",0,0,0,0,0,1,0,0,0,0,0,-5.35052116529329,-46,-3
+"wind energy.stepping on toes parameter in renewable energy sector[1]",1,0,0,0,0,1,0,0,0,0,0,0.5,0.1,1
+"wind energy.time to perceive changes in construction[1]",1,0,0,0,0,0,0,0,0,0,0,1,0.25,5
+"wind energy.Wind Energy Full Load Hours[1]",0,0,0,0,1,0,0,0,0,0,0,1838.69962936481,1650,1850
+"wind energy.Wind Energy Learning Rate[1]",1,0,0,0,0,1,0,0,0,0,0,0.113320005451525,0.05,0.4
+"Government Regulations.calibration period government debt to GDP ratio target[1]",1,0,0,0,0,0,0,0,0,0,0,1.2,1,1.5
+"Government Regulations.debt to gdp level start year",0,0,0,0,0,0,0,0,0,1,0,2025,2025,2100
+"Government Regulations.government debt to GDP ratio target",0,0,0,0,0,0,0,0,0,1,0,1.2,0.5,2
+"Government Regulations.historical inflation goal[1]",1,0,0,0,0,0,0,0,0,0,0,0.02,0.01,0.04
+"Government Regulations.historical unemployment goal[1]",1,0,0,0,0,0,0,0,0,0,0,0.05,0.02,0.08
+"Government Regulations.inflation goal policy",0,0,0,0,0,0,0,0,0,1,0,0.02,0,0.1
+"Government Regulations.max change per year in inflation",0,0,0,0,0,0,0,0,0,1,0,0.001,0.0001,0.02
+"Government Regulations.max change per year in unemployment",0,0,0,0,0,0,0,0,0,1,0,0.001,0.0001,0.02
+"Government Regulations.minimum percentage of taxes spent by government",0,0,0,0,0,0,0,0,0,1,0,0.9,0.5,1
+"Government Regulations.Moratorium on fossil energy year",0,0,0,0,0,0,0,0,0,1,0,2150,2070,2150
+"Government Regulations.profit tax policy",0,0,0,0,0,0,0,0,0,1,0,0.327,0,1
+"Government Regulations.profit tax policy start year",0,0,0,0,0,0,0,0,0,1,0,2025,2025,2100
+"Government Regulations.SLR adaptation start year",0,0,0,0,0,0,0,0,0,1,0,2025,2025,2100
+"Government Regulations.switch animal product efficiency policy",0,0,0,0,0,0,0,0,0,1,0,0,0,1
+"Government Regulations.switch irrigation fraction policy",0,0,0,0,0,0,0,0,0,1,0,0,0,1
+"Government Regulations.switch non agricultural water use policy",0,0,0,0,0,0,0,0,0,1,0,0,0,1
+"Government Regulations.switch profit tax policy",0,0,0,0,0,0,0,0,0,1,0,0,0,1
+"Government Regulations.switch wage tax policy",0,0,0,0,0,0,0,0,0,1,0,0,0,1
+"Government Regulations.time for government to change the debt to GDP ratio target",0,0,0,0,0,0,0,0,0,1,0,10,5,50
+"Government Regulations.time to implement profit tax policy",0,0,0,0,0,0,0,0,0,1,0,5,5,75
+"Government Regulations.time to implement wage tax policy",0,0,0,0,0,0,0,0,0,1,0,5,5,75
+"Government Regulations.time to implement wealth tax policy",0,0,0,0,0,0,0,0,0,1,0,5,5,75
+"Government Regulations.time to start central bank inflation policy",0,0,0,0,0,0,0,0,0,1,0,2025,2025,2075
+"Government Regulations.time to start central bank unemployment policy",0,0,0,0,0,0,0,0,0,1,0,2025,2025,2075
+"Government Regulations.unemployment goal policy",0,0,0,0,0,0,0,0,0,1,0,0.05,0,0.15
+"Government Regulations.wage tax policy",0,0,0,0,0,0,0,0,0,1,0,0.218,0.05,0.5
+"Government Regulations.wage tax policy start year",0,0,0,0,0,0,0,0,0,1,0,2025,2025,2100
+"Government Regulations.wealth tax policy",0,0,0,0,0,0,0,0,0,1,0,0,0,0.02
+"Government Regulations.wealth tax policy start year",0,0,0,0,0,0,0,0,0,1,0,2025,2025,2100
+"Animal Products.Animal Products Yield in 1980[1]",0,0,0,0,0,1,0,0,0,0,0,0.960417911929394,0.6,1
+"Animal Products.aquatic animal product share 1980[1]",0,0,0,0,0,1,0,0,0,0,0,0.0609962335002205,0.059,0.061
+"Animal Products.average animal product growth efficiency[1]",0,0,0,0,0,1,0,0,0,0,0,0.152342090865498,0.01,0.25
+"Animal Products.averaging time[1]",1,0,0,0,0,0,0,0,0,0,0,4.89771767092869,2,8
+"Animal Products.desired animal products reserve capacity[1]",0,0,0,0,0,1,0,0,0,0,0,0.0725050241819243,0,0.1
+"Animal Products.elasticity of aquatic animal product share to GDP per person[1]",0,0,0,0,0,1,0,0,0,0,0,0.394319330814918,0,1
+"Animal Products.normal rate of change in grazing land yield[1]",0,0,0,0,0,1,0,0,0,0,0,0.0299527655360562,0.01,0.1
+"Animal Products.sensitivity of rate of change in animal products balance to growth rate in yield[1]",0,0,0,0,0,1,0,0,0,0,0,-69.8418280979725,-100,0
+"Crop.desired crop reserve capacity[1]",0,0,0,0,0,1,0,0,0,0,0,0.00578654384682234,0,0.1
+"Crop.fertilizer use crop yield parameter[1]",0,0,0,0,0,1,0,0,0,0,0,0.0163103521043001,0.00001,0.1
+"Crop.harvest index for energy crops[1]",0,0,0,0,0,1,0,0,0,0,0,0.946146343585683,0.6,0.95
+"Crop.harvest index for feed crops[1]",0,0,0,0,0,1,0,0,0,0,0,0.799444218938155,0.5,0.8
+"Crop.initial crop yield[1]",0,0,0,0,0,1,0,0,0,0,0,5.90574472508119,5.5,6.5
+"Crop.irrigation crop yield parameter[1]",0,0,0,0,0,1,0,0,0,0,0,2.50055038934869,2.5,9
+"Crop.normal harvest index for food crops[1]",0,0,0,0,0,1,0,0,0,0,0,0.44990066007591,0.4,0.45
+"Crop.sensitivity of effect of crop residue production on field fraction[1]",0,0,0,0,0,1,0,0,0,0,0,0.559909570253009,0,0.75
+"Crop.sensitivity of effect of crop yield on harvest index[1]",0,0,0,0,0,1,0,0,0,0,0,0.0989407396381699,0.05,0.1
+"Crop.soil carbon crop yield parameter[1]",0,0,0,0,0,1,0,0,0,0,0,0.0191871944846803,1e-8,0.2
+"Crop.tolerance of the cap on harvest index and residue on field fraction[1]",0,0,0,0,0,1,0,0,0,0,0,0.0488017706603499,0.03,0.08
+"Crop.UNIT GtC per PCal crop[1]",0,0,0,0,1,0,0,0,0,0,1,0.000220559,0.000220559,0.00027385
+"Food Demand.animal product demand per person 1980",0,0,0,0,0,0,1,0,0,0,0,0.147907225282667,0,1
+"Food Demand.crops used for non energy other per person[1]",0,0,0,0,0,1,0,0,0,0,0,0.544013209683342,0,1
+"Food Demand.crops used for seed or lost per person 1980[1]",0,0,0,0,0,1,0,0,0,0,0,0.127318786431931,0,1
+"Food Demand.direct food demand per person per day 1980",0,0,0,0,0,0,1,0,0,0,0,2480.82102599208,2000,3000
+"Food Demand.elasticity of animal product demand to GDP per person",0,0,0,0,0,0,1,0,0,0,0,0.494190813685668,0,2
+"Food Demand.elasticity of crops used for non energy other to GDP per person[1]",0,0,0,0,0,1,0,0,0,0,0,0.362230160734174,0,2
+"Food Demand.elasticity of crops used for seed or lost to GDP per person[1]",0,0,0,0,0,1,0,0,0,0,0,0.402627060131928,0,2
+"Food Demand.elasticity of food demand to GDP per person",0,0,0,0,0,0,1,0,0,0,0,0.256870140176168,0,2
+"Food Demand.initial crop demand for feed offset[1]",0,0,0,0,0,1,0,0,0,0,0,0.979604148171561,0.9,0.98
+"Food Demand.switch use GDP for food demand",0,0,0,0,0,0,1,0,0,0,0,0,0,1
+"Food Demand.time to change crop demand components[1]",0,0,0,0,0,1,0,0,0,0,0,6.71244517171147,5,20
+"Food Demand.time to change demand for feed[1]",0,0,0,0,0,1,0,0,0,0,0,9.86970946764368,1,10
+"Forest.CO2 tree net primary production parameter[1]",0,0,0,0,0,1,0,0,0,0,0,0.001,0.0005,0.001
+"Forest.forest aboveground biomass 1980[1]",0,0,0,0,0,1,0,0,0,0,0,546.9907432,450,700
+"Forest.STA maximum aboveground biomass per area parameter[1]",0,0,0,0,0,1,0,0,0,0,0,0.253488316,0.2,0.35
+"Forest.STA squared maximum aboveground biomass per area parameter[1]",0,0,0,0,0,1,0,0,0,0,0,-0.048709811,-0.08,-0.02
+"Forest.STA squared tree net primary production parameter[1]",0,0,0,0,0,1,0,0,0,0,0,-0.023015026,-0.05,-0.01
+"Forest.STA tree net primary production parameter[1]",0,0,0,0,0,1,0,0,0,0,0,0.125348729,0.01,0.13
+"Forest.tree net primary production in 1980[1]",0,0,0,0,0,1,0,0,0,0,0,0.008320717,0.005,0.01
+"Forest.Young mature forest biomass ratio[1]",0,0,0,0,0,1,0,0,0,0,0,0.558925781,0.3,0.7
+"Freshwater.average deep groundwater infiltration time[1]",0,0,0,0,0,1,0,0,0,0,0,100,20,200
+"Freshwater.base fraction of cropland irrigated[1]",0,0,0,0,0,1,0,0,0,0,0,0.185580542606732,0,0.3
+"Freshwater.elasticity of non agricultural water withdrawal per capita to GDP per person[1]",0,0,0,0,0,1,0,0,0,0,0,0.0108421901817229,0.01,0.5
+"Freshwater.initial available water supply[1]",0,0,0,0,0,1,0,0,0,0,0,48246098907318.8,30000000000000,120000000000000
+"Freshwater.initial average relative real gdp per person[1]",0,0,0,0,0,1,0,0,0,0,0,0.833626372509192,0.5,1
+"Freshwater.initial fraction of unsustainable water withdrawal[1]",0,0,0,0,0,1,0,0,0,0,0,0.0505261471847029,0,0.3
+"Freshwater.non agricultural water withdrawal 1980[1]",0,0,0,0,0,1,0,0,0,0,0,170884178.399796,50000000,400000000
+"Freshwater.rate of change in irrigation efficiency[1]",0,0,0,0,0,1,0,0,0,0,0,0.00372796642741939,0,0.01
+"Freshwater.rate of change in technological water discovery[1]",0,0,0,0,0,1,0,0,0,0,0,-0.0162923325605105,-0.02,0
+"Freshwater.sensitivity of effect of available water supply on land irrigated[1]",0,0,0,0,0,1,0,0,0,0,0,1.03717417070288,0.5,1.5
+"Freshwater.sensitivity of fraction of cropland irrigated indicated to GDP per person[1]",0,0,0,0,0,1,0,0,0,0,0,0.139661067358513,0.01,1
+"Freshwater.sensitivity of pressure to expand water supply to available water supply[1]",0,0,0,0,0,1,0,0,0,0,0,-2.94827673721631,-3,0
+"Freshwater.sensitivity of surface temperature anomaly on water used per Mtcrop[1]",0,0,1,0,0,1,0,0,0,0,0,0.064352435,0.02,0.1
+"Freshwater.technological water discovery 1980[1]",0,0,0,0,0,1,0,0,0,0,0,30519841631.7115,10000000000,1000000000000
+"Freshwater.time for GDP to impact irrigation[1]",0,0,0,0,0,1,0,0,0,0,0,7.01821871951311,3,15
+"Freshwater.water withdrawal per MHa irrigated 1980[1]",0,0,0,0,0,1,0,0,0,0,0,9447671449.83665,1000000000,100000000000
+"Grass.CO2 grass net primary production parameter[1]",0,0,0,0,0,1,0,0,0,0,0,0.000963654,0.0005,0.001
+"Grass.grass net primary production in 1980[1]",0,0,0,0,0,1,0,0,0,0,0,0.005,0.0025,0.005
+"Grass.GtC per PCal of grazing multiplier[1]",0,0,0,0,0,1,0,0,0,0,0,0.315778805,0.2,0.6
+"Grass.STA grass net primary production parameter[1]",0,0,0,0,0,1,0,0,0,0,0,0.126281692,0.01,0.13
+"Grass.STA squared grass net primary production parameter[1]",0,0,0,0,0,1,0,0,0,0,0,-0.034654395,-0.05,-0.01
+"Land Nutrients.elasticity of effect of animal products on manure fertilizer use[1]",0,0,0,0,0,1,0,0,0,0,0,0.0970036314376746,0.01,1.5
+"Land Nutrients.man made fertilizer use 1980[1]",0,0,0,0,1,0,0,0,0,0,0,60.6,58,64
+"Land Nutrients.manure fertilizer use 1980[1]",0,0,0,0,1,0,0,0,0,0,0,22.96867648,20,25
+"Land Nutrients.maximum desired growth in fertilizer use[1]",0,0,0,0,0,1,0,0,0,0,0,0.0499909963335135,0,0.05
+"Land Nutrients.reference fertilizer use[1]",1,0,0,0,0,0,0,0,0,0,0,85,60,120
+"Land Nutrients.sensitivity demand to relative use[1]",0,0,0,0,0,1,0,0,0,0,0,-0.0191652954443731,-0.5,-0.001
+"Land Nutrients.sensitivity of fertilizer use to crop balance with reserves[1]",0,0,0,0,0,1,0,0,0,0,0,-1.85338957870363,-10,-0.2
+"Land Nutrients.time to change fertilizer use[1]",0,0,0,0,0,1,0,0,0,0,0,2.99477652618579,2,5
+"Land Use.cropland expansion time[1]",0,0,0,0,0,1,0,0,0,0,0,2.85632402447486,1,10
+"Land Use.elasticity of effect of animal products yield on fraction of grassland degrading[1]",0,0,0,0,0,1,0,0,0,0,0,0.708983972802554,0.2,2
+"Land Use.elasticity of effect of crop yield on fraction cropland degrading[1]",0,0,0,0,0,1,0,0,0,0,0,0.866410252363501,0.2,2
+"Land Use.forest recovery time[1]",0,0,0,0,0,1,0,0,0,0,0,64.15611703,50,70
+"Land Use.fraction cropland degrading 1980[1]",0,0,0,0,0,1,0,0,0,0,0,0.00005,0,0.0001
+"Land Use.fraction of depleting cropland to grassland[1]",0,0,0,0,0,1,0,0,0,0,0,0.412578004548668,0.2,0.8
+"Land Use.fraction of grassland degrading 1980[1]",0,0,0,0,0,1,0,0,0,0,0,0.00001,0,0.0001
+"Land Use.fraction of grassland for grazing[1]",0,0,0,0,0,1,0,0,0,0,0,0.672311080417832,0.6,0.8
+"Land Use.fraction of new cropland from forests[1]",0,0,0,0,0,1,0,0,0,0,0,0.510511456217934,0.2,0.8
+"Land Use.normal average cutting time[1]",0,0,0,0,0,1,0,0,0,0,0,599.441148339866,100,1000
+"Land Use.normal average time cropland in use[1]",0,0,0,0,0,1,0,0,0,0,0,966.048326007073,100,1000
+"Land Use.percent of forest recovering in 1980[1]",0,0,0,0,0,1,0,0,0,0,0,0.0863642445555122,0.01,0.5
+"Land Use.sensitivity of crop land use time to cropland size[1]",0,0,0,0,0,1,0,0,0,0,0,0.613486442667746,0,10
+"Land Use.sensitivity of cutting time to forest size[1]",0,0,0,0,0,1,0,0,0,0,0,1.61188503044571,0,5
+"Land Use.sensitivity of effect of animal products balance on grassland expansion rate[1]",0,0,0,0,0,1,0,0,0,0,0,-0.152244737461254,-1,0
+"Land Use.sensitivity of effect of crop balance on crop land expansion rate[1]",0,0,0,0,0,1,0,0,0,0,0,-0.314437630068299,-1,0
+"Land Use.time to close grassland gap[1]",0,0,0,0,0,1,0,0,0,0,0,8.51420168264695,2,10
+"cropland soil carbon.cropland soil carbon 1980[1]",0,0,0,0,0,1,0,0,0,0,0,106.352147,80,150
+"degraded land soil carbon.degraded land productivity reduction factor[1]",0,0,0,0,1,0,0,0,0,0,0,0.05,0.01,0.1
+"forest soil carbon.forest soil carbon initialisation[1]",0,0,0,0,0,1,0,0,0,0,0,799.9965225,400,950
+"forest soil carbon.Young forest soil carbon reduction factor[1]",0,0,0,0,0,1,0,0,0,0,0,0.862530531,0.5,1
+"grassland soil carbon.grassland soil carbon 1980[1]",0,0,0,0,0,1,0,0,0,0,0,330,330,500
+"soil carbon decay.cropland litter input share slow soil carbon[1]",0,0,0,0,0,1,0,0,0,0,0,0.016233165,0.01,0.02
+"soil carbon decay.cropland slow soil carbon historic share[1]",0,0,0,0,0,1,0,0,0,0,0,0.374742551,0.3,0.4
+"soil carbon decay.e0[1]",0,0,0,0,0,1,0,0,0,0,0,290.0287445,290,320
+"soil carbon decay.grassland litter input share slow soil carbon[1]",0,0,0,0,0,1,0,0,0,0,0,0.018249348,0.01,0.02
+"soil carbon decay.grassland slow soil carbon historic share[1]",0,0,0,0,0,1,0,0,0,0,0,0.4,0.3,0.4
+"soil carbon decay.mature forest litter input share slow soil carbon[1]",0,0,0,0,0,1,0,0,0,0,0,0.02136525,0.015,0.025
+"soil carbon decay.mature forest slow soil carbon historic share[1]",0,0,0,0,0,1,0,0,0,0,0,0.399614252,0.3,0.4
+"soil carbon decay.natural decay rate fast soil carbon[1]",0,0,0,0,0,1,0,0,0,0,0,0.025,0.025,0.035
+"soil carbon decay.natural decay rate litter carbon[1]",0,0,0,0,0,1,0,0,0,0,0,0.600513407,0.6,0.8
+"soil carbon decay.natural decay rate slow soil carbon[1]",0,0,0,0,0,1,0,0,0,0,0,0.000808824,0.0008,0.0012
+"soil carbon decay.temp response[1]",0,0,0,0,0,1,0,0,0,0,0,60,40,60
+"soil carbon decay.young forest litter input share slow soil carbon[1]",0,0,0,0,0,1,0,0,0,0,0,0.011729817,0.01,0.025
+"soil carbon decay.young forest slow soil carbon historic share[1]",0,0,0,0,0,1,0,0,0,0,0,0.3,0.3,0.4
+"Concrete.BASE AVERAGE LIFETIME OF BUILDINGS[1]",0,0,0,0,0,1,0,0,0,0,0,115.309006352437,75,200
+"Concrete.BASE AVERAGE LIFETIME OF INFRASTRUCTURE[1]",0,0,0,0,0,1,0,0,0,0,0,25,25,150
+"Concrete.CLIMATE IMPACT ON CONCRETE LIFETIME[1]",0,0,1,0,0,0,0,0,0,0,0,-0.075,-0.15,-0.05
+"Concrete.CO2 INTENSITY OF INFRASTRUCTURE CONCRETE[1]",0,0,0,0,1,1,0,0,0,0,0,0.07,0.07,0.164
+"Concrete.CO2 INTENSITY OF RS BUILDINGS CONCRETE[1]",0,0,0,0,1,1,0,0,0,0,0,0.0585221156311479,0.05,0.163
+"Concrete.CONCRETE PER m2 UFA[1]",0,0,0,0,1,0,0,0,0,0,0,0.998,0.452,1.43
+"Concrete.GAP ADJUSTMENT TIME FOR BUILDINGS[1]",1,0,0,0,0,1,0,0,0,0,0,13.9260948345179,0.5,20
+"Concrete.GAP ADJUSTMENT TIME FOR INFRASTRUCTURE[1]",1,0,0,0,0,1,0,0,0,0,0,9.96999123908307,0.5,10
+"Concrete.INFRA ALPHA[1]",1,0,0,0,0,1,0,0,0,0,0,-27235.0941605342,-40000,-5000
+"Concrete.INFRA BETA[1]",1,0,0,0,0,1,0,0,0,0,0,-37.3680135607164,-40,-5
+"Concrete.INFRA GAMMA[1]",1,0,0,0,0,1,0,0,0,0,0,6.61569213989495,4.48,6.824
+"Concrete.INIT CONCRETE IN NEW BUILDINGS[1]",1,0,0,0,0,1,0,0,0,0,0,12666.3005103963,1000,70000
+"Concrete.INIT CONCRETE IN NEW INFRASTRUCTURE[1]",1,0,0,0,0,1,0,0,0,0,0,2838.18417582776,1000,16000
+"Concrete.INIT CONCRETE IN OLD BUILDINGS[1]",1,0,0,0,0,1,0,0,0,0,0,54769.4016691214,20000,80000
+"Concrete.INIT CONCRETE IN OLD INFRASTRUCTURE[1]",1,0,0,0,0,1,0,0,0,0,0,14990.5225486193,1000,15000
+"Concrete.INTERCEPT[1]",1,0,0,0,0,1,0,0,0,0,0,165310,165310,322082
+"Concrete.NORMAL CONCRETE DETERIORATION RATE[1]",0,0,0,0,0,1,0,0,0,0,0,0.0142483549785972,0.001,0.1
+"Concrete.TIME TO ADJUST DESIRED FLOOR AREA[1]",1,0,0,0,0,1,0,0,0,0,0,6.33255854211754,2,30
+"Concrete.TIME TO ADJUST DESIRED INFRASTRUCTURE AREA[1]",1,0,0,0,0,1,0,0,0,0,0,1,1,10
+"Concrete.UFA alpha[1]",1,0,0,0,0,1,0,0,0,0,0,29.3981092227848,1,45
+"Concrete.UFA intercept[1]",1,0,0,0,0,1,0,0,0,0,0,-237.396109005807,-300,-50
 
