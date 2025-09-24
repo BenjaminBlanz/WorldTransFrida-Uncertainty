@@ -150,3 +150,17 @@ for SLR analysis,Sea level rise costs and impacts,Total people retreat costs,[*]
 for SLR analysis,Sea level rise costs and impacts,Total asset retreat costs,[*],Sea level rise costs and impacts.Total asset retreat costs[*],bc$/year
 Useful econ vars,GDP,future time in recession,[*],GDP.future time in recession[*],Year
 Useful econ vars,GDP,future recession counter,[*],GDP.future recession counter[*],dmnl
+,,,,,
+For Billy,Finance,lending standards,[*],Finance.lending standards[*],dmnl
+For Billy,Finance,climate adjusted failure rate,[*],Finance.climate adjusted failure rate[*],dmnl
+For Billy,Finance,failure rate,[*],Finance.failure rate[*],dmnl
+For Billy,Finance,measured default rate of risky assets,[*],Finance.measured default rate of risky assets[*],dmnl/year
+For Billy,Finance,measured default rate of safe assets,[*],Finance.measured default rate of safe assets[*],dmnl/year
+For Billy,Finance,bank investment,[*],Finance.bank investment[*],b$/year
+For Billy,Finance,private investment,[*],Finance.private investment[*],b$/year
+For Billy,Finance,assets to liability ratio,[*],Finance.assets to liability ratio[*],dmnl
+For Billy,Finance,risk premium,[*],Finance.risk premium[*],dmnl/year
+For Billy,GDP,private investment in in 2021c$,[*],GDP.private investment in in 2021c$[*],bc$/year
+For Billy,GDP,public investment in 2021c$,[*],GDP.public investment in 2021c$[*],bc$/year
+For Billy,Employment,realised productivity,[*],Employment.realised productivity[*],dmnl
+For Billy,Inflation,Inflation Index,[*],Inflation.Inflation Index[*],1/year
