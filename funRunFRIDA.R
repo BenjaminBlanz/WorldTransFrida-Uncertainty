@@ -213,8 +213,11 @@ runFRIDASpecParms <- function(parVect,silent=T){
 							 file.path(location.frida,'FRIDA.stmx')),
 				 ignore.stdout = silent,ignore.stderr = silent,wait = T)
 	runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
-	runDat <- runDat[complete.cases(runDat),]
 	colnames(runDat) <- cleanNames(colnames(runDat))
+	if('year' %in% colnames(runDat) &&
+		 sum(is.na(runDat$year))<nrow(runDat)){
+		runDat <- runDat[!is.na(runDat$year),]
+	}
 	rownames(runDat) <- runDat$year
 	runDat <- runDat[,-1]
 	return(runDat)
