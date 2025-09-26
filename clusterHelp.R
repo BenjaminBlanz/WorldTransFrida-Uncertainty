@@ -114,5 +114,11 @@ if(exists('cl')&&is.numeric(result)&&result==2){
 		if(exists('calDat')){clusterExport(cl,list('calDat'))}
 		if(exists('resSigma')){clusterExport(cl,list('resSigma'))}
 	}
+	test <- unlist(clusterEvalQ(cl,disk.free(location.frida)< 2e4))
+	if(sum(test)>0){
+		stop('less than 20mib in frida location of workers\n')
+	}
 	cat('done\n')
 }
+
+

@@ -86,9 +86,6 @@ writeFRIDAExportSpec <- function(varsForExport.fridaNames,location.frida){
 # write frida input ####
 # uses location.frida and name.fridaInputFile from the global env.
 writeFRIDAInput <- function(variables,values,policyMode=F){
-	if(disk.free(location.frida)< 2e4){
-		stop('less than 20mib in frida location\n')
-	}
 	if(policyMode){
 		sink(file.path(location.frida,'Data',name.fridaInputFile))
 		for(domID in names(values)){
