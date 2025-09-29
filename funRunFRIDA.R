@@ -660,7 +660,12 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 				# catches varDataFromRun being shorter than the output data frame
 				perVarData[[varName]][perVarDataIndices,3:(2+ncol(varDataFromRun))] <- varDataFromRun
 			} else{
-				perVarData[[varName]][run.i,] <- unname(unlist(c(parOutput[[run.i]]$parmsIndex,runDat[varName])))
+				varDataFromRun <- unname(unlist(c(parOutput[[run.i]]$parmsIndex,runDat[varName])))
+				# writing just into the entries for which we have data from run
+				# to catch varDataFromRun being shorter than the output data frame
+				# we start from one here instead 3 as above, because our ourputstructure
+				# does not have the columns for polID and sowID
+				perVarData[[varName]][run.i,1:length(varDataFromRun)] <- varDataFromRun
 			}
 		}
 		logLike[run.i,] <- c(parOutput[[run.i]]$parmsIndex,parOutput[[run.i]]$logLike)
