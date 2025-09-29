@@ -838,7 +838,7 @@ writePerVarFile <- function(varData,file,outputType=NULL,compressCsv=T){
 		write.table(varData,paste0(fileNoExt,'.csv'),
 								row.names = F,sep=',')
 		if(compressCsv){
-			system(paste('gzip',paste0(fileNoExt,'.csv')))
+			system(paste('gzip -f',paste0(fileNoExt,'.csv')))
 		}
 	} else if(outputType=='RDS'){
 		saveRDS(varData,paste0(fileNoExt,'.RDS'))
