@@ -26,7 +26,7 @@ function cleanup_policy_repo() {
 if [ ! -d ./FRIDAforPolicyAnalysisGit ] ; then
 	#clone the FRIDA model so you always have the latest
 	echo "Cloning FRIDA from the main metno/WorldTransFRIDA repo"
-	git clone https://github.com/BenjaminBlanz/WorldTransFRIDA-SimpleDashboard.git FRIDAforPolicyAnalysisGit
+	git clone --depth 1 https://github.com/BenjaminBlanz/WorldTransFRIDA-SimpleDashboard.git FRIDAforPolicyAnalysisGit
 
 	cleanup_policy_repo
 
