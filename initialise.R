@@ -1,10 +1,10 @@
 suppressPackageStartupMessages({
-	library(Rmpfr) # arbitrary precision math use to calculate the likelihood from loglikelihood
-	library(optimx) # interface to various optimizers
-	library(tictoc) # simple timing measurements
-	library(SobolSequence) # generates multidimensional sobol sequences
-	library(lubridate) # deals with times
-	library(cNORM) # wighted quantiles
+	library(Rmpfr,quietly=T,warn.conflicts = F) # arbitrary precision math used to calculate the likelihood from loglikelihood
+	library(optimx,quietly=T,warn.conflicts = F) # interface to various optimizers
+	library(tictoc,quietly=T,warn.conflicts = F) # simple timing measurements
+	library(SobolSequence,quietly=T,warn.conflicts = F) # generates multidimensional sobol sequences
+	library(lubridate,quietly=T,warn.conflicts = F) # deals with times
+	library(cNORM,quietly=T,warn.conflicts = F) # wighted quantiles
 	library(spatstat.explore,quietly=T,warn.conflicts = F) # used for the quantile.density function
 })
 
