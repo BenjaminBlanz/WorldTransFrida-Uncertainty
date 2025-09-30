@@ -185,7 +185,12 @@ runFridaParmsBySamplePoints <- function(policyMode=F){
 		logLike.df <- saveParOutputToPerVarFiles(parOutput = retlist,workUnit.i = workUnit.i,
 														 workerID = workerID)
 		if(doNotReturnRunDataSavePerWorkerOnly){
-			retlist <- list()
+			newRetlist <- list()
+			for(i in 1:length(retlist)){
+				newRetlist[[i]] <- list(parmsIndex=retlist[[i]]$parmsIndex,
+																logLike=retlist[[i]]$logLike)
+			}
+			retlist <- newRetlist
 		}
 		retlist[['logLike.df']] <- logLike.df
 	}
@@ -428,8 +433,12 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			tryCatch({parOutput <- readRDS(file.path(baseWD,location.output,paste0('workUnit-',i,'.RDS')))},
 							 error = function(e){},warning=function(w){})
 			if(exists('parOutput')){
-				if(length(parOutput)>(workUnitBoundaries[i+1]-workUnitBoundaries[i])){
-					lastChunkSize <- length(parOutput)
+				lastChunkSize <- length(parOutput)
+				if(!is.null(parOutput$logLike.df)){
+					logLike.df <- parOutput$logLike.df
+					lastChunkSize <- lastChunkSize-1
+				}
+				if(lastChunkSize>(workUnitBoundaries[i+1]-workUnitBoundaries[i])){
 					cat(sprintf(', existing output has different chunkSize (%i rather than %i), resorting remaining work',
 											lastChunkSize,
 											chunkSizePerWorker*numWorkers))
@@ -498,6 +507,9 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			}
 			cat('\r(s)')
 			parOutput <-  unlist(parOutput, recursive = F)
+			if(writePerWorkerFiles){
+				parOutput$logLike.df <- logLike.df
+			}
 			saveRDS(parOutput,file.path(baseWD,location.output,paste0('workUnit-',i,'.RDS')))
 			if(!writePerWorkerFiles){
 				saveParOutputToPerVarFiles(parOutput=parOutput, workUnit.i=i)
@@ -506,12 +518,20 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 		}
 		cat('\r(l)')
 		
-		if(writePerWorkerFiles & exists('logLike.df')){
+		# if there is a full assembled logLike.df use it
+		if(exists('logLike.df')){
 			logLike[logLike.df$id] <- logLike.df$logLike
 			completeRunsSoFar <- sum(logLike > -.Machine$double.xmax+(200*.Machine$double.eps))
 		} else {
+			# otherwise assemble the logLikes 
 			for(l in 1:length(parOutput)){
-				logLike[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$logLike 
+				# if the parOutput has logLike.df use it
+				if('logLike.df' %in% names(parOutput[[l]])){
+					logLike[parOutput[[l]]$logLike.df$id] <- parOutput[[l]]$logLike.df$logLike 
+				} else {
+					# otherwise collect the logLikes
+					logLike[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$logLike 
+				}
 				if(parOutput[[l]]$logLike > -.Machine$double.xmax+(200*.Machine$double.eps)){
 					completeRunsSoFar <- completeRunsSoFar + 1
 				}
