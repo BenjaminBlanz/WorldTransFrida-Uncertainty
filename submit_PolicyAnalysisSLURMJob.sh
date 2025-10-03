@@ -3,10 +3,11 @@
 ##############################################################################
 ########                  Change config here                          ########
 ##############################################################################
-# Change properties of the SLURM job here. Change run specificaiton in 
-# configPolicyAnalysis.R
 
-### SLURM settings
+# These settings are only for running this file manually,
+# if using runPolicyAnalysisSLURMrunner, these values are taken from 
+# configPolicyAnalysis.
+
 # How long will it take approximately? Job will be killed after this time!
 # But max 8:00 hours and the shorter the run is, the earlier the job gets run
 hours=8
@@ -60,7 +61,7 @@ while [ $# -gt 0 ]; do
       partition="$2"
       ;;
     -e|--email)
-      partition="$2"
+      email="$2"
       ;;
     *)
       printf "Error: Invalid argument: $1 \n"

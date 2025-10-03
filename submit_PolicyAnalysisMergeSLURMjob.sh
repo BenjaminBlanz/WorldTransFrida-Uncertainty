@@ -3,6 +3,11 @@
 ##############################################################################
 ########                  Change config here                          ########
 ##############################################################################
+
+# These settings are only for running this file manually,
+# if using runPolicyAnalysisSLURMrunner, these values are taken from 
+# configPolicyAnalysis.
+
 # Change properties of the SLURM job here. Change run specificaiton in 
 # configPolicyAnalysis.R
 
@@ -57,7 +62,7 @@ while [ $# -gt 0 ]; do
       partition="$2"
       ;;
     -e|--email)
-      partition="$2"
+      email="$2"
       ;;
     *)
       printf "Error: Invalid argument: $1 \n"

@@ -49,10 +49,16 @@ for(workUnitDir in workUnitDirs){
 				if(numJobsQueued < maxJobsQueue){
 					numJobsQueued <- numJobsQueued + 1
 					system(paste0('./submit_PolicyAnalysisSLURMJob.sh',
-						' -o ',location.output,
-						' -s ',name.output,
-						' -u ',unitID,
-						' -w ',numWorkers),
+												' -h ',SLURMhours,
+												' -m ',SLURMminutes,
+												' -M ',SLURMmemorySize,
+												' -a ',SLURMaccount,
+												' -p ',SLURMpartition,
+												' -e ',SLURMemail,
+												' -o ',location.output,
+												' -s ',name.output,
+												' -u ',unitID,
+												' -w ',numWorkers),
 						intern = T, wait = F,ignore.stdout = T)
 					status <- 'submitted (new)'
 				}
@@ -84,6 +90,12 @@ write(mergeStatus,file.path(location.output,'mergeStatus.txt'))
 if(mergeStatus=='ready for merge'){
 	cat('submitting file merge \n')
 	system(paste0('./submit_PolicyAnalysisMergeSLURMjob.sh',
+								' -h ',SLURMhours,
+								' -m ',SLURMminutes,
+								' -M ',SLURMmemorySize,
+								' -a ',SLURMaccount,
+								' -p ',SLURMpartition,
+								' -e ',SLURMemail,
 								' -o ',location.output,
 								' -s ',name.output,
 								' -w ',numWorkersFileMerge),
@@ -100,4 +112,5 @@ if(mergeStatus=='ready for merge'){
 	cat('Merge completed\n')
 }
 
+# run the plots
 

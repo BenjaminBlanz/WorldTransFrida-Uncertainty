@@ -25,8 +25,22 @@ nullPolProb <- 0.5
 # parallel ####
 useSLURM <- TRUE
 maxJobsQueue <- 10
-numWorkers <- parallel::detectCores()
-numWorkersFileMerge <- min(numWorkers,floor(1e7/numInitialJointPol))
+# How long will it take approximately? Job will be killed after this time!
+# But max 8:00 hours and the shorter the run is, the earlier the job gets run
+SLURMhours <- '8'
+SLURMminutes <- '00'
+# Does the job need larger memory?
+# (the larger the memory you request, the longer the job might sit in the queue, if the machine is full)
+memorySize='256G' # can be ['256G' '512G', '1024G'], '256G' sometimes fails with 100,000 samples
+SLURMmemorySize <- '256G'
+# Use a different group account for ressources? Which partition?
+SLURMaccount <- REPLACEME
+SLURMpartition <- 'compute'
+# Enter Email here in case you want to receive a mail, when the job failed
+SLURMemail <- ''
+# bumber of workers for each of the slurm jobs
+numWorkers <- 256
+numWorkersFileMerge <- min(numWorkers,ceiling(1e6/numInitialJointPol))
 # How large the chunks of work are, smaller means more frequent pauses to write out
 # itermediate results (and update the diagnostic output).
 # smaller also means increaseing the total number of files, which can cause file system 
