@@ -70,11 +70,13 @@ print(table(statuses))
 # run the merger
 if(file.exists(file.path(location.output,'mergeStatus.txt'))){
 	mergeStatus <- readLines(file.path(location.output,'mergeStatus.txt'))
-} else {
+} else if(table(statuses)['completed']==length(statuses)) {
 	mergeStatus <- 'ready for merge'
-	write(mergeStatus,file.path(location.output,'mergeStatus.txt'))
+} else {
+	mergeStatus <- 'waiting for runs to complete'
 }
-if(mergeStatus=='ready for merge' && table(statuses)['completed']==length(statuses)){
+write(mergeStatus,file.path(location.output,'mergeStatus.txt'))
+if(mergeStatus=='ready for merge'){
 	cat('submitting file merge \n')
 	system(paste0('./submit_PolicyAnalysisMergeSLURMjob.sh',
 								' -o ',location.output,
