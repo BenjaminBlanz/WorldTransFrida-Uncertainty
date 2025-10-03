@@ -93,7 +93,7 @@ sed -i "s/jdoe@mail.com/${email}/" $runscript
 #############################################################################
 echo submitted > $locationOutput/mergeStatus.txt
 #echo $runscript
-#if ! sbatch $runscript; then
-#	echo 'sbatch failed' > $locationOutput/mergeStatus.txt
-#fi
+if ! sbatch $runscript; then
+	echo 'sbatch failed' > $locationOutput/mergeStatus.txt
+fi
 
