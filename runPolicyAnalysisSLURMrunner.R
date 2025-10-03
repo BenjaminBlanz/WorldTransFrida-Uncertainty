@@ -83,6 +83,9 @@ if(numComplete < length(statuses)){
 	mergeStatus <- 'waiting for runs to complete'
 } else if(file.exists(file.path(location.output,'mergeStatus.txt'))){
 	mergeStatus <- readLines(file.path(location.output,'mergeStatus.txt'))
+	if(mergeStatus=='waiting for runs to complete'){
+		mergeStatus <- 'ready for merge'
+	}
 } else {
 	mergeStatus <- 'ready for merge'
 } 
