@@ -73,7 +73,7 @@ name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
 location.frida.info <- './FRIDA-info'
 name.frida_info <- 'frida_info.csv'
 name.frida_extra_variables_to_export_list <- 'frida_extra_variables_to_export_list.csv'
-location.singleDomainPolicyFiles <- file.path('policyFileGeneration/PolicyFolder')
+location.singleDomainPolicyFiles <- file.path('policy-singleDomainPolicyMatrices')
 
 # Policies to sample ####
 # By default all policy files present in location.singleDomainPolicyFiles will be sampled

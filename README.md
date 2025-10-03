@@ -88,10 +88,11 @@ The shell script that creates the scripts is currently called **```submit_Uncert
 
 ### Prepare Single Domain Policy Files
 - Execute ```python3 createFilesForPolicyAnalysis.py``` in ```policyFileGeneration```
-- This will create a folder called ```PolicyFolder``` which contains the single domain policy files. A folder containing these, or a subset of these, has to be specified in ```configPolicyAnalysis.R``` by default the ```PolicyFolder``` created in this step is used.
+- This will create a folder called ```PolicyFolder``` which contains the single domain policy files. 
 
 ## For each Run
 ### Run Configuration
+- Copy the single domain policy files from which policies should be sampled from ```policyFileGeneration/PolicyFolder``` to ```policy-singleDomainPolicyMatrices```.
 - edit ```configPolicyAnalysis.R```
     - Specify the run configuration. This file contains documentation in comments
     - Note that policies to sample are specified toward the bottom of the file.
