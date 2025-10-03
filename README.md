@@ -102,8 +102,6 @@ The shell script that creates the scripts is currently called **```submit_Uncert
 - Execute ```Rscript runPolicyAnalysisSLURMrunner.R```
     - This submitts the work unit batch jobs to SLURM and reports the state of the chunks.
     - This can be run repeatedly, it will report on the current state of the batch jobs, and submit further work units as the queue empties, until all jobs have been submitted
-    - Once this script reports all jobs have been completed proceed to the next step.
-- Execute ```Rscript runPolicyAnalysisMerger.R```
-    - This will merge the outputs from the work units into single files per variable. (Variables to export can be specidied as in the uncertainty analysis above)
+    - Once all jobs have been completed this script will send off a slurm job to merge the individual outputs into single files per variable. (Variables to export can be specidied as in the uncertainty analysis above)
 - Exceute ```Rscript runPolicyAnalysisPlots.R```
     - Creates some figures, amend as desired, or simply work on the per variable exported files yourself.
