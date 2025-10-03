@@ -38,9 +38,6 @@ while [ $# -gt 0 ]; do
     -s|--expID)
       expID="$2"
       ;;
-    -u|--workUnitID)
-      workUnitID="$2"
-      ;;
     -o|--locationOutput)
       locationOutput="$2"
       ;;
