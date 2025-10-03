@@ -17,11 +17,11 @@ minutes=00
 memorySize='256G' # can be ['256G' '512G', '1024G'], '256G' sometimes fails with 100,000 samples
 
 # Use a different group account for ressources? Which partition?
-account=uc1275
+account=REPLACEME
 partition=compute
 
 # Enter Email here in case you want to receive a mail, when the job failed
-email=benjamin.blanz@uni-hamburg.de
+email=
 
 ##############################################################################
 ########                 End of input section                      ###########
