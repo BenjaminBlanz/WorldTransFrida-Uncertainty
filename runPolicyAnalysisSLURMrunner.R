@@ -66,3 +66,29 @@ for(workUnitDir in workUnitDirs){
 }
 cat("summary of work units' statuses\n")
 print(table(statuses))
+
+# run the merger
+if(file.exists(file.path(location.output,'mergeStatus.txt'))){
+	mergeStatus <- readLines(file.path(location.output,'mergeStatus.txt'))
+} else {
+	mergeStatus <- 'ready for merge'
+	write(mergeStatus,file.path(location.output,'mergeStatus.txt'))
+}
+if(mergeStatus=='ready for merge' && table(statuses)['completed']==length(statuses)){
+	cat('submitting file merge \n')
+	system(paste0('./submit_PolicyAnalysisMergeSLURMJob.sh',
+								' -o ',location.output,
+								' -s ',name.output,
+								' -w ',numWorkersFileMerge),
+				 intern = T, wait = F,ignore.stdout = T)
+} else if(mergeStatus=='submitted'){
+	cat('Merge already submitted and waiting for allocation, check squeue\n')
+} else if(mergeStatus=='running'){
+	cat('Merge already running, check squeue\n')
+} else if(mergeStatus=='failed'){
+	cat('Merge failed debug by running runPolicyAnalysisMerger.R interactively\n')
+} else if(mergeStatus=='completed'){
+	cat('Merge completed\n')
+}
+
+
