@@ -68,7 +68,12 @@ cat("summary of work units' statuses\n")
 print(table(statuses))
 
 # run the merger
-if(table(statuses)['completed']<length(statuses)){
+if('completed' %in% names(table(statuses))){
+	numComplete <- table(statuses)['completed']
+} else {
+	numComplete <- 0
+}
+if(numComplete < length(statuses)){
 	mergeStatus <- 'waiting for runs to complete'
 } else if(file.exists(file.path(location.output,'mergeStatus.txt'))){
 	mergeStatus <- readLines(file.path(location.output,'mergeStatus.txt'))
