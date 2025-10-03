@@ -5,7 +5,7 @@
 #SBATCH --ntasks-per-node=128
 #SBATCH --constraint=256G
 #SBATCH --mem=0
-#SBATCH --time=11:00:00
+#SBATCH --time=01:00:00
 #SBATCH --output=policy-workOutput/MERGELOG_%j.log
 #SBATCH --error=policy-workOutput/MERGELOG_%j.log
 #SBATCH --mail-user=jdoe@mail.com
