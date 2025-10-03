@@ -86,6 +86,7 @@ sed -i "s/constraint=256G/constraint=${memorySize}/" $runscript
 sed -i "s/max-connections=1024/max-connections=$(($(($numWorkers+5)) > 128 ? $(($numWorkers+5)) : 128))/g" $runscript
 sed -i "s/runPolicyAnalysisMerger.R 128/runPolicyAnalysisMerger.R ${numWorkers}/g" $runscript
 sed -i "s/expID/${expID}/g" $runscript
+sed -i "s/locationOutput/${locationOutput}/g" $runscript
 sed -i "s/jdoe@mail.com/${email}/" $runscript
 
 #############################################################################
