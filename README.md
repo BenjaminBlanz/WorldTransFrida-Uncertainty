@@ -71,3 +71,38 @@ The shell script that creates the scripts is currently called **```submit_Uncert
     - At the start of the execution one has to check for Errors in the log output and hit enter twice.
 
 - (execute ```source('runPlotAllRuns.R')```)
+
+# Notes on the FRIDA policy analysis
+
+## Before First Run
+### Preparation of the environment
+- Place Stella Simulator for Linux files into the ```Stella_Simulator_Linux``` folder
+- Run ```policy_update_frida.sh``` to check out the version of FRIDA that includes the rpresentative member subsample
+
+### Technical Configuration
+- ```PolicyAnalysis.run``` and ```PolicyAnalysisMerge.run```
+    - The headers of these files (the lines starting with ```$SBATCH```) will be set automatically, but remove any that are incompatible with your installation of SLURM.
+    - Change the module load command to load a version of R available on your machine, or remove it if R is always available. An R version greater than 4.4 is required if you intend to run with more than 125 workers per batch job.
+- ```submit_PolicyAnalysisSLURMjob.sh```
+    - Modify the account, partition, email, etc. in the ```Change config here``` section.
+
+### Prepare Single Domain Policy Files
+- Execute ```python3 createFilesForPolicyAnalysis.py``` in ```policyFileGeneration```
+- This will create a folder called ```PolicyFolder``` which contains the single domain policy files. A folder containing these, or a subset of these, has to be specified in ```configPolicyAnalysis.R``` by default the ```PolicyFolder``` created in this step is used.
+
+## For each Run
+### Run Configuration
+- edit ```configPolicyAnalysis.R```
+    - Specify the run configuration. This file contains documentation in comments
+    - Note that policies to sample are specified toward the bottom of the file.
+### Run
+- Execute ```Rscript runPolicyAnalysisSLURMsetup.R```
+    - This splits the total ensemble into work units suitable for SLURM batch jobs and creates corresponding run files and output folder structures.
+- Execute ```Rscript runPolicyAnalysisSLURMrunner.R```
+    - This submitts the work unit batch jobs to SLURM and reports the state of the chunks.
+    - This can be run repeatedly, it will report on the current state of the batch jobs, and submit further work units as the queue empties, until all jobs have been submitted
+    - Once this script reports all jobs have been completed proceed to the next step.
+- Execute ```Rscript runPolicyAnalysisMerger.R```
+    - This will merge the outputs from the work units into single files per variable. (Variables to export can be specidied as in the uncertainty analysis above)
+- Exceute ```Rscript runPolicyAnalysisPlots.R```
+    - Creates some figures, amend as desired, or simply work on the per variable exported files yourself.
