@@ -87,11 +87,11 @@ sed -i "s/account=REPLACEME/account=${account}/" $runscript
 sed -i "s/partition=compute/partition=${partition}/" $runscript
 sed -i "s/ntasks-per-node=128/ntasks-per-node=${numWorkers}/" $runscript
 sed -i "s/constraint=256G/constraint=${memorySize}/" $runscript
-# locationOutput contains slashes so use @ as the field limit symbol for sed
 sed -i "s/max-connections=1024/max-connections=$(($(($numWorkers+5)) > 128 ? $(($numWorkers+5)) : 128))/g" $runscript
 sed -i "s/runPolicyAnalysisMerger.R 128/runPolicyAnalysisMerger.R ${numWorkers}/g" $runscript
 sed -i "s/expID/${expID}/g" $runscript
-sed -i "s/locationOutput/${locationOutput}/g" $runscript
+# locationOutput contains slashes so use @ as the field limit symbol for sed
+sed -i "s@locationOutput@${locationOutput}@g" $runscript
 sed -i "s/jdoe@mail.com/${email}/" $runscript
 
 #############################################################################
