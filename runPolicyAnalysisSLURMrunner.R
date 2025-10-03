@@ -76,7 +76,7 @@ if(file.exists(file.path(location.output,'mergeStatus.txt'))){
 }
 if(mergeStatus=='ready for merge' && table(statuses)['completed']==length(statuses)){
 	cat('submitting file merge \n')
-	system(paste0('./submit_PolicyAnalysisMergeSLURMJob.sh',
+	system(paste0('./submit_PolicyAnalysisMergeSLURMjob.sh',
 								' -o ',location.output,
 								' -s ',name.output,
 								' -w ',numWorkersFileMerge),
@@ -85,6 +85,8 @@ if(mergeStatus=='ready for merge' && table(statuses)['completed']==length(status
 	cat('Merge already submitted and waiting for allocation, check squeue\n')
 } else if(mergeStatus=='running'){
 	cat('Merge already running, check squeue\n')
+} else if(mergeStatus=='sbatch failed'){
+	cat('Failed to submit merge job\n')
 } else if(mergeStatus=='failed'){
 	cat('Merge failed debug by running runPolicyAnalysisMerger.R interactively\n')
 } else if(mergeStatus=='completed'){
