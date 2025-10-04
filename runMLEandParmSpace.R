@@ -139,6 +139,7 @@ while(newMaxFound){
 		parallelParscale <- T
 		useOrdersOfMagGuesses <- T
 		while(iterations < 2 && sum(is.na(parscale)|is.infinite(parscale))>0){
+			tic()
 			parsToDet <- which(is.na(parscale)|is.infinite(parscale))
 			cat(sprintf('Determining the parscale of %i parameters. %i parameters with already known parscale.%s\n',
 									length(parsToDet),length(parscale)-length(parsToDet),
@@ -169,6 +170,7 @@ while(newMaxFound){
 			# try those that did not succeed with the guess again with the full range
 			useOrdersOfMagGuesses <- F
 			iterations <- iterations+1
+			toc()
 		}
 		parscale.parvect <- parscale[0:nrow(sampleParms)]
 		parscale.resSigmaVect <- parscale[(nrow(sampleParms)+1):length(jParVect)]
@@ -366,7 +368,8 @@ while(newMaxFound){
 													 parscale=parscale.parvect,
 													 bounds=parBounds,
 													 niter=1e3,# set niter so that the errors at least in the indep case are small
-													 workerStagger = T)) 
+													 workerStagger = T,
+													 chunk.size = 1)) 
 			names(border.coefs[,direction]) <- names(parVect)
 			# fallback values in case borders could not be determined:
 			notDeterminedBorders[,direction] <- 
@@ -379,7 +382,7 @@ while(newMaxFound){
 			# this check only works for the independent case, as we do not retain the information
 			# what the values of the other parameters where during range finding
 			
-			cat('\nsaving...')
+			cat('saving...')
 			if(direction=='Min'){
 				sampleParms[[direction]] <- pmax(border.coefs[,direction],parBounds[,'Min'])
 			} else {
@@ -390,6 +393,7 @@ while(newMaxFound){
 			cat('done\n')
 		}
 	}
+	
 	## make borders symmetric ####
 	if(symmetricRanges%in%c('Max','Min')){
 		cat('Symmetrifying parameter ranges\n')
