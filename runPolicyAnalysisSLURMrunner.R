@@ -85,6 +85,10 @@ if(numComplete < length(statuses)){
 	mergeStatus <- readLines(file.path(location.output,'mergeStatus.txt'))
 	if(mergeStatus=='waiting for runs to complete'){
 		mergeStatus <- 'ready for merge'
+	} else if(mergeStatus=='failed'){
+		mergeStatus <- 'ready for merge'
+		cat('Previous merge failed, retrying\n')
+		cat('If this persists (and is not due to timeouts, debug by running runPolicyAnalysisMerger.R interactively\n')
 	}
 } else {
 	mergeStatus <- 'ready for merge'
@@ -109,8 +113,6 @@ if(mergeStatus=='ready for merge'){
 	cat('Merge already running, check squeue\n')
 } else if(mergeStatus=='sbatch failed'){
 	cat('Failed to submit merge job\n')
-} else if(mergeStatus=='failed'){
-	cat('Merge failed debug by running runPolicyAnalysisMerger.R interactively\n')
 } else if(mergeStatus=='completed'){
 	cat('Merge completed\n')
 }
