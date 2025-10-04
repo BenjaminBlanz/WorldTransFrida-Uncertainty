@@ -75,6 +75,24 @@ if(treatVarsAsIndep){
 }
 jParVect <- c(parVect,resSigmaVect)
 
+if(!redoAllCalc&&file.exists(file.path(location.output,'sampleParmsParscaleRanged.RDS'))){
+	cat('loading existing sampleParmsParscaleRanged\n')
+	sampleParmsInput <- readRDS(file.path(location.output,'sampleParmsParscaleRanged.RDS'))
+	sampleParmsInput <- prepareSampleParms(excludeNames=excludedParmsForBeingIntegers,sampleParms = sampleParmsInput)
+	if(nrow(sampleParmsInput)!=nrow(sampleParms) || 
+		 sum(sampleParmsInput$Variable==sampleParms$Variable)<nrow(sampleParms)){
+		cat('invalid loaded sampleParmsParscaleRanged, renaming\n')
+		system(sprintf('mv %s %s',file.path(location.output,'sampleParmsParscaleRanged.RDS'),
+					 file.path(location.output,'invalidSampleParmsParscaleRanged.RDS')))
+	} else {
+		parVect <- sampleParmsInput$Value
+		names(parVect) <- sampleParmsInput$Variable 
+		jParVect <- c(parVect,resSigmaVect)
+		sampleParms <- sampleParmsInput
+		skipParscale <- T
+	}
+}
+
 # start cluster ####
 source('clusterHelp.R')
 gobble <- clusterEvalQ(cl,source(file.path(baseWD,'config.R')))
@@ -85,7 +103,7 @@ if(!redoAllCalc){
 	names(parscale) <- names(jParVect)
 	if(file.exists(file.path(location.output,'parscale.RDS'))){
 		parscale.old <- readRDS(file.path(location.output,'parscale.RDS'))
-		matches <- which(names(parscale) %in% names(parscale.old))
+		matches <- names(parscale)[which(names(parscale) %in% names(parscale.old))]
 		parscale[matches] <- parscale.old[matches]
 	}
 }
@@ -114,14 +132,7 @@ while(newMaxFound){
 	baseNegLL <- jnegLLikelihood.f(jParVect)
 	
 	if(forceParBounds){
-		#cat('Forced using frida_info bounds\n')
-	} else if(!redoAllCalc&&file.exists(file.path(location.output,'sampleParmsParscaleRanged.RDS'))){
-		cat('loading existing sampleParmsParscaleRanged\n')
-		sampleParms <- readRDS(file.path(location.output,'sampleParmsParscaleRanged.RDS'))
-		sampleParms <- prepareSampleParms(excludeNames=excludedParmsForBeingIntegers,sampleParms = sampleParms)
-		parVect <- sampleParms$Value
-		names(parVect) <- sampleParms$Variable 
-		jParVect <- c(parVect,resSigmaVect)
+		cat('Forced using frida_info bounds\n')
 	} else {
 		# determine parscale ####
 		cat('Determining parscales...\n')
@@ -207,87 +218,89 @@ while(newMaxFound){
 		saveRDS(parscale.all,file.path(location.output,'parscale.RDS'))
 		sampleParms$parscale <- parscale.parvect
 		write.csv(sampleParms,file.path(location.output,'sampleParmsParscale.csv'))
-		# MLE ####
-		if(!skipParMLE){
-			sv <- jParVect
-			optimOutput <- array(NA,dim=c(1,length(jParVect)+9))
-			colnames(optimOutput) <- c(names(jParVect),
-																 c('value','fevals','gevals','niter','convcode',
-																 	'kkt1','kkt2','xtime','check value'))
-			optimOutput <- as.data.frame(optimOutput)
-			optimOutput[1,] <- c(jParVect,baseNegLL,rep('',8))
-			rownames(optimOutput) <- 'sv'
-			oldVal <- 0
-			newVal <- 1
-			iteration <- 0
-			all.methods <- T # use all methods on the first iteration then use whichever was the best
-			methods <- c('bobyqa')
-			while(abs(oldVal-newVal)>1e-12&&iteration<1e3){
-				iteration <- iteration+1
-				cat(sprintf('Running likelihood maximization (min neg log like) iteration %i...',
-										iteration))
-				oldVal <- newVal
-				# sv <- sv * 1.1
-				# specifying limits breaks the parscale info for bobyqa!
-				lower <- c(sampleParms$Min,resSigmaVect-abs(parscale.resSigmaVect)*100)
-				names(lower) <- names(jParVect)
-				which(lower==sv)
-				upper <- c(sampleParms$Min,resSigmaVect+abs(parscale.resSigmaVect)*100)
-				optRes <- optimx(sv,jnegLLikelihood.f,method=methods,
-												 lower = lower,
-												 upper = upper,
-												 control=list(all.methods=all.methods,
-												 						 parscale = 1/parscale,
-												 						 # fnscale = newVal,
-												 						 dowarn=F,
-												 						 # trace=9,
-												 						 kkt=F,
-												 						 maxit = 10*length(jParVect)^2,
-												 						 reltol = 1e-15))
-				svNegLLike <-c ()
-				for(opt.i in 1:nrow(optRes)){
-					sv.i <- unlist(as.vector(optRes[opt.i,1:length(jParVect)]))
-					svNegLLike[opt.i] <- jnegLLikelihood.f(sv.i)
-				}
-				maxMethod <- which.min(svNegLLike)
-				methods <- rownames(optRes[which(!is.na(optRes[,1]))])
-				sv <- unlist(as.vector(optRes[maxMethod,1:length(jParVect)]))
-				cat(sprintf('%10f %10f\n',
-										optRes$value[1],svNegLLike[maxMethod]))
-				newOptimOutputRowNums <- (nrow(optimOutput)+1):((nrow(optimOutput))+nrow(optRes))
-				optimOutput[newOptimOutputRowNums,] <- 
-					base::cbind(optRes,svNegLLike)
-				rownames(optimOutput)[newOptimOutputRowNums] <-
-					paste(rep(iteration,nrow(optRes)),rownames(optRes))
-				write.csv(optimOutput,file.path(location.output,'optRes.csv'),)
-				saveRDS(optRes,file.path(location.output,'optRes.RDS'))
-				newVal <- optRes$value[maxMethod]
-				all.methods <- F
+	}
+	
+	# MLE ####
+	if(!skipParMLE){
+		sv <- jParVect
+		optimOutput <- array(NA,dim=c(1,length(jParVect)+9))
+		colnames(optimOutput) <- c(names(jParVect),
+															 c('value','fevals','gevals','niter','convcode',
+															 	'kkt1','kkt2','xtime','check value'))
+		optimOutput <- as.data.frame(optimOutput)
+		optimOutput[1,] <- c(jParVect,baseNegLL,rep('',8))
+		rownames(optimOutput) <- 'sv'
+		oldVal <- 0
+		newVal <- 1
+		iteration <- 0
+		all.methods <- T # use all methods on the first iteration then use whichever was the best
+		methods <- c('bobyqa')
+		while(abs(oldVal-newVal)>1e-12&&iteration<1e3){
+			iteration <- iteration+1
+			cat(sprintf('Running likelihood maximization (min neg log like) iteration %i...',
+									iteration))
+			oldVal <- newVal
+			# sv <- sv * 1.1
+			# specifying limits breaks the parscale info for bobyqa!
+			lower <- c(sampleParms$Min,resSigmaVect-abs(parscale.resSigmaVect)*100)
+			names(lower) <- names(jParVect)
+			which(lower==sv)
+			upper <- c(sampleParms$Min,resSigmaVect+abs(parscale.resSigmaVect)*100)
+			optRes <- optimx(sv,jnegLLikelihood.f,method=methods,
+											 lower = lower,
+											 upper = upper,
+											 control=list(all.methods=all.methods,
+											 						 parscale = 1/parscale,
+											 						 # fnscale = newVal,
+											 						 dowarn=F,
+											 						 # trace=9,
+											 						 kkt=F,
+											 						 maxit = 10*length(jParVect)^2,
+											 						 reltol = 1e-15))
+			svNegLLike <-c ()
+			for(opt.i in 1:nrow(optRes)){
+				sv.i <- unlist(as.vector(optRes[opt.i,1:length(jParVect)]))
+				svNegLLike[opt.i] <- jnegLLikelihood.f(sv.i)
 			}
-			if(sum(is.na(sv[1:length(jParVect)]))==0|optRes$value<baseNegLL){
-				jParVect.names <- names(jParVect)
-				jParVect <- sv[1:length(jParVect)]
-				names(jParVect) <- jParVect.names
-				parVect <- jParVect[1:length(parVect)]
-				resSigmaVect <- jParVect[(length(parVect)+1):length(jParVect)]
-				if(treatVarsAsIndep){
-					resSigma <- diag(resSigmaVect)
-				} else {
-					resSigma <- array(NA,dim=rep(ncol(calDat),2))
-					resSigma[!lower.tri(resSigma)]<- resSigmaVect
-					resSigma[lower.tri(resSigma)] <- t(resSigma)[lower.tri(resSigma)]
-				}
-				saveRDS(jParVect,file.path(location.output,'jParVectAfterOptim.RDS'))
-				saveRDS(resSigma,file.path(location.output,
-																	 paste0('sigma',
-																	 			 ifelse(treatVarsAsIndep,'-indepParms',''),
-																	 			 '.RDS')))
-				cat('completed optimization\n')
+			maxMethod <- which.min(svNegLLike)
+			methods <- rownames(optRes[which(!is.na(optRes[,1]))])
+			sv <- unlist(as.vector(optRes[maxMethod,1:length(jParVect)]))
+			cat(sprintf('%10f %10f\n',
+									optRes$value[1],svNegLLike[maxMethod]))
+			newOptimOutputRowNums <- (nrow(optimOutput)+1):((nrow(optimOutput))+nrow(optRes))
+			optimOutput[newOptimOutputRowNums,] <- 
+				base::cbind(optRes,svNegLLike)
+			rownames(optimOutput)[newOptimOutputRowNums] <-
+				paste(rep(iteration,nrow(optRes)),rownames(optRes))
+			write.csv(optimOutput,file.path(location.output,'optRes.csv'),)
+			saveRDS(optRes,file.path(location.output,'optRes.RDS'))
+			newVal <- optRes$value[maxMethod]
+			all.methods <- F
+		}
+		if(sum(is.na(sv[1:length(jParVect)]))==0|optRes$value<baseNegLL){
+			jParVect.names <- names(jParVect)
+			jParVect <- sv[1:length(jParVect)]
+			names(jParVect) <- jParVect.names
+			parVect <- jParVect[1:length(parVect)]
+			resSigmaVect <- jParVect[(length(parVect)+1):length(jParVect)]
+			if(treatVarsAsIndep){
+				resSigma <- diag(resSigmaVect)
 			} else {
-				stop('failed optimization\n')
+				resSigma <- array(NA,dim=rep(ncol(calDat),2))
+				resSigma[!lower.tri(resSigma)]<- resSigmaVect
+				resSigma[lower.tri(resSigma)] <- t(resSigma)[lower.tri(resSigma)]
 			}
+			saveRDS(jParVect,file.path(location.output,'jParVectAfterOptim.RDS'))
+			saveRDS(resSigma,file.path(location.output,
+																 paste0('sigma',
+																 			 ifelse(treatVarsAsIndep,'-indepParms',''),
+																 			 '.RDS')))
+			cat('completed optimization\n')
+		} else {
+			stop('failed optimization\n')
 		}
 	}
+	
 	# coef range ####
 	## par bounds ####
 	idcOfSampleParmsInFridaInfo <- c()
