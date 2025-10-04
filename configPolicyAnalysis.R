@@ -2,8 +2,15 @@
 
 source('funParmSpace.R')
 
+# Set the expID to a something descriptive of the run.
+# The expID is used to name the output folder, among other things.
+# addAutoNameToExpID can be used to automatically generate something descriptive based 
+# on the run configuration but this will cause too long filenames and the run will crash.
 expID <- 'testing2'
-addAutoNameToExpID <- T
+# This adds a description of the configured policies to sample to the expID
+# Set this to false if you intend to sample a wide range of policies as
+# the filenames will be too long to handle and the run will crash.
+addAutoNameToExpID <- F
 
 # number of joint policy scenarios
 numInitialJointPol <- 1e5
@@ -19,7 +26,7 @@ nullPolProb <- 0.5
 useSLURM <- TRUE
 maxJobsQueue <- 10
 numWorkers <- parallel::detectCores()
-numWorkersFileMerge <- floor(numWorkers/2)
+numWorkersFileMerge <- min(numWorkers,floor(1e7/numInitialJointPol))
 # How large the chunks of work are, smaller means more frequent pauses to write out
 # itermediate results (and update the diagnostic output).
 # smaller also means increaseing the total number of files, which can cause file system 
@@ -66,12 +73,16 @@ name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
 location.frida.info <- './FRIDA-info'
 name.frida_info <- 'frida_info.csv'
 name.frida_extra_variables_to_export_list <- 'frida_extra_variables_to_export_list.csv'
-
-
 location.singleDomainPolicyFiles <- file.path('policy-singleDomainPolicyMatrices')
 
+# Policies to sample ####
+# By default all policy files present in location.singleDomainPolicyFiles will be sampled
+# To sample only a subset either specify a location containing only the desired sample above
+# or provide a vector of strings with the file names of those you want to sample here.
 policyFiles <- list.files(location.singleDomainPolicyFiles)
 
+
+# automatic stuff ####
 if(addAutoNameToExpID){
 	name.output <- gsub('\\.','_',paste0(expID,'-N-',numInitialJointPol,'-nPr-',nullPolProb,'-polFiles-',
 																		 paste(cleanNames(tools::file_path_sans_ext(policyFiles)),collapse='-')))

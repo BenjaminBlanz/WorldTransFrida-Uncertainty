@@ -86,9 +86,6 @@ writeFRIDAExportSpec <- function(varsForExport.fridaNames,location.frida){
 # write frida input ####
 # uses location.frida and name.fridaInputFile from the global env.
 writeFRIDAInput <- function(variables,values,policyMode=F){
-	if(disk.free(location.frida)< 2e4){
-		stop('less than 20mib in frida location\n')
-	}
 	if(policyMode){
 		sink(file.path(location.frida,'Data',name.fridaInputFile))
 		for(domID in names(values)){
@@ -188,7 +185,12 @@ runFridaParmsBySamplePoints <- function(policyMode=F){
 		logLike.df <- saveParOutputToPerVarFiles(parOutput = retlist,workUnit.i = workUnit.i,
 														 workerID = workerID)
 		if(doNotReturnRunDataSavePerWorkerOnly){
-			retlist <- list()
+			newRetlist <- list()
+			for(i in 1:length(retlist)){
+				newRetlist[[i]] <- list(parmsIndex=retlist[[i]]$parmsIndex,
+																logLike=retlist[[i]]$logLike)
+			}
+			retlist <- newRetlist
 		}
 		retlist[['logLike.df']] <- logLike.df
 	}
@@ -217,6 +219,10 @@ runFRIDASpecParms <- function(parVect,silent=T){
 				 ignore.stdout = silent,ignore.stderr = silent,wait = T)
 	runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
 	colnames(runDat) <- cleanNames(colnames(runDat))
+	if('year' %in% colnames(runDat) &&
+		 sum(is.na(runDat$year))<nrow(runDat)){
+		runDat <- runDat[!is.na(runDat$year),]
+	}
 	rownames(runDat) <- runDat$year
 	runDat <- runDat[,-1]
 	return(runDat)
@@ -428,8 +434,12 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			tryCatch({parOutput <- readRDS(file.path(baseWD,location.output,paste0('workUnit-',i,'.RDS')))},
 							 error = function(e){},warning=function(w){})
 			if(exists('parOutput')){
-				if(length(parOutput)>(workUnitBoundaries[i+1]-workUnitBoundaries[i])){
-					lastChunkSize <- length(parOutput)
+				lastChunkSize <- length(parOutput)
+				if(!is.null(parOutput$logLike.df)){
+					logLike.df <- parOutput$logLike.df
+					lastChunkSize <- lastChunkSize-1
+				}
+				if(lastChunkSize>(workUnitBoundaries[i+1]-workUnitBoundaries[i])){
 					cat(sprintf(', existing output has different chunkSize (%i rather than %i), resorting remaining work',
 											lastChunkSize,
 											chunkSizePerWorker*numWorkers))
@@ -498,6 +508,9 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			}
 			cat('\r(s)')
 			parOutput <-  unlist(parOutput, recursive = F)
+			if(writePerWorkerFiles){
+				parOutput$logLike.df <- logLike.df
+			}
 			saveRDS(parOutput,file.path(baseWD,location.output,paste0('workUnit-',i,'.RDS')))
 			if(!writePerWorkerFiles){
 				saveParOutputToPerVarFiles(parOutput=parOutput, workUnit.i=i)
@@ -506,12 +519,20 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 		}
 		cat('\r(l)')
 		
-		if(writePerWorkerFiles & exists('logLike.df')){
+		# if there is a full assembled logLike.df use it
+		if(exists('logLike.df')){
 			logLike[logLike.df$id] <- logLike.df$logLike
 			completeRunsSoFar <- sum(logLike > -.Machine$double.xmax+(200*.Machine$double.eps))
 		} else {
+			# otherwise assemble the logLikes 
 			for(l in 1:length(parOutput)){
-				logLike[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$logLike 
+				# if the parOutput has logLike.df use it
+				if('logLike.df' %in% names(parOutput[[l]])){
+					logLike[parOutput[[l]]$logLike.df$id] <- parOutput[[l]]$logLike.df$logLike 
+				} else {
+					# otherwise collect the logLikes
+					logLike[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$logLike 
+				}
 				if(parOutput[[l]]$logLike > -.Machine$double.xmax+(200*.Machine$double.eps)){
 					completeRunsSoFar <- completeRunsSoFar + 1
 				}
@@ -661,7 +682,12 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 				# catches varDataFromRun being shorter than the output data frame
 				perVarData[[varName]][perVarDataIndices,3:(2+ncol(varDataFromRun))] <- varDataFromRun
 			} else{
-				perVarData[[varName]][run.i,] <- unname(unlist(c(parOutput[[run.i]]$parmsIndex,runDat[varName])))
+				varDataFromRun <- unname(unlist(c(parOutput[[run.i]]$parmsIndex,runDat[varName])))
+				# writing just into the entries for which we have data from run
+				# to catch varDataFromRun being shorter than the output data frame
+				# we start from one here instead 3 as above, because our ourputstructure
+				# does not have the columns for polID and sowID
+				perVarData[[varName]][run.i,1:length(varDataFromRun)] <- varDataFromRun
 			}
 		}
 		logLike[run.i,] <- c(parOutput[[run.i]]$parmsIndex,parOutput[[run.i]]$logLike)
@@ -839,7 +865,7 @@ writePerVarFile <- function(varData,file,outputType=NULL,compressCsv=T){
 		write.table(varData,paste0(fileNoExt,'.csv'),
 								row.names = F,sep=',')
 		if(compressCsv){
-			system(paste('gzip',paste0(fileNoExt,'.csv')))
+			system(paste('gzip -f',paste0(fileNoExt,'.csv')))
 		}
 	} else if(outputType=='RDS'){
 		saveRDS(varData,paste0(fileNoExt,'.RDS'))

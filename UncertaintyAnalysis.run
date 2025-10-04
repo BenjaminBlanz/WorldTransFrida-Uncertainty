@@ -19,7 +19,7 @@ trap 'cleanup' ERR
 
 function cleanup(){
   echo "FAILED! Cleaning up..."
-  Rscript --max-connections=1024 -e "source('config.R'); source('cleanup.R')"
+  Rscript --max-connections=1024 -e "source('initialise.R'); source('config.R'); source('cleanup.R')"
   mv expID_*.R workOutput/expID/
   echo failed > workOutput/expID/status
 }

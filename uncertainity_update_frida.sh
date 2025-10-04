@@ -38,7 +38,7 @@ function cleanup_uncertainty_repo() {
 if [ ! -d ./FRIDAforUncertaintyAnalysisGit ] ; then
 	#clone the FRIDA model so you always have the latest
 	echo "Cloning FRIDA from the main metno/WorldTransFRIDA repo"
-	git clone https://github.com/metno/WorldTransFRIDA.git FRIDAforUncertaintyAnalysisGit
+	git clone --depth 1 https://github.com/metno/WorldTransFRIDA.git FRIDAforUncertaintyAnalysisGit
 
 	cleanup_uncertainty_repo
 

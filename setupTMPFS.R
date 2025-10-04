@@ -33,3 +33,7 @@ if(!exists('cl') &&
 } else {
 	cat('Using existing directories\n')
 }
+
+if(disk.free(location.frida)< 2e4){
+	stop('less than 20mib in frida location\n')
+}

@@ -27,11 +27,11 @@ memorySize='256G' # can be ['256G' '512G', '1024G'], '256G' sometimes fails with
 
 
 # Use a different group account for ressources? Which partition?
-account=mh0033 
+account=REPLACE_ME 
 partition=compute
 
 # Enter Email here in case you want to receive a mail, when the job failed
-email=benjamin.blanz@uni-hamburg.de
+email=REPLACE_ME
 
 # Copy ranges from pre-existing work?
 # This should be the name of workOutput from which the files will be copied!
