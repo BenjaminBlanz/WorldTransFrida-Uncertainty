@@ -205,7 +205,7 @@ runFridaDefaultParms <- function(silent=T){
 }
 
 # runFRIDASpecParms ####
-runFRIDASpecParms <- function(parVect,silent=T){
+runFRIDASpecParms <- function(parVect,silent=T,alsoReturnLike=F){
 	if(is.null(names(parVect))&length(parVect)>0){
 		stop('need names in parVect to write FRIDA input\n')
 	}
@@ -225,7 +225,18 @@ runFRIDASpecParms <- function(parVect,silent=T){
 	}
 	rownames(runDat) <- runDat$year
 	runDat <- runDat[,-1]
-	return(runDat)
+	if(!alsoReturnLike){
+		return(runDat)
+	} else {
+		resDat <- calDat-runDat[1:nrow(calDat),colnames(calDat)]
+		logLike <- funLogLikelihood(resDat,resSigma)
+		# If the logLike is not NA but the run did not complete assign 
+		# lowest nonzero value. We use this when narrowing the parms space
+		if(is.na(runDat[[1]][nrow(runDat)])||logLike==-Inf){
+			logLike <- -.Machine$double.xmax+sum(!is.na(runDat[[1]]))*.Machine$double.eps
+		}
+		return(list(runDat=runDat,logLike=logLike))
+	}
 }
 
 # cleanNames ####
