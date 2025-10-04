@@ -1,4 +1,5 @@
 suppressPackageStartupMessages({
+	library(mvtnorm,quietly=T,warn.conflicts=F) # used in the likelihood calculation
 	library(Rmpfr,quietly=T,warn.conflicts = F) # arbitrary precision math used to calculate the likelihood from loglikelihood
 	library(optimx,quietly=T,warn.conflicts = F) # interface to various optimizers
 	library(tictoc,quietly=T,warn.conflicts = F) # simple timing measurements

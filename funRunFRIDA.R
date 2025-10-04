@@ -2,8 +2,6 @@
 # Functions to run frida
 #
 
-suppressPackageStartupMessages(require(Rmpfr)) # use to calculate the likelihood from loglikelihood
-
 # prepareSampleParms ####
 prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NULL){
 	cat('Specify sampling parameters...')
