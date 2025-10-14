@@ -636,8 +636,6 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 								dseconds(round(sum(chunkTimes,na.rm=T))),
 								'                                                                             '))
 	}
-	# merge all the individual per Var files into one complete one
-	mergePerVarFiles()
 	return(logLike)
 }
 

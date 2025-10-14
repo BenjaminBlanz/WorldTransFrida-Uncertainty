@@ -129,7 +129,7 @@ while(newMaxFound){
 	# MLE.
 	
 	baseNegLL <- jnegLLikelihood.f(jParVect)
-	
+	baseLL <- baseNegLL
 	if(forceParBounds){
 		cat('Forced using frida_info bounds\n')
 	} else {
@@ -154,6 +154,7 @@ while(newMaxFound){
 															'jParVect'))
 				gobble <- clusterEvalQ(cl,source(file.path(baseWD,'funParmSpace.R')))
 				parParscaleOutput <- parLapplyLB(cl,parsToDet,funFindParScale,
+																				 niter=parscaleMaxIter,
 																				 useOrdersOfMagGuesses=useOrdersOfMagGuesses)
 				parscale[parsToDet] <- unlist(parParscaleOutput)
 				names(parscale) <- names(jParVect)
@@ -303,7 +304,7 @@ while(newMaxFound){
 	}
 	
 	# coef range ####
-	## par bounds ####
+	## par bounds step 1 ####
 	idcOfSampleParmsInFridaInfo <- c()
 	fi.i <- 0
 	for(p.i in 1:nrow(sampleParms)){
@@ -364,11 +365,12 @@ while(newMaxFound){
 				unlist(parLapplyLB(cl,which(notDeterminedBorders[,direction]),findDensValBorder,
 													 parVect=parVect,lpdensEps=lpdensEps,
 													 ceterisParibusPars=treatVarsAsIndep,
+													 maxiter = parRangeMaxIter,
 													 tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
 													 parscale=parscale.parvect,
 													 bounds=parBounds,
-													 niter=1e3,# set niter so that the errors at least in the indep case are small
-													 workerStagger = T,
+													 niter=parRangeSecantMaxIter,# set niter so that the errors at least in the indep case are small
+													 workerStagger = F,
 													 chunk.size = 1)) 
 			names(border.coefs[,direction]) <- names(parVect)
 			# fallback values in case borders could not be determined:
@@ -422,6 +424,9 @@ while(newMaxFound){
 			sampleParms$Max <- sampleParms$Value+sampleParms$distance
 			sampleParms$Min <- sampleParms$Value-sampleParms$distance
 		}
+	} else {
+		sampleParms$MaxAfterDet <- sampleParms$Max
+		sampleParms$MinAfterDet <- sampleParms$Min
 	}
 	## read manual borders ####
 	if(ignoreParBounds){
@@ -547,63 +552,120 @@ while(newMaxFound){
 		cat(sprintf('Would have called ghostbusters... -baseNegLL=%10f, maxLLike=%10f\n', -baseNegLL, maxLLike))
 	}
 	
-	## sample points ####
+## sample points ####
+
 	# add the integer parms back
 	sampleParms <- prepareSampleParms(sampleParms = sampleParms,integerParms = integerParms)
-	samplePoints <- generateSobolSequenceForSampleParms(sampleParms,numSample,
-																											restretchSamplePoints,
-																											ignoreExistingResults = redoAllCalc,
-																											integerParms = integerParms)
-	if(ncol(samplePoints) != nrow(sampleParms) || nrow(samplePoints)!=numSample){
-		cat('Invalid sample points regenerating\n')
-		samplePoints <- generateSobolSequenceForSampleParms(sampleParms,numSample,
-																												restretchSamplePoints,
-																												ignoreExistingResults = T,
-																												integerParms = integerParms)
-	}
-	# apply baseline parms
-	if(!is.na(name.baselineParmFile)&&name.baselineParmFile!=''){
-		cat('applying baseline parms...')
-		baselineParms <- read.csv(file.path(location.frida.configs,name.baselineParmFile))
-		baselineParmsNames <- unname(unlist(read.table(file.path(location.frida.configs,name.baselineParmFile),nrows = 1,sep=',')))
-		baselineParmsNames <- gsub('([^\\]])$','\\1\\[1\\]',baselineParmsNames,perl=T)
-		baselineParmsNames <- gsub('\\[\\*','\\[1',baselineParmsNames,perl=T)
-		if(nrow(baselineParms)>1){
-			stop('baseline parms may only be a single set (line)\n')
+
+	samplingSteps <- c('Generating initial sample points in box ranges...',
+										 'Generating sample points inside convex hull of likely range...')
+	for(samplingStep in 1:length(samplingSteps)){
+		if(samplingStep == 1){
+			samplePoints <- generateSobolSequenceForSampleParms(sampleParms,numSample,
+																													restretchSamplePoints,
+																													ignoreExistingResults = T,
+																													integerParms = integerParms)
+		} else if(samplingStep == 2){
+			cat(sprintf('Increasing number of generated sample points to %i based on ratio of numGoodPoints/numSample\n',
+									numSample*numGoodPoints))
+			samplePoints <- generateSobolSequenceForSampleParms(sampleParms,numSample*numGoodPoints,
+																													restretchSamplePoints,
+																													ignoreExistingResults = T,
+																													integerParms = integerParms)
+			inHull <- inhulln(samplePoints,goodPoints.hull)
+			numSample <- sum(inHull)
+			cat(sprintf('After culling with convex hull of good points %i samplepoints are left\n',
+									numSample))
+			samplePoints <- samplePoints[inHull,]
 		}
-		for(par.i in 1:length(colnames(baselineParms))){
-			if(!baselineParmsNames[par.i]%in%colnames(samplePoints)){
-				newcol <- array(baselineParms[par.i],dim=c(nrow(samplePoints),1))
-				colnames(newcol) <- baselineParmsNames[par.i]
-				samplePoints <- base::cbind(samplePoints,newcol)
+
+
+		# apply baseline parms
+		if(!is.na(name.baselineParmFile)&&name.baselineParmFile!=''){
+			cat('applying baseline parms...')
+			baselineParms <- read.csv(file.path(location.frida.configs,name.baselineParmFile))
+			baselineParmsNames <- unname(unlist(read.table(file.path(location.frida.configs,name.baselineParmFile),nrows = 1,sep=',')))
+			baselineParmsNames <- gsub('([^\\]])$','\\1\\[1\\]',baselineParmsNames,perl=T)
+			baselineParmsNames <- gsub('\\[\\*','\\[1',baselineParmsNames,perl=T)
+			if(nrow(baselineParms)>1){
+				stop('baseline parms may only be a single set (line)\n')
 			}
+			for(par.i in 1:length(colnames(baselineParms))){
+				if(!baselineParmsNames[par.i]%in%colnames(samplePoints)){
+					newcol <- array(baselineParms[par.i],dim=c(nrow(samplePoints),1))
+					colnames(newcol) <- baselineParmsNames[par.i]
+					samplePoints <- base::cbind(samplePoints,newcol)
+				}
+			}
+			cat('done\n')
 		}
+		cat('saving sampleParms and samplePoints...')
+		write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
+		saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
+		saveRDS(samplePoints,file.path(location.output,'samplePoints.RDS'))
+		write.csv(samplePoints,file.path(location.output,'samplePoints.csv'))
 		cat('done\n')
+
+		## write export spec ####
+		if(samplingStep == 1){
+			extraVarNamesForExport <- c()
+		} else {
+			extraVarNamesForExport <- read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN
+			extraVarNamesForExport <- extraVarNamesForExport[nchar(extraVarNamesForExport)>4]
+		}
+		writeFRIDAExportSpec(varsForExport.fridaNames = unique(c(varsForExport.fridaNames.orig,extraVarNamesForExport)),
+												 location.frida)
+		source('clusterHelp.R') #make sure the workers also get the updated export spec
+
+		## evaluate sample points ####
+		logLikes <- clusterRunFridaForSamplePoints(samplePoints,chunkSizePerWorker,
+																							 calDat=calDat,
+																							 resSigma=resSigma,
+																							 location.output=file.path(location.output,'detectedParmSpace'),
+																							 redoAllCalc=redoAllCalc,
+																							 plotDatWhileRunning=F,
+																							 plotDatPerChunWhileRunning=plotDatPerChunWhileRunning,
+																							 baseLL=-baseNegLL)
+		logLikes[logLikes==-Inf] <- -.Machine$double.xmax
+
+
+		stop()
+
+		if(samplingStep == 1){
+			library('geometry')
+			goodPointsIdc <- which(logLikes>(baseLL-likeCutoffRatio))
+			numGoodPoints <- length(goodPointsIdc)
+			if(numSample < (ncol(samplePoints)+1)){
+				stop('numSample is too small\n')
+			}
+			expandedLikeCutoffRatio <- likeCutoffRatio
+			requiredNumGoodPoints <- ncol(samplePoints)+10
+			while(length(goodPointsIdc) < (requiredNumGoodPoints)){
+				expandedLikeCutoffRatio <- expandedLikeCutoffRatio + 1
+				goodPointsIdc <- which(logLikes>(baseLL-expandedLikeCutoffRatio))
+			}
+			length(goodPointsIdc)
+			goodPoints <- samplePoints[goodPointsIdc,]
+			# convhulln requires at least as many samplepoints as there are dimensions + 1
+			if(length(goodPointsIdc)<(requiredNumGoodPoints)){
+				stop('need more not bad sample points in parm space. Rerun with higher number of samplepoints\n')
+			}
+			if(expandedLikeCutoffRatio==likeCutoffRatio){
+				cat(sprintf('Found %i good points in sample points.\n',length(goodPointsIdc)))
+			} else {
+				cat('Expanded likeCutoffRatio to %i, to ensure at least %i good points.\n',
+						expandedLikeCutoffRatio,requiredNumGoodPoints)
+			}
+			cat('Determining convex hull of good points...')
+			goodPoints.hull <- convhulln(goodPoints)
+			cat('done\n')
+		}
 	}
-	cat('saving sampleParms and samplePoints...')
-	write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
-	saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
-	saveRDS(samplePoints,file.path(location.output,'samplePoints.RDS'))
-	write.csv(samplePoints,file.path(location.output,'samplePoints.csv'))
-	cat('done\n')
-	
-	## write export spec ####
-	extraVarNamesForExport <- read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN
-	extraVarNamesForExport <- extraVarNamesForExport[nchar(extraVarNamesForExport)>4]
-	writeFRIDAExportSpec(varsForExport.fridaNames = unique(c(varsForExport.fridaNames.orig,extraVarNamesForExport)),
-											 location.frida)
-	source('clusterHelp.R') #make sure the workers also get the updated export spec
-	
-	## evaluate sample points ####	
-	logLikes <- clusterRunFridaForSamplePoints(samplePoints,chunkSizePerWorker,
-																						 calDat=calDat,
-																						 resSigma=resSigma,
-																						 location.output=file.path(location.output,'detectedParmSpace'),
-																						 redoAllCalc=redoAllCalc,
-																						 plotDatWhileRunning=F,
-																						 plotDatPerChunWhileRunning=plotDatPerChunWhileRunning,
-																						 baseLL=-baseNegLL)
-	logLikes[logLikes==-Inf] <- -.Machine$double.xmax
+
+	# merge all the individual per Var files into one complete one
+	mergePerVarFiles()
+
+
 	if(plotWhileRunning){
 		plotCape <- capabilities()
 		if(!(plotCape['X11']|plotCape['aqua'])){
@@ -630,7 +692,7 @@ while(newMaxFound){
 								file.path(location.output,'detectedParmSpace',paste0('logLikesDensity-',iterationNewMax,'.pdf')))
 		}
 	}
-	
+
 	maxInd <- which.max(logLikes)
 	if(logLikes[maxInd] > maxLLike){
 		parVect <- samplePoints[maxInd,]
@@ -640,9 +702,9 @@ while(newMaxFound){
 		cat('Found greater likelihood pars in sampling, rerunning with fit procedure\n')
 	} else {
 		cat('No greater likelihood found in sampling.\n')
-		newMaxFound <- F	
+		newMaxFound <- F
 	}
-	
+
 	# disable looping
 	newMaxFound <- F
 }

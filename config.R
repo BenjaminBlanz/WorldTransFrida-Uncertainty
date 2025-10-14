@@ -63,7 +63,7 @@ calDat.col <- 'red'
 # files will be used).
 name.baselineParmFile <- NA
 # number of samples for the sobol sequence across all dimensions
-numSample <- 1e4
+numSample <- 1e5
 # by default sobol sequence covers the entire range between min and max with 
 # equal density.
 # However we might want to ensure that there are similar number of points above and 
@@ -97,9 +97,14 @@ treatVarsAsIndep <- T
 # parms.
 # The parm range will be either increased or decreased to make this happen in each
 # parameter.
-likeCutoffRatio <- 1000
+likeCutoffRatio <- 10000
 # tolerance for the search of the likelihood border
-rangeTol <- 1e-15
+rangeTol <- 1e-10
+# maximum number of iterations in parscale
+parscaleMaxIter <- 50
+# maximum number of iterations parameter ranging
+parRangeMaxIter <- 10
+parRangeSecantMaxIter <- 50
 checkBorderErrors <- FALSE
 kickParmsErrorRangeDet <- FALSE
 kickParmsErrorRangeDet.tolerance <- 1e-2
@@ -156,7 +161,7 @@ name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
 
 
 # execute config ####
-name.output <- 'dummyNameForSubmitSlurmScriptToOverwrite'
+name.output <- 'testing'
 # if this was not run by slurm, the above will not be overwritten and so we set a 
 # sensible output name. Otherwise name.output will be set by the slurm submit script
 if(name.output=='dummyNameForSubmitSlurmScriptToOverwrite'){

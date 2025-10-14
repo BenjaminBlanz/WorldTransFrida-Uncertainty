@@ -196,7 +196,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 				}
 			}
 			iter <- iter+1
-		} 
+		}
 	}
 	return(par.val)
 }
@@ -316,7 +316,12 @@ generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 		cat('Reading sampling points...')
 		samplePoints <- readRDS(file.path(location.output,'samplePoints.RDS'))
 		cat('done\n')
-	} else {
+		if(ncol(samplePoints) != nrow(sampleParms) || nrow(samplePoints)!=numSample){
+			cat('Invalid sample points regenerating\n')
+			ignoreExistingResults <- T
+		}
+	}
+	if(ignoreExistingResults){
 		if(nrow(sampleParms)==1){
 			samplePoints.base <- array(seq(0,1,length.out=numSample),dim=c(numSample,1))
 			colnames(samplePoints.base) <- sampleParms[1,1]
