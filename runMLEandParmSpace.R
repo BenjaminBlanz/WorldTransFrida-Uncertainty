@@ -3,6 +3,7 @@ source('initialise.R')
 # config ####
 cat('Config...')
 source('config.R')
+
 sink(file.path(location.output,'log.txt'),append=T)
 cat(paste0(
 	'\n###############################################################\n',
@@ -398,7 +399,7 @@ while(newMaxFound){
 	
 	## make borders symmetric ####
 	if(symmetricRanges%in%c('Max','Min')){
-		cat('Symmetrifying parameter ranges\n')
+		cat('Symmetrifying parameter ranges.')
 		if(symmetricRanges=='Max'){
 			sampleParms$distance <- pmax(sampleParms$Value-sampleParms$Min,
 																	 sampleParms$Max-sampleParms$Value)
@@ -409,10 +410,11 @@ while(newMaxFound){
 																		 )
 			}
 		} else {
+			cat('Caution using symmetric Ranges \'Min\' may cause zero ranges.\n')
+			cat('Zero range parameters will eliminated from sampling.\n')
 			sampleParms$distance <- pmin(sampleParms$Value-sampleParms$Min,
 																	 sampleParms$Max-sampleParms$Value)
 		}
-		# those that would have a distance of zero, we do not reassign
 		sampleParms$MaxAfterDet <- sampleParms$Max
 		sampleParms$MinAfterDet <- sampleParms$Min
 		if(allowAssymetricToAvoidZeroRanges){
@@ -493,41 +495,54 @@ while(newMaxFound){
 	write.csv(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.csv'))
 	saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
 	
+	## determine Parms with zero range ####
+	sampleParms$kickedForZeroRange <- (sampleParms$Max-sampleParms$Min)==0
+	
 	
 	# write to frida_info like file for comparison to input
 	frida_info.toModify <- read.csv(file.path(location.frida.info,name.frida_info))
 	frida_info.toModify$includedInSampleParms <- frida_info.toModify$Variable %in% sampleParms$Variable
 	idcOfSampleParmsInFridaInfo <- c()
 	for(p.i in 1:nrow(sampleParms)){
-		idcOfSampleParmsInFridaInfo[p.i] <- which(frida_info.toModify$Variable==sampleParms$Variable[p.i])
+		index <- which(frida_info.toModify$Variable==sampleParms$Variable[p.i])
+		if(length(index)==1){
+			idcOfSampleParmsInFridaInfo[length(idcOfSampleParmsInFridaInfo)+1] <- index
+		}
 	}
+	idcOfFridaInfoInSampleParms <- sampleParms$Variable %in% frida_info.toModify$Variable
 	frida_info.toModify$newMin <- NA
-	frida_info.toModify$newMin[idcOfSampleParmsInFridaInfo] <- sampleParms$Min
+	frida_info.toModify$newMin[idcOfSampleParmsInFridaInfo] <- sampleParms$Min[idcOfFridaInfoInSampleParms]
 	frida_info.toModify$newMax <- NA
-	frida_info.toModify$newMax[idcOfSampleParmsInFridaInfo] <- sampleParms$Max
+	frida_info.toModify$newMax[idcOfSampleParmsInFridaInfo] <- sampleParms$Max[idcOfFridaInfoInSampleParms]
 	frida_info.toModify$beforeSymMin <- NA
-	frida_info.toModify$beforeSymMin[idcOfSampleParmsInFridaInfo] <- sampleParms$MinAfterDet
+	frida_info.toModify$beforeSymMin[idcOfSampleParmsInFridaInfo] <- sampleParms$MinAfterDet[idcOfFridaInfoInSampleParms]
 	frida_info.toModify$beforeSymMax <- NA
-	frida_info.toModify$beforeSymMax[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxAfterDet
+	frida_info.toModify$beforeSymMax[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxAfterDet[idcOfFridaInfoInSampleParms]
 	frida_info.toModify$llikeErrorAtNewMin <- NA
-	frida_info.toModify$llikeErrorAtNewMin[idcOfSampleParmsInFridaInfo] <- sampleParms$MinBorderLogLikeError
+	frida_info.toModify$llikeErrorAtNewMin[idcOfSampleParmsInFridaInfo] <- sampleParms$MinBorderLogLikeError[idcOfFridaInfoInSampleParms]
 	frida_info.toModify$llikeErrorAtNewMax <- NA
-	frida_info.toModify$llikeErrorAtNewMax[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxBorderLogLikeError
+	frida_info.toModify$llikeErrorAtNewMax[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxBorderLogLikeError[idcOfFridaInfoInSampleParms]
 	frida_info.toModify$MinBoundByAuthors <- NA
-	frida_info.toModify$MinBoundByAuthors[idcOfSampleParmsInFridaInfo] <- sampleParms$MinBoundByAuthors
+	frida_info.toModify$MinBoundByAuthors[idcOfSampleParmsInFridaInfo] <- sampleParms$MinBoundByAuthors[idcOfFridaInfoInSampleParms]
 	frida_info.toModify$MaxBoundByAuthors <- NA
-	frida_info.toModify$MaxBoundByAuthors[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxBoundByAuthors
+	frida_info.toModify$MaxBoundByAuthors[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxBoundByAuthors[idcOfFridaInfoInSampleParms]
 	frida_info.toModify$MinNotDetermined <- NA
-	frida_info.toModify$MinNotDetermined[idcOfSampleParmsInFridaInfo] <- sampleParms$MinNotDeterminedBorder
+	frida_info.toModify$MinNotDetermined[idcOfSampleParmsInFridaInfo] <- sampleParms$MinNotDeterminedBorder[idcOfFridaInfoInSampleParms]
 	frida_info.toModify$MaxNotDetermined <- NA
-	frida_info.toModify$MaxNotDetermined[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxNotDeterminedBorder
+	frida_info.toModify$MaxNotDetermined[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxNotDeterminedBorder[idcOfFridaInfoInSampleParms]
 	frida_info.toModify$MinKickedParmsErrorRangeDet <- NA
-	frida_info.toModify$MinKickedParmsErrorRangeDet[idcOfSampleParmsInFridaInfo] <- sampleParms$MinKickParmsErrorRangeDet
+	frida_info.toModify$MinKickedParmsErrorRangeDet[idcOfSampleParmsInFridaInfo] <- sampleParms$MinKickParmsErrorRangeDet[idcOfFridaInfoInSampleParms]
 	frida_info.toModify$MaxKickedParmsErrorRangeDet <- NA
-	frida_info.toModify$MaxKickedParmsErrorRangeDet[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxKickParmsErrorRangeDet
+	frida_info.toModify$MaxKickedParmsErrorRangeDet[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxKickParmsErrorRangeDet[idcOfFridaInfoInSampleParms]
+	frida_info.toModify$kickedForZeroRange <- NA
+	frida_info.toModify$kickedForZeroRange[idcOfSampleParmsInFridaInfo] <- sampleParms$kickedForZeroRange[idcOfFridaInfoInSampleParms]
 	write.csv(frida_info.toModify,file.path(location.output,'frida_info_ranged.csv'))
 
-	# Kick out parameters with errors in the range determination and kickParmsErrorRangeDet was true
+	# Kick ####
+	# parms with zero range
+	cat(sprintf('Kicking out %i parameters with zero range\n',sum(sampleParms$kickedForZeroRange)))
+	sampleParms <- sampleParms[-which(sampleParms$kickedForZeroRange),]
+	# out parameters with errors in the range determination and kickParmsErrorRangeDet was true
 	if(kickParmsErrorRangeDet){
 		cat(sprintf('Kicking out %i parameters for errors in range determination\n',
 								sum(sampleParms$MinKickParmsErrorRangeDet|sampleParms$MaxKickParmsErrorRangeDet)))
@@ -552,8 +567,8 @@ while(newMaxFound){
 		cat(sprintf('Would have called ghostbusters... -baseNegLL=%10f, maxLLike=%10f\n', -baseNegLL, maxLLike))
 	}
 	
-## sample points ####
-
+	## sample points ####
+	
 	# add the integer parms back
 	sampleParms <- prepareSampleParms(sampleParms = sampleParms,integerParms = integerParms)
 
@@ -640,9 +655,6 @@ while(newMaxFound){
 		stop()
 		
 		if(samplingStep == 1){
-			for(i in 1:ncol(samplePoints)){
-				cat(sprintf('%4i: %e\n',i,diff(range(samplePoints[,i]))))
-			}
 			library('geometry')
 			goodPointsIdc <- which(logLikes>(baseLL-likeCutoffRatio))
 			numGoodPoints <- length(goodPointsIdc)
