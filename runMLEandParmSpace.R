@@ -584,7 +584,8 @@ while(newMaxFound){
 		if(!is.na(name.baselineParmFile)&&name.baselineParmFile!=''){
 			cat('applying baseline parms...')
 			baselineParms <- read.csv(file.path(location.frida.configs,name.baselineParmFile))
-			baselineParmsNames <- unname(unlist(read.table(file.path(location.frida.configs,name.baselineParmFile),nrows = 1,sep=',')))
+			baselineParmsNames <- unname(unlist(read.table(file.path(location.frida.configs,
+																					name.baselineParmFile),nrows = 1,sep=',')))
 			baselineParmsNames <- gsub('([^\\]])$','\\1\\[1\\]',baselineParmsNames,perl=T)
 			baselineParmsNames <- gsub('\\[\\*','\\[1',baselineParmsNames,perl=T)
 			if(nrow(baselineParms)>1){
@@ -610,28 +611,38 @@ while(newMaxFound){
 		if(samplingStep == 1){
 			extraVarNamesForExport <- c()
 		} else {
-			extraVarNamesForExport <- read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN
+			extraVarNamesForExport <- read.csv(file.path(location.frida.info,
+																name.frida_extra_variables_to_export_list))$FRIDA.FQN
 			extraVarNamesForExport <- extraVarNamesForExport[nchar(extraVarNamesForExport)>4]
 		}
-		writeFRIDAExportSpec(varsForExport.fridaNames = unique(c(varsForExport.fridaNames.orig,extraVarNamesForExport)),
+		writeFRIDAExportSpec(varsForExport.fridaNames = unique(c(varsForExport.fridaNames.orig,
+																														 extraVarNamesForExport)),
 												 location.frida)
 		source('clusterHelp.R') #make sure the workers also get the updated export spec
 
 		## evaluate sample points ####
-		logLikes <- clusterRunFridaForSamplePoints(samplePoints,chunkSizePerWorker,
-																							 calDat=calDat,
-																							 resSigma=resSigma,
-																							 location.output=file.path(location.output,'detectedParmSpace'),
-																							 redoAllCalc=redoAllCalc,
-																							 plotDatWhileRunning=F,
-																							 plotDatPerChunWhileRunning=plotDatPerChunWhileRunning,
-																							 baseLL=-baseNegLL)
-		logLikes[logLikes==-Inf] <- -.Machine$double.xmax
-
-
+		if(!file.exists(file.path(location.output,'logLikesFromCluterRun.RDS'))
+			 && !redoAllCalc){
+			logLikes <- clusterRunFridaForSamplePoints(samplePoints,chunkSizePerWorker,
+																								 calDat=calDat,
+																								 resSigma=resSigma,
+																								 location.output=file.path(location.output,'detectedParmSpace'),
+																								 redoAllCalc=redoAllCalc,
+																								 plotDatWhileRunning=F,
+																								 plotDatPerChunWhileRunning=plotDatPerChunWhileRunning,
+																								 baseLL=-baseNegLL)
+			logLikes[logLikes==-Inf] <- -.Machine$double.xmax
+			saveRDS(logLikes,file.path(location.output,'logLikesFromCluterRun.RDS'))
+		} else {
+			logLikes <- readRDS(file.path(location.output,'logLikesFromCluterRun.RDS'))
+		}
+		
 		stop()
-
+		
 		if(samplingStep == 1){
+			for(i in 1:ncol(samplePoints)){
+				cat(sprintf('%4i: %e\n',i,diff(range(samplePoints[,i]))))
+			}
 			library('geometry')
 			goodPointsIdc <- which(logLikes>(baseLL-likeCutoffRatio))
 			numGoodPoints <- length(goodPointsIdc)
@@ -644,28 +655,28 @@ while(newMaxFound){
 				expandedLikeCutoffRatio <- expandedLikeCutoffRatio + 1
 				goodPointsIdc <- which(logLikes>(baseLL-expandedLikeCutoffRatio))
 			}
-			length(goodPointsIdc)
-			goodPoints <- samplePoints[goodPointsIdc,]
+			# drop the integer parms maybe they are what is preventing the convex hull being determined
+			goodPoints <- samplePoints[goodPointsIdc,!(colnames(samplePoints) %in% integerParms$Variable)]
 			# convhulln requires at least as many samplepoints as there are dimensions + 1
 			if(length(goodPointsIdc)<(requiredNumGoodPoints)){
-				stop('need more not bad sample points in parm space. Rerun with higher number of samplepoints\n')
+				stop('need more good sample points in parm space. Rerun with higher number of samplepoints\n')
 			}
 			if(expandedLikeCutoffRatio==likeCutoffRatio){
 				cat(sprintf('Found %i good points in sample points.\n',length(goodPointsIdc)))
 			} else {
-				cat('Expanded likeCutoffRatio to %i, to ensure at least %i good points.\n',
-						expandedLikeCutoffRatio,requiredNumGoodPoints)
+				cat(sprintf('Expanded likeCutoffRatio to %i, to ensure at least %i good points.\n',
+						expandedLikeCutoffRatio,requiredNumGoodPoints))
 			}
 			cat('Determining convex hull of good points...')
-			goodPoints.hull <- convhulln(goodPoints)
+			goodPoints.hull <- convhulln(goodPoints,options='Tv')
 			cat('done\n')
 		}
 	}
-
+	
 	# merge all the individual per Var files into one complete one
 	mergePerVarFiles()
-
-
+	
+	
 	if(plotWhileRunning){
 		plotCape <- capabilities()
 		if(!(plotCape['X11']|plotCape['aqua'])){
