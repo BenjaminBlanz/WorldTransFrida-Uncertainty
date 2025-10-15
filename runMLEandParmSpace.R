@@ -111,7 +111,7 @@ ordersOfMagGuesses.resSigmaVect <- funOrderOfMagnitude(resSigmaVect)-6
 ordersOfMagGuesses <- c(ordersOfMagGuesses.parvect,ordersOfMagGuesses.resSigmaVect)
 
 # used by the funFindParScale function
-ordersOfMagLimits <- c(min(ordersOfMagGuesses)-2,max(ordersOfMagGuesses)+4)
+ordersOfMagLimits <- c(max(min(ordersOfMagGuesses)-2,-20,na.rm=T),min(max(ordersOfMagGuesses)+4,20,na.rm=T))
 ordersOfMag <- seq(ordersOfMagLimits[1],ordersOfMagLimits[2])
 responseTolerance <- 0.01
 
