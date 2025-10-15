@@ -180,8 +180,10 @@ runFridaParmsBySamplePoints <- function(policyMode=F){
 	if(writePerWorkerFiles){
 		workerID <- ifelse(exists('workerID'),workerID,0)
 		workUnit.i <- ifelse(exists('workUnit.i'),workUnit.i,0)
-		logLike.df <- saveParOutputToPerVarFiles(parOutput = retlist,workUnit.i = workUnit.i,
-														 workerID = workerID)
+		if(!exists('onlyEvaluateForLike')||!onlyEvaluateForLike){
+			logLike.df <- saveParOutputToPerVarFiles(parOutput = retlist,workUnit.i = workUnit.i,
+															 workerID = workerID)
+		}
 		if(doNotReturnRunDataSavePerWorkerOnly){
 			newRetlist <- list()
 			for(i in 1:length(retlist)){
@@ -380,7 +382,8 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 																					 numWorkers=length(cl),
 																					 calDat.impExtrValue=NULL,
 																					 plotMinAlpha = 0.01,
-																					 plotBaseName = 'runs-'){
+																					 plotBaseName = 'runs-',
+																					 onlyEvaluateForLike = F){
 	cat('cluster run...\n')
 	# If we are not plotting while running we can directly store from the running
 	# worker processes. This is MUCH faster.
@@ -410,7 +413,8 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 													'calDat','resSigma',
 													'runFridaParmsByIndex','writePerWorkerFiles',
 													'treatVarsAsIndep','perVarOutputTypes',
-													'doNotReturnRunDataSavePerWorkerOnly'))
+													'doNotReturnRunDataSavePerWorkerOnly',
+													'onlyEvaluateForLike'),envir = environment())
 	}
 	# plot setup 
 	if(plotDatWhileRunning){
@@ -453,12 +457,16 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 											lastChunkSize,
 											chunkSizePerWorker*numWorkers))
 					workUnitBoundaries[i+1] <- workUnitBoundaries[i]+lastChunkSize
-					workUnitBoundaries <- c(workUnitBoundaries[1:i],
-																	seq(workUnitBoundaries[i+1],numSample,chunkSizePerWorker*numWorkers))
-					if(workUnitBoundaries[length(workUnitBoundaries)]!=numSample){
-						workUnitBoundaries <- c(workUnitBoundaries,numSample)
+					if(workUnitBoundaries[i+1]==(numSample+1)){
+						workUnitBoundaries <- workUnitBoundaries[1:(i+1)]
+					} else {
+						workUnitBoundaries <- c(workUnitBoundaries[1:i],
+																		seq(workUnitBoundaries[i+1],numSample,chunkSizePerWorker*numWorkers))
+						if(workUnitBoundaries[length(workUnitBoundaries)]!=numSample){
+							workUnitBoundaries <- c(workUnitBoundaries,numSample)
+						}
+						workUnitBoundaries[length(workUnitBoundaries)] <- numSample+1
 					}
-					workUnitBoundaries[length(workUnitBoundaries)] <- numSample+1
 				}
 			}
 		}
