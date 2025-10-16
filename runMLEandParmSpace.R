@@ -680,7 +680,30 @@ while(newMaxFound){
 						expandedLikeCutoffRatio,requiredNumGoodPoints))
 			}
 			cat('Determining convex hull of good points...')
-			goodPoints.hull <- convhulln(goodPoints,options='Tv')
+			cairo_pdf(file.path(location.output,'2DconvexHulls.pdf'),
+					width=1000,height=1000)
+			par(mfrow=c(ncol(goodPoints),ncol(goodPoints)))
+			par(mar=c(1,1,1,1))
+			timings <- array(NA,dim=rep(ncol(goodPoints),2))
+			for(i in 1:ncol(goodPoints)){
+				for(j in 1:ncol(goodPoints)){
+					if(i>j){
+						cat(sprintf('\rconvhulln of columns %i and %i...',i,j))
+						tic()
+						goodPoints.hull <- convhulln(goodPoints[,c(i,j)],options='QJ',output.options = TRUE)
+						timing = toc(quiet = T)
+						
+						cat(sprintf('done. %s\n',timing$callback_msg))
+						plot(goodPoints.hull,main=sprintf('convex hull of %i and %i',i,j),
+								 xlab='',ylab='')
+						points(samplePoints[,c(i,j)],pch='.')
+						# gobble <- readline('press Enter')
+					}	else {
+						plot(0,0,type='n',axes=F,xlab='',ylab='')
+					}
+				}
+			}
+			dev.off()
 			cat('done\n')
 		}
 	}
