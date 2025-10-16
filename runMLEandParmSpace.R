@@ -692,7 +692,7 @@ while(newMaxFound){
 						tic()
 						goodPoints.hull <- convhulln(goodPoints[,c(i,j)],options='QJ',output.options = TRUE)
 						timing = toc(quiet = T)
-						
+						timings[i,j] <- timing$toc - timing$tic
 						cat(sprintf('done. %s\n',timing$callback_msg))
 						plot(goodPoints.hull,main=sprintf('convex hull of %i and %i',i,j),
 								 xlab='',ylab='')
