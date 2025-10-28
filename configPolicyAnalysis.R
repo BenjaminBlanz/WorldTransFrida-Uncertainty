@@ -96,6 +96,36 @@ location.singleDomainPolicyFiles <- file.path('policy-singleDomainPolicyMatrices
 policyFiles <- list.files(location.singleDomainPolicyFiles)
 
 
+# plotting ####
+
+filters <- list()
+filters$inflation_inflation_rate <- 0.4
+filters$gdpgr <- 0.4
+filters$stagr <- 0.4
+
+location.plots <- 'figures'
+yearsToPlot.names <- c('allYears')#,'1980-2023')
+uncertaintiesToPlot <- c('fit uncertainty')#,'noise uncertainty','all uncertainty')
+alsoPlotMean.vals <- c(FALSE)
+mean.lty <- 'solid'
+mean.lwd <- 2
+mean.col <- 'blue'
+alsoPlotDefaultRun.vals <- c(TRUE,FALSE)
+def.lty <- 'solid'
+def.lwd <- 2
+def.col <- 'green'
+plotWidth <- 20
+plotHeight <- 20
+plotUnit <- 'cm'
+plotRes <- 150
+# plot lines are
+# 1. Area of the median policy outcomes
+# 2. Area of the SOW outcomes
+plot.lty <- c('solid','dotted')#,'dotdash','dotted')
+plot.lwd <- c(3,1)
+plot.lcol <- c(1,1) # colors of the outlines
+plot.col <- c(gray(0.7,0.5),gray(0.8,0.5)) # colors of the area fills
+
 # automatic stuff ####
 if(addAutoNameToExpID){
 	name.output <- gsub('\\.','_',paste0(expID,'-N-',numInitialJointPol,'-nPr-',nullPolProb,'-polFiles-',
