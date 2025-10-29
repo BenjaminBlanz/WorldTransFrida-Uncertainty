@@ -56,7 +56,7 @@ if(varName %in% names(filterSpec)){
 		yearPolIDsToDrop <- lapply(1:length(years),filterFun)
 	} else {
 		if(verbosity>0){cat(' starting cluster...')}
-		clFiltering <- makeForkCluster(min(171,detectCores()))
+		clFiltering <- makeForkCluster(min(floor(171/2),detectCores()))
 		if(verbosity>0){cat('running...')}
 		yearPolIDsToDrop <- parLapply(clFiltering,1:length(years),filterFun)
 		stopCluster(clFiltering)
