@@ -73,13 +73,15 @@ polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
 saveRDS(polIDsToDrop,file.path(location.output,'droppedPolIDs.RDS'))
 polIDsToDrop <- readRDS(file.path(location.output,'droppedPolIDs.RDS'))
 firstThingsToPlot <- c(69,112,106,107)
-thingsToPlot <- c(firstThingsToPlot,seq(1:length(varsFiles))[-firstThingsToPlot])
+thingsToPlot <- c(firstThingsToPlot)#,seq(1:length(varsFiles))[-firstThingsToPlot])
 clPlotting <- makeForkCluster(numPlotThreads)
-parRes <- parLapplyLB(clPlotting,thingsToPlot[1:numPlotThreads],parPlotPolResults,
-											varsFiles=varsFiles,
-											polIDsToDrop=polIDsToDrop,
-											funFigFolder=NULL,
-											plotType=2)
+for(plotType in plotTypes){
+	parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
+												varsFiles=varsFiles,
+												polIDsToDrop=polIDsToDrop,
+												funFigFolder=NULL,
+												plotType=plotType)
+}
 stopCluster(clPlotting)
 
 # desired filtering ####
@@ -105,12 +107,13 @@ for(i in 1:length(desiredFilterSpec)){
 							length(polIDsToDropDesired),length(polIDsToDropDesired.lst[[i]])))
 }
 polIDsToDropDesired <- unique(polIDsToDropDesired,polIDsToDrop)
-plotType <- 2
 funFigFolder <- file.path(location.output,'figures',paste0('plotType',plotType,'-desiredFilters'))
 clPlotting <- makeForkCluster(numPlotThreads)
-parRes <- parLapplyLB(clPlotting,thingsToPlot[1:numPlotThreads],parPlotPolResults,
-											varsFiles=varsFiles,
-											polIDsToDrop=polIDsToDropDesired,
-											funFigFolder=funFigFolder,
-											plotType=plotType)
+for(plotType in plotTypes){
+	parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
+												varsFiles=varsFiles,
+												polIDsToDrop=polIDsToDropDesired,
+												funFigFolder=funFigFolder,
+												plotType=plotType)
+}
 stopCluster(clPlotting)
