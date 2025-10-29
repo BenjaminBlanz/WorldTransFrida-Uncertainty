@@ -8,9 +8,11 @@ args = commandArgs(trailingOnly=TRUE)
 varFile <- args[1]
 useCluster <- args[2]
 if(length(args)>=3){
-	outputFolder <- args[3]
+	location.output <- args[3]
 }
 verbosity <- 9
+
+outputFolder <- file.path(location.output,'detectedParmSpace','PerVarFiles-RDS')
 
 polIDsToDrop <- c()
 
@@ -63,8 +65,8 @@ if(varName %in% names(filterSpec)){
 		stopCluster(clFiltering)
 	}
 	polIDsToDrop <- unique(c(polIDsToDrop,unlist(yearPolIDsToDrop)))
-	outputFolder <- file.path(location.output,'filterResults')
-	dir.create(outputFolder,showWarnings = F,recursive = T)
-	saveRDS(polIDsToDrop,file.path(outputFolder,paste0(varName,'-filter.RDS')))
+	writeToFolder <- file.path(location.output,'filterResults')
+	dir.create(writeToFolder,showWarnings = F,recursive = T)
+	saveRDS(polIDsToDrop,file.path(writeToFolder,paste0(varName,'-filter.RDS')))
 }
 if(verbosity>0){cat('done\n')}
