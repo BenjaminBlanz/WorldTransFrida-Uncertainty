@@ -59,7 +59,7 @@ for(i in 1:length(filterSpec)){
 	polIDsToDrop <- c()
 	if(filteredFile %in% varsFiles){
 		system(paste('Rscript --max-connections=1024 --no-site-file runPolicyAnalysisFilterResults.R -f',
-								 filteredFile, '-p','TRUE', '-o',location.output,'-f','desiredFilterSpec.RDS'))
+								 filteredFile, '-c','TRUE', '-o',location.output))
 		polIDsToDrop.lst[[i]] <- readRDS(file.path(location.output,'filterResults',
 																					paste0(names(filterSpec)[i],'-filter.RDS')))
 		polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))

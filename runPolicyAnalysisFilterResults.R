@@ -1,5 +1,6 @@
 source('initialise.R')
 source('configPolicyAnalysis.R')
+# config cotains the baseline filterSpec
 
 option_list = list(
 	make_option(c("-f", "--varfile"), type="character", default=NULL, 
