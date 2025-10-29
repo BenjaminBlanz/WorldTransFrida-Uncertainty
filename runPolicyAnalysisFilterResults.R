@@ -7,7 +7,7 @@ args = commandArgs(trailingOnly=TRUE)
 
 varFile <- args[1]
 useCluster <- args[2]
-if(length(arg)>=3){
+if(length(args)>=3){
 	outputFolder <- args[3]
 }
 verbosity <- 9
