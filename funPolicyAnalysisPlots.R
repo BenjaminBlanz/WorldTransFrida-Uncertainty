@@ -140,14 +140,14 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 		countsSOW <- counts
 		for(year.i in 1:length(years)){
 			year <- years[year.i]
-			histDat <- hist(varDat[[as.character(year)]][varDat$sowID==5],
-											breaks=breaks,plot=F)
-			counts[,year.i] <- histDat$counts[-c(1,length(histDat$counts))]
-			if(plotType==3){
+			if(plotType==2){
+				histDat <- hist(varDat[[as.character(year)]][varDat$sowID==5],
+												breaks=breaks,plot=F)
+			} else {
 				histDat <- hist(varDat[[as.character(year)]],
 												breaks=breaks,plot=F)
-				countsSOW[,year.i] <- histDat$counts[-c(1,length(histDat$counts))]
 			}
+			counts[,year.i] <- histDat$counts[-c(1,length(histDat$counts))]
 			if(verbosity>1){cat('.')}
 		}
 		breaks <- breaks[-c(1,length(breaks))]
@@ -155,38 +155,16 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 			(breaks[2:(length(breaks))]-breaks[1:(length(breaks)-1)])/2
 		logmax <- log(max(counts))
 		levels <- exp(seq(0,logmax,length.out=plot.numColLevels))
-		if(plotType==2){
-			filled.contour(years,breaksMids,t(counts),
-										 xlim=range(years),
-										 ylim=ylims,
-										 xlab='year',
-										 xaxs='i',
-										 levels=levels,
-										 main=varFullName,ylab=varUnit,
-										 col = rev(paletteer_c(plot.palletteName, plot.numColLevels-1)),
-										 key.title = 'Number of policies')
-		} else if(plotType==3){
-			filled.contour(years,breaksMids,t(counts),
-										 xlim=range(years),
-										 ylim=ylims,
-										 xlab='year',
-										 xaxs='i',
-										 levels=levels,
-										 main=varFullName,ylab=varUnit,
-										 col = rev(paletteer_c(plot.palletteNameSOW, plot.numColLevels-1)),
-										 key.title = 'Number of policies',
-										 plot.axes={
-										 	filled.contour(years,breaksMids,t(counts),
-										 								 xlim=range(years),
-										 								 ylim=ylims,
-										 								 xlab='year',
-										 								 xaxs='i',
-										 								 levels=levels,
-										 								 main=varFullName,ylab=varUnit,
-										 								 col = rev(paletteer_c(plot.palletteName, plot.numColLevels-1)),
-										 								 key.title = 'Number of policies')
-										 })
-		}
+		filled.contour(years,breaksMids,t(counts),
+									 xlim=range(years),
+									 ylim=ylims,
+									 xlab='year',
+									 xaxs='i',
+									 levels=levels,
+									 main=varFullName,ylab=varUnit,
+									 col = rev(paletteer_c(ifelse(plotType==2,plot.palletteName,plot.palletteNameSOW),
+									 											plot.numColLevels-1)),
+									 key.title = 'Number of policies')
 	}
 	dev.off()
 	if(verbosity>0){cat('done\n')}
