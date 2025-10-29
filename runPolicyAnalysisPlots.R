@@ -58,8 +58,8 @@ for(i in 1:length(filterSpec)){
 	cat(sprintf('filtered file %i of %i\n ',i,length(filterSpec)))
 	polIDsToDrop <- c()
 	if(filteredFile %in% varsFiles){
-		system(paste('Rscript --max-connections=1024 --no-site-file runPolicyAnalysisFilterResults.R',
-								 filteredFile, 'TRUE', location.output))
+		system(paste('Rscript --max-connections=1024 --no-site-file runPolicyAnalysisFilterResults.R -f',
+								 filteredFile, '-p','TRUE', '-o',location.output,'-f','desiredFilterSpec.RDS'))
 		polIDsToDrop.lst[[i]] <- readRDS(file.path(location.output,'filterResults',
 																					paste0(names(filterSpec)[i],'-filter.RDS')))
 		polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
@@ -70,16 +70,47 @@ for(i in 1:length(filterSpec)){
 							length(polIDsToDrop),length(polIDsToDrop.lst[[i]])))
 }
 polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
-saveRDS(polIDsToDrop,file.path(location.output,'droppedPolIDs.RS'))
-polIDsToDrop <- readRDS(file.path(location.output,'droppedPolIDs.RS'))
-firstThingsToPlot <- c(69,112)
-thingsToPlot <- c(firstThingsToPlot,seq(1:length(varsFiles)[-firstThingsToPlot]))
+saveRDS(polIDsToDrop,file.path(location.output,'droppedPolIDs.RDS'))
+polIDsToDrop <- readRDS(file.path(location.output,'droppedPolIDs.RDS'))
+firstThingsToPlot <- c(69,112,106,107)
+thingsToPlot <- c(firstThingsToPlot,seq(1:length(varsFiles))[-firstThingsToPlot])
 clPlotting <- makeForkCluster(numPlotThreads)
-parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
+parRes <- parLapplyLB(clPlotting,thingsToPlot[1:numPlotThreads],parPlotPolResults,
 											varsFiles=varsFiles,
 											polIDsToDrop=polIDsToDrop,
-											figuresFolder=NULL,
+											funFigFolder=NULL,
 											plotType=2)
 stopCluster(clPlotting)
 
-
+# desired filtering ####
+desiredFilterSpec <- list()
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly <- c('sgtval',2,5)
+saveRDS(desiredFilterSpec,file.path(location.output,'desiredFilterSpec.RDS'))
+polIDsToDropDesired.lst <- list()
+for(i in 1:length(desiredFilterSpec)){
+	filteredFile <- paste0(names(desiredFilterSpec)[i],'.RDS')
+	cat(sprintf('reading for desired filtering %s ',names(desiredFilterSpec)[i]))
+	cat(sprintf('filtered file %i of %i\n ',i,length(desiredFilterSpec)))
+	polIDsToDropDesired <- c()
+	if(filteredFile %in% varsFiles){
+		system(paste('Rscript --max-connections=1024 --no-site-file runPolicyAnalysisFilterResults.R -f',
+								 filteredFile, '-c','TRUE', '-o',location.output,'-d','desiredFilterSpec.RDS'))
+		polIDsToDropDesired.lst[[i]] <- readRDS(file.path(location.output,'filterResults',
+																							 paste0(names(desiredFilterSpec)[i],'-filter.RDS')))
+		polIDsToDropDesired <- sort(unique(unlist(polIDsToDropDesired.lst)))
+	} else {
+		cat('no such file\n')
+	}
+	cat(sprintf('PolIDs dropped so far: %i (%i new from this file)\n',
+							length(polIDsToDropDesired),length(polIDsToDropDesired.lst[[i]])))
+}
+polIDsToDropDesired <- unique(polIDsToDropDesired,polIDsToDrop)
+plotType <- 2
+funFigFolder <- file.path(location.output,'figures',paste0('plotType',plotType,'-desiredFilters'))
+clPlotting <- makeForkCluster(numPlotThreads)
+parRes <- parLapplyLB(clPlotting,thingsToPlot[1:numPlotThreads],parPlotPolResults,
+											varsFiles=varsFiles,
+											polIDsToDrop=polIDsToDropDesired,
+											funFigFolder=funFigFolder,
+											plotType=plotType)
+stopCluster(clPlotting)
