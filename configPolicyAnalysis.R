@@ -127,7 +127,7 @@ plot.lty <- c('dotted','solid')#,'dotdash','dotted')
 plot.lwd <- c(1,3)
 plot.lcol <- c(1,1) # colors of the outlines
 plot.col <- c(gray(0.7,0.5),gray(0.2,0.5)) # colors of the area fills
-plot.relyrange <- c(0.001,0.999)
+plot.relyrange <- c(0.0001,0.9999)
 
 # automatic stuff ####
 if(addAutoNameToExpID){
