@@ -80,7 +80,7 @@ if(varName %in% names(filterSpec)){
 			stop('unkown filter spec\n')
 		}
 		if(verbosity>0){cat('.')}
-		return(polIDsToDrop)
+		return(polIDsToDrop[!is.na(polIDsToDrop)])
 	}
 	if(verbosity>0){cat('processing years')}
 	if(useCluster != T){
