@@ -70,6 +70,12 @@ if(varName %in% names(filterSpec)){
 			polIDsToDrop <- varDat$polID[varDat[[year]]<filterSpec[[varName]][2]]
 		} else if (filterSpec[[varName]][1] == 'gtval'){
 			polIDsToDrop <- varDat$polID[varDat[[year]]>filterSpec[[varName]][2]]
+		} else if (filterSpec[[varName]][1] == 'sltval'){
+			polIDsToDrop <- varDat$polID[varDat$sowID==filterSpec[[varName]][3] & 
+																	 	varDat[[year]]<filterSpec[[varName]][2]]
+		} else if (filterSpec[[varName]][1] == 'sgtval'){
+			polIDsToDrop <- varDat$polID[varDat$sowID==filterSpec[[varName]][3] &
+																	 	varDat[[year]]>filterSpec[[varName]][2]]
 		} else {
 			stop('unkown filter spec\n')
 		}
