@@ -34,7 +34,7 @@ SLURMminutes <- '00'
 memorySize='256G' # can be ['256G' '512G', '1024G'], '256G' sometimes fails with 100,000 samples
 SLURMmemorySize <- '256G'
 # Use a different group account for ressources? Which partition?
-SLURMaccount <- REPLACEME
+SLURMaccount <- 'uc1275'
 SLURMpartition <- 'compute'
 # Enter Email here in case you want to receive a mail, when the job failed
 SLURMemail <- ''
@@ -99,10 +99,12 @@ policyFiles <- list.files(location.singleDomainPolicyFiles)
 # plotting ####
 
 filters <- list()
-filters$inflation_inflation_rate <- 0.4
-filters$gdpgr <- 0.4
-filters$stagr <- 0.4
+filters$inflation_inflation_rate <- c('gtabs',0.2)
+filters$gdpgr <- c('gtabs',0.2)
+filters$stagr <- c('gtabs',0.2)
+filters$gdp_real_gdp_in_2021c <- c('ltval',100)
 
+numPlotThreads <- 20
 location.plots <- 'figures'
 yearsToPlot.names <- c('allYears')#,'1980-2023')
 uncertaintiesToPlot <- c('fit uncertainty')#,'noise uncertainty','all uncertainty')
@@ -119,12 +121,13 @@ plotHeight <- 20
 plotUnit <- 'cm'
 plotRes <- 150
 # plot lines are
-# 1. Area of the median policy outcomes
-# 2. Area of the SOW outcomes
-plot.lty <- c('solid','dotted')#,'dotdash','dotted')
-plot.lwd <- c(3,1)
+# 1. Area of the SOW outcomes
+# 2. Area of the median outcomes
+plot.lty <- c('dotted','solid')#,'dotdash','dotted')
+plot.lwd <- c(1,3)
 plot.lcol <- c(1,1) # colors of the outlines
-plot.col <- c(gray(0.7,0.5),gray(0.8,0.5)) # colors of the area fills
+plot.col <- c(gray(0.7,0.5),gray(0.2,0.5)) # colors of the area fills
+plot.relyrange <- c(0.001,0.999)
 
 # automatic stuff ####
 if(addAutoNameToExpID){
