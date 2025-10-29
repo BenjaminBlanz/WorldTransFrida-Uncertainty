@@ -1,7 +1,8 @@
 # plot policy analysis output
 source('initialise.R')
 source('configPolicyAnalysis.R')
-
+require(data.table)
+require(parallel)
 #override location.output
 location.output <- 'policy-workOutput/AllPolicies1e6-moreExports'
 # location.output <- 'policy-workOutput/'
@@ -48,43 +49,73 @@ if(!file.exists(file.path(outputFolder,'stagr.RDS'))){
 # plot unfiltered and apply filter and report back the filtered out IDs
 # In the second run 
 # plot filtered runs
-filterResults <- function(varFile,filterSpec,verbosity=0){
+filterResults <- function(varFile,filterSpec,verbosity=0,polIDsToDrop=NULL,useCluster=T){
 	varName <- tools::file_path_sans_ext(varFile)
-	if(verbosity>0){cat(sprintf('reading %s...',varName))}
 	if(varName %in% names(filterSpec)){
+		if(verbosity>0){cat(sprintf('reading %s...',varName))}
 		varDat <- readPerVarFile(file.path(outputFolder,varFile))
-		cat('determining filtered...')
+		if(verbosity>0){cat('converting to data.table...')}
+		varDat <- data.table(varDat)
+		if(verbosity>0){cat('determining filtered...')}
+		# if the last column is entirely NA this is probably
+		# a generated variable, drop that col to not mess with the complete cases
+		# filter
 		if(sum(is.na(varDat[,ncol(varDat)]))==nrow(varDat)){
 			varDat <- varDat[,-ncol(varDat)]
 		}
+		# if we have ex ante known polIDs to drop, we do not have to filter them
+		if(is.null(polIDsToDrop)){
+			if(verbosity>0){cat('applying prefilter...')}
+			varDat <- varDat[!varDat$polID %in% polIDsToDrop,]
+		}
+		cat('dropping incomplete and inf...')
 		polIDsToDrop <- unique(varDat$polID[!complete.cases(varDat) | !is.finite(varDat[,ncol(varDat)])])
-		varDat <- varDat[!varDat$polID %in% polIDsToDrop,]
-		for(year in colnames(varDat)[-c(1,2)]){
+		# years
+		years <- colnames(varDat)[-c(1,2)]
+		filterFun <- function(year.i){
+			year <- years[year.i]
 			if(filterSpec[[varName]][1] == 'ltabs'){
-				polIDsToDrop <- unique(c(polIDsToDrop,varDat$polID[abs(varDat[[year]])<filterSpec[[varName]][2]]))
+				polIDsToDrop <- varDat$polID[abs(varDat[[year]])<filterSpec[[varName]][2]]
 			} else if(filterSpec[[varName]][1] == 'gtabs'){
-				polIDsToDrop <- unique(c(polIDsToDrop,varDat$polID[abs(varDat[[year]])>filterSpec[[varName]][2]]))
+				polIDsToDrop <- varDat$polID[abs(varDat[[year]])>filterSpec[[varName]][2]]
 			} else if (filterSpec[[varName]][1] == 'ltval'){
-				polIDsToDrop <- unique(c(polIDsToDrop,varDat$polID[varDat[[year]]<filterSpec[[varName]][2]]))
+				polIDsToDrop <- varDat$polID[varDat[[year]]<filterSpec[[varName]][2]]
 			} else if (filterSpec[[varName]][1] == 'gtval'){
-				polIDsToDrop <- unique(c(polIDsToDrop,varDat$polID[varDat[[year]]>filterSpec[[varName]][2]]))
+				polIDsToDrop <- varDat$polID[varDat[[year]]>filterSpec[[varName]][2]]
 			} else {
 				stop('unkown filter spec\n')
 			}
+			if(verbosity>0){cat('.')}
 		}
+		if(verbosity>0){cat('processing years')}
+		if(!useCluster){
+			if(verbosity>0){cat(' not using cluster...')}
+			yearPolIDsToDrop <- lapply(1:length(years),filterFun)
+		} else {
+			if(verbosity>0){cat(' starting cluster...')}
+			clFiltering <- makeForkCluster(min(10,detectCores()))
+			if(verbosity>0){cat('running...')}
+			yearPolIDsToDrop <- parLapply(clFiltering,1:length(years),filterFun)
+			stopCluster(clFiltering)
+		}
+		polIDsToDrop <- unique(c(polIDsToDrop,unlist(yearPolIDsToDrop)))
 	} else {
 		polIDsToDrop <- c()
 	}
-	cat('done\n')
+	if(verbosity>0){cat('done\n')}
 	return(polIDsToDrop)
 }
-parFilterResults <- function(i,varsFiles,filterSpec){
-	return(filterResults(varsFiles[i],filterSpec))
-}
 
-plotPolResults <- function(varFile,polIDsToDrop=NULL,figuresFolder=NULL,verbosity=0){
+# plotType:
+#  0: Boxplot of medians
+#  1: Flat area of medians and flat area of sow extending beyond median
+#  2: contourplot of medians
+#  3: contourplot of medians overlayed with contour of sow
+plotPolResults <- function(varFile,polIDsToDrop=NULL,figuresFolder=NULL,
+													 plotType=1,
+													 verbosity=0){
 	if(is.null(figuresFolder)){
-		figuresFolder <- file.path(location.output,'figures')
+		figuresFolder <- file.path(location.output,'figures',paste0('plotType',plotType))
 	}
 	dir.create(figuresFolder,showWarnings = F,recursive = T)
 	varName <- tools::file_path_sans_ext(varFile)
@@ -96,47 +127,117 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,figuresFolder=NULL,verbosit
 	varDat <- varDat[!varDat$polID %in% polIDsToDrop,]
 	if(verbosity>0){cat('plotting...')}
 	years <- as.numeric(colnames(varDat)[3:ncol(varDat)])
-	maxBoundUp <- c() # area reached by the any SOW
-	maxBoundDown <- c() # lower bound of area reached by any SOW
-	medianBoundUp <- c() # upper bound of median results
-	medianBoundDown <- c() # lower bound of median results
-	for(year.i in 1:length(years)){
-		year <- years[year.i]
-		maxBoundUp[year.i] <- max(varDat[[as.character(year)]],na.rm=T)
-		maxBoundDown[year.i] <- min(varDat[[as.character(year)]],na.rm=T)
-		medianBoundUp[year.i] <- max(varDat[[as.character(year)]][varDat$sowID==5],na.rm=T)
-		medianBoundDown[year.i] <- min(varDat[[as.character(year)]][varDat$sowID==5],na.rm=T)
-		if(verbosity>1){cat('.')}
-	}
-	ylims <- quantile(varDat[,seq(3,ncol(varDat),3)],probs=plot.relyrange,na.rm=T)
-	maxBoundUpLim <- maxBoundUp
-	maxBoundUpLim[maxBoundUp>ylims[2]] <- ylims[2]
-	maxBoundDownLim <- maxBoundDown
-	maxBoundDownLim[maxBoundDown<ylims[1]] <- ylims[1]
-	medianBoundUpLim <- medianBoundUp
-	medianBoundUpLim[medianBoundUp>ylims[2]] <- ylims[2]
-	medianBoundDownLim <- medianBoundDown
-	medianBoundDownLim[medianBoundDown<ylims[1]] <- ylims[1]
 	png(file.path(figuresFolder,paste0(varName,'.png')),
 			width = plotWidth,height = plotHeight,units = plotUnit,res = plotRes)
-	plot(0,0,type='n',
-			 xlim=range(years),
-			 ylim=ylims,
-			 xlab='year',
-			 xaxs='i',
-			 main=varFullName,ylab=varUnit)
-	grid(col='gray',lwd=2)
-	polygon(c(years,rev(years)),c(maxBoundUp,rev(maxBoundDown)),
-					border = plot.lcol[1],col = plot.col[1],
-					lty=plot.lty[1])
-	polygon(c(years,rev(years)),c(medianBoundUp,rev(medianBoundDown)),
-					border = plot.lcol[2],col = plot.col[2],
-					lty=plot.lty[2])
+	ylims <- quantile(varDat[,seq(3,ncol(varDat),3)],probs=plot.relyrange,na.rm=T)
+	if(plotType==0){
+		plot(0,0,type='n',
+				 xlim=range(years),
+				 ylim=ylims,
+				 xlab='year',
+				 xaxs='i',
+				 main=varFullName,ylab=varUnit)
+		grid(col='gray',lwd=2)
+		for(year in years){
+			boxplot(varDat[[as.character(year)]][varDat$sowID==5],at=year,width = 0.8,add = T,pch='.',lwd=1,
+							axes=F)
+		}
+	} else if(plotType==1){
+		plot(0,0,type='n',
+				 xlim=range(years),
+				 ylim=ylims,
+				 xlab='year',
+				 xaxs='i',
+				 main=varFullName,ylab=varUnit)
+		grid(col='gray',lwd=2)
+		maxBoundUp <- c() # area reached by the any SOW
+		maxBoundDown <- c() # lower bound of area reached by any SOW
+		medianBoundUp <- c() # upper bound of median results
+		medianBoundDown <- c() # lower bound of median results
+		for(year.i in 1:length(years)){
+			year <- years[year.i]
+			maxBoundUp[year.i] <- max(varDat[[as.character(year)]],na.rm=T)
+			maxBoundDown[year.i] <- min(varDat[[as.character(year)]],na.rm=T)
+			medianBoundUp[year.i] <- max(varDat[[as.character(year)]][varDat$sowID==5],na.rm=T)
+			medianBoundDown[year.i] <- min(varDat[[as.character(year)]][varDat$sowID==5],na.rm=T)
+			if(verbosity>1){cat('.')}
+		}
+		maxBoundUpLim <- maxBoundUp
+		maxBoundUpLim[maxBoundUp>ylims[2]] <- ylims[2]
+		maxBoundDownLim <- maxBoundDown
+		maxBoundDownLim[maxBoundDown<ylims[1]] <- ylims[1]
+		medianBoundUpLim <- medianBoundUp
+		medianBoundUpLim[medianBoundUp>ylims[2]] <- ylims[2]
+		medianBoundDownLim <- medianBoundDown
+		medianBoundDownLim[medianBoundDown<ylims[1]] <- ylims[1]
+		polygon(c(years,rev(years)),c(maxBoundUp,rev(maxBoundDown)),
+						border = plot.lcol[1],col = plot.col[1],
+						lty=plot.lty[1])
+		polygon(c(years,rev(years)),c(medianBoundUp,rev(medianBoundDown)),
+						border = plot.lcol[2],col = plot.col[2],
+						lty=plot.lty[2])
+	} else if(plotType==2 || plotType==3){
+		# to build contours we need density values
+		# create histogram at each year, use density of hist. 
+		# ensure that all hists have the same breaks
+		breaks <- c(-Inf,seq(ylims[1],ylims[2],length.out=1001),Inf)
+		counts <- array(NA,dim=c(length(breaks)-3,length(years)))
+		countsSOW <- counts
+		for(year.i in 1:length(years)){
+			year <- years[year.i]
+			histDat <- hist(varDat[[as.character(year)]][varDat$sowID==5],
+											breaks=breaks,plot=F)
+			counts[,year.i] <- histDat$counts[-c(1,length(histDat$counts))]
+			if(plotType==3){
+				histDat <- hist(varDat[[as.character(year)]],
+												breaks=breaks,plot=F)
+				countsSOW[,year.i] <- histDat$counts[-c(1,length(histDat$counts))]
+			}
+			if(verbosity>1){cat('.')}
+		}
+		breaks <- breaks[-c(1,length(breaks))]
+		breaksMids <- breaks[1:(length(breaks)-1)]+
+			(breaks[2:(length(breaks))]-breaks[1:(length(breaks)-1)])/2
+		logmax <- log(max(counts))
+		levels <- exp(seq(0,logmax,length.out=plot.numColLevels))
+		if(plotType==2){
+			filled.contour(years,breaksMids,t(counts),
+										 xlim=range(years),
+										 ylim=ylims,
+										 xlab='year',
+										 xaxs='i',
+										 levels=levels,
+										 main=varFullName,ylab=varUnit,
+										 col = rev(paletteer_c(plot.palletteName, plot.numColLevels-1))
+										 key.title = 'Number of policies')
+		} else if(plotType==3){
+			filled.contour(years,breaksMids,t(counts),
+										 xlim=range(years),
+										 ylim=ylims,
+										 xlab='year',
+										 xaxs='i',
+										 levels=levels,
+										 main=varFullName,ylab=varUnit,
+										 col = rev(paletteer_c(plot.palletteNameSOW, plot.numColLevels-1))
+										 key.title = 'Number of policies',
+										 plot.axes={
+										 	filled.contour(years,breaksMids,t(counts),
+										 								 xlim=range(years),
+										 								 ylim=ylims,
+										 								 xlab='year',
+										 								 xaxs='i',
+										 								 levels=levels,
+										 								 main=varFullName,ylab=varUnit,
+										 								 col = rev(paletteer_c(plot.palletteName, plot.numColLevels-1))
+										 								 key.title = 'Number of policies')
+										 	})
+		}
+	}
 	dev.off()
 	if(verbosity>0){cat('done\n')}
 }
-parPlotPolResults<-function(i,varsFiles,polIDsToDrop,figuresFolder=NULL){
-	plotPolResults(varsFiles[i],polIDsToDrop,figuresFolder)	
+parPlotPolResults<-function(i,varsFiles,polIDsToDrop,figuresFolder=NULL,plotType=1){
+	plotPolResults(varsFiles[i],polIDsToDrop,figuresFolder,plotType)	
 }
 
 # read files list ####
@@ -145,175 +246,40 @@ varsFiles <- varsFiles[varsFiles!='logLike.RDS']
 varsMeta <- read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))
 varsMeta$cleanName <- cleanNames(varsMeta$FRIDA.FQN)
 
-if(sequentialPlotting){
-	numFiles <- length(varsFiles)
-	polIDsToDrop.lst <- list()
-	cat('PlottingPass 1 unfiltered plots, collecting filter outputs\n')
-	for(i in 1:length(filters)){
-		filteredFile <- paste0(names(filters)[i],'.RDS')
-		cat(sprintf('reading for filtering %s ',names(filters)[i]))
-		cat(sprintf('filtered file %i of %i\n ',i,length(filters)))
-		if(filteredFile %in% varsFiles){
-			polIDsToDrop.lst[[i]] <- filterResults(filteredFile,filterSpec = filters, verbosity = 1)
-			cat('\n')
-		} else {
-			cat('no such file\n')
-		}
+# polIDsToDrop.lst <- parLapplyLB(cl,1:length(varsFiles),parFilterResults,
+# 														varsFiles = varsFiles,filterSpec=filterSpec,
+# 														chunk.size = 1)
+
+# sequential filtering could be faster
+polIDsToDrop.lst <- list()
+for(i in 1:length(filterSpec)){
+	filteredFile <- paste0(names(filterSpec)[i],'.RDS')
+	cat(sprintf('reading for filtering %s ',names(filterSpec)[i]))
+	cat(sprintf('filtered file %i of %i\n ',i,length(filterSpec)))
+	polIDsToDrop <- c()
+	if(filteredFile %in% varsFiles){
+		system(paste('Rscript --max-connections=1024 --no-site-file runPolicyAnalysisFilterResults.R',
+								 filteredFile, 'TRUE', location.output))
+		polIDsToDrop.lst[[i]] <- readRDS(file.path(location.output,'filterResults',
+																					paste0(names(filterSpec)[i],'-filter.RDS')))
+		polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
+	} else {
+		cat('no such file\n')
 	}
-	polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
-	cat('Plotting pass 2 filtered plots.\n')
-	for(i in 1:length(varsFiles)){
-		varFile <- varsFiles[i]
-		cat(sprintf('File %i of %i ',i,numFiles))
-		try{
-			plotPolResults(varFile,polIDsToDrop = polIDsToDrop,verbosity = 1)
-		}
-	}
-} else {
-	library('parallel')
-	cl <- makeForkCluster(numPlotThreads)
-	parFilterRes <- parLapplyLB(cl,1:length(varsFiles),parFilterResults,
-															varsFiles = varsFiles,filterSpec=filters,
-															chunk.size = 1)
-	polIDsToDrop <- sort(unique(unlist(parFilterRes)))
-	saveRDS(polIDsToDrop,file.path(location.output,'droppedPolIDs.RS'))
-	
+	cat(sprintf('PolIDs dropped so far: %i (%i new from this file)\n',
+							length(polIDsToDrop),length(polIDsToDrop.lst[[i]])))
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-vars <- list()
-vars[['sta']] <- readPerVarFile(file = file.path(location.output,'detectedParmSpace','PerVarFiles-RDS','energy_balance_model_surface_temperature_anomaly.RDS'))
-vars[['pop']] <- readPerVarFile(file = file.path(location.output,'detectedParmSpace','PerVarFiles-RDS','demographics_population.RDS'))
-vars[['gdp']] <- readPerVarFile(file = file.path(location.output,'detectedParmSpace','PerVarFiles-RDS','gdp_real_gdp_in_2021c.RDS'))
-vars[['inf']] <- readPerVarFile(file = file.path(location.output,'detectedParmSpace','PerVarFiles-RDS','inflation_inflation_rate.RDS'))
-vars[['rdu']] <- readPerVarFile(file = file.path(location.output,'detectedParmSpace','PerVarFiles-RDS','gdp_future_year_in_recession.RDS'))
-
-vars$sta1d <- vars$sta
-vars$sta1d[,3:(ncol(vars$sta1d)-1)] <- vars$sta1d[,4:(ncol(vars$sta1d))] - vars$sta1d[,3:(ncol(vars$sta1d)-1)]
-vars$sta1d[,ncol(vars$sta1d)] <- NA
-
-vars$gdpgr <- vars$gdp
-vars$gdpgr[,3:(ncol(vars$gdpgr)-1)] <- (vars$gdpgr[,4:(ncol(vars$gdpgr))] - vars$gdpgr[,3:(ncol(vars$gdpgr)-1)]) /  vars$gdpgr[,3:(ncol(vars$gdpgr)-1)]
-vars$gdpgr[,ncol(vars$gdpgr)] <- NA
-
-#define filter
-# the filter defines the things we keep
-filter <- complete.cases(vars$sta)
-for(var in names(filters)){
-	filter <- filter & rowSums(abs(vars[[var]][,-c(1,2)]) > filters[[var]],na.rm = T) == 0 
-}
-# apply filters
-numPolID <- length(unique(vars$sta[,'polID']))
-polIDsToRemove <- unique(vars$sta[!filter,'polID'])
-filterInclSow <- vars$sta[,'polID'] %in% polIDsToRemove
-for(var in names(vars)){
-	vars[[var]] <- vars[[var]][filterInclSow,]
-}
-gc(verbose=F)
-cat(sprintf('Filters applied: %i removed , %i remain\n',length(polIDsToRemove),numPolID-length(polIDsToRemove)))
-
-# selecting run
-# highest GDP in 2150, that stays below 2deg, in median
-# idxOfSubSel <- which.max(vars$gdp[['2150']][vars$sta[['2150']]<2 & vars$gdp$sowID==5])
-# selRun <- rownames(vars$gdp[vars$sta[['2150']]<2 & vars$gdp$sowID==5,])[idxOfSubSel]
-
-# highest GDP in 2150, that stays below 2deg and has no more than 10 years in recession, in median
-idxOfSubSel <- which.max(vars$gdp[['2150']][vars$sta[['2150']]<2 & vars$rdu[['2150']]<10 & vars$gdp$sowID==5])
-selRun <- rownames(vars$gdp[vars$sta[['2150']]<2 & vars$rdu[['2150']]<10 & vars$gdp$sowID==5,])[idxOfSubSel]
-
-# highest real gdp in 2075
-# idxOfSubSel <- which.max(vars$gdp[['2075']][vars$gdp$sowID==5])
-# selRun <- rownames(vars$gdp[vars$gdp$sowID==5,])[idxOfSubSel]
-
-selPolID <- vars$gdp[selRun,1]
-
-# get information on the selPolID
-pdp.lst <- readRDS(file.path(location.output,'pdp.lst.RDS'))
-pdpMeta <- readRDS(file.path(location.output,'pdpMeta.RDS'))
-jointPolicies <- readRDS(file.path(location.output,'jointPolicies.RDS'))
-samplePoints <- readRDS(file.path(location.output,'samplePoints.RDS'))
-
-selPolDescStrs <- c()
-i <- 0
-for(domID in colnames(samplePoints)){
-	if(!is.na(samplePoints[selPolID,domID])){
-		i <- i+1
-		pdpName <- pdpMeta$domain[pdpMeta$domID==domID][1]
-		sdmID <- jointPolicies$sdmID[jointPolicies$domID==domID & jointPolicies$dplID==samplePoints[selPolID,domID]]
-		if(!is.na(pdpMeta$subdomain[pdpMeta$domID==domID & pdpMeta$sdmID==sdmID])){
-			pdpName <- paste0(pdpName,'+',pdpMeta$subdomain[pdpMeta$domID==domID & pdpMeta$sdmID==sdmID])
-		} 
-		sdpID <- jointPolicies$sdpID[jointPolicies$domID==domID & jointPolicies$dplID==samplePoints[selPolID,domID]]
-		selPolDescStrs <-c(selPolDescStrs, pdp.lst[[pdpName]][pdp.lst[[pdpName]]$polID==sdpID,2])
-	}
-}
-write(selPolDescStrs,file.path(figuresFolder,'selRunPolDesc.csv'))
-
-# plot ####
-plotLims <- list()
-plotLims$sta <- c(0,7)
-plotLims$gdp <- c(0,2e6)
-plotLims$pop <- c(0,1.5e4)
-plotLims$inf <- c(-0.4,0.4)
-plotLims$sta1d <- c(-0.4,0.4)
-plotLims$gdpgr <- c(-0.4,0.4)
-plotLims$rdu <- c(0,100)
-varUnits <- list()
-varUnits$sta <- 'degC'
-varUnits$gdp <- 'billion constant 2021 $'
-varUnits$pop <- 'million people'
-varUnits$sta1d <- 'degC'
-varUnits$inf <- 'rate'
-varUnits$gdpgr <- 'rate'
-varUnits$rdu <- 'years'
-varNames <- list()
-varNames$sta <- 'Surface Temperature Anomaly'
-varNames$gdp <- 'Real GDP'
-varNames$pop <- 'Population'
-varNames$inf <- 'Inflation'
-varNames$sta1d <- 'Change in Surface Temperature Anomaly'
-varNames$gdpgr <- 'Real GDP Growth Rate'
-varNames$rdu <- 'Duration spent in Recession'
-years <- seq(2150,1980,-2)
-for(var in names(vars)){
-	cat(sprintf('plotting %s ...',var))
-	png(file.path(figuresFolder,paste0(var,'.png')),width = plt.w,height = plt.h,units = plt.u,res = plt.r)
-	plot(0,0,type='n',xlim=range(years),ylim=plotLims[[var]],
-			 xlab='year',
-			 main=varNames[[var]],ylab=varUnits[[var]])
-	grid(col='gray',lwd=2)
-	for(year in years){
-		boxplot(vars[[var]][[as.character(year)]][vars[[var]]$sowID==5],at=year,width = 0.8,add = T,pch='.',lwd=1,
-						axes=F)
-	}
-	lines(as.numeric(colnames(vars[[var]][,-c(1,2)])),
-				vars[[var]][selRun,-c(1,2)])
-	dev.off()
-	cat('\n')
-}
+polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
+saveRDS(polIDsToDrop,file.path(location.output,'droppedPolIDs.RS'))
+polIDsToDrop <- readRDS(file.path(location.output,'droppedPolIDs.RS'))
+thingsToPlot <- c(69,112,seq(1:length(varsFiles)[-c(69,112)]))
+library('parallel')
+clPlotting <- makeForkCluster(numPlotThreads)
+parRes <- parLapplyLB(clPlotting,thingsToPlot[c(1,2)],parPlotPolResults,
+											varsFiles=varsFiles,
+											polIDsToDrop=polIDsToDrop,
+											figuresFolder=NULL,
+											plotType=2)
+stopCluster(clPlotting)
 
 
