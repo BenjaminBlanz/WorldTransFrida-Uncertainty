@@ -104,7 +104,7 @@ filterSpec$gdpgr <- c('gtabs',0.2)
 filterSpec$stagr <- c('gtabs',0.2)
 filterSpec$gdp_real_gdp_in_2021c <- c('ltval',100)
 
-numPlotThreads <- 20
+numPlotThreads <- 10
 location.plots <- 'figures'
 yearsToPlot.names <- c('allYears')#,'1980-2023')
 uncertaintiesToPlot <- c('fit uncertainty')#,'noise uncertainty','all uncertainty')
