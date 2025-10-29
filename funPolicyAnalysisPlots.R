@@ -163,7 +163,7 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,figuresFolder=NULL,
 										 xaxs='i',
 										 levels=levels,
 										 main=varFullName,ylab=varUnit,
-										 col = rev(paletteer_c(plot.palletteName, plot.numColLevels-1))
+										 col = rev(paletteer_c(plot.palletteName, plot.numColLevels-1)),
 										 key.title = 'Number of policies')
 		} else if(plotType==3){
 			filled.contour(years,breaksMids,t(counts),
@@ -183,7 +183,7 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,figuresFolder=NULL,
 										 								 xaxs='i',
 										 								 levels=levels,
 										 								 main=varFullName,ylab=varUnit,
-										 								 col = rev(paletteer_c(plot.palletteName, plot.numColLevels-1))
+										 								 col = rev(paletteer_c(plot.palletteName, plot.numColLevels-1)),
 										 								 key.title = 'Number of policies')
 										 })
 		}
