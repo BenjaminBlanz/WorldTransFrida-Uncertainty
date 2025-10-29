@@ -13,14 +13,12 @@ verbosity <- 9
 
 outputFolder <- file.path(location.output,'detectedParmSpace','PerVarFiles-RDS')
 
-polIDsToDrop <- c()
+polIDsToDrop <- NULL
 
 varName <- tools::file_path_sans_ext(varFile)
 if(varName %in% names(filterSpec)){
 	if(verbosity>0){cat(sprintf('reading %s...',varName))}
 	varDat <- readPerVarFile(file.path(outputFolder,varFile))
-	# if(verbosity>0){cat('converting to data.table...')}
-	# varDat <- data.table(varDat)
 	if(verbosity>0){cat('determining filtered...')}
 	# if the last column is entirely NA this is probably
 	# a generated variable, drop that col to not mess with the complete cases
