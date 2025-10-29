@@ -66,13 +66,13 @@ filterResults <- function(varFile,filterSpec,verbosity=0,polIDsToDrop=NULL,useCl
 #  1: Flat area of medians and flat area of sow extending beyond median
 #  2: contourplot of medians
 #  3: contourplot of medians overlayed with contour of sow
-plotPolResults <- function(varFile,polIDsToDrop=NULL,figuresFolder=NULL,
+plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 													 plotType=1,
 													 verbosity=0){
-	if(is.null(figuresFolder)){
-		figuresFolder <- file.path(location.output,'figures',paste0('plotType',plotType))
+	if(is.null(funFigFolder)){
+		funFigFolder <- file.path(location.output,'figures',paste0('plotType',plotType))
 	}
-	dir.create(figuresFolder,showWarnings = F,recursive = T)
+	dir.create(funFigFolder,showWarnings = F,recursive = T)
 	varName <- tools::file_path_sans_ext(varFile)
 	if(verbosity>0){cat(sprintf('reading %s...',varName))}
 	varDat <- readPerVarFile(file.path(outputFolder,varFile))
@@ -82,7 +82,7 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,figuresFolder=NULL,
 	varDat <- varDat[!varDat$polID %in% polIDsToDrop,]
 	if(verbosity>0){cat('plotting...')}
 	years <- as.numeric(colnames(varDat)[3:ncol(varDat)])
-	png(file.path(figuresFolder,paste0(varName,'.png')),
+	png(file.path(funFigFolder,paste0(varName,'.png')),
 			width = plotWidth,height = plotHeight,units = plotUnit,res = plotRes)
 	ylims <- quantile(varDat[,seq(3,ncol(varDat),3)],probs=plot.relyrange,na.rm=T)
 	if(plotType==0){
@@ -191,6 +191,6 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,figuresFolder=NULL,
 	dev.off()
 	if(verbosity>0){cat('done\n')}
 }
-parPlotPolResults<-function(i,varsFiles,polIDsToDrop,figuresFolder=NULL,plotType=1){
-	plotPolResults(varsFiles[i],polIDsToDrop,figuresFolder,plotType)	
+parPlotPolResults<-function(i,varsFiles,polIDsToDrop,funFigFolder=NULL,plotType=1){
+	plotPolResults(varsFiles[i],polIDsToDrop,funFigFolder,plotType)	
 }
