@@ -4,11 +4,11 @@ source('configPolicyAnalysis.R')
 option_list = list(
 	make_option(c("-f", "--varfile"), type="character", default=NULL, 
 							help="file containing model output for variable to be filtered by", metavar="character"),
-	make_option(c("-p", "--useCluster"), type="character", default="True", 
+	make_option(c("-c", "--useCluster"), type="character", default="True", 
 							help="should a cluster be started for filtering the years [default= %default]", metavar="character"),
-	make_option(c("-f", "--desiredFilterFileName"), type="character", default=NULL, 
+	make_option(c("-d", "--desiredFilterFileName"), type="character", default=NULL, 
 							help="name of file containing filters for desired filtering", metavar="character"),
-	make_option(c("-d", "--droppedPolIDs"), type="character", default=NULL, 
+	make_option(c("-p", "--droppedPolIDs"), type="character", default=NULL, 
 							help="name of file containing dropped PolIDs for prefiltering", metavar="character"),
 	make_option(c("-v", "--verbosity"), type="character", default=9, 
 							help="verbosity 0 is silent", metavar="character"),
@@ -16,7 +16,7 @@ option_list = list(
 							help="override the location.output parameter", metavar="character")
 )
 
-opt_parser = OptionParser(option_list=option_list,add_help_option=FALSE)
+opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser)
 if(is.null(opt$varfile)){
 	stop('varfile has to be provided\n')
