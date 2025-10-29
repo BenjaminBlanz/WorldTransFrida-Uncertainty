@@ -6,8 +6,10 @@ args = commandArgs(trailingOnly=TRUE)
 # args <- c('inflation_inflation_rate.RDS', 'TRUE', 'policy-workOutput/AllPolicies1e6-moreExports/detectedParmSpace/PerVarFiles-RDS')
 varFile <- args[1]
 useCluster <- args[2]
-if(length(args)>=3){
-	location.output <- args[3]
+location.output <- args[3]
+if(length(args)>=4){
+	desiredFilterFileName <- args[4]
+	filterSpec <- readRDS(desiredFilterFileName)
 }
 verbosity <- 9
 
@@ -65,5 +67,7 @@ if(varName %in% names(filterSpec)){
 	writeToFolder <- file.path(location.output,'filterResults')
 	dir.create(writeToFolder,showWarnings = F,recursive = T)
 	saveRDS(polIDsToDrop,file.path(writeToFolder,paste0(varName,'-filter.RDS')))
+} else {
+	cat(sprintf('Var name %s not in filter spec.\n',varName))
 }
 if(verbosity>0){cat('done\n')}
