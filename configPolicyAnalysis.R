@@ -116,6 +116,7 @@ alsoPlotDefaultRun.vals <- c(TRUE,FALSE)
 def.lty <- 'solid'
 def.lwd <- 2
 def.col <- 'green'
+plotType <- 2
 plot.numColLevels <- 26
 plot.palletteName <- "grDevices::RdPu"
 plot.palletteNameSOW <- "grDevices::Greens"
