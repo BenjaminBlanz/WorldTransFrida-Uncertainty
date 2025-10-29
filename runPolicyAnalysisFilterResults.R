@@ -4,7 +4,7 @@ require(data.table)
 require(parallel)
 
 args = commandArgs(trailingOnly=TRUE)
-
+# args <- c('inflation_inflation_rate.RDS', 'TRUE', 'policy-workOutput/AllPolicies1e6-moreExports/detectedParmSpace/PerVarFiles-RDS')
 varFile <- args[1]
 useCluster <- args[2]
 if(length(args)>=3){
@@ -52,7 +52,7 @@ if(varName %in% names(filterSpec)){
 		if(verbosity>0){cat('.')}
 	}
 	if(verbosity>0){cat('processing years')}
-	if(!useCluster){
+	if(useCluster != T){
 		if(verbosity>0){cat(' not using cluster...')}
 		yearPolIDsToDrop <- lapply(1:length(years),filterFun)
 	} else {
@@ -65,6 +65,6 @@ if(varName %in% names(filterSpec)){
 	polIDsToDrop <- unique(c(polIDsToDrop,unlist(yearPolIDsToDrop)))
 	outputFolder <- file.path(location.output,'filterResults')
 	dir.create(outputFolder,showWarnings = F,recursive = T)
-	saveRDS(polIDsToDrop,file.path(outputFolder,paste0(varName,'-filter.RDS'))
+	saveRDS(polIDsToDrop,file.path(outputFolder,paste0(varName,'-filter.RDS')))
 }
 if(verbosity>0){cat('done\n')}
