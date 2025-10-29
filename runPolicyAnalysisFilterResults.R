@@ -1,6 +1,6 @@
 source('initialise.R')
 source('configPolicyAnalysis.R')
-require(parallel)
+library(parallel,quietly = T)
 
 args = commandArgs(trailingOnly=TRUE)
 # args <- c('inflation_inflation_rate.RDS', 'TRUE', 'policy-workOutput/AllPolicies1e6-moreExports/detectedParmSpace/PerVarFiles-RDS')
