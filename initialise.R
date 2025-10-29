@@ -6,6 +6,8 @@ suppressPackageStartupMessages({
 	library(lubridate,quietly=T,warn.conflicts = F) # deals with times
 	library(cNORM,quietly=T,warn.conflicts = F) # wighted quantiles
 	library(spatstat.explore,quietly=T,warn.conflicts = F) # used for the quantile.density function
+	library(parallel,quietly = T,warn.conflicts = F) # for parallel runs
+	library(paletteer,quietly = T,warn.conflicts = F) # for color scales
 })
 
 source('funRunFRIDA.R')

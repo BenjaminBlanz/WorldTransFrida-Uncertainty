@@ -2,8 +2,6 @@
 source('initialise.R')
 source('configPolicyAnalysis.R')
 source('funPolicyAnalysisPlots.R')
-require(data.table)
-require(parallel)
 #override location.output
 location.output <- 'policy-workOutput/AllPolicies1e6-moreExports'
 # location.output <- 'policy-workOutput/'
@@ -74,10 +72,10 @@ for(i in 1:length(filterSpec)){
 polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
 saveRDS(polIDsToDrop,file.path(location.output,'droppedPolIDs.RS'))
 polIDsToDrop <- readRDS(file.path(location.output,'droppedPolIDs.RS'))
-thingsToPlot <- c(69,112,seq(1:length(varsFiles)[-c(69,112)]))
-library('parallel')
+firstThingsToPlot <- c(69,112)
+thingsToPlot <- c(firstThingsToPlot,seq(1:length(varsFiles)[-firstThingsToPlot]))
 clPlotting <- makeForkCluster(numPlotThreads)
-parRes <- parLapplyLB(clPlotting,thingsToPlot[c(1,2)],parPlotPolResults,
+parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
 											varsFiles=varsFiles,
 											polIDsToDrop=polIDsToDrop,
 											figuresFolder=NULL,
