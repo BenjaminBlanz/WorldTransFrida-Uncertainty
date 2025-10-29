@@ -6,9 +6,13 @@ require(parallel)
 args = commandArgs(trailingOnly=TRUE)
 
 varFile <- args[1]
-polIDsToDrop <- args[2]
-useCluster <- args[3]
+useCluster <- args[2]
+if(length(arg)>=3){
+	outputFolder <- arg[3]
+}
 verbosity <- 9
+
+polIDsToDrop <- c()
 
 varName <- tools::file_path_sans_ext(varFile)
 if(varName %in% names(filterSpec)){
