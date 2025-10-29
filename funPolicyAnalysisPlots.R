@@ -95,7 +95,7 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,figuresFolder=NULL,
 		grid(col='gray',lwd=2)
 		for(year in years){
 			boxplot(varDat[[as.character(year)]][varDat$sowID==5],at=year,width = 0.8,add = T,pch='.',lwd=1,
-							axes=F)
+							axes=F,range=0)
 		}
 	} else if(plotType==1){
 		plot(0,0,type='n',
