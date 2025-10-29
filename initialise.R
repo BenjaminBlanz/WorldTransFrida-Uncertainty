@@ -8,6 +8,7 @@ suppressPackageStartupMessages({
 	library(spatstat.explore,quietly=T,warn.conflicts = F) # used for the quantile.density function
 	library(parallel,quietly = T,warn.conflicts = F) # for parallel runs
 	library(paletteer,quietly = T,warn.conflicts = F) # for color scales
+	library(optparse,quietly = T,warn.conflicts = F) # for passing input arguments to scripts
 })
 
 source('funRunFRIDA.R')

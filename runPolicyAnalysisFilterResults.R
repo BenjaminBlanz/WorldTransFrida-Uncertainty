@@ -1,21 +1,44 @@
 source('initialise.R')
 source('configPolicyAnalysis.R')
-library(parallel,quietly = T)
 
-args = commandArgs(trailingOnly=TRUE)
-# args <- c('inflation_inflation_rate.RDS', 'TRUE', 'policy-workOutput/AllPolicies1e6-moreExports/detectedParmSpace/PerVarFiles-RDS')
-varFile <- args[1]
-useCluster <- args[2]
-location.output <- args[3]
-if(length(args)>=4){
-	desiredFilterFileName <- args[4]
-	filterSpec <- readRDS(file.path(location.output,desiredFilterFileName))
+option_list = list(
+	make_option(c("-f", "--varfile"), type="character", default=NULL, 
+							help="file containing model output for variable to be filtered by", metavar="character"),
+	make_option(c("-p", "--useCluster"), type="character", default="True", 
+							help="should a cluster be started for filtering the years [default= %default]", metavar="character"),
+	make_option(c("-f", "--desiredFilterFileName"), type="character", default=NULL, 
+							help="name of file containing filters for desired filtering", metavar="character"),
+	make_option(c("-d", "--droppedPolIDs"), type="character", default=NULL, 
+							help="name of file containing dropped PolIDs for prefiltering", metavar="character"),
+	make_option(c("-v", "--verbosity"), type="character", default=9, 
+							help="verbosity 0 is silent", metavar="character"),
+	make_option(c("-o", "--location.output"), type="character", default=NULL, 
+							help="override the location.output parameter", metavar="character")
+); 
+
+opt_parser = OptionParser(option_list=option_list);
+opt = parse_args(opt_parser);
+if(is.null(opt$varfile)){
+	stop('varfile has to be provided\n')
+} else {
+	varFile <- opt$varfile
 }
-verbosity <- 9
+useCluster <- opt$useCluster
+if(!is.nul(opt$location.output)){
+	location.output <- opt$location.output
+}
+if(!is.nul(opt$droppedPolIDs)){
+	polIDsToDrop <- readRDS(file.path(location.output,opt$droppedPolIDs))
+} else {
+	polIDsToDrop <- NULL
+}
+if(!is.nul(opt$desiredFilterFileName)){
+	filterSpec <- readRDS(file.path(location.output,opt$desiredFilterFileName))
+}
+verbosity <- opt$verbosity
 
 outputFolder <- file.path(location.output,'detectedParmSpace','PerVarFiles-RDS')
 
-polIDsToDrop <- NULL
 
 varName <- tools::file_path_sans_ext(varFile)
 if(varName %in% names(filterSpec)){
@@ -29,7 +52,7 @@ if(varName %in% names(filterSpec)){
 		varDat <- varDat[,-ncol(varDat)]
 	}
 	# if we have ex ante known polIDs to drop, we do not have to filter them
-	if(is.null(polIDsToDrop)){
+	if(!is.null(polIDsToDrop)){
 		if(verbosity>0){cat('applying prefilter...')}
 		varDat <- varDat[!varDat$polID %in% polIDsToDrop,]
 	}
@@ -51,6 +74,7 @@ if(varName %in% names(filterSpec)){
 			stop('unkown filter spec\n')
 		}
 		if(verbosity>0){cat('.')}
+		return(polIDsToDrop)
 	}
 	if(verbosity>0){cat('processing years')}
 	if(useCluster != T){
