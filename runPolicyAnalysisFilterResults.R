@@ -9,7 +9,7 @@ useCluster <- args[2]
 location.output <- args[3]
 if(length(args)>=4){
 	desiredFilterFileName <- args[4]
-	filterSpec <- readRDS(desiredFilterFileName)
+	filterSpec <- readRDS(file.path(location.output,desiredFilterFileName))
 }
 verbosity <- 9
 
