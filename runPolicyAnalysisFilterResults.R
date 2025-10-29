@@ -14,10 +14,10 @@ option_list = list(
 							help="verbosity 0 is silent", metavar="character"),
 	make_option(c("-o", "--location.output"), type="character", default=NULL, 
 							help="override the location.output parameter", metavar="character")
-); 
+)
 
-opt_parser = OptionParser(option_list=option_list);
-opt = parse_args(opt_parser);
+opt_parser = OptionParser(option_list=option_list,add_help_option=FALSE)
+opt = parse_args(opt_parser)
 if(is.null(opt$varfile)){
 	stop('varfile has to be provided\n')
 } else {
