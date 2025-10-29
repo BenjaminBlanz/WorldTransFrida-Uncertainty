@@ -24,15 +24,15 @@ if(is.null(opt$varfile)){
 	varFile <- opt$varfile
 }
 useCluster <- opt$useCluster
-if(!is.nul(opt$location.output)){
+if(!is.null(opt$location.output)){
 	location.output <- opt$location.output
 }
-if(!is.nul(opt$droppedPolIDs)){
+if(!is.null(opt$droppedPolIDs)){
 	polIDsToDrop <- readRDS(file.path(location.output,opt$droppedPolIDs))
 } else {
 	polIDsToDrop <- NULL
 }
-if(!is.nul(opt$desiredFilterFileName)){
+if(!is.null(opt$desiredFilterFileName)){
 	filterSpec <- readRDS(file.path(location.output,opt$desiredFilterFileName))
 }
 verbosity <- opt$verbosity
