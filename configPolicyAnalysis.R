@@ -99,9 +99,9 @@ policyFiles <- list.files(location.singleDomainPolicyFiles)
 # plotting ####
 
 filterSpec <- list()
-filterSpec$inflation_inflation_rate <- c('gtabs',0.4)
-filterSpec$gdpgr <- c('gtabs',0.4)
-filterSpec$stagr <- c('gtabs',0.4)
+filterSpec$inflation_inflation_rate <- c('gtabs',1)
+filterSpec$gdpgr <- c('gtabs',1)
+filterSpec$stagr <- c('gtabs',1)
 filterSpec$gdp_real_gdp_in_2021c <- c('ltval',100)
 
 numPlotThreads <- 10
