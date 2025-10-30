@@ -77,11 +77,15 @@ firstThingsToPlot <- c(69,112,106,107)
 thingsToPlot <- c(firstThingsToPlot)#,seq(1:length(varsFiles))[-firstThingsToPlot])
 clPlotting <- makeForkCluster(numPlotThreads)
 for(plotType in plotTypes){
+	cat(sprintf('plotting plot type %s\n',plotType))
+	logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
+	colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
 	parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
 												varsFiles=varsFiles,
 												polIDsToDrop=polIDsToDrop,
 												funFigFolder=NULL,
-												plotType=plotType)
+												plotType=plotType,
+												colLevels=colLevels)
 }
 stopCluster(clPlotting)
 
@@ -110,11 +114,11 @@ for(i in 1:length(desiredFilterSpec)){
 }
 polIDsToDropDesired <- unique(polIDsToDropDesired,polIDsToDrop)
 funFigFolder <- file.path(location.output,'figures',paste0('plotType',plotType,'-desiredFilters'))
-
-logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
-colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
 clPlotting <- makeForkCluster(numPlotThreads)
 for(plotType in plotTypes){
+	cat(sprintf('plotting plot type %s\n',plotType))
+	logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
+	colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
 	parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
 												varsFiles=varsFiles,
 												polIDsToDrop=polIDsToDropDesired,
