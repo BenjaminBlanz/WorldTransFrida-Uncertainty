@@ -54,7 +54,11 @@ varsMeta$cleanName <- cleanNames(varsMeta$FRIDA.FQN)
 polIDsToDrop.lst <- list()
 for(i in 1:length(filterSpec)){
 	filteredFile <- paste0(names(filterSpec)[i],'.RDS')
-	cat(sprintf('reading for filtering %s ',names(filterSpec)[i]))
+	cat(sprintf('reading for filtering %s %s %s',names(filterSpec)[i],
+							filterSpec[[i]][1],filterSpec[[i]][2]))
+	if(length(filterSpec[[i]]>=3)){
+		cat(sprintf('SOW %i',filterSpec[[i]][3]))
+	}
 	cat(sprintf('filtered file %i of %i\n ',i,length(filterSpec)))
 	polIDsToDrop <- c()
 	if(filteredFile %in% varsFiles){
@@ -96,7 +100,11 @@ saveRDS(desiredFilterSpec,file.path(location.output,'desiredFilterSpec.RDS'))
 polIDsToDropDesired.lst <- list()
 for(i in 1:length(desiredFilterSpec)){
 	filteredFile <- paste0(names(desiredFilterSpec)[i],'.RDS')
-	cat(sprintf('reading for desired filtering %s ',names(desiredFilterSpec)[i]))
+	cat(sprintf('reading for desired filtering %s %s',names(desiredFilterSpec)[i],
+							desiredFilterSpec[[i]][1],desiredFilterSpec[[i]][2]))
+	if(length(desiredFilterSpec[[i]]>=3)){
+		cat(sprintf('SOW %i',desiredFilterSpec[[i]][3]))
+	}
 	cat(sprintf('filtered file %i of %i\n ',i,length(desiredFilterSpec)))
 	polIDsToDropDesired <- c()
 	if(filteredFile %in% varsFiles){
