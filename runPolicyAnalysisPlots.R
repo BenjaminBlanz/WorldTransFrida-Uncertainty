@@ -110,12 +110,16 @@ for(i in 1:length(desiredFilterSpec)){
 }
 polIDsToDropDesired <- unique(polIDsToDropDesired,polIDsToDrop)
 funFigFolder <- file.path(location.output,'figures',paste0('plotType',plotType,'-desiredFilters'))
+
+logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
+colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
 clPlotting <- makeForkCluster(numPlotThreads)
 for(plotType in plotTypes){
 	parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
 												varsFiles=varsFiles,
 												polIDsToDrop=polIDsToDropDesired,
 												funFigFolder=funFigFolder,
-												plotType=plotType)
+												plotType=plotType,
+												colLevels=colLevels)
 }
 stopCluster(clPlotting)

@@ -66,8 +66,13 @@ filterResults <- function(varFile,filterSpec,verbosity=0,polIDsToDrop=NULL,useCl
 #  1: Flat area of medians and flat area of sow extending beyond median
 #  2: contourplot of medians
 #  3: contourplot of medians overlayed with contour of sow
+#  
+parPlotPolResults<-function(i,varsFiles,polIDsToDrop,funFigFolder=NULL,colLevels=NULL,plotType=1){
+	plotPolResults(varsFiles[i],polIDsToDrop,funFigFolder,colLevels,plotType)	
+}
 plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 													 plotType=1,
+													 colLevels=NULL,
 													 verbosity=0){
 	if(is.null(funFigFolder)){
 		funFigFolder <- file.path(location.output,'figures',paste0('plotType',plotType))
@@ -153,8 +158,12 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 		breaks <- breaks[-c(1,length(breaks))]
 		breaksMids <- breaks[1:(length(breaks)-1)]+
 			(breaks[2:(length(breaks))]-breaks[1:(length(breaks)-1)])/2
-		logmax <- log(max(counts))
-		levels <- exp(seq(0,logmax,length.out=plot.numColLevels))
+		if(is.null(colLevels)){
+			logmax <- log(max(counts))
+			levels <- exp(seq(0,logmax,length.out=plot.numColLevels))
+		} else {
+			levels <- colLevels
+		}
 		filled.contour(years,breaksMids,t(counts),
 									 xlim=range(years),
 									 ylim=ylims,
@@ -168,7 +177,4 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 	}
 	dev.off()
 	if(verbosity>0){cat('done\n')}
-}
-parPlotPolResults<-function(i,varsFiles,polIDsToDrop,funFigFolder=NULL,plotType=1){
-	plotPolResults(varsFiles[i],polIDsToDrop,funFigFolder,plotType)	
 }
