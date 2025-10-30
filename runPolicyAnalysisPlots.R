@@ -62,12 +62,13 @@ for(i in 1:length(filterSpec)){
 								 filteredFile, '-c','TRUE', '-o',location.output))
 		polIDsToDrop.lst[[i]] <- readRDS(file.path(location.output,'filterResults',
 																					paste0(names(filterSpec)[i],'-filter.RDS')))
+		polIDsToDrop.old <- polIDsToDrop
 		polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
 	} else {
 		cat('no such file\n')
 	}
 	cat(sprintf('PolIDs dropped so far: %i (%i new from this file)\n',
-							length(polIDsToDrop),length(polIDsToDrop.lst[[i]])))
+							length(polIDsToDrop),sum(!polIDsToDrop.lst[[i]] %in% polIDsToDrop.old)))
 }
 polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
 saveRDS(polIDsToDrop,file.path(location.output,'droppedPolIDs.RDS'))
@@ -99,12 +100,13 @@ for(i in 1:length(desiredFilterSpec)){
 								 filteredFile, '-c','TRUE', '-o',location.output,'-d','desiredFilterSpec.RDS'))
 		polIDsToDropDesired.lst[[i]] <- readRDS(file.path(location.output,'filterResults',
 																							 paste0(names(desiredFilterSpec)[i],'-filter.RDS')))
-		polIDsToDropDesired <- sort(unique(unlist(polIDsToDropDesired.lst)))
+		polIDsToDrop.old <- polIDsToDrop
+		polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
 	} else {
 		cat('no such file\n')
 	}
 	cat(sprintf('PolIDs dropped so far: %i (%i new from this file)\n',
-							length(polIDsToDropDesired),length(polIDsToDropDesired.lst[[i]])))
+							length(polIDsToDrop),sum(!polIDsToDrop.lst[[i]] %in% polIDsToDrop.old)))
 }
 polIDsToDropDesired <- unique(polIDsToDropDesired,polIDsToDrop)
 funFigFolder <- file.path(location.output,'figures',paste0('plotType',plotType,'-desiredFilters'))
