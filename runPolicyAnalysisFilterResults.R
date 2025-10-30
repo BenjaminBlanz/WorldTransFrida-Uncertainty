@@ -80,6 +80,7 @@ if(varName %in% names(filterSpec)){
 		} else {
 			stop('unkown filter spec\n')
 		}
+		polIDsToDrop <- unique(polIDsToDrop[!is.na(polIDsToDrop)])
 		if(verbosity>0){cat('.')}
 		return(polIDsToDrop[!is.na(polIDsToDrop)])
 	}
