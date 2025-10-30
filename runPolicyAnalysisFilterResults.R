@@ -63,20 +63,26 @@ if(varName %in% names(filterSpec)){
 	years <- colnames(varDat)[-c(1,2)]
 	filterFun <- function(year.i){
 		year <- years[year.i]
-		if(filterSpec[[varName]][1] == 'ltabs'){
-			polIDsToDrop <- varDat$polID[abs(varDat[[year]])<filterSpec[[varName]][2]]
-		} else if(filterSpec[[varName]][1] == 'gtabs'){
-			polIDsToDrop <- varDat$polID[abs(varDat[[year]])>filterSpec[[varName]][2]]
-		} else if (filterSpec[[varName]][1] == 'ltval'){
-			polIDsToDrop <- varDat$polID[varDat[[year]]<filterSpec[[varName]][2]]
-		} else if (filterSpec[[varName]][1] == 'gtval'){
-			polIDsToDrop <- varDat$polID[varDat[[year]]>filterSpec[[varName]][2]]
-		} else if (filterSpec[[varName]][1] == 'sltval'){
-			polIDsToDrop <- varDat$polID[varDat$sowID==filterSpec[[varName]][3] & 
-																	 	varDat[[year]]<filterSpec[[varName]][2]]
-		} else if (filterSpec[[varName]][1] == 'sgtval'){
-			polIDsToDrop <- varDat$polID[varDat$sowID==filterSpec[[varName]][3] &
-																	 	varDat[[year]]>filterSpec[[varName]][2]]
+		if(filterSpec[[varName]][[1]] == 'ltabs'){
+			polIDsToDrop <- varDat$polID[abs(varDat[[year]])<filterSpec[[varName]][[2]]]
+		} else if(filterSpec[[varName]][[1]] == 'gtabs'){
+			polIDsToDrop <- varDat$polID[abs(varDat[[year]])>filterSpec[[varName]][[2]]]
+		} else if(filterSpec[[varName]][[1]] == 'sltabs'){
+			polIDsToDrop <- varDat$polID[varDat$sowID %in% filterSpec[[varName]][[3]] &
+																	 	abs(varDat[[year]])<filterSpec[[varName]][[2]]]
+		} else if(filterSpec[[varName]][[1]] == 'sgtabs'){
+			polIDsToDrop <- varDat$polID[varDat$sowID %in% filterSpec[[varName]][[3]] &
+																	 	abs(varDat[[year]])>filterSpec[[varName]][[2]]]
+		} else if (filterSpec[[varName]][[1]] == 'ltval'){
+			polIDsToDrop <- varDat$polID[varDat[[year]]<filterSpec[[varName]][[2]]]
+		} else if (filterSpec[[varName]][[1]] == 'gtval'){
+			polIDsToDrop <- varDat$polID[varDat[[year]]>filterSpec[[varName]][[2]]]
+		} else if (filterSpec[[varName]][[1]] == 'sltval'){
+			polIDsToDrop <- varDat$polID[varDat$sowID %in% filterSpec[[varName]][[3]] & 
+																	 	varDat[[year]]<filterSpec[[varName]][[2]]]
+		} else if (filterSpec[[varName]][[1]] == 'sgtval'){
+			polIDsToDrop <- varDat$polID[varDat$sowID %in% filterSpec[[varName]][[3]] &
+																	 	varDat[[year]]>filterSpec[[varName]][[2]]]
 		} else {
 			stop('unkown filter spec\n')
 		}
