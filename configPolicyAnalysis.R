@@ -6,14 +6,14 @@ source('funParmSpace.R')
 # The expID is used to name the output folder, among other things.
 # addAutoNameToExpID can be used to automatically generate something descriptive based 
 # on the run configuration but this will cause too long filenames and the run will crash.
-expID <- 'testing2'
+expID <- 'AllPolicies1e6-moreExports'
 # This adds a description of the configured policies to sample to the expID
 # Set this to false if you intend to sample a wide range of policies as
 # the filenames will be too long to handle and the run will crash.
 addAutoNameToExpID <- F
 
 # number of joint policy scenarios
-numInitialJointPol <- 1e5
+numInitialJointPol <- 1e6
 
 # probability of status quo policy per policy domain
 # in sampling joint policies
