@@ -63,7 +63,7 @@ timing <- toc(quiet=T)
 cat(sprintf('done: %i  dropped %s\n',
 						length(polIDsToDrop),timing$callback_msg))
 rm(varDat)
-gc(verbose=F)
+gc(verbose = F)
 for(i in 1:length(filterSpec)){
 	filteredFile <- paste0(names(filterSpec)[i],'.RDS')
 	cat(sprintf('Filter %i of %i ',i,length(filterSpec)))
@@ -93,8 +93,9 @@ for(i in 1:length(filterSpec)){
 		cat('no such file\n')
 	}
 	timing <- toc(quiet=T)
-	cat(sprintf('PolIDs dropped so far: %i (%2.2f) (%i in this file %i new) %s\n',
-							length(polIDsToDrop),length(polIDsToDrop.lst[[i+1]]),
+	cat(sprintf('PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %s\n',
+							length(polIDsToDrop), length(polIDsToDrop)/numPolIDs,
+							length(polIDsToDrop.lst[[i+1]]),
 							length(polIDsToDrop)-length(polIDsToDrop.old),
 							timing$callback_msg))
 }
@@ -155,8 +156,9 @@ for(i in 1:length(desiredFilterSpec)){
 		cat('no such file\n')
 	}
 	timing <- toc(quiet=T)
-	cat(sprintf('PolIDs dropped so far: %i (%i in this file %i new) %s\n',
-							length(polIDsToDrop),length(polIDsToDropDesired.lst[[i+1]]),
+	cat(sprintf('PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %s\n',
+							length(polIDsToDrop),length(polIDsToDrop)/numPolIDs,
+							length(polIDsToDropDesired.lst[[i+1]]),
 							length(polIDsToDrop)-length(polIDsToDrop.old),
 							timing$callback_msg))
 	if(length(polIDsToDrop) >= numPolIDs){
