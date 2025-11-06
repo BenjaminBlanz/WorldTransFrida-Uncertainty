@@ -101,17 +101,17 @@ policyFiles <- list.files(location.singleDomainPolicyFiles)
 # TODO: explain the filterSpec
 filterSpec <- list()
 filterSpec$inflation_inflation_rate <- list()
-filterSpec$inflation_inflation_rate$type <- 'sgtabs'
+filterSpec$inflation_inflation_rate$type <- 'gtabs'
 filterSpec$inflation_inflation_rate$level <- 0.5
-filterSpec$inflation_inflation_rate$sowID <- 2:10
+filterSpec$inflation_inflation_rate$allowedTransgressions <- 2
 filterSpec$gdpgr <- list()
-filterSpec$gdpgr$type <- 'sgtabs'
+filterSpec$gdpgr$type <- 'gtabs'
 filterSpec$gdpgr$level <- 0.5
-filterSpec$gdpgr$sow <- 2:10
+filterSpec$gdpgr$allowedTransgressions <- 2
 filterSpec$stagr <- list()
 filterSpec$stagr$type <- 'sgtabs'
 filterSpec$stagr$level <- 0.5
-filterSpec$stagr$sow <- 2:10
+filterSpec$stagr$allowedTransgressions <- 2
 filterSpec$gdp_real_gdp_in_2021c <- list()
 filterSpec$gdp_real_gdp_in_2021c$type <- 'ltval'
 filterSpec$gdp_real_gdp_in_2021c$level <- 100

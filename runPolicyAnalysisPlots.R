@@ -52,6 +52,10 @@ varsMeta$cleanName <- cleanNames(varsMeta$FRIDA.FQN)
 
 # sequential filtering could be faster
 polIDsToDrop.lst <- list()
+cat('dropping incomplete and inf...')
+polIDsToDrop <- polIDsToDrop.lst[[1]] <- unique(varDat$polID[!complete.cases(varDat) | !is.finite(varDat[,ncol(varDat)])])
+cat(sprintf('done: %i  deropped\n',
+						length(polIDsToDrop),sum(!polIDsToDrop.lst[[i]] %in% polIDsToDrop.old)))
 for(i in 1:length(filterSpec)){
 	filteredFile <- paste0(names(filterSpec)[i],'.RDS')
 	cat(sprintf('reading for filtering %s %s %s',names(filterSpec)[i],
@@ -60,7 +64,6 @@ for(i in 1:length(filterSpec)){
 		cat(sprintf('SOW %i',filterSpec[[i]]$sowID))
 	}
 	cat(sprintf('filtered file %i of %i\n ',i,length(filterSpec)))
-	polIDsToDrop <- c()
 	if(filteredFile %in% varsFiles){
 		# for debugging filterscript
 		varFile <- filteredFile
@@ -68,15 +71,15 @@ for(i in 1:length(filterSpec)){
 		verbosity <- 9
 		system(paste('Rscript --max-connections=1024 --no-site-file runPolicyAnalysisFilterResults.R -f',
 								 filteredFile, '-c','TRUE', '-o',location.output))
-		polIDsToDrop.lst[[i]] <- readRDS(file.path(location.output,'filterResults',
+		polIDsToDrop.lst[[i+1]] <- readRDS(file.path(location.output,'filterResults',
 																					paste0(names(filterSpec)[i],'-filter.RDS')))
 		polIDsToDrop.old <- polIDsToDrop
-		polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
+		polIDsToDrop <- sort(unique(c(polIDsToDrop,unlist(polIDsToDrop.lst[[i+1]]))))
 	} else {
 		cat('no such file\n')
 	}
 	cat(sprintf('PolIDs dropped so far: %i (%i new from this file)\n',
-							length(polIDsToDrop),sum(!polIDsToDrop.lst[[i]] %in% polIDsToDrop.old)))
+							length(polIDsToDrop),length(polIDsToDrop)-length(polIDsToDrop.old)))
 }
 polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
 saveRDS(polIDsToDrop,file.path(location.output,'droppedPolIDs.RDS'))

@@ -57,34 +57,38 @@ if(varName %in% names(filterSpec)){
 		if(verbosity>0){cat('applying prefilter...')}
 		varDat <- varDat[!varDat$polID %in% polIDsToDrop,]
 	}
-	cat('dropping incomplete and inf...')
-	polIDsToDrop <- unique(varDat$polID[!complete.cases(varDat) | !is.finite(varDat[,ncol(varDat)])])
 	# years
 	years <- colnames(varDat)[-c(1,2)]
 	filterFun <- function(year.i){
 		year <- years[year.i]
-		if(filterSpec[[varName]]$type == 'ltabs'){
+		if(filterSpec[[varName]]$type == 'ltabs'){ # absolute value less than filter val
 			polIDsToDrop <- varDat$polID[abs(varDat[[year]])<filterSpec[[varName]]$level]
-		} else if(filterSpec[[varName]]$type == 'gtabs'){
+		} else if(filterSpec[[varName]]$type == 'gtabs'){ # absolute value greater than filter val
 			polIDsToDrop <- varDat$polID[abs(varDat[[year]])>filterSpec[[varName]]$level]
-		} else if(filterSpec[[varName]]$type == 'sltabs'){
+		} else if(filterSpec[[varName]]$type == 'sltabs'){ # absolute value less than filter val in specified SOW
 			polIDsToDrop <- varDat$polID[varDat$sowID %in% filterSpec[[varName]]$sowID &
 																	 	abs(varDat[[year]])<filterSpec[[varName]]$level]
-		} else if(filterSpec[[varName]]$type == 'sgtabs'){
+		} else if(filterSpec[[varName]]$type == 'sgtabs'){ # absolute value greater than filter val in specified SOW
 			polIDsToDrop <- varDat$polID[varDat$sowID %in% filterSpec[[varName]]$sowID &
 																	 	abs(varDat[[year]])>filterSpec[[varName]]$level]
-		} else if (filterSpec[[varName]]$type == 'ltval'){
+		}	else if (filterSpec[[varName]]$type == 'ltval'){ # value less than filter val
 			polIDsToDrop <- varDat$polID[varDat[[year]]<filterSpec[[varName]]$level]
-		} else if (filterSpec[[varName]]$type == 'gtval'){
+		} else if (filterSpec[[varName]]$type == 'gtval'){ # value greater than filter val
 			polIDsToDrop <- varDat$polID[varDat[[year]]>filterSpec[[varName]]$level]
-		} else if (filterSpec[[varName]]$type == 'sltval'){
+		} else if (filterSpec[[varName]]$type == 'sltval'){ # value less than filter val in specified SOW
 			polIDsToDrop <- varDat$polID[varDat$sowID %in% filterSpec[[varName]]$sowID & 
 																	 	varDat[[year]]<filterSpec[[varName]]$level]
-		} else if (filterSpec[[varName]]$type == 'sgtval'){
+		} else if (filterSpec[[varName]]$type == 'sgtval'){ # value greater than filter val in specified SOW
 			polIDsToDrop <- varDat$polID[varDat$sowID %in% filterSpec[[varName]]$sowID &
 																	 	varDat[[year]]>filterSpec[[varName]]$level]
 		} else {
 			stop('unkown filter spec\n')
+		}
+		# if a number of SOW is defined in the filter we only drop if the filter is violated in
+		# at least numSOW cases
+		if(!is.null(filterSpec[[varName]]$allowedTransgressions)){ 
+			dropCounts <- table(polIDsToDrop)
+			polIDsToDrop <- as.numeric(names(which(dropCounts>=filterSpec[[varName]]$allowedTransgressions)))
 		}
 		polIDsToDrop <- unique(polIDsToDrop[!is.na(polIDsToDrop)])
 		if(verbosity>0){cat('.')}
