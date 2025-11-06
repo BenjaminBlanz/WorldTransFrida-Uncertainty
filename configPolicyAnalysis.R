@@ -99,6 +99,9 @@ policyFiles <- list.files(location.singleDomainPolicyFiles)
 # plotting ####
 
 # TODO: explain the filterSpec
+# these are the filters that drop policies that are outside the functional scope
+# of the model (while the math may work in some of these cases the conceptual model 
+# and hence the interpretability does not)
 filterSpec <- list()
 filterSpec$inflation_inflation_rate <- list()
 filterSpec$inflation_inflation_rate$type <- 'gtabs'
@@ -114,7 +117,18 @@ filterSpec$stagr$level <- 0.5
 filterSpec$stagr$allowedTransgressions <- 2
 filterSpec$gdp_real_gdp_in_2021c <- list()
 filterSpec$gdp_real_gdp_in_2021c$type <- 'ltval'
-filterSpec$gdp_real_gdp_in_2021c$level <- 100
+filterSpec$gdp_real_gdp_in_2021c$level <- 5e4 # roughly the 1980 level of GDP
+
+#these are the filters that drop policies with "undersirable" outcomes
+desiredFilterSpec <- list()
+desiredFilterSpec$gdp_real_gdp_in_2021c <- list()
+desiredFilterSpec$gdp_real_gdp_in_2021c$type <- 'ltval'
+desiredFilterSpec$gdp_real_gdp_in_2021c$level <- 1.5e5 # a bit less than the 2023 median level
+desiredFilterSpec$gdp_real_gdp_in_2021c$allowedTransgressions <- 5
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly <- list()
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$type <- 'gtval'
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$level <- 2
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$allowedTransgressions <- 4
 
 numPlotThreads <- 10
 location.plots <- 'figures'
