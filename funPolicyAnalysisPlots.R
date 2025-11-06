@@ -67,13 +67,17 @@ filterResults <- function(varFile,filterSpec,verbosity=0,polIDsToDrop=NULL,useCl
 #  2: contourplot of medians
 #  3: contourplot of medians overlayed with contour of sow
 #  
-parPlotPolResults<-function(i,varsFiles,polIDsToDrop,funFigFolder=NULL,colLevels=NULL,plotType=1){
-	plotPolResults(varsFiles[i],polIDsToDrop,funFigFolder,colLevels,plotType)	
+parPlotPolResults<-function(i,varsFiles,polIDsToDrop,funFigFolder=NULL,colLevels=NULL,plotType=1,verbosity=0){
+	plotPolResults(varsFiles[i],polIDsToDrop=polIDsToDrop,
+								 funFigFolder=funFigFolder,
+								 plotType=plotType,
+								 colLevels=colLevels,
+								 verbosity=verbosity)	
 }
 plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 													 plotType=1,
 													 colLevels=NULL,
-													 verbosity=0){
+													 verbosity=9){
 	if(is.null(funFigFolder)){
 		funFigFolder <- file.path(location.output,'figures',paste0('plotType',plotType))
 	}
