@@ -98,20 +98,23 @@ policyFiles <- list.files(location.singleDomainPolicyFiles)
 
 # plotting ####
 
+# TODO: explain the filterSpec
 filterSpec <- list()
 filterSpec$inflation_inflation_rate <- list()
-filterSpec$inflation_inflation_rate[[1]] <- 'sgtabs'
-filterSpec$inflation_inflation_rate[[2]] <- 1
-filterSpec$inflation_inflation_rate[[3]] <- 2:10
+filterSpec$inflation_inflation_rate$type <- 'sgtabs'
+filterSpec$inflation_inflation_rate$level <- 0.5
+filterSpec$inflation_inflation_rate$sowID <- 2:10
 filterSpec$gdpgr <- list()
-filterSpec$gdpgr[[1]] <- 'sgtabs'
-filterSpec$gdpgr[[2]] <- 1
-filterSpec$gdpgr[[3]] <- 2:10
+filterSpec$gdpgr$type <- 'sgtabs'
+filterSpec$gdpgr$level <- 0.5
+filterSpec$gdpgr$sow <- 2:10
 filterSpec$stagr <- list()
-filterSpec$stagr[[1]] <- 'sgtabs'
-filterSpec$stagr[[2]] <- 1
-filterSpec$stagr[[3]] <- 2:10
-filterSpec$gdp_real_gdp_in_2021c <- c('ltval',100)
+filterSpec$stagr$type <- 'sgtabs'
+filterSpec$stagr$level <- 0.5
+filterSpec$stagr$sow <- 2:10
+filterSpec$gdp_real_gdp_in_2021c <- list()
+filterSpec$gdp_real_gdp_in_2021c$type <- 'ltval'
+filterSpec$gdp_real_gdp_in_2021c$level <- 100
 
 numPlotThreads <- 10
 location.plots <- 'figures'

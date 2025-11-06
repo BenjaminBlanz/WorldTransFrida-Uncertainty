@@ -55,13 +55,17 @@ polIDsToDrop.lst <- list()
 for(i in 1:length(filterSpec)){
 	filteredFile <- paste0(names(filterSpec)[i],'.RDS')
 	cat(sprintf('reading for filtering %s %s %s',names(filterSpec)[i],
-							filterSpec[[i]][1],filterSpec[[i]][2]))
+							filterSpec[[i]]$type,filterSpec[[i]]$level))
 	if(length(filterSpec[[i]]>=3)){
-		cat(sprintf('SOW %i',filterSpec[[i]][3]))
+		cat(sprintf('SOW %i',filterSpec[[i]]$sowID))
 	}
 	cat(sprintf('filtered file %i of %i\n ',i,length(filterSpec)))
 	polIDsToDrop <- c()
 	if(filteredFile %in% varsFiles){
+		# for debugging filterscript
+		varFile <- filteredFile
+		useCluster <- T
+		verbosity <- 9
 		system(paste('Rscript --max-connections=1024 --no-site-file runPolicyAnalysisFilterResults.R -f',
 								 filteredFile, '-c','TRUE', '-o',location.output))
 		polIDsToDrop.lst[[i]] <- readRDS(file.path(location.output,'filterResults',
@@ -95,15 +99,17 @@ stopCluster(clPlotting)
 
 # desired filtering ####
 desiredFilterSpec <- list()
-desiredFilterSpec$energy_balance_model_surface_temperature_anomaly <- c('sgtval',2,5)
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly <- list()
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$type <- 'sgtval'
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$level <- 2.5
 saveRDS(desiredFilterSpec,file.path(location.output,'desiredFilterSpec.RDS'))
 polIDsToDropDesired.lst <- list()
 for(i in 1:length(desiredFilterSpec)){
 	filteredFile <- paste0(names(desiredFilterSpec)[i],'.RDS')
 	cat(sprintf('reading for desired filtering %s %s',names(desiredFilterSpec)[i],
-							desiredFilterSpec[[i]][1],desiredFilterSpec[[i]][2]))
+							desiredFilterSpec[[i]]$type,desiredFilterSpec[[i]]$level))
 	if(length(desiredFilterSpec[[i]]>=3)){
-		cat(sprintf('SOW %i',desiredFilterSpec[[i]][3]))
+		cat(sprintf('SOW %i',desiredFilterSpec[[i]]$sowID))
 	}
 	cat(sprintf('filtered file %i of %i\n ',i,length(desiredFilterSpec)))
 	polIDsToDropDesired <- c()
