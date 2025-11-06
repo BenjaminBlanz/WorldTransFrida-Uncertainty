@@ -53,22 +53,36 @@ varsMeta$cleanName <- cleanNames(varsMeta$FRIDA.FQN)
 # sequential filtering could be faster
 polIDsToDrop.lst <- list()
 cat('dropping incomplete and inf...')
+tic()
+cat('reading file to determine incompletes...')
+varDat <- readPerVarFile(file.path(outputFolder,varsFiles[1]))
+numPolIDs <- length(unique(varDat$polID))
+cat('filtering...')
 polIDsToDrop <- polIDsToDrop.lst[[1]] <- unique(varDat$polID[!complete.cases(varDat) | !is.finite(varDat[,ncol(varDat)])])
-cat(sprintf('done: %i  deropped\n',
-						length(polIDsToDrop),sum(!polIDsToDrop.lst[[i]] %in% polIDsToDrop.old)))
+timing <- toc(quiet=T)
+cat(sprintf('done: %i  dropped %s\n',
+						length(polIDsToDrop),timing$callback_msg))
+rm(varDat)
+gc(verbose=F)
 for(i in 1:length(filterSpec)){
 	filteredFile <- paste0(names(filterSpec)[i],'.RDS')
-	cat(sprintf('reading for filtering %s %s %s',names(filterSpec)[i],
+	cat(sprintf('Filter %i of %i ',i,length(filterSpec)))
+	cat(sprintf(' filtering %s %s %s',names(filterSpec)[i],
 							filterSpec[[i]]$type,filterSpec[[i]]$level))
-	if(length(filterSpec[[i]]>=3)){
-		cat(sprintf('SOW %i',filterSpec[[i]]$sowID))
+	if(!is.null(filterSpec[[i]]$sowID)){
+		cat(sprintf(' SOW %i',filterSpec[[i]]$sowID))
 	}
-	cat(sprintf('filtered file %i of %i\n ',i,length(filterSpec)))
+	if(!is.null(filterSpec[[i]]$allowedTransgressions)){
+		cat(sprintf(' number of allowed transgressions per year %i',filterSpec[[i]]$allowedTransgressions))
+	}
+	cat('\n  ')
+	tic()
 	if(filteredFile %in% varsFiles){
 		# for debugging filterscript
-		varFile <- filteredFile
-		useCluster <- T
-		verbosity <- 9
+		# varFile <- filteredFile
+		# useCluster <- T
+		# verbosity <- 9
+		#
 		system(paste('Rscript --max-connections=1024 --no-site-file runPolicyAnalysisFilterResults.R -f',
 								 filteredFile, '-c','TRUE', '-o',location.output))
 		polIDsToDrop.lst[[i+1]] <- readRDS(file.path(location.output,'filterResults',
@@ -78,8 +92,11 @@ for(i in 1:length(filterSpec)){
 	} else {
 		cat('no such file\n')
 	}
-	cat(sprintf('PolIDs dropped so far: %i (%i new from this file)\n',
-							length(polIDsToDrop),length(polIDsToDrop)-length(polIDsToDrop.old)))
+	timing <- toc(quiet=T)
+	cat(sprintf('PolIDs dropped so far: %i (%2.2f) (%i in this file %i new) %s\n',
+							length(polIDsToDrop),length(polIDsToDrop.lst[[i+1]]),
+							length(polIDsToDrop)-length(polIDsToDrop.old),
+							timing$callback_msg))
 }
 polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
 saveRDS(polIDsToDrop,file.path(location.output,'droppedPolIDs.RDS'))
@@ -88,7 +105,9 @@ firstThingsToPlot <- c(69,112,106,107)
 thingsToPlot <- c(firstThingsToPlot)#,seq(1:length(varsFiles))[-firstThingsToPlot])
 clPlotting <- makeForkCluster(numPlotThreads)
 for(plotType in plotTypes){
-	cat(sprintf('plotting plot type %s\n',plotType))
+	cat(sprintf('plotting %i vars with %i threads plot type %s...',
+							length(thingsToPlot),numPlotThreads,plotType))
+	tic()
 	logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
 	colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
 	parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
@@ -97,50 +116,64 @@ for(plotType in plotTypes){
 												funFigFolder=NULL,
 												plotType=plotType,
 												colLevels=colLevels)
+	timing <- toc(quiet=T)
+	cat(sprintf('done %s\n',timing$callback_msg))
 }
 stopCluster(clPlotting)
 
 # desired filtering ####
-desiredFilterSpec <- list()
-desiredFilterSpec$energy_balance_model_surface_temperature_anomaly <- list()
-desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$type <- 'sgtval'
-desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$level <- 2.5
 saveRDS(desiredFilterSpec,file.path(location.output,'desiredFilterSpec.RDS'))
+polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
 polIDsToDropDesired.lst <- list()
 for(i in 1:length(desiredFilterSpec)){
 	filteredFile <- paste0(names(desiredFilterSpec)[i],'.RDS')
-	cat(sprintf('reading for desired filtering %s %s',names(desiredFilterSpec)[i],
+	cat(sprintf('Desired filter %i of %i ',i,length(desiredFilterSpec)))
+	cat(sprintf(' filtering %s %s %s',names(desiredFilterSpec)[i],
 							desiredFilterSpec[[i]]$type,desiredFilterSpec[[i]]$level))
-	if(length(desiredFilterSpec[[i]]>=3)){
-		cat(sprintf('SOW %i',desiredFilterSpec[[i]]$sowID))
+	if(!is.null(desiredFilterSpec[[i]]$sowID)){
+		cat(sprintf(' SOW %i',desiredFilterSpec[[i]]$sowID))
 	}
-	cat(sprintf('filtered file %i of %i\n ',i,length(desiredFilterSpec)))
-	polIDsToDropDesired <- c()
+	if(!is.null(desiredFilterSpec[[i]]$allowedTransgressions)){
+		cat(sprintf(' number of allowed transgressions per year %i',desiredFilterSpec[[i]]$allowedTransgressions))
+	}
+	cat('\n  ')
+	tic()
 	if(filteredFile %in% varsFiles){
-		system(paste('Rscript --max-connections=1024 --no-site-file runPolicyAnalysisFilterResults.R -f',
-								 filteredFile, '-c','TRUE', '-o',location.output,'-d','desiredFilterSpec.RDS'))
-		polIDsToDropDesired.lst[[i]] <- readRDS(file.path(location.output,'filterResults',
-																							 paste0(names(desiredFilterSpec)[i],'-filter.RDS')))
+		# for debugging filterscript
+		# varFile <- filteredFile
+		# useCluster <- T
+		# verbosity <- 9
+		#
+		system(paste('Rscript --max-connections=1024 --no-site-file runPolicyAnalysisFilterResults.R', 
+								 '-f', filteredFile, '-c','TRUE', '-o',location.output,
+								 '-d','desiredFilterSpec.RDS'))
+		polIDsToDropDesired.lst[[i+1]] <- readRDS(file.path(location.output,'filterResults',
+																								 paste0(names(desiredFilterSpec)[i],'-filter.RDS')))
 		polIDsToDrop.old <- polIDsToDrop
-		polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
+		polIDsToDrop <- sort(unique(c(polIDsToDrop,unlist(polIDsToDropDesired.lst[[i+1]]))))
 	} else {
 		cat('no such file\n')
 	}
-	cat(sprintf('PolIDs dropped so far: %i (%i new from this file)\n',
-							length(polIDsToDrop),sum(!polIDsToDrop.lst[[i]] %in% polIDsToDrop.old)))
+	timing <- toc(quiet=T)
+	cat(sprintf('PolIDs dropped so far: %i (%i in this file %i new) %s\n',
+							length(polIDsToDrop),length(polIDsToDropDesired.lst[[i+1]]),
+							length(polIDsToDrop)-length(polIDsToDrop.old),
+							timing$callback_msg))
+	if(length(polIDsToDrop) >= numPolIDs){
+		stop('All policies have been filtered out, nothing left to do\n')
+	}
+	clPlotting <- makeForkCluster(numPlotThreads)
+	for(plotType in plotTypes){
+		funFigFolder <- file.path(location.output,'figures',paste0('plotType',plotType,'-desiredFilters-',paste0(1:i,collapse = '-')))
+		cat(sprintf('plotting plot type %s\n',plotType))
+		logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
+		colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
+		parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
+													varsFiles=varsFiles,
+													polIDsToDrop=polIDsToDrop,
+													funFigFolder=funFigFolder,
+													plotType=plotType,
+													colLevels=colLevels)
+	}
+	stopCluster(clPlotting)
 }
-polIDsToDropDesired <- unique(polIDsToDropDesired,polIDsToDrop)
-funFigFolder <- file.path(location.output,'figures',paste0('plotType',plotType,'-desiredFilters'))
-clPlotting <- makeForkCluster(numPlotThreads)
-for(plotType in plotTypes){
-	cat(sprintf('plotting plot type %s\n',plotType))
-	logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
-	colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
-	parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
-												varsFiles=varsFiles,
-												polIDsToDrop=polIDsToDropDesired,
-												funFigFolder=funFigFolder,
-												plotType=plotType,
-												colLevels=colLevels)
-}
-stopCluster(clPlotting)
