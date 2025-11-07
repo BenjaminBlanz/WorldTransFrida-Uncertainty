@@ -1,14 +1,16 @@
 source('initialise.R')
 source('configPolicyAnalysis.R')
 # config cotains the baseline filterSpec
+# config also contains desiredFilterSpec
 
 option_list = list(
 	make_option(c("-f", "--varfile"), type="character", default=NULL, 
 							help="file containing model output for variable to be filtered by", metavar="character"),
 	make_option(c("-c", "--useCluster"), type="character", default="True", 
 							help="should a cluster be started for filtering the years [default= %default]", metavar="character"),
-	make_option(c("-d", "--desiredFilterFileName"), type="character", default=NULL, 
-							help="name of file containing filters for desired filtering", metavar="character"),
+	make_option(c("-d", "--useDesiredFilterSpec"), type="boolean", default=FALSE, 
+							help="TRUE to use desiredFilterSpec from config",
+							metavar="boolean"),
 	make_option(c("-p", "--droppedPolIDs"), type="character", default=NULL, 
 							help="name of file containing dropped PolIDs for prefiltering", metavar="character"),
 	make_option(c("-v", "--verbosity"), type="character", default=9, 
@@ -33,8 +35,8 @@ if(!is.null(opt$droppedPolIDs)){
 } else {
 	polIDsToDrop <- NULL
 }
-if(!is.null(opt$desiredFilterFileName)){
-	filterSpec <- readRDS(file.path(location.output,opt$desiredFilterFileName))
+if(opt$useDesiredFilterSpec){
+	filterSpec <- desiredFilterSpec
 }
 verbosity <- opt$verbosity
 
@@ -108,7 +110,16 @@ if(varName %in% names(filterSpec)){
 	polIDsToDrop <- unique(c(polIDsToDrop,unlist(yearPolIDsToDrop)))
 	writeToFolder <- file.path(location.output,'filterResults')
 	dir.create(writeToFolder,showWarnings = F,recursive = T)
-	saveRDS(polIDsToDrop,file.path(writeToFolder,paste0(varName,'-filter.RDS')))
+	if(opt$useDesiredFilterSpec){
+		saveRDS(polIDsToDrop,file.path(writeToFolder,paste0(varName,'-desiredFilter.RDS')))
+	} else {
+		saveRDS(polIDsToDrop,file.path(writeToFolder,paste0(varName,'-filter.RDS')))
+	}
+	if(opt$useDesiredFilterSpec){
+		saveRDS(filterSpec[[varName]],file.path(writeToFolder,paste0(varName,'-desiredFilterSpec.RDS')))
+	} else {
+		saveRDS(filterSpec[[varName]],file.path(writeToFolder,paste0(varName,'-filterSpec.RDS')))
+	}
 } else {
 	cat(sprintf('Var name %s not in filter spec.\n',varName))
 }
