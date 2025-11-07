@@ -133,7 +133,7 @@ for(i in 1:length(filterSpec)){
 	if(filteredFile %in% varsFiles){
 		# for debugging filterscript
 		# varFile <- filteredFile
-		# useCluster <- min(171/2,detectCores())
+		# useClusterNumThreads <- min(171/2,detectCores())
 		# verbosity <- 9
 		# useDesiredFilterSpec <- F
 		system(paste('Rscript --max-connections=1024 --no-site-file runPolicyAnalysisFilterResults.R -f',
