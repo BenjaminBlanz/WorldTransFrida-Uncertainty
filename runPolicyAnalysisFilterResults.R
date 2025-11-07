@@ -80,6 +80,7 @@ if(useDesiredFilterSpec){
 }
 if(filterSpecsAreEqual(filterSpec[[varName]],filterSpecCached)){
 	if(verbosity>0){cat(sprintf('Valid cached filter results exist for  %s.\n',varName))}
+	return() # exit the script here the filtering is already accomplished in the files
 } else {
 	if(verbosity>0){cat(sprintf('Invalid cached filter results exist for  %s ignoring.\n',varName))}
 	filterSpecCached <- NULL
