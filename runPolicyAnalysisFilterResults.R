@@ -83,13 +83,13 @@ if(useDesiredFilterSpec){
 	filterSpecCached <- NULL
 }
 if(is.null(filterSpecCached)){
-	if(verbosity>0){cat(sprintf('  No cached filter results exist for %s.\n',varName))}
+	if(verbosity>0){cat(sprintf('  No cached %sfilter results exist for %s.\n',ifelse(useDesiredFilterSpec,'desired ',''),varName))}
 	keepRunning <- T
 } else if(filterSpecsAreEqual(filterSpec[[varName]],filterSpecCached)){
-	if(verbosity>0){cat(sprintf('  Valid cached filter results exist for %s.\n',varName))}
+	if(verbosity>0){cat(sprintf('  Valid cached %sfilter results exist for %s.\n',ifelse(useDesiredFilterSpec,'desired ',''),varName))}
 	keepRunning <- F
 } else {
-	if(verbosity>0){cat(sprintf('  Invalid cached filter results exist for %s ignoring.\n',varName))}
+	if(verbosity>0){cat(sprintf('  Invalid cached %sfilter results exist for %s ignoring.\n',ifelse(useDesiredFilterSpec,'desired ',''),varName))}
 	keepRunning <- T
 } 
 if(keepRunning){
