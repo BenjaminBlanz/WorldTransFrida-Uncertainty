@@ -113,24 +113,32 @@ if(keepRunning){
 		filterFun <- function(year.i){
 			year <- years[year.i]
 			if(is.null(filterSpec[[varName]]$years) || year %in% filterSpec[[varName]]$years){
-				if(filterSpec[[varName]]$type == 'ltabs'){ # absolute value less than filter val
+				if(filterSpec[[varName]]$type == 'ltabs' 
+					 && is.null(filterSpec[[varName]]$sowID)){ # absolute value less than filter val
 					polIDsToDrop <- varDat$polID[abs(varDat[[year]])<filterSpec[[varName]]$level]
-				} else if(filterSpec[[varName]]$type == 'gtabs'){ # absolute value greater than filter val
+				} else if(filterSpec[[varName]]$type == 'gtabs' 
+									&& is.null(filterSpec[[varName]]$sowID)){ # absolute value greater than filter val
 					polIDsToDrop <- varDat$polID[abs(varDat[[year]])>filterSpec[[varName]]$level]
-				} else if(filterSpec[[varName]]$type == 'sltabs'){ # absolute value less than filter val in specified SOW
+				} else if(filterSpec[[varName]]$type == 'ltabs' 
+									&& !is.null(filterSpec[[varName]]$sowID)){ # absolute value less than filter val in specified SOW
 					polIDsToDrop <- varDat$polID[varDat$sowID %in% filterSpec[[varName]]$sowID &
 																			 	abs(varDat[[year]])<filterSpec[[varName]]$level]
-				} else if(filterSpec[[varName]]$type == 'sgtabs'){ # absolute value greater than filter val in specified SOW
+				} else if(filterSpec[[varName]]$type == 'gtabs' 
+									&& !is.null(filterSpec[[varName]]$sowID)){ # absolute value greater than filter val in specified SOW
 					polIDsToDrop <- varDat$polID[varDat$sowID %in% filterSpec[[varName]]$sowID &
 																			 	abs(varDat[[year]])>filterSpec[[varName]]$level]
-				}	else if (filterSpec[[varName]]$type == 'ltval'){ # value less than filter val
+				}	else if (filterSpec[[varName]]$type == 'ltval' 
+									 && is.null(filterSpec[[varName]]$sowID)){ # value less than filter val
 					polIDsToDrop <- varDat$polID[varDat[[year]]<filterSpec[[varName]]$level]
-				} else if (filterSpec[[varName]]$type == 'gtval'){ # value greater than filter val
+				} else if (filterSpec[[varName]]$type == 'gtval' 
+									 && is.null(filterSpec[[varName]]$sowID)){ # value greater than filter val
 					polIDsToDrop <- varDat$polID[varDat[[year]]>filterSpec[[varName]]$level]
-				} else if (filterSpec[[varName]]$type == 'sltval'){ # value less than filter val in specified SOW
+				} else if (filterSpec[[varName]]$type == 'ltval' 
+									 && !is.null(filterSpec[[varName]]$sowID)){ # value less than filter val in specified SOW
 					polIDsToDrop <- varDat$polID[varDat$sowID %in% filterSpec[[varName]]$sowID & 
 																			 	varDat[[year]]<filterSpec[[varName]]$level]
-				} else if (filterSpec[[varName]]$type == 'sgtval'){ # value greater than filter val in specified SOW
+				} else if (filterSpec[[varName]]$type == 'gtval' 
+									 && !is.null(filterSpec[[varName]]$sowID)){ # value greater than filter val in specified SOW
 					polIDsToDrop <- varDat$polID[varDat$sowID %in% filterSpec[[varName]]$sowID &
 																			 	varDat[[year]]>filterSpec[[varName]]$level]
 				} else {
