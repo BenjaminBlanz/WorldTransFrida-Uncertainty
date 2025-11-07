@@ -112,7 +112,7 @@ if(keepRunning){
 		years <- colnames(varDat)[-c(1,2)]
 		filterFun <- function(year.i){
 			year <- years[year.i]
-			if(year %in% filterSpec[[varName]]$years){
+			if(is.null(filterSpec[[varName]]$years) || year %in% filterSpec[[varName]]$years){
 				if(filterSpec[[varName]]$type == 'ltabs'){ # absolute value less than filter val
 					polIDsToDrop <- varDat$polID[abs(varDat[[year]])<filterSpec[[varName]]$level]
 				} else if(filterSpec[[varName]]$type == 'gtabs'){ # absolute value greater than filter val
