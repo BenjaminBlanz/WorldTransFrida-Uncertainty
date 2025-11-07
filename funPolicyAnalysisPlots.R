@@ -128,5 +128,7 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 	}
 	dev.off()
 	if(verbosity>0){cat('done\n')}
-	return(list(ylims=ylims))
+	retlist <- list()
+	retlist$ylims <- ylims
+	return(retlist)
 }
