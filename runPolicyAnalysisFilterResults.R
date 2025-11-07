@@ -73,6 +73,8 @@ if(useDesiredFilterSpec){
 	if(file.exists(file.path(writeToFolder,paste0(varName,'-desiredFilterSpec.RDS')))&&
 		 file.exists(file.path(writeToFolder,paste0(varName,'-desiredFilter.RDS')))){
 		filterSpecCached <- readRDS(file.path(writeToFolder,paste0(varName,'-desiredFilterSpec.RDS')))
+	} else {
+		filterSpecCached <- NULL
 	}
 } else if(file.exists(file.path(writeToFolder,paste0(varName,'-filterSpec.RDS'))) &&
 					file.exists(file.path(writeToFolder,paste0(varName,'-filter.RDS')))){
