@@ -12,12 +12,14 @@ dir.create(figuresFolder,showWarnings = F,recursive = T)
 outputFolder <- file.path(location.output,'detectedParmSpace','PerVarFiles-RDS')
 
 if(!file.exists(file.path(outputFolder,'gdpgr.RDS'))){
-	cat('gdpgr does not exist calculating...')
+	cat('gdpgr does not exist generating...')
 	if(file.exists(file.path(outputFolder,'gdp_real_gdp_in_2021c.RDS'))){
+		cat('reading gdp...')
 		gdp <- readPerVarFile(file = file.path(outputFolder,'gdp_real_gdp_in_2021c.RDS'))
 	} else {
 		stop('missing gdp in output files\n')
 	}
+	cat('calculating...')
 	gdpgr <- gdp
 	gdpgr[,3:(ncol(gdpgr)-1)] <- (gdpgr[,4:(ncol(gdpgr))] - gdpgr[,3:(ncol(gdpgr)-1)]) /  gdpgr[,3:(ncol(gdpgr)-1)]
 	gdpgr[,ncol(gdpgr)] <- NA
@@ -29,12 +31,14 @@ if(!file.exists(file.path(outputFolder,'gdpgr.RDS'))){
 	cat('done\n')
 }
 if(!file.exists(file.path(outputFolder,'stagr.RDS'))){
-	cat('stagr does not exist calculating...')
+	cat('stagr does not exist generating...')
 	if(file.exists(file.path(outputFolder,'energy_balance_model_surface_temperature_anomaly.RDS'))){
+		cat('reading sta...')
 		sta <- readPerVarFile(file = file.path(outputFolder,'energy_balance_model_surface_temperature_anomaly.RDS'))
 	} else {
 		stop('missing sta in output files\n')
 	}
+	cat('calculating...')
 	stagr <- sta
 	stagr[,3:(ncol(stagr)-1)] <- (stagr[,4:(ncol(stagr))] - stagr[,3:(ncol(stagr)-1)]) /  stagr[,3:(ncol(stagr)-1)]
 	stagr[,ncol(stagr)] <- NA
@@ -46,14 +50,17 @@ if(!file.exists(file.path(outputFolder,'stagr.RDS'))){
 	cat('done\n')
 }
 if(!file.exists(file.path(outputFolder,'gdppc.RDS'))){
-	cat('gdppc does not exist calculating...')
+	cat('gdppc does not exist generating...')
 	if(file.exists(file.path(outputFolder,'demographics_population.RDS')) &&
 								 file.exists(file.path(outputFolder,'gdp_real_gdp_in_2021c.RDS'))){
+		cat('reading gdp...')
 		gdp <- readPerVarFile(file = file.path(outputFolder,'gdp_real_gdp_in_2021c.RDS'))
+		cat('reading pop...')
 		pop <- readPerVarFile(file = file.path(outputFolder,'demographics_population.RDS'))
 	} else {
 		stop('missing gdp_real_gdp_in_2021c.RDS or demographics_population.RDS in output files\n')
 	}
+	cat('calculating...')
 	gdppc <- gdp/pop
 	cat('saving...')
 	saveRDS(stagr,file.path(outputFolder,'gdppc.RDS'))
