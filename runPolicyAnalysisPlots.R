@@ -23,6 +23,9 @@ if(!file.exists(file.path(outputFolder,'gdpgr.RDS'))){
 	gdpgr[,ncol(gdpgr)] <- NA
 	cat('saving...')
 	saveRDS(gdpgr,file.path(outputFolder,'gdpgr.RDS'))
+	rm(gdp)
+	rm(gdpgr)
+	quietgc()
 	cat('done\n')
 }
 if(!file.exists(file.path(outputFolder,'stagr.RDS'))){
@@ -37,6 +40,27 @@ if(!file.exists(file.path(outputFolder,'stagr.RDS'))){
 	stagr[,ncol(stagr)] <- NA
 	cat('saving...')
 	saveRDS(stagr,file.path(outputFolder,'stagr.RDS'))
+	rm(sta)
+	rm(stagr)
+	quietgc()
+	cat('done\n')
+}
+if(!file.exists(file.path(outputFolder,'gdppc.RDS'))){
+	cat('gdppc does not exist calculating...')
+	if(file.exists(file.path(outputFolder,'demographics_population.RDS')) &&
+								 file.exists(file.path(outputFolder,'gdp_real_gdp_in_2021c.RDS'))){
+		gdp <- readPerVarFile(file = file.path(outputFolder,'gdp_real_gdp_in_2021c.RDS'))
+		pop <- readPerVarFile(file = file.path(outputFolder,'demographics_population.RDS'))
+	} else {
+		stop('missing gdp_real_gdp_in_2021c.RDS or demographics_population.RDS in output files\n')
+	}
+	gdppc <- gdp/pop
+	cat('saving...')
+	saveRDS(stagr,file.path(outputFolder,'gdppc.RDS'))
+	rm(gdp)
+	rm(pop)
+	rm(gdppc)
+	quietgc()
 	cat('done\n')
 }
 
@@ -63,7 +87,7 @@ timing <- toc(quiet=T)
 cat(sprintf('done\n',
 						length(polIDsToDrop)))
 rm(varDat)
-gc(verbose = F)
+quietgc()
 
 cat(sprintf('PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %s\n',
 						length(polIDsToDrop), 100*length(polIDsToDrop)/numPolIDs,

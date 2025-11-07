@@ -15,4 +15,10 @@ source('funRunFRIDA.R')
 source('funPlot.R')
 source('funParmSpace.R')
 
+quietgc <- function(){
+	sink(file='/dev/null')
+	gc()
+	sink()	
+}
+
 
