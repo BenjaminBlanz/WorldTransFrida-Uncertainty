@@ -1,3 +1,10 @@
+parFilterPolicyAnalysisResults <- function(i,varsFiles,useCluster=T,useDesiredFilterSpec=F,
+																					 droppedPolIDs=NULL,verbosity=1,
+																					 location.output=NULL,returnPolIDsToDrop=T){
+	filterPolicyAnalysisResults(varsFiles[i],useCluster,useDesiredFilterSpec,
+															droppedPolIDs,verbosity,
+															location.output,returnPolIDsToDrop)
+}
 filterPolicyAnalysisResults <- function(varFile,useCluster=T,useDesiredFilterSpec=F,
 																				droppedPolIDs=NULL,verbosity=1,
 																				location.output=NULL,returnPolIDsToDrop=T){
