@@ -103,7 +103,11 @@ varsMeta <- rbind(varsMeta,generatedVarsMeta)
 # 														varsFiles = varsFiles,filterSpec=filterSpec,
 # 														chunk.size = 1)
 
-# sequential filtering could be faster
+# sequential filtering could be faster if we applied the last filter as prefilter
+# for the nest, however as long as the data are in data.frames and not data.tables
+# the subsetting of the data.frame is so slow it negates any benefit from having to filter
+# fewer points. (will have to change the output generation in the main run script to use
+# data.tables (no converting is not the solution, takes too long))
 polIDsToDrop.lst <- list()
 cat('dropping incomplete and inf...')
 tic()
