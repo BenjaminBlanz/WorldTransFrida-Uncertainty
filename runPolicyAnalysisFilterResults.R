@@ -79,20 +79,7 @@ if(useDesiredFilterSpec){
 	filterSpecCached <- NULL
 }
 if(filterSpecsAreEqual(filterSpec[[varName]],filterSpecCached)){
-	if(verbosity>0){cat(sprintf('Valid cached filter results exist for  %s...',varName))}
-	if(returnPolIDsToDrop){
-		if(verbosity>0){cat('reading...')}
-		if(useDesiredFilterSpec){
-			polIDsToDrop <- readRDS(file.path(writeToFolder,paste0(varName,'-desiredFilter.RDS')))
-		} else {
-			polIDsToDrop <- readRDS(file.path(writeToFolder,paste0(varName,'-filter.RDS')))
-		}
-		if(verbosity>0){cat('done\n')}
-		return(polIDsToDrop)
-	} else {
-		if(verbosity>0){cat('done\n')}
-		return()
-	}
+	if(verbosity>0){cat(sprintf('Valid cached filter results exist for  %s.\n',varName))}
 } else {
 	if(verbosity>0){cat(sprintf('Invalid cached filter results exist for  %s ignoring.\n',varName))}
 	filterSpecCached <- NULL
