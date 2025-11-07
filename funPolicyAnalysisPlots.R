@@ -128,12 +128,18 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 									 											plot.numColLevels-1)),
 									 key.title = 'Number of policies',
 									 plot.axes = {
-									 	grid(col=gray(0.5,0.8),lwd=2,lty=2)
+									 	axis(1)
+									 	axis(2)
+									 	grid(col=gray(0.5,0.2),lwd=2,lty=2)
 									 	if(!is.null(selPolID)){
 									 		lines(years,varDat[varDat$polID==selPolID & varDat$sowID==selectedRunSpec$sow,as.character(years)])
 									 	}
 									 	}
 									 )
+	} else if (plotType==4){
+		
+	} else {
+		mtext('unkown plot type',3,1)
 	}
 	dev.off()
 	if(verbosity>0){cat('done\n')}
