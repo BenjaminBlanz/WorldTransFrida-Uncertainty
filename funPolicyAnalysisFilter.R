@@ -1,13 +1,18 @@
 parFilterPolicyAnalysisResults <- function(i,varsFiles,useCluster=T,useDesiredFilterSpec=F,
 																					 droppedPolIDs=NULL,verbosity=1,
-																					 location.output=NULL,returnPolIDsToDrop=T){
+																					 overrideLocation.output=NULL,returnPolIDsToDrop=T){
 	filterPolicyAnalysisResults(varsFiles[i],useCluster,useDesiredFilterSpec,
 															droppedPolIDs,verbosity,
-															location.output,returnPolIDsToDrop)
+															overrideLocation.output,returnPolIDsToDrop)
 }
 filterPolicyAnalysisResults <- function(varFile,useCluster=T,useDesiredFilterSpec=F,
 																				droppedPolIDs=NULL,verbosity=1,
-																				location.output=NULL,returnPolIDsToDrop=T){
+																				overrideLocation.output=NULL,returnPolIDsToDrop=T){
+	if(!is.null(overrideLocation.output)){
+		location.output <- overrideLocation.output
+	}
+	outputFolder <- file.path(location.output,'detectedParmSpace','PerVarFiles-RDS')
+	writeToFolder <- file.path(location.output,'filterResults')
 	if(useDesiredFilterSpec){
 		filterSpec <- desiredFilterSpec
 		if(file.exists(file.path(writeToFolder,paste0(varName,'-desiredFilterSpec.RDS')))){
@@ -103,7 +108,6 @@ filterPolicyAnalysisResults <- function(varFile,useCluster=T,useDesiredFilterSpe
 			stopCluster(clFiltering)
 		}
 		polIDsToDrop <- unique(c(polIDsToDrop,unlist(yearPolIDsToDrop)))
-		writeToFolder <- file.path(location.output,'filterResults')
 		dir.create(writeToFolder,showWarnings = F,recursive = T)
 		if(useDesiredFilterSpec){
 			saveRDS(polIDsToDrop,file.path(writeToFolder,paste0(varName,'-desiredFilter.RDS')))

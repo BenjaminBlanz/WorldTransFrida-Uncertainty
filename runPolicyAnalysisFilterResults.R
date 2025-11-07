@@ -30,7 +30,9 @@ if(is.null(opt$varFile)){
 }
 useCluster <- opt$useCluster
 if(!is.null(opt$location.output)){
-	location.output <- opt$location.output
+	overrideLocation.output <- opt$location.output
+} else {
+	overrideLocation.output <- location.output
 }
 if(!is.null(opt$droppedPolIDs)){
 	polIDsToDrop <- readRDS(file.path(location.output,opt$droppedPolIDs))
@@ -45,8 +47,6 @@ if(opt$useDesiredFilterSpec){
 }
 verbosity <- opt$verbosity
 
-outputFolder <- file.path(location.output,'detectedParmSpace','PerVarFiles-RDS')
-
 filterPolicyAnalysisResults(varFile,useCluster,useDesiredFilterSpec,
-														droppedPolIDs,verbosity,location.output,
+														droppedPolIDs,verbosity,overrideLocation.output,
 														returnPolIDsToDrop=FALSE)
