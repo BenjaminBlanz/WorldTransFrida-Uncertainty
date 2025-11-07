@@ -167,7 +167,7 @@ polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
 
 # plotting baseline ####
 firstThingsToPlot <- c(69,112,106,107)
-thingsToPlot <- c(firstThingsToPlot)#,seq(1:length(varsFiles))[-firstThingsToPlot])
+thingsToPlot <- c(firstThingsToPlot,seq(1:length(varsFiles))[-firstThingsToPlot])
 clPlotting <- makeForkCluster(numPlotThreads)
 for(plotType in plotTypes){
 	cat(sprintf('plotting %i vars with %i threads plot type %s...',
