@@ -236,7 +236,7 @@ for(i in 1:length(desiredFilterSpec)){
 	}
 	clPlotting <- makeForkCluster(numPlotThreads)
 	for(plotType in plotTypes){
-		funFigFolder <- file.path(figuresFolder,paste0('plotType',plotType,'-desiredFilters-',paste0(1:i,collapse = '-')))
+		funFigFolder <- file.path(figuresFolder,paste0('plotType',plotType,'-desiredFilters-',i))
 		cat(sprintf('plotting plot type %s\n',plotType))
 		logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
 		colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
@@ -266,6 +266,23 @@ if(selectedRunSpec$optimize=='max'){
 if(selectedRunSpec$optimize=='min'){
 	selPolID <- setForSelection$polID[which.min(setForSelection[[as.character(selectedRunSpec$year)]])]
 }
+clPlotting <- makeForkCluster(numPlotThreads)
+for(plotType in plotTypes){
+	funFigFolder <- file.path(figuresFolder,paste0('plotType',plotType,'-desiredFilters-',i,'-withSelPolID'))
+	cat(sprintf('plotting plot type %s\n',plotType))
+	logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
+	colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
+	parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
+												varsFiles=varsFiles,
+												polIDsToDrop=polIDsToDrop,
+												funFigFolder=funFigFolder,
+												plotType=plotType,
+												colLevels=colLevels,
+												baselinePlotProps=baselinePlotProps,
+												selPolID=selPolID)
+}
+stopCluster(clPlotting)
+
 # get information on the selPolID
 pdp.lst <- readRDS(file.path(location.output,'pdp.lst.RDS'))
 pdpMeta <- readRDS(file.path(location.output,'pdpMeta.RDS'))
@@ -287,20 +304,3 @@ for(domID in colnames(samplePoints)){
 	}
 }
 write(selPolDescStrs,file.path(figuresFolder,'selRunPolDesc.csv'))
-
-clPlotting <- makeForkCluster(numPlotThreads)
-for(plotType in plotTypes){
-	funFigFolder <- file.path(figuresFolder,paste0('plotType',plotType,'-desiredFilters-',paste0(1:i,collapse = '-'),'-withSelPolID'))
-	cat(sprintf('plotting plot type %s\n',plotType))
-	logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
-	colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
-	parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
-												varsFiles=varsFiles,
-												polIDsToDrop=polIDsToDrop,
-												funFigFolder=funFigFolder,
-												plotType=plotType,
-												colLevels=colLevels,
-												baselinePlotProps=baselinePlotProps,
-												selPolID=selPolID)
-}
-stopCluster(clPlotting)
