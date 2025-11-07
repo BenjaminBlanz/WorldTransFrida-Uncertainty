@@ -114,10 +114,11 @@ filterSpec$gdpgr$allowedTransgressions <- 2
 filterSpec$stagr <- list()
 filterSpec$stagr$type <- 'sgtabs'
 filterSpec$stagr$level <- 0.5
-filterSpec$stagr$allowedTransgressions <- 2
+filterSpec$stagr$allowedTransgressions <- 0
 filterSpec$gdp_real_gdp_in_2021c <- list()
 filterSpec$gdp_real_gdp_in_2021c$type <- 'ltval'
 filterSpec$gdp_real_gdp_in_2021c$level <- 5e4 # roughly the 1980 level of GDP
+filterSpec$gdp_real_gdp_in_2021c$allowedTransgressions <- 2
 
 #these are the filters that drop policies with "undersirable" outcomes
 desiredFilterSpec <- list()
