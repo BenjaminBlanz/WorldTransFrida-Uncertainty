@@ -97,6 +97,11 @@ cat('dropping incomplete and inf...')
 tic()
 cat('reading file to determine incompletes...')
 varDat <- readPerVarFile(file.path(outputFolder,varsFiles[1]))
+# if the last column is entirely NA this is probably
+# a generated variable, drop that col to not mess with the filter
+if(sum(is.na(varDat[,ncol(varDat)]))==nrow(varDat)){
+	varDat <- varDat[,-ncol(varDat)]
+}
 numPolIDs <- length(unique(varDat$polID))
 cat('filtering...')
 polIDsToDrop <- polIDsToDrop.lst[[1]] <- unique(varDat$polID[!complete.cases(varDat) | !is.finite(varDat[,ncol(varDat)])])
