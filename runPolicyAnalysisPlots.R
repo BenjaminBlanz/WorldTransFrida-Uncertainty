@@ -60,10 +60,16 @@ numPolIDs <- length(unique(varDat$polID))
 cat('filtering...')
 polIDsToDrop <- polIDsToDrop.lst[[1]] <- unique(varDat$polID[!complete.cases(varDat) | !is.finite(varDat[,ncol(varDat)])])
 timing <- toc(quiet=T)
-cat(sprintf('done: %i  dropped %s\n',
-						length(polIDsToDrop),timing$callback_msg))
+cat(sprintf('done\n',
+						length(polIDsToDrop)))
 rm(varDat)
 gc(verbose = F)
+
+cat(sprintf('PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %s\n',
+						length(polIDsToDrop), 100*length(polIDsToDrop)/numPolIDs,
+						length(polIDsToDrop.lst[[1]]),
+						length(polIDsToDrop)-0,
+						timing$callback_msg))
 for(i in 1:length(filterSpec)){
 	filteredFile <- paste0(names(filterSpec)[i],'.RDS')
 	cat(sprintf('Filter %i of %i ',i,length(filterSpec)))
@@ -94,14 +100,17 @@ for(i in 1:length(filterSpec)){
 	}
 	timing <- toc(quiet=T)
 	cat(sprintf('PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %s\n',
-							length(polIDsToDrop), length(polIDsToDrop)/numPolIDs,
+							length(polIDsToDrop), 100*length(polIDsToDrop)/numPolIDs,
 							length(polIDsToDrop.lst[[i+1]]),
 							length(polIDsToDrop)-length(polIDsToDrop.old),
 							timing$callback_msg))
+	if(length(polIDsToDrop) >= numPolIDs){
+		stop('All policies have been filtered out, nothing left to do\n')
+	}
 }
 polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
-saveRDS(polIDsToDrop,file.path(location.output,'droppedPolIDs.RDS'))
-polIDsToDrop <- readRDS(file.path(location.output,'droppedPolIDs.RDS'))
+# saveRDS(polIDsToDrop,file.path(location.output,'droppedPolIDs.RDS'))
+# polIDsToDrop <- readRDS(file.path(location.output,'droppedPolIDs.RDS'))
 firstThingsToPlot <- c(69,112,106,107)
 thingsToPlot <- c(firstThingsToPlot)#,seq(1:length(varsFiles))[-firstThingsToPlot])
 clPlotting <- makeForkCluster(numPlotThreads)
@@ -157,7 +166,7 @@ for(i in 1:length(desiredFilterSpec)){
 	}
 	timing <- toc(quiet=T)
 	cat(sprintf('PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %s\n',
-							length(polIDsToDrop),length(polIDsToDrop)/numPolIDs,
+							length(polIDsToDrop),100*length(polIDsToDrop)/numPolIDs,
 							length(polIDsToDropDesired.lst[[i+1]]),
 							length(polIDsToDrop)-length(polIDsToDrop.old),
 							timing$callback_msg))
