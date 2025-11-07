@@ -114,7 +114,7 @@ filterSpec$inflation_inflation_rate$level <- 0.5
 filterSpec$inflation_inflation_rate$allowedTransgressions <- 2
 filterSpec$real_gdp_growth_rate <- list()
 filterSpec$real_gdp_growth_rate$type <- 'ltval'
-filterSpec$real_gdp_growth_rate$level <- -0.2
+filterSpec$real_gdp_growth_rate$level <- -0.1
 filterSpec$real_gdp_growth_rate$allowedTransgressions <- 2
 filterSpec$surface_temperature_anomaly_growth_rate <- list()
 filterSpec$surface_temperature_anomaly_growth_rate$type <- 'gtabs'
