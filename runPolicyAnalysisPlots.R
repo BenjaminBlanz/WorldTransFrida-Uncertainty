@@ -167,7 +167,7 @@ polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
 
 # plotting baseline ####
 firstThingsToPlot <- c(69,112,106,107)
-thingsToPlot <- c(firstThingsToPlot,seq(1:length(varsFiles))[-firstThingsToPlot])
+thingsToPlot <- c(firstThingsToPlot)#,seq(1:length(varsFiles))[-firstThingsToPlot])
 clPlotting <- makeForkCluster(numPlotThreads)
 for(plotType in plotTypes){
 	cat(sprintf('plotting %i vars with %i threads plot type %s...',
@@ -219,7 +219,7 @@ for(i in 1:length(desiredFilterSpec)){
 								 '-f', filteredFile, '-c',min(171/2,detectCores()), '-o',location.output,
 								 '-d',TRUE))
 		polIDsToDropDesired.lst[[i+1]] <- readRDS(file.path(location.output,'filterResults',
-																								 paste0(names(desiredFilterSpec)[i],'-filter.RDS')))
+																								 paste0(names(desiredFilterSpec)[i],'-desiredFilter.RDS')))
 		polIDsToDrop.old <- polIDsToDrop
 		polIDsToDrop <- sort(unique(c(polIDsToDrop,unlist(polIDsToDropDesired.lst[[i+1]]))))
 	} else {
@@ -236,7 +236,7 @@ for(i in 1:length(desiredFilterSpec)){
 	}
 	clPlotting <- makeForkCluster(numPlotThreads)
 	for(plotType in plotTypes){
-		funFigFolder <- file.path(location.output,'figures',paste0('plotType',plotType,'-desiredFilters-',paste0(1:i,collapse = '-')))
+		funFigFolder <- file.path(figuresFolder,paste0('plotType',plotType,'-desiredFilters-',paste0(1:i,collapse = '-')))
 		cat(sprintf('plotting plot type %s\n',plotType))
 		logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
 		colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
@@ -250,3 +250,57 @@ for(i in 1:length(desiredFilterSpec)){
 	}
 	stopCluster(clPlotting)
 }
+
+# selected run ####
+selFilePath <- file.path(outputFolder,paste0(selectedRunSpec$var,'.RDS'))
+if(!file.exists(selFilePath)){
+	stop(sprintf('File selected for individual run %s does not exist.\n',selFilePath))
+} 
+varDat <- readPerVarFile(selFilePath)
+setForSelection <- varDat[!varDat$polID %in% polIDsToDrop & 
+														varDat$sowID==selectedRunSpec$sow,
+													c('polID',as.character(selectedRunSpec$year))])
+if(selectedRunSpec$optimize=='max'){
+	selPolID <- setForSelection$polID[which.max(setForSelection[[as.character(selectedRunSpec$year)]])]
+}
+if(selectedRunSpec$optimize=='min'){
+	selPolID <- setForSelection$polID[which.min(setForSelection[[as.character(selectedRunSpec$year)]])]
+}
+# get information on the selPolID
+pdp.lst <- readRDS(file.path(location.output,'pdp.lst.RDS'))
+pdpMeta <- readRDS(file.path(location.output,'pdpMeta.RDS'))
+jointPolicies <- readRDS(file.path(location.output,'jointPolicies.RDS'))
+samplePoints <- readRDS(file.path(location.output,'samplePoints.RDS'))
+
+selPolDescStrs <- c()
+i <- 0
+for(domID in colnames(samplePoints)){
+	if(!is.na(samplePoints[selPolID,domID])){
+		i <- i+1
+		pdpName <- pdpMeta$domain[pdpMeta$domID==domID][1]
+		sdmID <- jointPolicies$sdmID[jointPolicies$domID==domID & jointPolicies$dplID==samplePoints[selPolID,domID]]
+		if(!is.na(pdpMeta$subdomain[pdpMeta$domID==domID & pdpMeta$sdmID==sdmID])){
+			pdpName <- paste0(pdpName,'+',pdpMeta$subdomain[pdpMeta$domID==domID & pdpMeta$sdmID==sdmID])
+		} 
+		sdpID <- jointPolicies$sdpID[jointPolicies$domID==domID & jointPolicies$dplID==samplePoints[selPolID,domID]]
+		selPolDescStrs <-c(selPolDescStrs, pdp.lst[[pdpName]][pdp.lst[[pdpName]]$polID==sdpID,2])
+	}
+}
+write(selPolDescStrs,file.path(figuresFolder,'selRunPolDesc.csv'))
+
+clPlotting <- makeForkCluster(numPlotThreads)
+for(plotType in plotTypes){
+	funFigFolder <- file.path(figuresFolder,paste0('plotType',plotType,'-desiredFilters-',paste0(1:i,collapse = '-'),'-withSelPolID'))
+	cat(sprintf('plotting plot type %s\n',plotType))
+	logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
+	colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
+	parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
+												varsFiles=varsFiles,
+												polIDsToDrop=polIDsToDrop,
+												funFigFolder=funFigFolder,
+												plotType=plotType,
+												colLevels=colLevels,
+												baselinePlotProps=baselinePlotProps,
+												selPolID=selPolID)
+}
+stopCluster(clPlotting)

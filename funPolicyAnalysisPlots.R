@@ -5,7 +5,7 @@
 #  3: contourplot of medians overlayed with contour of sow
 #  
 parPlotPolResults<-function(i,varsFiles,polIDsToDrop,funFigFolder=NULL,colLevels=NULL,plotType=1,verbosity=0,
-														baselinePlotProps=NULL){
+														baselinePlotProps=NULL,selPolID=NULL){
 	if(!is.null(baselinePlotProps)){
 		ylims <- baselinePlotProps[[i]]$ylims
 	} else {
@@ -16,13 +16,15 @@ parPlotPolResults<-function(i,varsFiles,polIDsToDrop,funFigFolder=NULL,colLevels
 												plotType=plotType,
 												colLevels=colLevels,
 												verbosity=verbosity,
-												ylims=ylims))
+												ylims=ylims,
+												selPolID=selPolID))
 }
 plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 													 plotType=1,
 													 colLevels=NULL,
 													 verbosity=9,
-													 ylims=NULL){
+													 ylims=NULL,
+													 selPolID=NULL){
 	if(is.null(funFigFolder)){
 		funFigFolder <- file.path(location.output,'figures',paste0('plotType',plotType))
 	}
@@ -124,7 +126,14 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 									 main=varFullName,ylab=varUnit,
 									 col = rev(paletteer_c(ifelse(plotType==2,plot.palletteName,plot.palletteNameSOW),
 									 											plot.numColLevels-1)),
-									 key.title = 'Number of policies')
+									 key.title = 'Number of policies',
+									 plot.axes = {
+									 	grid(col=gray(0.5,0.8),lwd=2,lty=2)
+									 	if(!is.null(selPolID)){
+									 		lines(years,varDat[varDat$polID==selPolID & varDat$sowID==selectedRunSpec$sow,as.character(years)])
+									 	}
+									 	}
+									 )
 	}
 	dev.off()
 	if(verbosity>0){cat('done\n')}
