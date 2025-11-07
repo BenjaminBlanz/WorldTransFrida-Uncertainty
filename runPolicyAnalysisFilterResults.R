@@ -70,18 +70,27 @@ writeToFolder <- file.path(location.output,'filterResults')
 varName <- tools::file_path_sans_ext(varFile)
 if(useDesiredFilterSpec){
 	filterSpec <- desiredFilterSpec
-	if(file.exists(file.path(writeToFolder,paste0(varName,'-desiredFilterSpec.RDS')))){
+	if(file.exists(file.path(writeToFolder,paste0(varName,'-desiredFilterSpec.RDS')))&&
+		 file.exists(file.path(writeToFolder,paste0(varName,'-desiredFilter.RDS')))){
 		filterSpecCached <- readRDS(file.path(writeToFolder,paste0(varName,'-desiredFilterSpec.RDS')))
 	}
-} else if(file.exists(file.path(writeToFolder,paste0(varName,'-filterSpec.RDS')))){
+} else if(file.exists(file.path(writeToFolder,paste0(varName,'-filterSpec.RDS'))) &&
+					file.exists(file.path(writeToFolder,paste0(varName,'-filter.RDS')))){
 	filterSpecCached <- readRDS(file.path(writeToFolder,paste0(varName,'-filterSpec.RDS')))
 } else {
 	filterSpecCached <- NULL
 }
-if(filterSpecsAreEqual(filterSpec[[varName]],filterSpecCached)){
+if(is.null(filterSpecCached)){
+	if(verbosity>0){cat(sprintf('No cached filter results exist for %s.\n',varName))}
+	keepRunning <- T
+} else if(filterSpecsAreEqual(filterSpec[[varName]],filterSpecCached)){
 	if(verbosity>0){cat(sprintf('Valid cached filter results exist for %s.\n',varName))}
+	keepRunning <- F
 } else {
 	if(verbosity>0){cat(sprintf('Invalid cached filter results exist for %s ignoring.\n',varName))}
+	keepRunning <- T
+} 
+if(keepRunning){
 	filterSpecCached <- NULL
 	if(varName %in% names(filterSpec)){
 		if(verbosity>0){cat(sprintf('reading %s...',varName))}
