@@ -112,14 +112,14 @@ filterSpec$inflation_inflation_rate <- list()
 filterSpec$inflation_inflation_rate$type <- 'gtabs'
 filterSpec$inflation_inflation_rate$level <- 0.5
 filterSpec$inflation_inflation_rate$allowedTransgressions <- 2
-filterSpec$gdpgr <- list()
-filterSpec$gdpgr$type <- 'gtabs'
-filterSpec$gdpgr$level <- 0.5
-filterSpec$gdpgr$allowedTransgressions <- 2
-filterSpec$stagr <- list()
-filterSpec$stagr$type <- 'sgtabs'
-filterSpec$stagr$level <- 0.5
-filterSpec$stagr$allowedTransgressions <- 0
+filterSpec$real_gdp_growth_rate <- list()
+filterSpec$real_gdp_growth_rate$type <- 'ltval'
+filterSpec$real_gdp_growth_rate$level <- -0.2
+filterSpec$real_gdp_growth_rate$allowedTransgressions <- 2
+filterSpec$surface_temperature_anomaly_growth_rate <- list()
+filterSpec$surface_temperature_anomaly_growth_rate$type <- 'sgtabs'
+filterSpec$surface_temperature_anomaly_growth_rate$level <- 0.5
+filterSpec$surface_temperature_anomaly_growth_rate$allowedTransgressions <- 0
 filterSpec$gdp_real_gdp_in_2021c <- list()
 filterSpec$gdp_real_gdp_in_2021c$type <- 'ltval'
 filterSpec$gdp_real_gdp_in_2021c$level <- 5e4 # roughly the 1980 level of GDP
@@ -134,9 +134,9 @@ desiredFilterSpec$gdp_real_gdp_in_2021c$level <- 1.5e5 # a bit less than the 202
 desiredFilterSpec$gdp_real_gdp_in_2021c$allowedTransgressions <- 4 # ~37% of cases with default 11 runs
 desiredFilterSpec$gdp_real_gdp_in_2021c$years <- 2023:2150 # the years in which this filter applies
 desiredFilterSpec$energy_balance_model_surface_temperature_anomaly <- list()
-desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$type <- 'gtval'
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$type <- 'sgtval'
 desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$level <- 2
-desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$allowedTransgressions <- 5 # ~46% of cases with default 11 runs
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$sowID <- 5 # the median case
 desiredFilterSpec$gdp_future_year_in_recession <- list()
 desiredFilterSpec$gdp_future_year_in_recession$type <- 'gtval'
 desiredFilterSpec$gdp_future_year_in_recession$level <- 10
