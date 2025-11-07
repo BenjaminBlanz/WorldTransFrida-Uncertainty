@@ -104,19 +104,19 @@ if(sum(is.na(varDat[,ncol(varDat)]))==nrow(varDat)){
 }
 numPolIDs <- length(unique(varDat$polID))
 cat('filtering...')
-polIDsToDrop <- polIDsToDrop.lst[[1]] <- unique(varDat$polID[!complete.cases(varDat) | !is.finite(varDat[,ncol(varDat)])])
+polIDsToDrop.lst[[1]] <- unique(varDat$polID[!complete.cases(varDat) | !is.finite(varDat[,ncol(varDat)])])
 timing <- toc(quiet=T)
 cat('done\n')
 rm(varDat)
 quietgc()
 
-cat(sprintf('PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %s\n',
+cat('Filter 0 filtering for incompletes and infinities filter applies in all years\n')
+polIDsToDrop <- polIDsToDrop.lst[[1]] 
+cat(sprintf('  PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %s\n',
 						length(polIDsToDrop), 100*length(polIDsToDrop)/numPolIDs,
 						length(polIDsToDrop.lst[[1]]),
 						length(polIDsToDrop)-0,
 						timing$callback_msg))
-# refresh this for when running interactively so the output is actually correct
-polIDsToDrop <- polIDsToDrop.lst[[1]] 
 for(i in 1:length(filterSpec)){
 	filteredFile <- paste0(names(filterSpec)[i],'.RDS')
 	cat(sprintf('Filter %i of %i ',i,length(filterSpec)))
@@ -127,6 +127,14 @@ for(i in 1:length(filterSpec)){
 	}
 	if(!is.null(filterSpec[[i]]$allowedTransgressions)){
 		cat(sprintf(' number of allowed transgressions per year %i',filterSpec[[i]]$allowedTransgressions))
+	}
+	if(!is.null(filterSpec[[i]]$years)){
+		rangeFilterYears <- range(filterSpec[[i]]$years)
+		numFilterYears <- length(filterSpec[[i]]$years)
+		numFilterYearsStr <- ifelse(numFilterYears==(diff(rangeFilterYears)+1),'all',as.character(numFilterYears))
+		cat(sprintf(' filter applies in %s years between %i and %i',numFilterYearsStr,rangeFilterYears[1],rangeFilterYears[2]))
+	} else {
+		cat(' filter applies in all years')
 	}
 	cat('\n')
 	tic()
@@ -146,7 +154,7 @@ for(i in 1:length(filterSpec)){
 		cat('no such file\n')
 	}
 	timing <- toc(quiet=T)
-	cat(sprintf('PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %s\n',
+	cat(sprintf('  PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %s\n',
 							length(polIDsToDrop), 100*length(polIDsToDrop)/numPolIDs,
 							length(polIDsToDrop.lst[[i+1]]),
 							length(polIDsToDrop)-length(polIDsToDrop.old),
@@ -156,8 +164,8 @@ for(i in 1:length(filterSpec)){
 	}
 }
 polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
-# saveRDS(polIDsToDrop,file.path(location.output,'droppedPolIDs.RDS'))
-# polIDsToDrop <- readRDS(file.path(location.output,'droppedPolIDs.RDS'))
+
+# plotting baseline ####
 firstThingsToPlot <- c(69,112,106,107)
 thingsToPlot <- c(firstThingsToPlot)#,seq(1:length(varsFiles))[-firstThingsToPlot])
 clPlotting <- makeForkCluster(numPlotThreads)
@@ -167,19 +175,18 @@ for(plotType in plotTypes){
 	tic()
 	logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
 	colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
-	parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
-												varsFiles=varsFiles,
-												polIDsToDrop=polIDsToDrop,
-												funFigFolder=NULL,
-												plotType=plotType,
-												colLevels=colLevels)
+	baselinePlotProps <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
+																	 varsFiles=varsFiles,
+																	 polIDsToDrop=polIDsToDrop,
+																	 funFigFolder=NULL,
+																	 plotType=plotType,
+																	 colLevels=colLevels)
 	timing <- toc(quiet=T)
 	cat(sprintf('done %s\n',timing$callback_msg))
 }
 stopCluster(clPlotting)
 
-# desired filtering ####
-saveRDS(desiredFilterSpec,file.path(location.output,'desiredFilterSpec.RDS'))
+# desired filtering  and plotting ####
 polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
 polIDsToDropDesired.lst <- list()
 for(i in 1:length(desiredFilterSpec)){
@@ -193,17 +200,20 @@ for(i in 1:length(desiredFilterSpec)){
 	if(!is.null(desiredFilterSpec[[i]]$allowedTransgressions)){
 		cat(sprintf(' number of allowed transgressions per year %i',desiredFilterSpec[[i]]$allowedTransgressions))
 	}
-	cat('\n  ')
+	if(!is.null(filterSpec[[i]]$years)){
+		rangeFilterYears <- range(filterSpec[[i]]$years)
+		numFilterYears <- length(filterSpec[[i]]$years)
+		numFilterYearsStr <- ifelse(numFilterYears==(diff(rangeFilterYears)+1),'all',as.character(numFilterYears))
+		cat(sprintf(' filter applies in %s years between %i and %i',numFilterYearsStr,rangeFilterYears[1],rangeFilterYears[2]))
+	} else {
+		cat(' filter applies in all years')
+	}
+	cat('\n')
 	tic()
 	if(filteredFile %in% varsFiles){
-		# for debugging filterscript
-		# varFile <- filteredFile
-		# useCluster <- T
-		# verbosity <- 9
-		#
 		system(paste('Rscript --max-connections=1024 --no-site-file runPolicyAnalysisFilterResults.R', 
 								 '-f', filteredFile, '-c',min(171/2,detectCores()), '-o',location.output,
-								 '-d','desiredFilterSpec.RDS'))
+								 '-d',TRUE))
 		polIDsToDropDesired.lst[[i+1]] <- readRDS(file.path(location.output,'filterResults',
 																								 paste0(names(desiredFilterSpec)[i],'-filter.RDS')))
 		polIDsToDrop.old <- polIDsToDrop
@@ -212,9 +222,9 @@ for(i in 1:length(desiredFilterSpec)){
 		cat('no such file\n')
 	}
 	timing <- toc(quiet=T)
-	cat(sprintf('PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %s\n',
-							length(polIDsToDrop),100*length(polIDsToDrop)/numPolIDs,
-							length(polIDsToDropDesired.lst[[i+1]]),
+	cat(sprintf('  PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %s\n',
+							length(polIDsToDrop), 100*length(polIDsToDrop)/numPolIDs,
+							length(polIDsToDrop.lst[[i+1]]),
 							length(polIDsToDrop)-length(polIDsToDrop.old),
 							timing$callback_msg))
 	if(length(polIDsToDrop) >= numPolIDs){
@@ -231,7 +241,8 @@ for(i in 1:length(desiredFilterSpec)){
 													polIDsToDrop=polIDsToDrop,
 													funFigFolder=funFigFolder,
 													plotType=plotType,
-													colLevels=colLevels)
+													colLevels=colLevels,
+													baselinePlotProps=baselinePlotProps)
 	}
 	stopCluster(clPlotting)
 }
