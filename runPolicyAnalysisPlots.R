@@ -175,7 +175,7 @@ for(plotType in plotTypes){
 	tic()
 	logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
 	colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
-	baselinePlotProps <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
+	baselinePlotPropsParRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
 																	 varsFiles=varsFiles,
 																	 polIDsToDrop=polIDsToDrop,
 																	 funFigFolder=NULL,
@@ -185,6 +185,10 @@ for(plotType in plotTypes){
 	cat(sprintf('done %s\n',timing$callback_msg))
 }
 stopCluster(clPlotting)
+baselinePlotProps <- list()
+for(p.i in 1:length(baselinePlotPropsParRes)){
+	baselinePlotProps[[thingsToPlot[p.i]]] <- baselinePlotPropsParRes[[p.i]]
+}
 
 # desired filtering  and plotting ####
 polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
