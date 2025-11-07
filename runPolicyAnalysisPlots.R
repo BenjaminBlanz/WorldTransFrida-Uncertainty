@@ -130,7 +130,7 @@ for(i in 1:length(filterSpec)){
 		# verbosity <- 9
 		#
 		system(paste('Rscript --max-connections=1024 --no-site-file runPolicyAnalysisFilterResults.R -f',
-								 filteredFile, '-c',min(171,detectCores()), '-o',location.output))
+								 filteredFile, '-c',min(171/2,detectCores()), '-o',location.output))
 		polIDsToDrop.lst[[i+1]] <- readRDS(file.path(location.output,'filterResults',
 																					paste0(names(filterSpec)[i],'-filter.RDS')))
 		polIDsToDrop.old <- polIDsToDrop
@@ -195,7 +195,7 @@ for(i in 1:length(desiredFilterSpec)){
 		# verbosity <- 9
 		#
 		system(paste('Rscript --max-connections=1024 --no-site-file runPolicyAnalysisFilterResults.R', 
-								 '-f', filteredFile, '-c','TRUE', '-o',location.output,
+								 '-f', filteredFile, '-c',min(171/2,detectCores()), '-o',location.output,
 								 '-d','desiredFilterSpec.RDS'))
 		polIDsToDropDesired.lst[[i+1]] <- readRDS(file.path(location.output,'filterResults',
 																								 paste0(names(desiredFilterSpec)[i],'-filter.RDS')))
