@@ -10,7 +10,34 @@ filterPolicyAnalysisResults <- function(varFile,useCluster=T,useDesiredFilterSpe
 																				location.output=NULL,returnPolIDsToDrop=T){
 	if(useDesiredFilterSpec){
 		filterSpec <- desiredFilterSpec
+		if(file.exists(file.path(writeToFolder,paste0(varName,'-desiredFilterSpec.RDS')))){
+			filterSpecCached <- readRDS(file.path(writeToFolder,paste0(varName,'-desiredFilterSpec.RDS')))
+		}
+	} else if(file.exists(file.path(writeToFolder,paste0(varName,'-filterSpec.RDS')))){
+		filterSpecCached <- readRDS(file.path(writeToFolder,paste0(varName,'-filterSpec.RDS')))
+	} else {
+		filterSpecCached <- NULL
 	}
+	if(filterSpecsAreEqual(filterSpec,filterSpecCached)){
+		if(verbosity>0){cat(sprintf('Valid cached filter results exist for  %s...',varName))}
+		if(returnPolIDsToDrop){
+			if(verbosity>0){cat('reading...')}
+			if(useDesiredFilterSpec){
+				polIDsToDrop <- readRDS(file.path(writeToFolder,paste0(varName,'-desiredFilter.RDS')))
+			} else {
+				polIDsToDrop <- readRDS(file.path(writeToFolder,paste0(varName,'-filter.RDS')))
+			}
+			if(verbosity>0){cat('done\n')}
+			return(polIDsToDrop)
+		} else {
+			if(verbosity>0){cat('done\n')}
+			return()
+		}
+	} else {
+		if(verbosity>0){cat(sprintf('Invalid cached filter results exist for  %s ignoring',varName))}
+		filterSpecCached <- NULL
+	}
+			
 	varName <- tools::file_path_sans_ext(varFile)
 	if(varName %in% names(filterSpec)){
 		if(verbosity>0){cat(sprintf('reading %s...',varName))}
@@ -95,4 +122,20 @@ filterPolicyAnalysisResults <- function(varFile,useCluster=T,useDesiredFilterSpe
 	if(returnPolIDsToDrop){
 		return(polIDsToDrop)
 	}
+}
+filterSpecsAreEqual <- function(filterSpec1,filterSpec2){
+	if(length(filterSpec1)!=length(filterSpec2)){
+		return(F)
+	}
+	for(entry in names(filterSpec1)){
+		if(length(filterSpec1[[entry]])!=length(filterSpec2[[entry]])){
+			return(F)
+		}
+		for(subentry.i in 1:length(filterSpec1[[entry]])){
+			if(filterSpec1[[entry]][subentry.i]!=filterSpec2[[entry]][subentry.i]){
+				return(F)
+			}
+		}
+	}
+	return(T)
 }
