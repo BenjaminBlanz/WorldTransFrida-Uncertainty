@@ -79,9 +79,9 @@ if(useDesiredFilterSpec){
 	filterSpecCached <- NULL
 }
 if(filterSpecsAreEqual(filterSpec[[varName]],filterSpecCached)){
-	if(verbosity>0){cat(sprintf('Valid cached filter results exist for  %s.\n',varName))}
+	if(verbosity>0){cat(sprintf('Valid cached filter results exist for %s.\n',varName))}
 } else {
-	if(verbosity>0){cat(sprintf('Invalid cached filter results exist for  %s ignoring.\n',varName))}
+	if(verbosity>0){cat(sprintf('Invalid cached filter results exist for %s ignoring.\n',varName))}
 	filterSpecCached <- NULL
 	if(varName %in% names(filterSpec)){
 		if(verbosity>0){cat(sprintf('reading %s...',varName))}
