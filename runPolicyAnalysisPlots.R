@@ -63,7 +63,7 @@ if(!file.exists(file.path(outputFolder,'gdppc.RDS'))){
 	cat('calculating...')
 	gdppc <- gdp/pop
 	cat('saving...')
-	saveRDS(stagr,file.path(outputFolder,'gdppc.RDS'))
+	saveRDS(gdppc,file.path(outputFolder,'gdppc.RDS'))
 	rm(gdp)
 	rm(pop)
 	rm(gdppc)
