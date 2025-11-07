@@ -12,6 +12,7 @@ dir.create(figuresFolder,showWarnings = F,recursive = T)
 outputFolder <- file.path(location.output,'detectedParmSpace','PerVarFiles-RDS')
 
 if(!file.exists(file.path(outputFolder,'gdpgr.RDS'))){
+	tic()
 	cat('gdpgr does not exist generating...')
 	if(file.exists(file.path(outputFolder,'gdp_real_gdp_in_2021c.RDS'))){
 		cat('reading gdp...')
@@ -29,8 +30,10 @@ if(!file.exists(file.path(outputFolder,'gdpgr.RDS'))){
 	rm(gdpgr)
 	quietgc()
 	cat('done\n')
+	toc()
 }
 if(!file.exists(file.path(outputFolder,'stagr.RDS'))){
+	tic()
 	cat('stagr does not exist generating...')
 	if(file.exists(file.path(outputFolder,'energy_balance_model_surface_temperature_anomaly.RDS'))){
 		cat('reading sta...')
@@ -48,8 +51,10 @@ if(!file.exists(file.path(outputFolder,'stagr.RDS'))){
 	rm(stagr)
 	quietgc()
 	cat('done\n')
+	toc()
 }
 if(!file.exists(file.path(outputFolder,'gdppc.RDS'))){
+	tic()
 	cat('gdppc does not exist generating...')
 	if(file.exists(file.path(outputFolder,'demographics_population.RDS')) &&
 								 file.exists(file.path(outputFolder,'gdp_real_gdp_in_2021c.RDS'))){
@@ -61,7 +66,7 @@ if(!file.exists(file.path(outputFolder,'gdppc.RDS'))){
 		stop('missing gdp_real_gdp_in_2021c.RDS or demographics_population.RDS in output files\n')
 	}
 	cat('calculating...')
-	gdppc <- gdp/pop
+	gdppc <- gdp/(pop/1000) # divide by 1000 so that the unit is $/p instead of 1000$/p
 	cat('saving...')
 	saveRDS(gdppc,file.path(outputFolder,'gdppc.RDS'))
 	rm(gdp)
@@ -69,6 +74,7 @@ if(!file.exists(file.path(outputFolder,'gdppc.RDS'))){
 	rm(gdppc)
 	quietgc()
 	cat('done\n')
+	toc()
 }
 
 # read files list ####
