@@ -78,7 +78,7 @@ if(useDesiredFilterSpec){
 } else {
 	filterSpecCached <- NULL
 }
-if(filterSpecsAreEqual(filterSpec,filterSpecCached)){
+if(filterSpecsAreEqual(filterSpec[[varName]],filterSpecCached)){
 	if(verbosity>0){cat(sprintf('Valid cached filter results exist for  %s...',varName))}
 	if(returnPolIDsToDrop){
 		if(verbosity>0){cat('reading...')}
