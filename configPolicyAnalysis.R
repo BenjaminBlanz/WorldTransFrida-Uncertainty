@@ -117,7 +117,7 @@ filterSpec$real_gdp_growth_rate$type <- 'ltval'
 filterSpec$real_gdp_growth_rate$level <- -0.2
 filterSpec$real_gdp_growth_rate$allowedTransgressions <- 2
 filterSpec$surface_temperature_anomaly_growth_rate <- list()
-filterSpec$surface_temperature_anomaly_growth_rate$type <- 'sgtabs'
+filterSpec$surface_temperature_anomaly_growth_rate$type <- 'gtabs'
 filterSpec$surface_temperature_anomaly_growth_rate$level <- 0.5
 filterSpec$surface_temperature_anomaly_growth_rate$allowedTransgressions <- 0
 filterSpec$gdp_real_gdp_in_2021c <- list()
@@ -134,7 +134,7 @@ desiredFilterSpec$gdp_real_gdp_in_2021c$level <- 1.5e5 # a bit less than the 202
 desiredFilterSpec$gdp_real_gdp_in_2021c$allowedTransgressions <- 4 # ~37% of cases with default 11 runs
 desiredFilterSpec$gdp_real_gdp_in_2021c$years <- 2023:2150 # the years in which this filter applies
 desiredFilterSpec$energy_balance_model_surface_temperature_anomaly <- list()
-desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$type <- 'sgtval'
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$type <- 'gtval'
 desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$level <- 2
 desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$sowID <- 5 # the median case
 desiredFilterSpec$gdp_future_year_in_recession <- list()
