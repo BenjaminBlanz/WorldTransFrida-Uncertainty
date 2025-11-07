@@ -32,7 +32,15 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 	varName <- tools::file_path_sans_ext(varFile)
 	if(verbosity>0){cat(sprintf('reading %s...',varName))}
 	varDat <- readPerVarFile(file.path(outputFolder,varFile))
+	# if the last column is entirely NA this is probably
+	# a generated variable, drop that col to not mess with the filter
+	if(sum(is.na(varDat[,ncol(varDat)]))==nrow(varDat)){
+		varDat <- varDat[,-ncol(varDat)]
+	}
 	varUnit <- varsMeta$Unit[varsMeta$cleanName==varName]
+	if(is.null(varUnit)){
+		varUnit <- varName
+	}
 	varFullName <- varsMeta$FRIDA.FQN[varsMeta$cleanName==varName]
 	cat('applying filters...')
 	varDat <- varDat[!varDat$polID %in% polIDsToDrop,]
