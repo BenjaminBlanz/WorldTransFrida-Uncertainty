@@ -1,7 +1,6 @@
 # Scriptable version of the filter function.
 source('initialise.R')
 source('configPolicyAnalysis.R')
-source('funPolicyAnalysisFilter.R')
 # config cotains the baseline filterSpec
 # config also contains desiredFilterSpec
 
