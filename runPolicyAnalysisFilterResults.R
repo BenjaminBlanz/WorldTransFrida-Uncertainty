@@ -81,19 +81,19 @@ if(useDesiredFilterSpec){
 	filterSpecCached <- NULL
 }
 if(is.null(filterSpecCached)){
-	if(verbosity>0){cat(sprintf('No cached filter results exist for %s.\n',varName))}
+	if(verbosity>0){cat(sprintf('  No cached filter results exist for %s.\n',varName))}
 	keepRunning <- T
 } else if(filterSpecsAreEqual(filterSpec[[varName]],filterSpecCached)){
-	if(verbosity>0){cat(sprintf('Valid cached filter results exist for %s.\n',varName))}
+	if(verbosity>0){cat(sprintf('  Valid cached filter results exist for %s.\n',varName))}
 	keepRunning <- F
 } else {
-	if(verbosity>0){cat(sprintf('Invalid cached filter results exist for %s ignoring.\n',varName))}
+	if(verbosity>0){cat(sprintf('  Invalid cached filter results exist for %s ignoring.\n',varName))}
 	keepRunning <- T
 } 
 if(keepRunning){
 	filterSpecCached <- NULL
 	if(varName %in% names(filterSpec)){
-		if(verbosity>0){cat(sprintf('reading %s...',varName))}
+		if(verbosity>0){cat(sprintf('  reading %s...',varName))}
 		varDat <- readPerVarFile(file.path(outputFolder,varFile))
 		if(verbosity>0){cat('determining filtered...')}
 		# if the last column is entirely NA this is probably

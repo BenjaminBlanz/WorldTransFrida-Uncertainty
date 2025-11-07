@@ -110,6 +110,8 @@ cat(sprintf('PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %s\n',
 						length(polIDsToDrop.lst[[1]]),
 						length(polIDsToDrop)-0,
 						timing$callback_msg))
+# refresh this for when running interactively so the output is actually correct
+polIDsToDrop <- polIDsToDrop.lst[[1]] 
 for(i in 1:length(filterSpec)){
 	filteredFile <- paste0(names(filterSpec)[i],'.RDS')
 	cat(sprintf('Filter %i of %i ',i,length(filterSpec)))
@@ -121,14 +123,14 @@ for(i in 1:length(filterSpec)){
 	if(!is.null(filterSpec[[i]]$allowedTransgressions)){
 		cat(sprintf(' number of allowed transgressions per year %i',filterSpec[[i]]$allowedTransgressions))
 	}
-	cat('\n  ')
+	cat('\n')
 	tic()
 	if(filteredFile %in% varsFiles){
 		# for debugging filterscript
 		# varFile <- filteredFile
-		# useCluster <- T
+		# useCluster <- min(171/2,detectCores())
 		# verbosity <- 9
-		#
+		# useDesiredFilterSpec <- F
 		system(paste('Rscript --max-connections=1024 --no-site-file runPolicyAnalysisFilterResults.R -f',
 								 filteredFile, '-c',min(171/2,detectCores()), '-o',location.output))
 		polIDsToDrop.lst[[i+1]] <- readRDS(file.path(location.output,'filterResults',
