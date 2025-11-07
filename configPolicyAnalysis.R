@@ -119,6 +119,7 @@ filterSpec$gdp_real_gdp_in_2021c <- list()
 filterSpec$gdp_real_gdp_in_2021c$type <- 'ltval'
 filterSpec$gdp_real_gdp_in_2021c$level <- 5e4 # roughly the 1980 level of GDP
 filterSpec$gdp_real_gdp_in_2021c$allowedTransgressions <- 2
+filterSpec$gdp_real_gdp_in_2021c$years <- 2023:2150 # the years in which this filter applies
 
 #these are the filters that drop policies with "undersirable" outcomes
 desiredFilterSpec <- list()
