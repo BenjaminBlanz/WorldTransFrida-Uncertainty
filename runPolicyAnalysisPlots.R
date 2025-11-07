@@ -204,9 +204,9 @@ for(i in 1:length(desiredFilterSpec)){
 	if(!is.null(desiredFilterSpec[[i]]$allowedTransgressions)){
 		cat(sprintf(' number of allowed transgressions per year %i',desiredFilterSpec[[i]]$allowedTransgressions))
 	}
-	if(!is.null(filterSpec[[i]]$years)){
-		rangeFilterYears <- range(filterSpec[[i]]$years)
-		numFilterYears <- length(filterSpec[[i]]$years)
+	if(!is.null(desiredFilterSpec[[i]]$years)){
+		rangeFilterYears <- range(desiredFilterSpec[[i]]$years)
+		numFilterYears <- length(desiredFilterSpec[[i]]$years)
 		numFilterYearsStr <- ifelse(numFilterYears==(diff(rangeFilterYears)+1),'all',as.character(numFilterYears))
 		cat(sprintf(' filter applies in %s years between %i and %i',numFilterYearsStr,rangeFilterYears[1],rangeFilterYears[2]))
 	} else {
