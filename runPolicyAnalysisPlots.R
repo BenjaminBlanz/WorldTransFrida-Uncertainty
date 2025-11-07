@@ -25,7 +25,7 @@ generatedVarsMeta <- data.frame("IMPORTANT..NO.WHITESPACE.AT.THE.END.OF.FIELDS."
 																"Unit" =c('rate','rate','2021c$/p'))
 generatedVarsMeta$cleanName <- cleanNames(generatedVarsMeta$FRIDA.FQN)
 
-if(!file.exists(file.path(outputFolder,paste(generatedVarsMeta$cleanName[1],'.RDS')))){
+if(!file.exists(file.path(outputFolder,paste0(generatedVarsMeta$cleanName[1],'.RDS')))){
 	tic()
 	cat('gdpgr does not exist generating...')
 	if(file.exists(file.path(outputFolder,'gdp_real_gdp_in_2021c.RDS'))){
@@ -39,14 +39,14 @@ if(!file.exists(file.path(outputFolder,paste(generatedVarsMeta$cleanName[1],'.RD
 	gdpgr[,3:(ncol(gdpgr)-1)] <- (gdpgr[,4:(ncol(gdpgr))] - gdpgr[,3:(ncol(gdpgr)-1)]) /  gdpgr[,3:(ncol(gdpgr)-1)]
 	gdpgr[,ncol(gdpgr)] <- NA
 	cat('saving...')
-	saveRDS(gdpgr,file.path(outputFolder,paste(generatedVarsMeta$cleanName[1],'.RDS')))
+	saveRDS(gdpgr,file.path(outputFolder,paste0(generatedVarsMeta$cleanName[1],'.RDS')))
 	rm(gdp)
 	rm(gdpgr)
 	quietgc()
 	cat('done\n')
 	toc()
 }
-if(!file.exists(file.path(outputFolder,paste(generatedVarsMeta$cleanName[2],'.RDS')))){
+if(!file.exists(file.path(outputFolder,paste0(generatedVarsMeta$cleanName[2],'.RDS')))){
 	tic()
 	cat('stagr does not exist generating...')
 	if(file.exists(file.path(outputFolder,'energy_balance_model_surface_temperature_anomaly.RDS'))){
@@ -60,14 +60,14 @@ if(!file.exists(file.path(outputFolder,paste(generatedVarsMeta$cleanName[2],'.RD
 	stagr[,3:(ncol(stagr)-1)] <- (stagr[,4:(ncol(stagr))] - stagr[,3:(ncol(stagr)-1)]) /  stagr[,3:(ncol(stagr)-1)]
 	stagr[,ncol(stagr)] <- NA
 	cat('saving...')
-	saveRDS(stagr,file.path(outputFolder,paste(generatedVarsMeta$cleanName[2],'.RDS')))
+	saveRDS(stagr,file.path(outputFolder,paste0(generatedVarsMeta$cleanName[2],'.RDS')))
 	rm(sta)
 	rm(stagr)
 	quietgc()
 	cat('done\n')
 	toc()
 }
-if(!file.exists(file.path(outputFolder,paste(generatedVarsMeta$cleanName[3],'.RDS')))){
+if(!file.exists(file.path(outputFolder,paste0(generatedVarsMeta$cleanName[3],'.RDS')))){
 	tic()
 	cat('gdppc does not exist generating...')
 	if(file.exists(file.path(outputFolder,'demographics_population.RDS')) &&
@@ -82,7 +82,7 @@ if(!file.exists(file.path(outputFolder,paste(generatedVarsMeta$cleanName[3],'.RD
 	cat('calculating...')
 	gdppc <- gdp/(pop/1000) # divide by 1000 so that the unit is $/p instead of 1000$/p
 	cat('saving...')
-	saveRDS(gdppc,file.path(outputFolder,paste(generatedVarsMeta$cleanName[3],'.RDS')))
+	saveRDS(gdppc,file.path(outputFolder,paste0(generatedVarsMeta$cleanName[3],'.RDS')))
 	rm(gdp)
 	rm(pop)
 	rm(gdppc)
