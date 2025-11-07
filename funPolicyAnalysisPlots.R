@@ -11,12 +11,12 @@ parPlotPolResults<-function(i,varsFiles,polIDsToDrop,funFigFolder=NULL,colLevels
 	} else {
 		ylims <- NULL
 	}
-	plotPolResults(varsFiles[i],polIDsToDrop=polIDsToDrop,
-								 funFigFolder=funFigFolder,
-								 plotType=plotType,
-								 colLevels=colLevels,
-								 verbosity=verbosity,
-								 ylims=ylims)	
+	return(plotPolResults(varsFiles[i],polIDsToDrop=polIDsToDrop,
+												funFigFolder=funFigFolder,
+												plotType=plotType,
+												colLevels=colLevels,
+												verbosity=verbosity,
+												ylims=ylims))
 }
 plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 													 plotType=1,
