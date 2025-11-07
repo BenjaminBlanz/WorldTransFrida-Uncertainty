@@ -13,6 +13,7 @@ filterPolicyAnalysisResults <- function(varFile,useCluster=T,useDesiredFilterSpe
 	}
 	outputFolder <- file.path(location.output,'detectedParmSpace','PerVarFiles-RDS')
 	writeToFolder <- file.path(location.output,'filterResults')
+	varName <- tools::file_path_sans_ext(varFile)
 	if(useDesiredFilterSpec){
 		filterSpec <- desiredFilterSpec
 		if(file.exists(file.path(writeToFolder,paste0(varName,'-desiredFilterSpec.RDS')))){
@@ -42,8 +43,6 @@ filterPolicyAnalysisResults <- function(varFile,useCluster=T,useDesiredFilterSpe
 		if(verbosity>0){cat(sprintf('Invalid cached filter results exist for  %s ignoring',varName))}
 		filterSpecCached <- NULL
 	}
-			
-	varName <- tools::file_path_sans_ext(varFile)
 	if(varName %in% names(filterSpec)){
 		if(verbosity>0){cat(sprintf('reading %s...',varName))}
 		varDat <- readPerVarFile(file.path(outputFolder,varFile))
