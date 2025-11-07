@@ -4,7 +4,10 @@ source('configPolicyAnalysis.R')
 source('funPolicyAnalysisPlots.R')
 #override location.output
 location.output <- 'policy-workOutput/AllPolicies1e6-moreExports'
+
+# save reference file
 system(paste('cp','configPolicyAnalysis.R',file.path(location.output,'configPolicyAnalysisUsedForPlotting.R')))
+
 # location.output <- 'policy-workOutput/'
 
 figuresFolder <- file.path(location.output,'figures')
