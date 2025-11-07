@@ -102,6 +102,11 @@ policyFiles <- list.files(location.singleDomainPolicyFiles)
 # these are the filters that drop policies that are outside the functional scope
 # of the model (while the math may work in some of these cases the conceptual model 
 # and hence the interpretability does not)
+# Types:
+#  gtabs: absolute value greater than the filter level
+#  ltabs: absolute value less than the filter level
+#  gtval: value greater than the filter level
+#  ltval: value less than the filter level
 filterSpec <- list()
 filterSpec$inflation_inflation_rate <- list()
 filterSpec$inflation_inflation_rate$type <- 'gtabs'
@@ -126,12 +131,12 @@ desiredFilterSpec <- list()
 desiredFilterSpec$gdp_real_gdp_in_2021c <- list()
 desiredFilterSpec$gdp_real_gdp_in_2021c$type <- 'ltval'
 desiredFilterSpec$gdp_real_gdp_in_2021c$level <- 1.5e5 # a bit less than the 2023 median level
-desiredFilterSpec$gdp_real_gdp_in_2021c$allowedTransgressions <- 4 # ~64% of cases with default 11 runs
+desiredFilterSpec$gdp_real_gdp_in_2021c$allowedTransgressions <- 4 # ~37% of cases with default 11 runs
 desiredFilterSpec$gdp_real_gdp_in_2021c$years <- 2023:2150 # the years in which this filter applies
 desiredFilterSpec$energy_balance_model_surface_temperature_anomaly <- list()
 desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$type <- 'gtval'
 desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$level <- 2
-desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$allowedTransgressions <- 4 # ~64% of cases with default 11 runs
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$allowedTransgressions <- 5 # ~46% of cases with default 11 runs
 desiredFilterSpec$gdp_future_year_in_recession <- list()
 desiredFilterSpec$gdp_future_year_in_recession$type <- 'gtval'
 desiredFilterSpec$gdp_future_year_in_recession$level <- 10
