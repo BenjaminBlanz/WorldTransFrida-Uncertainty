@@ -836,11 +836,18 @@ readPerVarFile <- function(file,outputType=NULL){
 		if(!file.exists(paste0(fileNoExt,'.csv')) && 
 			 file.exists(paste0(fileNoExt,'.csv.gz'))){
 			return(read.csv(gzfile(paste0(fileNoExt,'.csv.gz'))))
+		} else if(file.exists(paste0(fileNoExt,'.csv'))){
+			return(read.csv(paste0(fileNoExt,'.csv')))
+		} else {
+			stop(sprintf('file does not exist: %s with .csv or .gz.csv extension\n',fileNoExt))
 		}
-		return(read.csv(paste0(fileNoExt,'.csv')))
 		
 	} else if(outputType=='RDS'){
-		return(readRDS(paste0(fileNoExt,'.RDS')))
+		if(file.exists(paste0(fileNoExt,'.RDS'))){
+			return(readRDS(paste0(fileNoExt,'.RDS')))
+		} else {
+			stop(sprintf('file does not exist: %s\n',paste0(fileNoExt,'.RDS')))
+		}
 	}
 }
 
