@@ -126,12 +126,22 @@ desiredFilterSpec <- list()
 desiredFilterSpec$gdp_real_gdp_in_2021c <- list()
 desiredFilterSpec$gdp_real_gdp_in_2021c$type <- 'ltval'
 desiredFilterSpec$gdp_real_gdp_in_2021c$level <- 1.5e5 # a bit less than the 2023 median level
-desiredFilterSpec$gdp_real_gdp_in_2021c$allowedTransgressions <- 5
+desiredFilterSpec$gdp_real_gdp_in_2021c$allowedTransgressions <- 4 # ~64% of cases with default 11 runs
 desiredFilterSpec$gdp_real_gdp_in_2021c$years <- 2023:2150 # the years in which this filter applies
 desiredFilterSpec$energy_balance_model_surface_temperature_anomaly <- list()
 desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$type <- 'gtval'
 desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$level <- 2
-desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$allowedTransgressions <- 4
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$allowedTransgressions <- 4 # ~64% of cases with default 11 runs
+desiredFilterSpec$gdp_future_year_in_recession <- list()
+desiredFilterSpec$gdp_future_year_in_recession$type <- 'gtval'
+desiredFilterSpec$gdp_future_year_in_recession$level <- 10
+desiredFilterSpec$gdp_future_year_in_recession$allowedTransgressions <- 4 # ~64% of cases with default 11 runs
+
+#select a specific run to highlight and output the policies
+selectedRunSpec <- list()
+selectedRunSpec$var <- 'gdp_real_gdp_in_2021c'
+selectedRunSpec$year <- 2150
+selectedRunSpec$optimize <- 'medMax'
 
 numPlotThreads <- 10
 location.plots <- 'figures'
