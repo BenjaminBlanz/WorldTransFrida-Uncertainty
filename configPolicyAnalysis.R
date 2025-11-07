@@ -118,7 +118,7 @@ filterSpec$stagr$allowedTransgressions <- 0
 filterSpec$gdp_real_gdp_in_2021c <- list()
 filterSpec$gdp_real_gdp_in_2021c$type <- 'ltval'
 filterSpec$gdp_real_gdp_in_2021c$level <- 5e4 # roughly the 1980 level of GDP
-filterSpec$gdp_real_gdp_in_2021c$allowedTransgressions <- 2
+filterSpec$gdp_real_gdp_in_2021c$allowedTransgressions <- 0
 filterSpec$gdp_real_gdp_in_2021c$years <- 2023:2150 # the years in which this filter applies
 
 #these are the filters that drop policies with "undersirable" outcomes
@@ -141,7 +141,8 @@ desiredFilterSpec$gdp_future_year_in_recession$allowedTransgressions <- 4 # ~64%
 selectedRunSpec <- list()
 selectedRunSpec$var <- 'gdp_real_gdp_in_2021c'
 selectedRunSpec$year <- 2150
-selectedRunSpec$optimize <- 'medMax'
+selectedRunSpec$optimize <- 'max'
+selectedRunSpec$sow <- 5
 
 numPlotThreads <- 10
 location.plots <- 'figures'
