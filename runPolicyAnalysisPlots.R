@@ -228,7 +228,7 @@ for(i in 1:length(desiredFilterSpec)){
 	timing <- toc(quiet=T)
 	cat(sprintf('  PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %s\n',
 							length(polIDsToDrop), 100*length(polIDsToDrop)/numPolIDs,
-							length(polIDsToDrop.lst[[i+1]]),
+							length(polIDsToDropDesired.lst[[i+1]]),
 							length(polIDsToDrop)-length(polIDsToDrop.old),
 							timing$callback_msg))
 	if(length(polIDsToDrop) >= numPolIDs){
