@@ -8,8 +8,8 @@ source('funPolicyAnalysisFilter.R')
 option_list = list(
 	make_option(c("-f", "--varFile"), type="character", default=NULL, 
 							help="file containing model output for variable to be filtered by", metavar="character"),
-	make_option(c("-c", "--useCluster"), type="logical", default=FALSE, 
-							help="should a cluster be started for filtering the years [default= %default]", metavar="logical"),
+	make_option(c("-c", "--useClusterNumThreads"), type="integer", default=0, 
+							help="should a cluster be started for filtering the years and how many threads should it have 0 means no cluster [default= %default]", metavar="integer"),
 	make_option(c("-d", "--useDesiredFilterSpec"), type="logical", default=FALSE, 
 							help="TRUE to use desiredFilterSpec from config",
 							metavar="logical"),
@@ -28,7 +28,7 @@ if(is.null(opt$varFile)){
 } else {
 	varFile <- opt$varFile
 }
-useCluster <- opt$useCluster
+useClusterNumThreads <- opt$useClusterNumThreads
 if(!is.null(opt$location.output)){
 	overrideLocation.output <- opt$location.output
 } else {
@@ -151,12 +151,12 @@ if(varName %in% names(filterSpec)){
 		return(polIDsToDrop[!is.na(polIDsToDrop)])
 	}
 	if(verbosity>0){cat('processing years')}
-	if(useCluster != T){
+	if(useClusterNumThreads == 0){
 		if(verbosity>0){cat(' not using cluster...')}
 		yearPolIDsToDrop <- lapply(1:length(years),filterFun)
 	} else {
 		if(verbosity>0){cat(' starting cluster...')}
-		clFiltering <- makeForkCluster(min(floor(171/2),detectCores()))
+		clFiltering <- makeForkCluster(useClusterNumThreads)
 		if(verbosity>0){cat('running...')}
 		yearPolIDsToDrop <- parLapply(clFiltering,1:length(years),filterFun)
 		stopCluster(clFiltering)

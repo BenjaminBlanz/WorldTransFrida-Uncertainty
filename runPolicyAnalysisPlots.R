@@ -101,8 +101,7 @@ numPolIDs <- length(unique(varDat$polID))
 cat('filtering...')
 polIDsToDrop <- polIDsToDrop.lst[[1]] <- unique(varDat$polID[!complete.cases(varDat) | !is.finite(varDat[,ncol(varDat)])])
 timing <- toc(quiet=T)
-cat(sprintf('done\n',
-						length(polIDsToDrop)))
+cat('done\n')
 rm(varDat)
 quietgc()
 
@@ -131,7 +130,7 @@ for(i in 1:length(filterSpec)){
 		# verbosity <- 9
 		#
 		system(paste('Rscript --max-connections=1024 --no-site-file runPolicyAnalysisFilterResults.R -f',
-								 filteredFile, '-c','TRUE', '-o',location.output))
+								 filteredFile, '-c',min(171,detectCores()), '-o',location.output))
 		polIDsToDrop.lst[[i+1]] <- readRDS(file.path(location.output,'filterResults',
 																					paste0(names(filterSpec)[i],'-filter.RDS')))
 		polIDsToDrop.old <- polIDsToDrop
