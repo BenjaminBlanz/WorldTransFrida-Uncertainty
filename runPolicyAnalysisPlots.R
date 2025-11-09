@@ -4,7 +4,7 @@ source('configPolicyAnalysis.R')
 source('funPolicyAnalysisPlots.R')
 #override location.output
 location.output <- 'policy-workOutput/AllPolicies1e6-moreExports'
-
+filterResFolder <- file.path(location.output,'filterResults')
 # save reference file
 system(paste('cp','configPolicyAnalysis.R',file.path(location.output,'configPolicyAnalysisUsedForPlotting.R')))
 # logging
@@ -123,10 +123,10 @@ varsMeta <- rbind(varsMeta,generatedVarsMeta)
 polIDsToDrop.lst <- list()
 cat('dropping incomplete and inf...')
 tic()
-if(file.exists(file.path(writeToFolder,'incompleteAndInfPols.RDS'))){
+if(file.exists(file.path(filterResFolder,'incompleteAndInfPols.RDS'))){
 	cat('using existing incompleteAndInfPols.RDS...')
-	polIDsToDrop.lst[[1]] <- readRDS(file.path(writeToFolder,'incompleteAndInfPols.RDS'))
-	numPolIDs <- readRDS(file.path(writeToFolder,'numPolIDs.RDS'))
+	polIDsToDrop.lst[[1]] <- readRDS(file.path(filterResFolder,'incompleteAndInfPols.RDS'))
+	numPolIDs <- readRDS(file.path(filterResFolder,'numPolIDs.RDS'))
 } else {
 	cat('reading file to determine incompletes...')
 	varDat <- readPerVarFile(file.path(outputFolder,varsFiles[1]))
@@ -138,8 +138,8 @@ if(file.exists(file.path(writeToFolder,'incompleteAndInfPols.RDS'))){
 	numPolIDs <- length(unique(varDat$polID))
 	cat('filtering...')
 	polIDsToDrop.lst[[1]] <- unique(varDat$polID[!complete.cases(varDat) | !is.finite(varDat[,ncol(varDat)])])
-	saveRDS(polIDsToDrop.lst[[1]],file.path(writeToFolder,'incompleteAndInfPols.RDS'))
-	saveRDS(numPolIDs,file.path(writeToFolder,'numPolIDs.RDS'))
+	saveRDS(polIDsToDrop.lst[[1]],file.path(filterResFolder,'incompleteAndInfPols.RDS'))
+	saveRDS(numPolIDs,file.path(filterResFolder,'numPolIDs.RDS'))
 }
 timing <- toc(quiet=T)
 cat('done\n')
@@ -308,9 +308,9 @@ if(exists('selectedRunSpec')&&
 	 !is.null(selectedRunSpec$optimize)&&
 	 !is.null(selectedRunSpec$sow)){
 	selFilePath <- file.path(outputFolder,paste0(selectedRunSpec$var,'.RDS'))
-	if(file.exists(file.path(writeToFolder,'selPolID.RDS'))&&
-		 file.exists(file.path(writeToFolder,'selectedRunSpec.RDS'))){
-		selectedRunSpecCached <- readRDS(file.path(writeToFolder,'selectedRunSpec.RDS'))
+	if(file.exists(file.path(filterResFolder,'selPolID.RDS'))&&
+		 file.exists(file.path(filterResFolder,'selectedRunSpec.RDS'))){
+		selectedRunSpecCached <- readRDS(file.path(filterResFolder,'selectedRunSpec.RDS'))
 	} else {
 		selectedRunSpecCached <- NULL
 	}
@@ -333,8 +333,8 @@ if(exists('selectedRunSpec')&&
 		if(selectedRunSpec$optimize=='min'){
 			selPolID <- setForSelection$polID[which.min(setForSelection[[as.character(selectedRunSpec$year)]])]
 		}
-		saveRDS(selectedRunSpec,file.path(writeToFolder,'selectedRunSpec.RDS'))
-		saveRDS(selPolID,file.path(writeToFolder,'selPolID.RDS'))
+		saveRDS(selectedRunSpec,file.path(filterResFolder,'selectedRunSpec.RDS'))
+		saveRDS(selPolID,file.path(filterResFolder,'selPolID.RDS'))
 		timing <- toc(quiet=T)
 	}
 	cat(sprintf('selected run %i (%s)\n',selPolID,timing$callback_msg))

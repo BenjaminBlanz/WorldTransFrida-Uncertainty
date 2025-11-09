@@ -66,19 +66,19 @@ if(!is.null(overrideLocation.output)){
 	location.output <- overrideLocation.output
 }
 outputFolder <- file.path(location.output,'detectedParmSpace','PerVarFiles-RDS')
-writeToFolder <- file.path(location.output,'filterResults')
+filterResFolder <- file.path(location.output,'filterResults')
 varName <- tools::file_path_sans_ext(varFile)
 if(useDesiredFilterSpec){
 	filterSpec <- desiredFilterSpec
-	if(file.exists(file.path(writeToFolder,paste0(varName,'-desiredFilterSpec.RDS')))&&
-		 file.exists(file.path(writeToFolder,paste0(varName,'-desiredFilter.RDS')))){
-		filterSpecCached <- readRDS(file.path(writeToFolder,paste0(varName,'-desiredFilterSpec.RDS')))
+	if(file.exists(file.path(filterResFolder,paste0(varName,'-desiredFilterSpec.RDS')))&&
+		 file.exists(file.path(filterResFolder,paste0(varName,'-desiredFilter.RDS')))){
+		filterSpecCached <- readRDS(file.path(filterResFolder,paste0(varName,'-desiredFilterSpec.RDS')))
 	} else {
 		filterSpecCached <- NULL
 	}
-} else if(file.exists(file.path(writeToFolder,paste0(varName,'-filterSpec.RDS'))) &&
-					file.exists(file.path(writeToFolder,paste0(varName,'-filter.RDS')))){
-	filterSpecCached <- readRDS(file.path(writeToFolder,paste0(varName,'-filterSpec.RDS')))
+} else if(file.exists(file.path(filterResFolder,paste0(varName,'-filterSpec.RDS'))) &&
+					file.exists(file.path(filterResFolder,paste0(varName,'-filter.RDS')))){
+	filterSpecCached <- readRDS(file.path(filterResFolder,paste0(varName,'-filterSpec.RDS')))
 } else {
 	filterSpecCached <- NULL
 }
@@ -169,16 +169,16 @@ if(keepRunning){
 			stopCluster(clFiltering)
 		}
 		polIDsToDrop <- unique(c(polIDsToDrop,unlist(yearPolIDsToDrop)))
-		dir.create(writeToFolder,showWarnings = F,recursive = T)
+		dir.create(filterResFolder,showWarnings = F,recursive = T)
 		if(useDesiredFilterSpec){
-			saveRDS(polIDsToDrop,file.path(writeToFolder,paste0(varName,'-desiredFilter.RDS')))
+			saveRDS(polIDsToDrop,file.path(filterResFolder,paste0(varName,'-desiredFilter.RDS')))
 		} else {
-			saveRDS(polIDsToDrop,file.path(writeToFolder,paste0(varName,'-filter.RDS')))
+			saveRDS(polIDsToDrop,file.path(filterResFolder,paste0(varName,'-filter.RDS')))
 		}
 		if(useDesiredFilterSpec){
-			saveRDS(filterSpec[[varName]],file.path(writeToFolder,paste0(varName,'-desiredFilterSpec.RDS')))
+			saveRDS(filterSpec[[varName]],file.path(filterResFolder,paste0(varName,'-desiredFilterSpec.RDS')))
 		} else {
-			saveRDS(filterSpec[[varName]],file.path(writeToFolder,paste0(varName,'-filterSpec.RDS')))
+			saveRDS(filterSpec[[varName]],file.path(filterResFolder,paste0(varName,'-filterSpec.RDS')))
 		}
 	} else {
 		cat(sprintf('Var name %s not in filter spec.\n',varName))
