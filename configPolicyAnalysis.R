@@ -115,7 +115,7 @@ filterSpec$inflation_inflation_rate$allowedTransgressions <- 2
 filterSpec$real_gdp_growth_rate <- list()
 filterSpec$real_gdp_growth_rate$type <- 'ltval'
 filterSpec$real_gdp_growth_rate$level <- -0.1
-filterSpec$real_gdp_growth_rate$allowedTransgressions <- 2
+filterSpec$real_gdp_growth_rate$allowedTransgressions <- 0
 filterSpec$surface_temperature_anomaly_growth_rate <- list()
 filterSpec$surface_temperature_anomaly_growth_rate$type <- 'gtabs'
 filterSpec$surface_temperature_anomaly_growth_rate$level <- 0.5
@@ -141,6 +141,7 @@ desiredFilterSpec$gdp_future_year_in_recession <- list()
 desiredFilterSpec$gdp_future_year_in_recession$type <- 'gtval'
 desiredFilterSpec$gdp_future_year_in_recession$level <- 10
 desiredFilterSpec$gdp_future_year_in_recession$allowedTransgressions <- 4 # ~64% of cases with default 11 runs
+filtersToPlot <- 1:length(desiredFilterSpec)
 
 #select a specific run to highlight and output the policies
 selectedRunSpec <- list()

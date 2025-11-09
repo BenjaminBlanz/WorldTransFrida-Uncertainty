@@ -134,7 +134,6 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 									 main=varFullName,ylab=varUnit,
 									 col = rev(paletteer_c(ifelse(plotType==2,plot.palletteName,plot.palletteNameSOW),
 									 											plot.numColLevels-1)),
-									 key.title = 'Number of policies',
 									 plot.axes = {
 									 	axis(1)
 									 	axis(2)
@@ -144,6 +143,7 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 									 	}
 									 	}
 									 )
+		mtext('Number of Policies',4,0)
 	} else if (plotType==4){
 		
 	} else {
@@ -155,3 +155,30 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 	retlist$ylims <- ylims
 	return(retlist)
 }
+
+
+# function to write out information on the information on the selPolID
+writeSelPolIDPolicies <- function(selPolID,location.output,outputName){
+	pdp.lst <- readRDS(file.path(location.output,'pdp.lst.RDS'))
+	pdpMeta <- readRDS(file.path(location.output,'pdpMeta.RDS'))
+	jointPolicies <- readRDS(file.path(location.output,'jointPolicies.RDS'))
+	samplePoints <- readRDS(file.path(location.output,'samplePoints.RDS'))
+	
+	selPolDescStrs <- c()
+	i <- 0
+	for(domID in colnames(samplePoints)){
+		if(!is.na(samplePoints[selPolID,domID])){
+			i <- i+1
+			pdpName <- pdpMeta$domain[pdpMeta$domID==domID][1]
+			sdmID <- jointPolicies$sdmID[jointPolicies$domID==domID & jointPolicies$dplID==samplePoints[selPolID,domID]]
+			if(!is.na(pdpMeta$subdomain[pdpMeta$domID==domID & pdpMeta$sdmID==sdmID])){
+				pdpName <- paste0(pdpName,'+',pdpMeta$subdomain[pdpMeta$domID==domID & pdpMeta$sdmID==sdmID])
+			} 
+			sdpID <- jointPolicies$sdpID[jointPolicies$domID==domID & jointPolicies$dplID==samplePoints[selPolID,domID]]
+			selPolDescStrs <-c(selPolDescStrs, pdp.lst[[pdpName]][pdp.lst[[pdpName]]$polID==sdpID,2])
+		}
+	}
+	outputName <- paste0(tools::file_path_sans_ext(outputName),'.csv')
+	write(selPolDescStrs,file.path(location.output,outputName))
+}
+

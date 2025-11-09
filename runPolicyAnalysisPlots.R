@@ -7,13 +7,23 @@ location.output <- 'policy-workOutput/AllPolicies1e6-moreExports'
 
 # save reference file
 system(paste('cp','configPolicyAnalysis.R',file.path(location.output,'configPolicyAnalysisUsedForPlotting.R')))
+# logging
+sink(file.path(location.output,'policyAnalysisPlotsLog.txt'),append=T)
+cat(paste0(
+	'\n###############################################################\n',
+	format(Sys.Date(), "%c"),
+	location.output,
+	'\n###############################################################\n'))
+sink()
+sink(file.path(location.output,'policyAnalysisPlotsLog.txt'),append=T,split=T)
 
 # location.output <- 'policy-workOutput/'
-
 figuresFolder <- file.path(location.output,'figures')
 dir.create(figuresFolder,showWarnings = F,recursive = T)
 
 outputFolder <- file.path(location.output,'detectedParmSpace','PerVarFiles-RDS')
+
+
 
 # generate missing computable variables ####
 
@@ -103,6 +113,8 @@ varsMeta <- rbind(varsMeta,generatedVarsMeta)
 # 														varsFiles = varsFiles,filterSpec=filterSpec,
 # 														chunk.size = 1)
 
+# baseline filtering ####
+
 # sequential filtering could be faster if we applied the last filter as prefilter
 # for the nest, however as long as the data are in data.frames and not data.tables
 # the subsetting of the data.frame is so slow it negates any benefit from having to filter
@@ -170,16 +182,17 @@ for(i in 1:length(filterSpec)){
 		cat('no such file\n')
 	}
 	timing <- toc(quiet=T)
-	cat(sprintf('  PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %s\n',
+	cat(sprintf('  PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new); %i PolIDs left %s\n',
 							length(polIDsToDrop), 100*length(polIDsToDrop)/numPolIDs,
 							length(polIDsToDrop.lst[[i+1]]),
 							length(polIDsToDrop)-length(polIDsToDrop.old),
+							numPolIDs-length(polIDsToDrop),
 							timing$callback_msg))
 	if(length(polIDsToDrop) >= numPolIDs){
 		stop('All policies have been filtered out, nothing left to do\n')
 	}
 }
-polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
+polIDsToDrop.baseline <- polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
 
 # plotting baseline ####
 firstThingsToPlot <- c(69,112,131,130,141,106,107)
@@ -207,7 +220,7 @@ for(p.i in 1:length(baselinePlotPropsParRes)){
 }
 
 # desired filtering  and plotting ####
-polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
+polIDsToDropDesired <- sort(unique(unlist(polIDsToDrop.lst)))
 polIDsToDropDesired.lst <- list()
 for(i in 1:length(desiredFilterSpec)){
 	filteredFile <- paste0(names(desiredFilterSpec)[i],'.RDS')
@@ -236,61 +249,72 @@ for(i in 1:length(desiredFilterSpec)){
 								 '-d',TRUE))
 		polIDsToDropDesired.lst[[i+1]] <- readRDS(file.path(location.output,'filterResults',
 																								 paste0(names(desiredFilterSpec)[i],'-desiredFilter.RDS')))
-		polIDsToDrop.old <- polIDsToDrop
-		polIDsToDrop <- sort(unique(c(polIDsToDrop,unlist(polIDsToDropDesired.lst[[i+1]]))))
+		polIDsToDropDesired.old <- polIDsToDropDesired
+		polIDsToDropDesired <- sort(unique(c(polIDsToDropDesired,unlist(polIDsToDropDesired.lst[[i+1]]))))
 	} else {
 		cat('no such file\n')
 	}
 	timing <- toc(quiet=T)
-	cat(sprintf('  PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %s\n',
-							length(polIDsToDrop), 100*length(polIDsToDrop)/numPolIDs,
+	cat(sprintf('  PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new); %i PolIDs left %s\n',
+							length(polIDsToDropDesired), 100*length(polIDsToDropDesired)/numPolIDs,
 							length(polIDsToDropDesired.lst[[i+1]]),
-							length(polIDsToDrop)-length(polIDsToDrop.old),
+							length(polIDsToDropDesired)-length(polIDsToDropDesired.old),
+							numPolIDs-length(polIDsToDropDesired),
 							timing$callback_msg))
-	if(length(polIDsToDrop) >= numPolIDs){
+	if(length(polIDsToDropDesired) >= numPolIDs){
 		stop('All policies have been filtered out, nothing left to do\n')
 	}
-	clPlotting <- makeForkCluster(numPlotThreads)
-	for(plotType in plotTypes){
-		funFigFolder <- file.path(figuresFolder,paste0('plotType',plotType,'-desiredFilters-',i))
-		cat(sprintf('plotting plot type %s\n',plotType))
-		logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
-		colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
-		parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
-													varsFiles=varsFiles,
-													polIDsToDrop=polIDsToDrop,
-													funFigFolder=funFigFolder,
-													plotType=plotType,
-													colLevels=colLevels,
-													baselinePlotProps=baselinePlotProps)
+	if(i %in% filtersToPlot){
+		clPlotting <- makeForkCluster(numPlotThreads)
+		for(plotType in plotTypes){
+			cat(sprintf('plotting %i vars with %i threads plot type %s...',
+									length(thingsToPlot),numPlotThreads,plotType))
+			funFigFolder <- file.path(figuresFolder,paste0('plotType',plotType,'-desiredFilters-',i))
+			logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
+			colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
+			parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
+														varsFiles=varsFiles,
+														polIDsToDrop=polIDsToDropDesired,
+														funFigFolder=funFigFolder,
+														plotType=plotType,
+														colLevels=colLevels,
+														baselinePlotProps=baselinePlotProps)
+		}
+		stopCluster(clPlotting)
 	}
-	stopCluster(clPlotting)
 }
 
 # selected run ####
 selFilePath <- file.path(outputFolder,paste0(selectedRunSpec$var,'.RDS'))
+cat(sprintf('Reading %s for selected run picking...',selectedRunSpec$var))
 if(!file.exists(selFilePath)){
 	stop(sprintf('File selected for individual run %s does not exist.\n',selFilePath))
-} 
+}
+tic()
 varDat <- readPerVarFile(selFilePath)
-setForSelection <- varDat[!varDat$polID %in% polIDsToDrop & 
+cat('selecting...')
+setForSelection <- varDat[!varDat$polID %in% polIDsToDropDesired & 
 														varDat$sowID==selectedRunSpec$sow,
-													c('polID',as.character(selectedRunSpec$year))])
+													c('polID',as.character(selectedRunSpec$year))]
 if(selectedRunSpec$optimize=='max'){
 	selPolID <- setForSelection$polID[which.max(setForSelection[[as.character(selectedRunSpec$year)]])]
 }
 if(selectedRunSpec$optimize=='min'){
 	selPolID <- setForSelection$polID[which.min(setForSelection[[as.character(selectedRunSpec$year)]])]
 }
+timing <- toc(quiet=T)
+cat('selected run %i (%s)\n',selPolID,timing$callback_msg)
+writeSelPolIDPolicies(selPolID,location.output,'SelectedPolicy.csv')
 clPlotting <- makeForkCluster(numPlotThreads)
 for(plotType in plotTypes){
+	cat(sprintf('plotting %i vars with %i threads plot type %s...',
+							length(thingsToPlot),numPlotThreads,plotType))
 	funFigFolder <- file.path(figuresFolder,paste0('plotType',plotType,'-desiredFilters-',i,'-withSelPolID'))
-	cat(sprintf('plotting plot type %s\n',plotType))
 	logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
 	colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
 	parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
 												varsFiles=varsFiles,
-												polIDsToDrop=polIDsToDrop,
+												polIDsToDrop=polIDsToDropDesired,
 												funFigFolder=funFigFolder,
 												plotType=plotType,
 												colLevels=colLevels,
@@ -299,24 +323,3 @@ for(plotType in plotTypes){
 }
 stopCluster(clPlotting)
 
-# get information on the selPolID
-pdp.lst <- readRDS(file.path(location.output,'pdp.lst.RDS'))
-pdpMeta <- readRDS(file.path(location.output,'pdpMeta.RDS'))
-jointPolicies <- readRDS(file.path(location.output,'jointPolicies.RDS'))
-samplePoints <- readRDS(file.path(location.output,'samplePoints.RDS'))
-
-selPolDescStrs <- c()
-i <- 0
-for(domID in colnames(samplePoints)){
-	if(!is.na(samplePoints[selPolID,domID])){
-		i <- i+1
-		pdpName <- pdpMeta$domain[pdpMeta$domID==domID][1]
-		sdmID <- jointPolicies$sdmID[jointPolicies$domID==domID & jointPolicies$dplID==samplePoints[selPolID,domID]]
-		if(!is.na(pdpMeta$subdomain[pdpMeta$domID==domID & pdpMeta$sdmID==sdmID])){
-			pdpName <- paste0(pdpName,'+',pdpMeta$subdomain[pdpMeta$domID==domID & pdpMeta$sdmID==sdmID])
-		} 
-		sdpID <- jointPolicies$sdpID[jointPolicies$domID==domID & jointPolicies$dplID==samplePoints[selPolID,domID]]
-		selPolDescStrs <-c(selPolDescStrs, pdp.lst[[pdpName]][pdp.lst[[pdpName]]$polID==sdpID,2])
-	}
-}
-write(selPolDescStrs,file.path(figuresFolder,'selRunPolDesc.csv'))
