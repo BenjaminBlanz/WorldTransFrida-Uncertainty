@@ -267,6 +267,7 @@ for(i in 1:length(desiredFilterSpec)){
 	if(i %in% filtersToPlot){
 		clPlotting <- makeForkCluster(numPlotThreads)
 		for(plotType in plotTypes){
+			tic()
 			cat(sprintf('plotting %i vars with %i threads plot type %s...',
 									length(thingsToPlot),numPlotThreads,plotType))
 			funFigFolder <- file.path(figuresFolder,paste0('plotType',plotType,'-desiredFilters-',i))
@@ -279,7 +280,7 @@ for(i in 1:length(desiredFilterSpec)){
 														plotType=plotType,
 														colLevels=colLevels,
 														baselinePlotProps=baselinePlotProps)
-			cat('done\n')
+			cat(sprintf('done %s\n',timing$callback_msg))
 		}
 		stopCluster(clPlotting)
 	}
@@ -325,6 +326,7 @@ if(exists('selectedRunSpec')&&
 	writeSelPolIDPolicies(selPolID,location.output,'SelectedPolicy.csv')
 	clPlotting <- makeForkCluster(numPlotThreads)
 	for(plotType in plotTypes){
+		tic()
 		cat(sprintf('plotting %i vars with %i threads plot type %s...',
 								length(thingsToPlot),numPlotThreads,plotType))
 		funFigFolder <- file.path(figuresFolder,paste0('plotType',plotType,'-desiredFilters-',i,'-withSelPolID'))
@@ -338,7 +340,7 @@ if(exists('selectedRunSpec')&&
 													colLevels=colLevels,
 													baselinePlotProps=baselinePlotProps,
 													selPolID=selPolID)
-		cat('done\n')
+		cat(sprintf('done %s\n',timing$callback_msg))
 	}
 	stopCluster(clPlotting)
 }
