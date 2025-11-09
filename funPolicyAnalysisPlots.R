@@ -177,7 +177,7 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 									 					lwd=selectedRun.lwd,
 									 					col=selectedRun.col)
 									 	}
-									 }
+									 },
 									 key.axes = {
 									 	axis(4)
 									 	if(plotType==2){
