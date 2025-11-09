@@ -38,6 +38,7 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 		return(readRDS(plotMetaDataFilePath))
 	} 
 	if(verbosity>0){cat(sprintf('reading %s...',varName))}
+	retlist <- list()
 	quietgc()
 	varDat <- readPerVarFile(file.path(outputFolder,varFile))
 	# if the last column is entirely NA this is probably
@@ -132,10 +133,18 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 			(breaks[2:(length(breaks))]-breaks[1:(length(breaks)-1)])/2
 		if(is.null(colLevels)){
 			logmax <- log(max(counts))
-			levels <- exp(seq(0,logmax,length.out=plot.numColLevels))
+			levels <- c(0,1,exp(seq(1,logmax,length.out=plot.numColLevels))[-1])
 		} else {
 			levels <- colLevels
 		}
+		contourCols <- rev(paletteer_c(ifelse(plotType==2,plot.palletteName,plot.palletteNameSOW),
+																	 plot.numColLevels-1+length(plot.palletteOmmitEntries)))
+		if(length(plot.palletteOmmitEntries)>0){
+			contourCols <- contourCols[-plot.palletteOmmitEntries]
+		}
+		contourCols[plot.palletteReplaceEntries.idc] <- plot.palletteReplaceEntries.cols
+		retlist$contourCols <- contourCols
+		retlist$contourLevels <- levels
 		filled.contour(years,breaksMids,t(counts),
 									 xlim=range(years),
 									 ylim=ylims,
@@ -143,8 +152,7 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 									 xaxs='i',
 									 levels=levels,
 									 main=varFullName,ylab=varUnit,
-									 col = rev(paletteer_c(ifelse(plotType==2,plot.palletteName,plot.palletteNameSOW),
-									 											plot.numColLevels-1+length(plot.palletteOmmitEntries))[-plot.palletteOmmitEntries]),
+									 col = contourCols,
 									 plot.axes = {
 									 	axis(1)
 									 	axis(2)
@@ -174,7 +182,6 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 	}
 	dev.off()
 	if(verbosity>0){cat('done\n')}
-	retlist <- list()
 	retlist$ylims <- ylims
 	dir.create(file.path(funFigFolder,'plotMetaData'),F,T)
 	saveRDS(retlist,plotMetaDataFilePath)

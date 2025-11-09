@@ -168,7 +168,9 @@ plotTypes <- c(2,3)
 plot.numColLevels <- 26
 plot.palletteName <- "grDevices::RdPu"
 plot.palletteNameSOW <- "grDevices::Greens"
-plot.palletteOmmitEntries <- 1:3
+plot.palletteOmmitEntries <- 1:10
+plot.palletteReplaceEntries.idc <- c(1)
+plot.palletteReplaceEntries.cols <- c('white')
 plotWidth <- 20
 plotHeight <- 20
 plotUnit <- 'cm'
