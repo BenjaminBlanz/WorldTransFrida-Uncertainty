@@ -182,7 +182,7 @@ for(i in 1:length(filterSpec)){
 		cat('no such file\n')
 	}
 	timing <- toc(quiet=T)
-	cat(sprintf('  PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new); %i PolIDs left %s\n',
+	cat(sprintf('  PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %i PolIDs left. %s.\n',
 							length(polIDsToDrop), 100*length(polIDsToDrop)/numPolIDs,
 							length(polIDsToDrop.lst[[i+1]]),
 							length(polIDsToDrop)-length(polIDsToDrop.old),
@@ -255,7 +255,7 @@ for(i in 1:length(desiredFilterSpec)){
 		cat('no such file\n')
 	}
 	timing <- toc(quiet=T)
-	cat(sprintf('  PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new); %i PolIDs left %s\n',
+	cat(sprintf('  PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %i PolIDs left. %s.\n',
 							length(polIDsToDropDesired), 100*length(polIDsToDropDesired)/numPolIDs,
 							length(polIDsToDropDesired.lst[[i+1]]),
 							length(polIDsToDropDesired)-length(polIDsToDropDesired.old),
