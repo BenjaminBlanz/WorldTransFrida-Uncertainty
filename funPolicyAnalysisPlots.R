@@ -11,6 +11,7 @@ parPlotPolResults<-function(i,varsFiles,polIDsToDrop,funFigFolder=NULL,colLevels
 	} else {
 		ylims <- NULL
 	}
+	quietgc()
 	return(plotPolResults(varsFiles[i],polIDsToDrop=polIDsToDrop,
 												funFigFolder=funFigFolder,
 												plotType=plotType,
@@ -39,7 +40,6 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 	} 
 	if(verbosity>0){cat(sprintf('reading %s...',varName))}
 	retlist <- list()
-	quietgc()
 	varDat <- readPerVarFile(file.path(outputFolder,varFile))
 	# if the last column is entirely NA this is probably
 	# a generated variable, drop that col to not mess with the filter
