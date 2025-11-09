@@ -123,16 +123,24 @@ varsMeta <- rbind(varsMeta,generatedVarsMeta)
 polIDsToDrop.lst <- list()
 cat('dropping incomplete and inf...')
 tic()
-cat('reading file to determine incompletes...')
-varDat <- readPerVarFile(file.path(outputFolder,varsFiles[1]))
-# if the last column is entirely NA this is probably
-# a generated variable, drop that col to not mess with the filter
-if(sum(is.na(varDat[,ncol(varDat)]))==nrow(varDat)){
-	varDat <- varDat[,-ncol(varDat)]
+if(file.exists(file.path(writeToFolder,'incompleteAndInfPols.RDS'))){
+	cat('using existing incompleteAndInfPols.RDS...')
+	polIDsToDrop.lst[[1]] <- readRDS(file.path(writeToFolder,'incompleteAndInfPols.RDS'))
+	numPolIDs <- readRDS(file.path(writeToFolder,'numPolIDs.RDS'))
+} else {
+	cat('reading file to determine incompletes...')
+	varDat <- readPerVarFile(file.path(outputFolder,varsFiles[1]))
+	# if the last column is entirely NA this is probably
+	# a generated variable, drop that col to not mess with the filter
+	if(sum(is.na(varDat[,ncol(varDat)]))==nrow(varDat)){
+		varDat <- varDat[,-ncol(varDat)]
+	}
+	numPolIDs <- length(unique(varDat$polID))
+	cat('filtering...')
+	polIDsToDrop.lst[[1]] <- unique(varDat$polID[!complete.cases(varDat) | !is.finite(varDat[,ncol(varDat)])])
+	saveRDS(polIDsToDrop.lst[[1]],file.path(writeToFolder,'incompleteAndInfPols.RDS'))
+	saveRDS(numPolIDs,file.path(writeToFolder,'numPolIDs.RDS'))
 }
-numPolIDs <- length(unique(varDat$polID))
-cat('filtering...')
-polIDsToDrop.lst[[1]] <- unique(varDat$polID[!complete.cases(varDat) | !is.finite(varDat[,ncol(varDat)])])
 timing <- toc(quiet=T)
 cat('done\n')
 rm(varDat)
@@ -195,7 +203,14 @@ for(i in 1:length(filterSpec)){
 polIDsToDrop.baseline <- polIDsToDrop <- sort(unique(unlist(polIDsToDrop.lst)))
 
 # plotting baseline ####
-firstThingsToPlot <- c(69,112,131,130,141,106,107)
+firstThingsToPlot <- c(which(varsFiles=='energy_balance_model_surface_temperature_anomaly.RDS'),
+											 which(varsFiles=='gdp_real_gdp_in_2021c.RDS'),
+											 which(varsFiles=='gdp_future_year_in_recession.RDS'),
+											 which(varsFiles=='employment_unemployment_rate.RDS'),
+											 which(varsFiles=='real_gdp_per_capita.RDS'),
+											 which(varsFiles=='real_gdp_growth_rate.RDS'),
+											 which(varsFiles=='surface_temperature_anomaly_growth_rate.RDS'),
+											 which(varsFiles=='surface_temperature_anomaly_growth_rate.RDS'))
 thingsToPlot <- c(firstThingsToPlot,seq(1:length(varsFiles))[-firstThingsToPlot])
 clPlotting <- makeForkCluster(numPlotThreads)
 for(plotType in plotTypes){
