@@ -157,6 +157,11 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 									 	axis(1)
 									 	axis(2)
 									 	grid(col=gray(0.5,0.2),lwd=2,lty=2)
+									 	if(plotType==3){
+									 		mtext('Showng all ensemble members',3,0)
+									 	} else if(plotType==2){
+									 		mtext('Showng median ensemble member',3,0)
+									 	}
 									 	if(!is.null(selPolID)){
 									 		sowIDs <- unique(varDat$sowID)
 									 		if(plotType==3){
@@ -165,23 +170,23 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 										 						lty=selectedRunEnsemble.lty,
 										 						lwd=selectedRunEnsemble.lwd,
 										 						col=selectedRunEnsemble.col)
-										 			mtext('Showng all ensemble members',3,0)
 										 		}
-									 		} else {
-									 			mtext('Showng median ensemble member',3,0)
 									 		}
 									 		lines(years,varDat[varDat$polID==selPolID & varDat$sowID==selectedRunSpec$sow,as.character(years)],
 									 					lty=selectedRun.lty,
 									 					lwd=selectedRun.lwd,
 									 					col=selectedRun.col)
 									 	}
+									 }
+									 key.axes = {
+									 	axis(4)
+									 	if(plotType==2){
+									 		mtext('Number of Policies',2,0)
+									 	} else if(plotType==2){
+									 		mtext('Number of Policies including ensemble members',2,0)
 									 	}
+									 }
 									 )
-		if(plotType==2){
-			mtext('Number of Policies',2,0)
-		} else if(plotType==2){
-			mtext('Number of Policies including ensemble members',2,0)
-		}
 	} else if (plotType==4){
 		
 	} else {
