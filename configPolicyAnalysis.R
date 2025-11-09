@@ -161,7 +161,7 @@ selectedRunEnsemble.lty <- 2
 selectedRunEnsemble.lwd <- 1
 selectedRunEnsemble.col <- 'black'
 
-numPlotThreads <- 15
+numPlotThreads <- 20
 location.plots <- 'figures'
 # plot 
 plotTypes <- c(2,3)
