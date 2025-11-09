@@ -33,6 +33,7 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 	dir.create(funFigFolder,showWarnings = F,recursive = T)
 	varName <- tools::file_path_sans_ext(varFile)
 	if(verbosity>0){cat(sprintf('reading %s...',varName))}
+	quietgc()
 	varDat <- readPerVarFile(file.path(outputFolder,varFile))
 	# if the last column is entirely NA this is probably
 	# a generated variable, drop that col to not mess with the filter
