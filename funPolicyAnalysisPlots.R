@@ -152,15 +152,16 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 									 xaxs='i',
 									 levels=levels,
 									 main=varFullName,ylab=varUnit,
+									 las=0,
 									 col = contourCols,
 									 plot.axes = {
 									 	axis(1)
 									 	axis(2)
 									 	grid(col=gray(0.5,0.2),lwd=2,lty=2)
 									 	if(plotType==3){
-									 		mtext('Showng all ensemble members',3,0)
+									 		mtext('showing all ensemble members',3,0.5)
 									 	} else if(plotType==2){
-									 		mtext('Showng median ensemble member',3,0)
+									 		mtext('showing median ensemble members',3,0.5)
 									 	}
 									 	if(!is.null(selPolID)){
 									 		sowIDs <- unique(varDat$sowID)
@@ -181,9 +182,9 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 									 key.axes = {
 									 	axis(4)
 									 	if(plotType==2){
-									 		mtext('Number of Policies',2,0)
+									 		mtext('Number of\nmedian res.\nin area',1,2,adj=0)
 									 	} else if(plotType==2){
-									 		mtext('Number of Policies including ensemble members',2,0)
+									 		mtext('Number of\nens. members\nin area',1,2,adj=0)
 									 	}
 									 }
 									 )
