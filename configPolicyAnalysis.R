@@ -98,7 +98,7 @@ policyFiles <- list.files(location.singleDomainPolicyFiles)
 
 # plotting ####
 
-medianSOW <- 6
+medianSOWid <- 6
 
 # TODO: explain the filterSpec
 # these are the filters that drop policies that are outside the functional scope

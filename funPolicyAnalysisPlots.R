@@ -65,7 +65,7 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 				 main=varFullName,ylab=varUnit)
 		grid(col='gray',lwd=2)
 		for(year in years){
-			boxplot(varDat[[as.character(year)]][varDat$sowID==medianSOW],at=year,width = 0.8,add = T,pch='.',lwd=1,
+			boxplot(varDat[[as.character(year)]][varDat$sowID==medianSOWid],at=year,width = 0.8,add = T,pch='.',lwd=1,
 							axes=F,range=0)
 		}
 	} else if(plotType==1){
@@ -84,8 +84,8 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 			year <- years[year.i]
 			maxBoundUp[year.i] <- max(varDat[[as.character(year)]],na.rm=T)
 			maxBoundDown[year.i] <- min(varDat[[as.character(year)]],na.rm=T)
-			medianBoundUp[year.i] <- max(varDat[[as.character(year)]][varDat$sowID==medianSOW],na.rm=T)
-			medianBoundDown[year.i] <- min(varDat[[as.character(year)]][varDat$sowID==medianSOW],na.rm=T)
+			medianBoundUp[year.i] <- max(varDat[[as.character(year)]][varDat$sowID==medianSOWid],na.rm=T)
+			medianBoundDown[year.i] <- min(varDat[[as.character(year)]][varDat$sowID==medianSOWid],na.rm=T)
 			if(verbosity>1){cat('.')}
 		}
 		maxBoundUpLim <- maxBoundUp
@@ -112,7 +112,7 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 		for(year.i in 1:length(years)){
 			year <- years[year.i]
 			if(plotType==2){
-				histDat <- hist(varDat[[as.character(year)]][varDat$sowID==medianSOW],
+				histDat <- hist(varDat[[as.character(year)]][varDat$sowID==medianSOWid],
 												breaks=breaks,plot=F)
 			} else {
 				histDat <- hist(varDat[[as.character(year)]],
