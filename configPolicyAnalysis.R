@@ -159,7 +159,7 @@ selectedRun.lwd <- 2
 selectedRun.col <- 'black'
 selectedRunEnsemble.lty <- 2
 selectedRunEnsemble.lwd <- 1
-selectedRunEnsemble.col <- 'gray'
+selectedRunEnsemble.col <- 'black'
 
 numPlotThreads <- 10
 location.plots <- 'figures'

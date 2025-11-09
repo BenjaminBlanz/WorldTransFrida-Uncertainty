@@ -145,11 +145,13 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 									 	grid(col=gray(0.5,0.2),lwd=2,lty=2)
 									 	if(!is.null(selPolID)){
 									 		sowIDs <- unique(varDat$sowID)
-									 		for(sowID in sowIDs){
-									 			lines(years,varDat[varDat$polID==selPolID & varDat$sowID==sowID,as.character(years)],
-									 						lty=selectedRunEnsemble.lty,
-									 						lwd=selectedRunEnsemble.lwd,
-									 						col=selectedRunEnsemble.col)
+									 		if(plotType==3){
+										 		for(sowID in sowIDs){
+										 			lines(years,varDat[varDat$polID==selPolID & varDat$sowID==sowID,as.character(years)],
+										 						lty=selectedRunEnsemble.lty,
+										 						lwd=selectedRunEnsemble.lwd,
+										 						col=selectedRunEnsemble.col)
+										 		}
 									 		}
 									 		lines(years,varDat[varDat$polID==selPolID & varDat$sowID==selectedRunSpec$sow,as.character(years)],
 									 					lty=selectedRun.lty,
