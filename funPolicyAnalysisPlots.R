@@ -5,7 +5,7 @@
 #  3: contourplot of medians overlayed with contour of sow
 #  
 parPlotPolResults<-function(i,varsFiles,polIDsToDrop,funFigFolder=NULL,colLevels=NULL,plotType=1,verbosity=0,
-														baselinePlotProps=NULL,selPolID=NULL){
+														baselinePlotProps=NULL,selPolID=NULL,useYlimOverrides=TRUE){
 	if(!is.null(baselinePlotProps)){
 		ylims <- baselinePlotProps[[i]]$ylims
 	} else {
@@ -17,14 +17,16 @@ parPlotPolResults<-function(i,varsFiles,polIDsToDrop,funFigFolder=NULL,colLevels
 												colLevels=colLevels,
 												verbosity=verbosity,
 												ylims=ylims,
-												selPolID=selPolID))
+												selPolID=selPolID,
+												useYlimOverrides=useYlimOverrides))
 }
 plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 													 plotType=1,
 													 colLevels=NULL,
 													 verbosity=9,
 													 ylims=NULL,
-													 selPolID=NULL){
+													 selPolID=NULL,
+													 useYlimOverrides=TRUE){
 	if(is.null(funFigFolder)){
 		funFigFolder <- file.path(location.output,'figures',paste0('plotType',plotType))
 	}
@@ -48,7 +50,10 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 	years <- as.numeric(colnames(varDat)[3:ncol(varDat)])
 	png(file.path(funFigFolder,paste0(varName,'.png')),
 			width = plotWidth,height = plotHeight,units = plotUnit,res = plotRes)
-	if(is.null(ylims)){
+	if(useYlimOverrides && exists('plot.ylimOverrides') &&
+		 !is.null(plot.ylimOverrides[[varName]])){
+	 	ylims <- plot.ylimOverrides[[varName]]
+	} else if(is.null(ylims)){
 		ylims <- quantile(varDat[,seq(3,ncol(varDat),3)],probs=plot.relyrange,na.rm=T)
 	}
 	if(plotType==0){
@@ -139,7 +144,17 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 									 	axis(2)
 									 	grid(col=gray(0.5,0.2),lwd=2,lty=2)
 									 	if(!is.null(selPolID)){
-									 		lines(years,varDat[varDat$polID==selPolID & varDat$sowID==selectedRunSpec$sow,as.character(years)])
+									 		sowIDs <- unique(varDat$sowID)
+									 		for(sowID in sowIDs){
+									 			lines(years,varDat[varDat$polID==selPolID & varDat$sowID==sowID,as.character(years)],
+									 						lty=selectedRunEnsemble.lty,
+									 						lwd=selectedRunEnsemble.lwd,
+									 						col=selectedRunEnsemble.col)
+									 		}
+									 		lines(years,varDat[varDat$polID==selPolID & varDat$sowID==selectedRunSpec$sow,as.character(years)],
+									 					lty=selectedRun.lty,
+									 					lwd=selectedRun.lwd,
+									 					col=selectedRun.col)
 									 	}
 									 	}
 									 )

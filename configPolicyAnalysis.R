@@ -150,18 +150,16 @@ selectedRunSpec$year <- 2150
 selectedRunSpec$optimize <- 'max'
 selectedRunSpec$sow <- 5
 
+selectedRun.lty <- 1
+selectedRun.lwd <- 2
+selectedRun.col <- 'black'
+selectedRunEnsemble.lty <- 2
+selectedRunEnsemble.lwd <- 1
+selectedRunEnsemble.col <- 'gray'
+
 numPlotThreads <- 10
 location.plots <- 'figures'
-yearsToPlot.names <- c('allYears')#,'1980-2023')
-uncertaintiesToPlot <- c('fit uncertainty')#,'noise uncertainty','all uncertainty')
-alsoPlotMean.vals <- c(FALSE)
-mean.lty <- 'solid'
-mean.lwd <- 2
-mean.col <- 'blue'
-alsoPlotDefaultRun.vals <- c(TRUE,FALSE)
-def.lty <- 'solid'
-def.lwd <- 2
-def.col <- 'green'
+# plot 
 plotTypes <- c(2,3)
 plot.numColLevels <- 26
 plot.palletteName <- "grDevices::RdPu"
@@ -178,6 +176,9 @@ plot.lwd <- c(1,3)
 plot.lcol <- c(1,1) # colors of the outlines
 plot.col <- c(gray(0.7,0.5),gray(0.2,0.5)) # colors of the area fills
 plot.relyrange <- c(0.0001,0.9999)
+# pre define plot ylimits for selected variables (uses the cleanName(varName) as the key)
+plot.ylimOverrides <- list()
+plot.ylimOverrides$gdp_real_gdp_in_2021c <- c(0,2.5e6)
 
 # automatic stuff ####
 if(addAutoNameToExpID){
