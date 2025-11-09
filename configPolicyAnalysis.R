@@ -98,6 +98,8 @@ policyFiles <- list.files(location.singleDomainPolicyFiles)
 
 # plotting ####
 
+medianSOW <- 6
+
 # TODO: explain the filterSpec
 # these are the filters that drop policies that are outside the functional scope
 # of the model (while the math may work in some of these cases the conceptual model 
@@ -136,19 +138,21 @@ desiredFilterSpec$gdp_real_gdp_in_2021c$years <- 2023:2150 # the years in which 
 desiredFilterSpec$energy_balance_model_surface_temperature_anomaly <- list()
 desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$type <- 'gtval'
 desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$level <- 2
-desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$sowID <- 5 # the median case
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$sow <- 6 # the median case
 desiredFilterSpec$gdp_future_year_in_recession <- list()
 desiredFilterSpec$gdp_future_year_in_recession$type <- 'gtval'
 desiredFilterSpec$gdp_future_year_in_recession$level <- 10
-desiredFilterSpec$gdp_future_year_in_recession$allowedTransgressions <- 4 # ~64% of cases with default 11 runs
-filtersToPlot <- 1:length(desiredFilterSpec)
+desiredFilterSpec$gdp_future_year_in_recession$allowedTransgressions <- 4 # ~37% of cases with default 11 runs
+# after which consecutively applied desired filter should we run plots?
+# default is to only plot with all the filters applied, to save time
+filtersToPlot <- c(length(desiredFilterSpec))
 
 #select a specific run to highlight and output the policies
 selectedRunSpec <- list()
 selectedRunSpec$var <- 'gdp_real_gdp_in_2021c'
 selectedRunSpec$year <- 2150
 selectedRunSpec$optimize <- 'max'
-selectedRunSpec$sow <- 5
+selectedRunSpec$sow <- 6
 
 selectedRun.lty <- 1
 selectedRun.lwd <- 2
