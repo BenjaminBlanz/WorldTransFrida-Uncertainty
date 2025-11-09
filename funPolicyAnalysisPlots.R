@@ -144,7 +144,7 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 									 levels=levels,
 									 main=varFullName,ylab=varUnit,
 									 col = rev(paletteer_c(ifelse(plotType==2,plot.palletteName,plot.palletteNameSOW),
-									 											plot.numColLevels+2)[-c(1:3)]),
+									 											plot.numColLevels-1+length(plot.palletteOmmitEntries))[-plot.palletteOmmitEntries]),
 									 plot.axes = {
 									 	axis(1)
 									 	axis(2)
