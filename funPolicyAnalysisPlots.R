@@ -32,6 +32,11 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 	}
 	dir.create(funFigFolder,showWarnings = F,recursive = T)
 	varName <- tools::file_path_sans_ext(varFile)
+	plotMetaDataFilePath <- file.path(funFigFolder,'plotMetaData',paste0(varName,'-',plotType,'.RDS'))
+	if(file.exists(plotMetaDataFilePath)&&
+		 file.exists(file.path(funFigFolder,paste0(varName,'.png')))){
+		return(readRDS(plotMetaDataFilePath))
+	} 
 	if(verbosity>0){cat(sprintf('reading %s...',varName))}
 	quietgc()
 	varDat <- readPerVarFile(file.path(outputFolder,varFile))
@@ -171,6 +176,8 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 	if(verbosity>0){cat('done\n')}
 	retlist <- list()
 	retlist$ylims <- ylims
+	dir.create(file.path(funFigFolder,'plotMetaData'),F,T)
+	saveRDS(retlist,plotMetaDataFilePath)
 	return(retlist)
 }
 
