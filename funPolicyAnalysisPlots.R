@@ -159,9 +159,9 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 									 	axis(2)
 									 	grid(col=gray(0.5,0.2),lwd=2,lty=2)
 									 	if(plotType==3){
-									 		mtext('showing all ensemble members',3,0.5)
+									 		mtext('showing all ensemble members',3,0.25)
 									 	} else if(plotType==2){
-									 		mtext('showing median ensemble members',3,0.5)
+									 		mtext('showing median ensemble members',3,0.25)
 									 	}
 									 	if(!is.null(selPolID)){
 									 		sowIDs <- unique(varDat$sowID)
