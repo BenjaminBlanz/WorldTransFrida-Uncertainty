@@ -279,47 +279,67 @@ for(i in 1:length(desiredFilterSpec)){
 														plotType=plotType,
 														colLevels=colLevels,
 														baselinePlotProps=baselinePlotProps)
+			cat('done\n')
 		}
 		stopCluster(clPlotting)
 	}
 }
 
 # selected run ####
-selFilePath <- file.path(outputFolder,paste0(selectedRunSpec$var,'.RDS'))
-cat(sprintf('Reading %s for selected run picking...',selectedRunSpec$var))
-if(!file.exists(selFilePath)){
-	stop(sprintf('File selected for individual run %s does not exist.\n',selFilePath))
+if(exists('selectedRunSpec')&&
+	 !is.null(selectedRunSpec$var)&&
+	 !is.null(selectedRunSpec$year)&&
+	 !is.null(selectedRunSpec$optimize)&&
+	 !is.null(selectedRunSpec$sow)){
+	selFilePath <- file.path(outputFolder,paste0(selectedRunSpec$var,'.RDS'))
+	if(file.exists(file.path(writeToFolder,'selPolID.RDS'))&&
+		 file.exists(file.path(writeToFolder,'selectedRunSpec.RDS'))){
+		selectedRunSpecCached <- readRDS(file.path(writeToFolder,'selectedRunSpec.RDS'))
+	} else {
+		selectedRunSpecCached <- NULL
+	}
+	if(filterSpecsAreEqual(selectedRunSpecCached,selectedRunSpec)){
+		cat(sprintf('valid cached selPolID for %s...',selectedRunSpec$var))
+	} else {
+		cat(sprintf('Reading %s for selected run picking...',selectedRunSpec$var))
+		if(!file.exists(selFilePath)){
+			stop(sprintf('File selected for individual run %s does not exist.\n',selFilePath))
+		}
+		tic()
+		varDat <- readPerVarFile(selFilePath)
+		cat('selecting...')
+		setForSelection <- varDat[!varDat$polID %in% polIDsToDropDesired & 
+																varDat$sowID==selectedRunSpec$sow,
+															c('polID',as.character(selectedRunSpec$year))]
+		if(selectedRunSpec$optimize=='max'){
+			selPolID <- setForSelection$polID[which.max(setForSelection[[as.character(selectedRunSpec$year)]])]
+		}
+		if(selectedRunSpec$optimize=='min'){
+			selPolID <- setForSelection$polID[which.min(setForSelection[[as.character(selectedRunSpec$year)]])]
+		}
+		saveRDS(selectedRunSpec,file.path(writeToFolder,'selectedRunSpec.RDS'))
+		saveRDS(selPolID,file.path(writeToFolder,'selPolID.RDS'))
+		timing <- toc(quiet=T)
+	}
+	cat(sprintf('selected run %i (%s)\n',selPolID,timing$callback_msg))
+	writeSelPolIDPolicies(selPolID,location.output,'SelectedPolicy.csv')
+	clPlotting <- makeForkCluster(numPlotThreads)
+	for(plotType in plotTypes){
+		cat(sprintf('plotting %i vars with %i threads plot type %s...',
+								length(thingsToPlot),numPlotThreads,plotType))
+		funFigFolder <- file.path(figuresFolder,paste0('plotType',plotType,'-desiredFilters-',i,'-withSelPolID'))
+		logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
+		colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
+		parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
+													varsFiles=varsFiles,
+													polIDsToDrop=polIDsToDropDesired,
+													funFigFolder=funFigFolder,
+													plotType=plotType,
+													colLevels=colLevels,
+													baselinePlotProps=baselinePlotProps,
+													selPolID=selPolID)
+		cat('done\n')
+	}
+	stopCluster(clPlotting)
 }
-tic()
-varDat <- readPerVarFile(selFilePath)
-cat('selecting...')
-setForSelection <- varDat[!varDat$polID %in% polIDsToDropDesired & 
-														varDat$sowID==selectedRunSpec$sow,
-													c('polID',as.character(selectedRunSpec$year))]
-if(selectedRunSpec$optimize=='max'){
-	selPolID <- setForSelection$polID[which.max(setForSelection[[as.character(selectedRunSpec$year)]])]
-}
-if(selectedRunSpec$optimize=='min'){
-	selPolID <- setForSelection$polID[which.min(setForSelection[[as.character(selectedRunSpec$year)]])]
-}
-timing <- toc(quiet=T)
-cat('selected run %i (%s)\n',selPolID,timing$callback_msg)
-writeSelPolIDPolicies(selPolID,location.output,'SelectedPolicy.csv')
-clPlotting <- makeForkCluster(numPlotThreads)
-for(plotType in plotTypes){
-	cat(sprintf('plotting %i vars with %i threads plot type %s...',
-							length(thingsToPlot),numPlotThreads,plotType))
-	funFigFolder <- file.path(figuresFolder,paste0('plotType',plotType,'-desiredFilters-',i,'-withSelPolID'))
-	logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
-	colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
-	parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
-												varsFiles=varsFiles,
-												polIDsToDrop=polIDsToDropDesired,
-												funFigFolder=funFigFolder,
-												plotType=plotType,
-												colLevels=colLevels,
-												baselinePlotProps=baselinePlotProps,
-												selPolID=selPolID)
-}
-stopCluster(clPlotting)
-
+	
