@@ -140,10 +140,10 @@ if(file.exists(file.path(filterResFolder,'incompleteAndInfPols.RDS'))){
 	polIDsToDrop.lst[[1]] <- unique(varDat$polID[!complete.cases(varDat) | !is.finite(varDat[,ncol(varDat)])])
 	saveRDS(polIDsToDrop.lst[[1]],file.path(filterResFolder,'incompleteAndInfPols.RDS'))
 	saveRDS(numPolIDs,file.path(filterResFolder,'numPolIDs.RDS'))
+	rm(varDat)
 }
 timing <- toc(quiet=T)
 cat('done\n')
-rm(varDat)
 quietgc()
 
 cat('Filter 0 filtering for incompletes and infinities filter applies in all years\n')
