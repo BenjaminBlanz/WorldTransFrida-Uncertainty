@@ -24,7 +24,7 @@ nullPolProb <- 0.5
 
 # parallel ####
 useSLURM <- TRUE
-maxJobsQueue <- 10
+maxJobsQueue <- 999
 # How long will it take approximately? Job will be killed after this time!
 # But max 8:00 hours and the shorter the run is, the earlier the job gets run
 SLURMhours <- '8'
