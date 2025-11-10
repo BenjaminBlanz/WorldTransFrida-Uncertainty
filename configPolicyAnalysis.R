@@ -138,7 +138,7 @@ desiredFilterSpec$gdp_real_gdp_in_2021c$years <- 2023:2150 # the years in which 
 desiredFilterSpec$energy_balance_model_surface_temperature_anomaly <- list()
 desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$type <- 'gtval'
 desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$level <- 2
-desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$sow <- 6 # the median case
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$allowedTransgressions <- 5 # 5/11 allowed to transgress
 desiredFilterSpec$gdp_future_year_in_recession <- list()
 desiredFilterSpec$gdp_future_year_in_recession$type <- 'gtval'
 desiredFilterSpec$gdp_future_year_in_recession$level <- 10
