@@ -13,14 +13,17 @@ parPlotPolResults<-function(i,varsFiles,polIDsToDrop,funFigFolder=NULL,colLevels
 	}
 	quietgc()
 	plotRes <- NULL
-	try({plotRes <- plotPolResults(varsFiles[i],polIDsToDrop=polIDsToDrop,
-																 funFigFolder=funFigFolder,
-																 plotType=plotType,
-																 colLevels=colLevels,
-																 verbosity=verbosity,
-																 ylims=ylims,
-																 selPolID=selPolID,
-																 useYlimOverrides=useYlimOverrides)})
+	tryCatch({plotRes <- plotPolResults(varsFiles[i],polIDsToDrop=polIDsToDrop,
+																			funFigFolder=funFigFolder,
+																			plotType=plotType,
+																			colLevels=colLevels,
+																			verbosity=verbosity,
+																			ylims=ylims,
+																			selPolID=selPolID,
+																			useYlimOverrides=useYlimOverrides)},
+					 error = function(e){
+					 	write(e,file.path(funFigFolder,paste0(tools::file_path_sans_ext(varsFiles[i]),'-error.log')))
+					 	})
 	return(plotRes)
 }
 plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
