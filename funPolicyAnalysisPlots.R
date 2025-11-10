@@ -25,7 +25,8 @@ parPlotPolResults<-function(i,varsFiles,polIDsToDrop,funFigFolder=NULL,colLevels
 					 	if(is.null(funFigFolder)){
 					 		funFigFolder <- file.path(location.output,'figures',paste0('plotType',plotType))
 					 	}
-					 	write(e,file.path(funFigFolder,paste0(tools::file_path_sans_ext(varsFiles[i]),'-error.log')))
+					 	write(c('call',e$call,'message',e$message),
+					 				file.path(funFigFolder,paste0(tools::file_path_sans_ext(varsFiles[i]),'-error.log')))
 					 	})
 	return(plotRes)
 }
