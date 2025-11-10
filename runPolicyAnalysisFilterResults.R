@@ -46,22 +46,7 @@ if(opt$useDesiredFilterSpec){
 }
 verbosity <- opt$verbosity
 
-filterSpecsAreEqual <- function(filterSpec1,filterSpec2){
-	if(length(filterSpec1)!=length(filterSpec2)){
-		return(F)
-	}
-	for(entry in names(filterSpec1)){
-		if(length(filterSpec1[[entry]])!=length(filterSpec2[[entry]])){
-			return(F)
-		}
-		for(subentry.i in 1:length(filterSpec1[[entry]])){
-			if(filterSpec1[[entry]][subentry.i]!=filterSpec2[[entry]][subentry.i]){
-				return(F)
-			}
-		}
-	}
-	return(T)
-}
+
 if(!is.null(overrideLocation.output)){
 	location.output <- overrideLocation.output
 }
