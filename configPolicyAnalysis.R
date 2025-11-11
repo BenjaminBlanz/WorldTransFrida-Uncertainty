@@ -40,7 +40,7 @@ SLURMpartition <- 'compute'
 SLURMemail <- ''
 # bumber of workers for each of the slurm jobs
 numWorkers <- 256
-numWorkersFileMerge <- min(numWorkers,ceiling(1e6/numInitialJointPol))
+numWorkersFileMerge <- min(numWorkers,ceiling(1e7/numInitialJointPol))
 # How large the chunks of work are, smaller means more frequent pauses to write out
 # itermediate results (and update the diagnostic output).
 # smaller also means increaseing the total number of files, which can cause file system 
