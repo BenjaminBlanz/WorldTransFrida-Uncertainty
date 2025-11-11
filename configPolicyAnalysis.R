@@ -31,8 +31,7 @@ SLURMhours <- '8'
 SLURMminutes <- '00'
 # Does the job need larger memory?
 # (the larger the memory you request, the longer the job might sit in the queue, if the machine is full)
-memorySize='256G' # can be ['256G' '512G', '1024G'], '256G' sometimes fails with 100,000 samples
-SLURMmemorySize <- '256G'
+SLURMmemorySize <- '256G' # can be ['256G' '512G', '1024G'], '256G' sometimes fails with 100,000 samples
 # Use a different group account for ressources? Which partition?
 SLURMaccount <- 'uc1275'
 SLURMpartition <- 'compute'
@@ -40,7 +39,7 @@ SLURMpartition <- 'compute'
 SLURMemail <- ''
 # bumber of workers for each of the slurm jobs
 numWorkers <- 256
-numWorkersFileMerge <- min(numWorkers,ceiling(1e7/numInitialJointPol))
+numWorkersFileMerge <- min(numWorkers,ceiling(5e6/numInitialJointPol))
 # How large the chunks of work are, smaller means more frequent pauses to write out
 # itermediate results (and update the diagnostic output).
 # smaller also means increaseing the total number of files, which can cause file system 
