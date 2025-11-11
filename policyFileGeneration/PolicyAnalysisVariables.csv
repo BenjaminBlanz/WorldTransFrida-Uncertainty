@@ -6,12 +6,12 @@ Oil Extraction + Tax,Government Regulations,tax rate on newly installed oil extr
 Oil Extraction + Subsidy,Government Regulations,tax rate on newly installed oil extraction capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed oil extraction capacity
 Gas Extraction + Tax,Government Regulations,tax rate on newly installed gas extraction capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed gas extraction capacity
 Gas Extraction + Subsidy,Government Regulations,tax rate on newly installed gas extraction capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed gas extraction capacity
-Coal Production + Tax,Government Regulations,tax rate on newly installed coal production capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed coal production capacity
-Coal Production + Subsidy,Government Regulations,tax rate on newly installed coal production capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed coal production capacity
-Oil Production + Tax,Government Regulations,tax rate on newly installed oil production capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed oil production capacity
-Oil Production + Subsidy,Government Regulations,tax rate on newly installed oil production capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed oil production capacity
-Gas Production + Tax,Government Regulations,tax rate on newly installed gas production capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed gas production capacity
-Gas Production + Subsidy,Government Regulations,tax rate on newly installed gas production capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed gas production capacity
+Coal Production + Tax,Government Regulations,tax rate on newly installed coal energy production capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed coal energy production capacity
+Coal Production + Subsidy,Government Regulations,tax rate on newly installed coal energy production capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed coal energy production capacity
+Oil Production + Tax,Government Regulations,tax rate on newly installed oil energy production capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed oil energy production capacity
+Oil Production + Subsidy,Government Regulations,tax rate on newly installed oil energy production capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed oil energy production capacity
+Gas Production + Tax,Government Regulations,tax rate on newly installed gas energy production capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed gas energy production capacity
+Gas Production + Subsidy,Government Regulations,tax rate on newly installed gas energy production capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed gas energy production capacity
 Hydropower Capacity + Tax,Government Regulations,tax rate on newly installed hydropower capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed hydropower capacity
 Hydropower Capacity + Subsidy,Government Regulations,tax rate on newly installed hydropower capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed hydropower capacity
 Bio Energy Capacity + Tax,Government Regulations,tax rate on newly installed bio energy capacity,0,0,1,SixParm,Government Regulations.tax rate on newly installed bio energy capacity
@@ -24,10 +24,10 @@ Wind Energy Capacity + Tax,Government Regulations,tax rate on newly installed wi
 Wind Energy Capacity + Subsidy,Government Regulations,tax rate on newly installed wind energy capacity,0,-0.75,0,SixParm,Government Regulations.tax rate on newly installed wind energy capacity
 ,,,,,,,
 SLR Strategy + Protection,Government Regulations,Protection as SLR adaptation strategy,0,0,1,Ones,Government Regulations.Protection as SLR adaptation strategy
-SLR Strategy + Protection,Government Regulations,SLR adaptation strategy start year,2025,2025,2100,DivBy5Parm,Government Regulations.SLR adaptation strategy start year
+SLR Strategy + Protection,Government Regulations,SLR adaptation start year,2025,2025,2100,DivBy5Parm,Government Regulations.SLR adaptation start year
 SLR Strategy + Protection,Government Regulations,No SLR adaptation strategy,1,0,1,Zeros,Government Regulations.No SLR adaptation strategy
 SLR Strategy + Retreat,Government Regulations,Retreat as SLR adaptation strategy,0,0,1,Ones,Government Regulations.Retreat as SLR adaptation strategy
-SLR Strategy + Retreat,Government Regulations,SLR adaptation strategy start year,2025,2025,2100,DivBy5Parm,Government Regulations.SLR adaptation strategy start year
+SLR Strategy + Retreat,Government Regulations,SLR adaptation start year,2025,2025,2100,DivBy5Parm,Government Regulations.SLR adaptation start year
 SLR Strategy + Retreat,Government Regulations,No SLR adaptation strategy,1,0,1,Zeros,Government Regulations.No SLR adaptation strategy
 ,,,,,,,
 Forrestation,Government Regulations,forestation policy,0,0,9,SixParm,Government Regulations.forestation policy
@@ -50,11 +50,11 @@ Wage Tax Policy,Government Regulations,wage tax policy,0.219,0.05,0.6,OneParm,Go
 Wage Tax Policy,Government Regulations,wage tax policy start year,2025,2025,2100,DivBy5Parm,Government Regulations.wage tax policy start year
 Wage Tax Policy,Government Regulations,time to implement wage tax policy,5,5,75,DivBy5Parm,Government Regulations.time to implement wage tax policy
 Wage Tax Policy,Government Regulations,switch wage tax policy,0,0,1,Ones,Government Regulations.switch wage tax policy
-Profit Tax Policy,Government Regulations,profit tax rate policy,0.327,0.05,0.4,OneParm,Government Regulations.profit tax rate policy
+Profit Tax Policy,Government Regulations,profit tax policy,0.327,0.05,0.4,OneParm,Government Regulations.profit tax policy
 Profit Tax Policy,Government Regulations,profit tax policy start year,2025,2025,2100,DivBy5Parm,Government Regulations.profit tax policy start year
 Profit Tax Policy,Government Regulations,time to implement profit tax policy,5,5,75,DivBy5Parm,Government Regulations.time to implement profit tax policy
 Profit Tax Policy,Government Regulations,switch profit tax policy,0,0,1,Ones,Government Regulations.switch profit tax policy
-Wealth Tax Policy,Government Regulations,wealth tax rate policy,0,0.05,0.5,OneParm,Government Regulations.wealth tax rate policy
+Wealth Tax Policy,Government Regulations,wealth tax policy,0,0,0.05,OneParm,Government Regulations.wealth tax policy
 Wealth Tax Policy,Government Regulations,wealth tax policy start year,2025,2025,2100,DivBy5Parm,Government Regulations.wealth tax policy start year
 Wealth Tax Policy,Government Regulations,time to implement wealth tax policy,5,5,75,DivBy5Parm,Government Regulations.time to implement wealth tax policy
 ,,,,,,,
