@@ -178,7 +178,7 @@ for(plotWeightType in plotWeightTypes){
 				saveRDS(plotData,file.path(location.output,location.plots,'CI-plots',
 																	 paste0(plotWeightType,'Weighted'),'plotData',
 																	 paste0(paste(varName,uncertaintyType,plotWeightType,'weighted',sep='-'),'.RDS')))
-				csvExport.df <- data.frame(year=plotData$years,mean=means,defaultRun=defRun)
+				csvExport.df <- data.frame(year=plotData$years,mean=means,defaultRun=defRun[[varName]])
 				for(q.i in 1:length(ciBoundQs)){
 					csvExport.df[[paste0('Quantile',ciBoundQs[q.i])]] <- ciBounds[,q.i]
 				}
