@@ -2,7 +2,6 @@
 # Functions to run frida
 #
 
-suppressPackageStartupMessages(require(Rmpfr)) # use to calculate the likelihood from loglikelihood
 
 # prepareSampleParms ####
 prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NULL){
@@ -11,7 +10,18 @@ prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NU
 		cat('reading frida_info...')
 		# read in the parameters in frida that have ranges defined
 		frida_info <- read.csv(file.path(location.frida.info,name.frida_info))
-		columnsThatAreFlags <- c(2,3,4,5,6,7,8,9,10,11)
+		if(!is.null(frida_info$A.LTM)){ # this file is from the new export in stella 4.11
+			columnsThatAreFlags <- c(5,6,7,8,9,10,11,12,13,14,15,which(colnames(frida_info)=='X'))
+			# skip lines that are not parameters with ranges
+			frida_info <- frida_info[!is.na(frida_info$Min)&!is.na(frida_info$Max),]
+			# write zeroes for NAs in columns that are flags
+			temp <- unlist(frida_info[,columnsThatAreFlags])
+			temp[is.na(temp)] <- 0
+			frida_info[,columnsThatAreFlags] <- temp
+		} else { # this is a frida_info file proided by billy pre stella 4.11
+			columnsThatAreFlags <- c(2,3,4,5,6,7,8,9,10,11)
+		
+		}	
 		# select the parameters to be sampled
 		sampleParms <- frida_info[rowSums(frida_info[,columnsThatAreFlags])>0 &
 																frida_info$No.Sensi==0 &
