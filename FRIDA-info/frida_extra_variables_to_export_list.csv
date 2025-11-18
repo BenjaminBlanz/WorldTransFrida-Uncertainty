@@ -1,4 +1,15 @@
 IMPORTANT: NO WHITESPACE AT THE END OF FIELDS!,FRIDA Module,FRIDA Name,Index,FRIDA FQN,Unit
+Forcings for Cecilie,Minor GHGs Forcing,Montreal Gases Effective Radiative Forcing,[*],Minor GHGs Forcing.Montreal Gases Effective Radiative Forcing[*],W/(metre^2)
+Forcings for Cecilie,Natural Forcing,Effective Radiative Forcing from Solar Output Variations,[*],Natural Forcing.Effective Radiative Forcing from Solar Output Variations[*],W/(metre^2)
+Forcings for Cecilie,Natural Forcing,Efficacy Adjusted Effective Radiative Forcing from Volcanoes,[*],Natural Forcing.Efficacy Adjusted Effective Radiative Forcing from Volcanoes[*],W/(metre^2)
+Forcings for Cecilie,CO2 Forcing,CO2 Effective Radiative Forcing,[*],CO2 Forcing.CO2 Effective Radiative Forcing[*],W/(metre^2)
+Forcings for Cecilie,CH4 Forcing,CH4 Effective Radiative Forcing,[*],CH4 Forcing.CH4 Effective Radiative Forcing[*],W/(metre^2)
+Forcings for Cecilie,N2O Forcing,N2O Effective Radiative Forcing,[*],N2O Forcing.N2O Effective Radiative Forcing[*],W/(metre^2)
+Forcings for Cecilie,Land Use Forcing,Total Land use forcing,[*],Land Use Forcing.Total Land use forcing[*],W/(metre^2)
+Forcings for Cecilie,Stratospheric Water Vapour Forcing,Effective Radiative Forcing from the CH4 effect on Stratospheric H2O,[*],Stratospheric Water Vapour Forcing.Effective Radiative Forcing from the CH4 effect on Stratospheric H2O[*],W/(metre^2)
+Forcings for Cecilie,Ozone Forcing,Ozone Effective Radiative Forcing,[*],Ozone Forcing.Ozone Effective Radiative Forcing[*],W/(metre^2)
+Forcings for Cecilie,BC on Snow Forcing,Effective Radiative Forcing of Black Carbon on Snow,[*],BC on Snow Forcing.Effective Radiative Forcing of Black Carbon on Snow[*],W/(metre^2)
+Forcings for Cecilie,Minor GHGs Forcing,HFC134a eq Effective Radiative Forcing,[*],Minor GHGs Forcing.HFC134a eq Effective Radiative Forcing[*],W/(metre^2)
 From Chris,Energy Balance Model,ocean heat content change,[*],Energy Balance Model.ocean heat content change[*],YJ
 From Chris,Aerosol Forcing,Effective Radiative Forcing from Aerosol Radiation Interactions,[*],Aerosol Forcing.Effective Radiative Forcing from Aerosol Radiation Interactions[*],W/(metre^2)
 From Chris,Aerosol Forcing,Effective Radiative Forcing from Aerosol Cloud Interactions,[*],Aerosol Forcing.Effective Radiative Forcing from Aerosol Cloud Interactions[*],W/(metre^2)
@@ -85,7 +96,7 @@ energy investment to biofuel,energy investments,Gross Investments in Biofuel Cap
 Energy investment into fossil,energy investments,Investments in Fossil Energy,[*],energy investments.Investments in Fossil Energy[*],2021c$/Year
 Energy investment into non-fossil,energy investments,Gross Investments in Renewables,[*],energy investments.Gross Investments in Renewables[*],2021c$/Year
 Economy module,,,,,
-global GDP (2021-dollars/year,GDP,Real GDP in 2021c$,[*],GDP.Real GDP in 2021c$[*],2021c$/Year
+global GDP (2021-dollars/year),GDP,Real GDP in 2021c$,[*],GDP.Real GDP in 2021c$[*],2021c$/Year
 ,Circular Flow,bottom 40 share of real income,[*],Circular Flow.bottom 40 share of real income[*],%
 ,Circular Flow,growth rates of income per capita among the bottom 40 per cent of the total population,[*],Circular Flow.growth rates of income per capita among the bottom 40 per cent of the total population[*],dmnl/Year
 ,Circular Flow,Income Inequality,[*],Circular Flow.Income Inequality[*],dmnl
@@ -95,10 +106,14 @@ global GDP (2021-dollars/year,GDP,Real GDP in 2021c$,[*],GDP.Real GDP in 2021c$[
 ,Finance,Non performing loans to total gross loans,[*],Finance.Non performing loans to total gross loans[*],
 ,Finance,Regulatory Tier 1 capital to assets,[*],Finance.Regulatory Tier 1 capital to assets[*],
 ,Finance,Return on assets to short term liabilities,[*],Finance.Return on assets to short term liabilities[*],
+Bank assets to liabilities ratio,Finance,assets to liability ratio,[*],Finance.assets to liability ratio[*],dmnl
+Exploratory bank investment,Finance,exploratory bank investment,[*],Finance.exploratory bank investment[*],b$/year
+Corporate innovative investment,Finance,safe loans affected innovation,[*],Finance.safe loans affected innovation,b$/year
 inflation rate (%/year),Inflation,Inflation Rate,[*],Inflation.Inflation Rate[*],1/Year
 productivity (all production factors),Employment,Productivity,[*],Employment.Productivity[*],dmnl
 unemployment rate (%),Employment,unemployment rate,[*],Employment.unemployment rate[*],dmnl
 worker share of net income (%),Circular Flow,worker share of net income,[*],Circular Flow.worker share of net income[*],%
+Government bank bailouts,Government,bank bailouts,[*],Government.bank bailouts[*],b$/year
 Resources module,,,,,
 yearly concrete production (million tonnes per year),Concrete,total yearly concrete use,[*],Concrete.total yearly concrete use[*],Mtonne/year
 in use concrete stock (million tonnes),Concrete,In use concrete stock,[*],Concrete.In use concrete stock[*],Mtonne
@@ -148,8 +163,19 @@ for SLR analysis,Sea level rise costs and impacts,Total loss of assets from SLR,
 for SLR analysis,Sea level rise costs and impacts,Productivity reduction factor from coastal flooding,[*],Sea level rise costs and impacts.Productivity reduction factor from coastal flooding[*],dmnl
 for SLR analysis,Sea level rise costs and impacts,Total people retreat costs,[*],Sea level rise costs and impacts.Total people retreat costs[*],bc$/year
 for SLR analysis,Sea level rise costs and impacts,Total asset retreat costs,[*],Sea level rise costs and impacts.Total asset retreat costs[*],bc$/year
-Useful econ vars,GDP,future time in recession,[*],GDP.future time in recession[*],Year
+Useful econ vars,GDP,future time in recession,[*],GDP.future time in recession[*],years
 Useful econ vars,GDP,future recession counter,[*],GDP.future recession counter[*],dmnl
+For SSP analysis,Circular Flow,private consumption,[*],Circular Flow.private consumption[*],b$/year
+For SSP analysis,Demographics,Births,[*],Demographics.Births[*],Mp/Year
+For SSP analysis,Demographics,deaths Over 75 years,[*],Demographics.deaths Over 75 years[*],Mp/Year
+For SSP analysis,Demographics,female population literacy percentage,[*],Demographics.female population literacy percentage[*],dmnl
+For SSP analysis,Demographics,fertility,[*],Demographics.fertility[*],dmnl
+For SSP analysis,Emissions,Total CH4 Emissions,[*],Emissions.Total CH4 Emissions[*],MtCH4/Year
+For SSP analysis,Emissions,Total CO2 Emissions,[*],Emissions.Total CO2 Emissions[*],MtCO2/Year
+For SSP analysis,Emissions,Total N2O Emissions,[*],Emissions.Total N2O Emissions[*],ktN2O/yr
+For SSP analysis,Employment,annual aggregate wages,[*],Employment.annual aggregate wages[*],b$/year
+For SSP analysis,energy supply,Total Energy Output,[*],energy supply.Total Energy Output[*],TWh/Year
+For SSP analysis,Land Nutrients,fertilizer use,[*],Land Nutrients.fertilizer use[*],MtN/year
 ,,,,,
 For Billy,Finance,lending standards,[*],Finance.lending standards[*],dmnl
 For Billy,Finance,climate adjusted failure rate,[*],Finance.climate adjusted failure rate[*],dmnl
@@ -164,3 +190,5 @@ For Billy,GDP,private investment in in 2021c$,[*],GDP.private investment in in 2
 For Billy,GDP,public investment in 2021c$,[*],GDP.public investment in 2021c$[*],bc$/year
 For Billy,Employment,realised productivity,[*],Employment.realised productivity[*],dmnl
 For Billy,Inflation,Inflation Index,[*],Inflation.Inflation Index[*],1/year
+,,,,,
+For econ paper by BB,Circular Flow,real private consumption 2021c$,[*],Circular Flow.real private consumption 2021c$[*],bc$/year
