@@ -8,7 +8,7 @@ function cleanup_uncertainty_repo() {
 
 	#remove all the stuff we don't need
 	rm -rf "./Data Processing"
-	rm -r FRIDA.isdb
+	rm -f FRIDA.isdb
 	rm -f LICENSE
 	rm -f ReadMe.md
 
@@ -47,7 +47,6 @@ else
 	echo "Resetting your FRIDA to be the latest..."
 	cd ./FRIDAforUncertaintyAnalysisGit
 	git fetch origin main
-	git reset --hard v2.1
 
 	cd ..
 
