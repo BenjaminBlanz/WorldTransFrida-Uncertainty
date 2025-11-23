@@ -122,6 +122,7 @@ if(!exists('skipParMLE')){
 # FRIDA config ####
 climateFeedbackSpecFile <- 'ClimateFeedback_On.csv'
 climateOverrideSpecFile <- 'ClimateSTAOverride_Off.csv'
+climateOverrideSpecFileTS <- 'ClimateSTAOverrideTS.csv'
 policyFileName <- 'policy_EMB.csv'#'policy_100DollarCarbonTax.csv' #'policy_EMB.csv'
 
 
@@ -142,7 +143,7 @@ location.frida.configs <- './FRIDA-configs'
 # export preferences etc
 location.frida.info <- './FRIDA-info'
 name.frida_external_ranges <-'frida_external_ranges.csv'
-name.frida_info <- 'frida_info.csv'
+name.frida_info <- 'Parameter Info.csv'
 name.frida_integer_parms <- 'frida_integer_parms.csv'
 name.frida_parameter_exclusion_list <- 'frida_parameter_exclusion_list.csv'
 # list of variables to exclude from the likelihood calculations
@@ -178,8 +179,8 @@ location.output.base <- location.output
 # and be faster
 # typical options on linux are /dev/shm or /run/user/####/ where #### is the uid
 # if both of these are unavailable use notTMPFS or some other arbitrary location on disk
-# tmpfsBaseDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork')
-tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T),'/rwork')
+tmpfsBaseDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork')
+# tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T),'/rwork')
 # tmpfsBaseDir <- 'notTMPFS'
 origTmpfsDir <- tmpfsDir <- file.path(tmpfsBaseDir,name.output)
 
@@ -218,4 +219,6 @@ file.copy(file.path(location.frida.configs,policyFileName),
 					file.path(location.frida,'Data','policyParameters.csv'),T)
 file.copy(file.path(location.frida.configs,climateOverrideSpecFile),
 					file.path(location.frida,'Data','ClimateSTAOverride.csv'),T)
+file.copy(file.path(location.frida.configs,climateOverrideSpecFileTS),
+					file.path(location.frida,'Data','ClimateSTAOverrideTS.csv'),T)
 

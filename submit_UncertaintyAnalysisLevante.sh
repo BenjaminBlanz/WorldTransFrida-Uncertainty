@@ -53,6 +53,7 @@ FRIDA='FRIDAforUncertaintyAnalysis'
 policyFile='policy_EMB.csv'
 climateFeedbackFile='ClimateFeedback_On.csv'
 climateSTAOverrideFile='ClimateSTAOverride_Off.csv'
+climateSTAOverrideFileTS='ClimateSTAOverrideTS.csv'
 baselineParmFile=''
 
 # These need to be located in the FRIDA-info/ folder!
@@ -122,6 +123,9 @@ while [ $# -gt 0 ]; do
     --sta|--climateSTAOverrideFile)
       climateSTAOverrideFile="$2"
       ;;
+    --stats|--climateSTAOverrideFileTS)
+      climateSTAOverrideFileTS="$2"
+      ;;
     --blp|--baselineParmFile)
       baselineParmFile="$2"
       ;;
@@ -153,6 +157,7 @@ sed -i "s/frida_info.csv/${infoFile}/" $config
 sed -i "s/policy_EMB.csv/${policyFile}/" $config
 sed -i "s/ClimateFeedback_On.csv/${climateFeedbackFile}/" $config
 sed -i "s/ClimateSTAOverride_Off.csv/${climateSTAOverrideFile}/" $config
+sed -i "s/ClimateSTAOverrideTS.csv/${climateSTAOverrideFileTS}/" $config
 sed -i "s/^name.baselineParmFile <-.*$/name.baselineParmFile <- '${baselineParmFile}'/" $config
 sed -i "s/frida_external_ranges.csv/${externalRangesFile}/" $config
 sed -i "s/frida_parameter_exclusion_list.csv/${excludeParmFile}/" $config
