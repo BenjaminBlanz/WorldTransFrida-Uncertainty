@@ -122,7 +122,7 @@ if(!exists('skipParMLE')){
 # FRIDA config ####
 climateFeedbackSpecFile <- 'ClimateFeedback_On.csv'
 climateOverrideSpecFile <- 'ClimateSTAOverride_Off.csv'
-climateOverrideSpecFileTS <- 'ClimateSTAOverrideTS.csv'
+climateOverrideSpecFileTS <- 'ClimateSTAOverrideTS_EMB.csv'
 policyFileName <- 'policy_EMB.csv'#'policy_100DollarCarbonTax.csv' #'policy_EMB.csv'
 
 
@@ -143,7 +143,7 @@ location.frida.configs <- './FRIDA-configs'
 # export preferences etc
 location.frida.info <- './FRIDA-info'
 name.frida_external_ranges <-'frida_external_ranges.csv'
-name.frida_info <- 'Parameter Info.csv'
+name.frida_info <- 'frida_info.csv'
 name.frida_integer_parms <- 'frida_integer_parms.csv'
 name.frida_parameter_exclusion_list <- 'frida_parameter_exclusion_list.csv'
 # list of variables to exclude from the likelihood calculations
