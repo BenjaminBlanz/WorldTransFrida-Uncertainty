@@ -33,3 +33,6 @@ Stella_Simulator_Linux-N*
 FRIDAforUncertaintyAnalysis-N*
 policy-workOutput
 policy-singleDomainPolicyMatrices
+__pycache__
+.spyproject
+PolicyFolder
