@@ -123,6 +123,7 @@ for(plotWeightType in plotWeightTypes){
 		}
 		if(sum(file.exists(figuresToBeCreated))==length(figuresToBeCreated)){
 			cat('All figures already created, skipping.\n')
+			next
 		}
 		cat('read...')
 		if(!file.exists(file.path(outputFolder,outputTypeFolder,paste0(varName,'.',outputType)))){
