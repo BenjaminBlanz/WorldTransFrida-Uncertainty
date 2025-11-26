@@ -137,7 +137,10 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-expID=${expIDPreString}-S${numSample}-${policyFile%.*}-${climateFeedbackFile%.*}-${climateSTAOverrideFile%.*}-${baselineParmFile%.*}
+expID=${expIDPreString}-S${numSample}-${policyFile%.*}-${climateFeedbackFile%.*}-${climateSTAOverrideFile%.*}
+if [${baselineParmFile%.*} = '']; then
+	expID=${expID}-${baselineParmFile%.*}
+fi
 #############################################################################
 ########     Preparing the R-scripts and the runscript             ##########
 #############################################################################
