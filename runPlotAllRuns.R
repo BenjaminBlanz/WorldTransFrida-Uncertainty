@@ -101,6 +101,29 @@ for(plotWeightType in plotWeightTypes){
 		if(length(varName.orig)>1){varName.orig<-varName.orig[1]}
 		cat(sprintf('(%i of %i) Plotting %s...\n  ',
 								varName.i,length(allVarNames),varName.orig))
+		# assemble the list of all figures that will be created to check if they arleady
+		# exit and we can skip
+		figuresToBeCreated <- c()
+		for(uncertaintyType in uncertaintiesToPlot){
+			for(years.i in 1:length(yearsToPlot.lst)){
+				for(alsoPlotMean in alsoPlotMean.vals){
+					for(alsoPlotDefaultRun in alsoPlotDefaultRun.vals){
+						yearsToPlot <- yearsToPlot.lst[[years.i]]
+						location.plots.ci <- file.path(location.output,location.plots,'CI-plots',
+																					 paste0(plotWeightType,'Weighted'),
+																					 yearsToPlot.names[years.i],
+																					 paste(uncertaintyType,
+																					 			ifelse(alsoPlotMean,'withMean','withoutMean'),
+																					 			ifelse(alsoPlotDefaultRun,'withDefaultRun','withoutDefaultRun'),sep='-'))
+						figuresToBeCreated[length(figuresToBeCreated)+1] <- 
+							file.path(location.plots.ci,paste0(paste(varName,plotWeightType,'weighted',sep='-'),'.png'))
+					}
+				}
+			}
+		}
+		if(sum(file.exists(figuresToBeCreated))==length(figuresToBeCreated)){
+			cat('All figures already created, skipping.\n')
+		}
 		cat('read...')
 		if(!file.exists(file.path(outputFolder,outputTypeFolder,paste0(varName,'.',outputType)))){
 			cat('missing\n')
