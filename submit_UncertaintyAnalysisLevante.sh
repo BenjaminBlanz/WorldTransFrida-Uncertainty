@@ -138,7 +138,7 @@ while [ $# -gt 0 ]; do
 done
 
 expID=${expIDPreString}-S${numSample}-${policyFile%.*}-${climateFeedbackFile%.*}-${climateSTAOverrideFile%.*}
-if [ -n "${baselineParmFile%.*}"]; then
+if [ -n "${baselineParmFile%.*}" ]; then
 	expID=${expID}-${baselineParmFile%.*}
 fi
 #############################################################################
