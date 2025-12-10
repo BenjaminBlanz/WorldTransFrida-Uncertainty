@@ -10,7 +10,6 @@
 library('parallel')
 source('initialise.R')
 source('config.R')
-source('config-RunDetermineRepresentiveSamples.R') #this config needs to overide the default stuff above
 
 if(!is.na(preexsistingBaselineFolder)){
 	location.output <- preexsistingBaselineFolder

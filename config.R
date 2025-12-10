@@ -119,6 +119,13 @@ if(!exists('skipParMLE')){
 	skipParMLE <- T
 }
 
+# representative subsample ####
+subSample.NumSamplePerVar <- 11
+subSample.Ps <- seq(0.5/subSample.NumSamplePerVar,1-0.5/subSample.NumSamplePerVar,
+										length.out=subSample.NumSamplePerVar)
+subSample.TargetVars <- c('demographics_real_gdp_per_person')
+
+
 # FRIDA config ####
 # These names have to be 
 # 'ClimateFeedback_On.csv','ClimateSTAOverride_Off.csv',
