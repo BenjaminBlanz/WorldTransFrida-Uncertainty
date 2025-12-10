@@ -173,10 +173,14 @@ for(plotWeightType in plotWeightTypes){
 	repSample <- repSample[,-which(colnames(repSample)=='plotWeight')]
 	cat('done\n')
 	cat('writing out to subSampleParameterValues.csv ...')
-	write.table(repSample,file.path(location.output,'subSampleParameterValues.csv'),
+	location.output.repSample <- file.path(location.output,'repSample',plotWeightType)
+	dir.create(location.output.repSample,F,T)
+	write.table(repSample,file.path(location.output.repSample,'subSampleParameterValues.csv'),
+							append = F,sep = ',',row.names = F)
+	write.table(data.frame(id=minSSEidc),file.path(location.output.repSample,'subSampleParameterIndices.csv'),
 							append = F,sep = ',',row.names = F)
 	cat('done\n')
-
+	
 	# plot ####
 	cat('plotting selected samples...')
 	sqrtNumPlots <- sqrt(length(subSample.TargetVars))

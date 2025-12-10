@@ -51,7 +51,9 @@ CIsToPlot.lty <- c('solid','longdash','dotted')#,'dotdash','dotted')
 CIsToPlot.lwd <- c(3,1,1)
 CIsToPlot.lcol <- c(1,1,1)
 CIsToPlot.col <- c(NA,gray(0.7,0.5),gray(0.8,0.5))
-
+rs.lty <- 'solid'
+rs.lwd <- '1'
+rs.col <- 'black'
 calDat.col <- 'red'
 
 # sampling ####

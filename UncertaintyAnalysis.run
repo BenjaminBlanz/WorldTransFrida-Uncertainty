@@ -25,7 +25,7 @@ function cleanup(){
 }
 
 echo started > workOutput/expID/status
-Rscript --max-connections=1024 -e "source('runMLEandParmSpace.R'); source('runPlotAllRuns.R'); source('cleanup.R')"
+Rscript --max-connections=1024 -e "source('runMLEandParmSpace.R'); source('runDetermineRepresentativeSamples.R'); source('runPlotAllRuns.R'); source('cleanup.R')"
 echo completed > workOutput/expID/status
 
 mv expID_*.R workOutput/expID/
