@@ -129,11 +129,6 @@ subSample.TargetVars <- c('demographics_real_gdp_per_person')
 
 
 # FRIDA config ####
-# These names have to be 
-# 'ClimateFeedback_On.csv','ClimateSTAOverride_Off.csv',
-# 'ClimateSTAOverrideTS_EMB.csv','policy_EMB.csv'
-# for the slurm submit script to correctly overwrite the file names with those specified
-# there.
 climateFeedbackSpecFile <- 'ClimateFeedback_On.csv'
 climateOverrideSpecFile <- 'ClimateSTAOverride_Off.csv'
 climateOverrideSpecFileTS <- 'ClimateSTAOverrideTS_EMB.csv'

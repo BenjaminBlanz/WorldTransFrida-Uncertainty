@@ -150,22 +150,22 @@ fi
 config=${expID}_config.R
 cp config.R $config
 
-sed -i "s/numWorkers <- parallel::detectCores()/numWorkers <- ${numWorkers}/" $config
-sed -i "s/numSample <- 1e4/numSample <- ${numSample}/" $config
-sed -i "s/chunkSizePerWorker <- 100/chunkSizePerWorker <- ${chunkSizePerWorker}/" $config
-sed -i "s/name.output <- 'dummyNameForSubmitSlurmScriptToOverwrite'/name.output <- '${expID}'/" $config
+sed -i "s/^numWorkers <-.*$/numWorkers <- ${numWorkers}/" $config
+sed -i "s/^numSample <-.*$/numSample <- ${numSample}/" $config
+sed -i "s/^chunkSizePerWorker <-.*$/chunkSizePerWorker <- ${chunkSizePerWorker}/" $config
+sed -i "s/^name.output <-.*$/name.output <- '${expID}'/" $config
 sed -i "s/config.R/${config}/g" $config
 sed -i "s/FRIDAforUncertaintyAnalysis/${FRIDA}/" $config
-sed -i "s/frida_info.csv/${infoFile}/" $config
-sed -i "s/policy_EMB.csv/${policyFile}/" $config
-sed -i "s/ClimateFeedback_On.csv/${climateFeedbackFile}/" $config
-sed -i "s/ClimateSTAOverride_Off.csv/${climateSTAOverrideFile}/" $config
-sed -i "s/ClimateSTAOverrideTS_EMB.csv/${climateSTAOverrideFileTS}/" $config
+sed -i "s/^name.frida_info <-.*$/name.frida_info <- '${infoFile}'/" $config
+sed -i "s/^policyFileName <-.*$/policyFileName <- '${policyFile}'/" $config
+sed -i "s/^climateFeedbackSpecFile <-.*$/climateFeedbackSpecFile <- '${climateFeedbackFile}'/" $config
+sed -i "s/^climateOverrideSpecFile <-.*$/climateOverrideSpecFile <- '${climateSTAOverrideFile}'/" $config
+sed -i "s/^climateOverrideSpecFileTS <- .*$/climateOverrideSpecFileTS <- '${climateSTAOverrideFileTS}'/" $config
 sed -i "s/^name.baselineParmFile <-.*$/name.baselineParmFile <- '${baselineParmFile}'/" $config
-sed -i "s/frida_external_ranges.csv/${externalRangesFile}/" $config
-sed -i "s/frida_parameter_exclusion_list.csv/${excludeParmFile}/" $config
-sed -i "s/frida_variable_exclusion_list.csv/${excludeVarFile}/" $config
-sed -i "s/frida_extra_variables_to_export_list.csv/${extraExportFile}/" $config
+sed -i "s/^name.frida_external_ranges <-.*$/name.frida_external_ranges <- '${externalRangesFile}'/" $config
+sed -i "s/^name.frida_parameter_exclusion_list <-.*$/name.frida_parameter_exclusion_list <- '${excludeParmFile}'/" $config
+sed -i "s/^name.frida_variable_exclusion_list <-.*$/name.frida_variable_exclusion_list <- '${excludeVarFile}'/" $config
+sed -i "s/^name.frida_extra_variables_to_export_list <-.*$/name.frida_extra_variables_to_export_list <- '${extraExportFile}'/" $config
 
 if [ "$outputType" = "csv" ]; then
 	sed -i "/^perVarOutputTypes/c\perVarOutputTypes <- c('csv')" $config
@@ -204,7 +204,6 @@ sed -i "s/config.R/${config}/g" $runMLE
 sed -i "s/runInitialiseData.R/${runInit}/g" $runMLE
 sed -i "s/clusterHelp.R/${clusterHelp}/g" $runMLE
 sed -i "/^continue <- readline/d" $runMLE
-
 
 # modify runPlotAllRuns
 if [ "${plotting}" = "true" ]; then
