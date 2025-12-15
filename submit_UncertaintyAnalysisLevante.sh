@@ -139,7 +139,7 @@ while [ $# -gt 0 ]; do
     --drs|--detRepSample)
     	detRepSample="$2"
     	;;
-  	--lcr|--likeCutoffRatio
+  	--lcr|--likeCutoffRatio)
   		likeCutoffRatio="$2"
   		;;
     *)
