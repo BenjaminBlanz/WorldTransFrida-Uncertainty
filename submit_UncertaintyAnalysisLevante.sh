@@ -11,6 +11,8 @@
 numWorkers=250
 numSample=10000
 chunkSizePerWorker=100
+likeCutoffRatio=1000
+
 #### experiment id custom addition
 # experiment id at bottom of input section to include policy name by default
 expIDPreString='UA'
@@ -43,6 +45,8 @@ copySamplePoints="false" # for run-by-run comparisons
 
 outputType='both' # can be 'both', 'csv' or 'RDS'
 plotting='true' # avoiding the plotting can save quit some compute time
+detRepSample='true' # needed for the plots that show the representative subsample
+#and for generating the rep sample
 
 
 #### OPTIONAL: USING DIFFERENT INPUT FILES?
@@ -129,6 +133,15 @@ while [ $# -gt 0 ]; do
     --blp|--baselineParmFile)
       baselineParmFile="$2"
       ;;
+    --plt|--plotting)
+    	plotting="$2"
+    	;;
+    --drs|--detRepSample)
+    	detRepSample="$2"
+    	;;
+  	--lcr|--likeCutoffRatio
+  		likeCutoffRatio="$2"
+  		;;
     *)
       printf "Error: Invalid argument: $1 \n"
       exit 1
@@ -152,6 +165,7 @@ cp config.R $config
 
 sed -i "s/^numWorkers <-.*$/numWorkers <- ${numWorkers}/" $config
 sed -i "s/^numSample <-.*$/numSample <- ${numSample}/" $config
+sed -i "s/^likeCutoffRatio <-.*$/likeCutoffRatio <- ${likeCutoffRatio}/" $config
 sed -i "s/^chunkSizePerWorker <-.*$/chunkSizePerWorker <- ${chunkSizePerWorker}/" $config
 sed -i "s/^name.output <-.*$/name.output <- '${expID}'/" $config
 sed -i "s/config.R/${config}/g" $config
@@ -213,10 +227,12 @@ if [ "${plotting}" = "true" ]; then
 fi
 
 # modify runDetermineRepresentativeSamples
-runRepSample=${expID}_runDetermineRepresentativeSamples.R
-cp runDetermineRepresentativeSamples.R $runRepSample
-sed -i "s/config.R/${config}/g" $runRepSample
-sed -i "s/runInitialiseData.R/${runInit}/g" $runRepSample
+if [ "${detRepSample}" = "true" ]; then
+	runRepSample=${expID}_runDetermineRepresentativeSamples.R
+	cp runDetermineRepresentativeSamples.R $runRepSample
+	sed -i "s/config.R/${config}/g" $runRepSample
+	sed -i "s/runInitialiseData.R/${runInit}/g" $runRepSample
+fi
 
 
 # Create the runscript from the template
@@ -241,7 +257,11 @@ if [ "${plotting}" = "true" ]; then
 else
 	sed -i "s/source('runPlotAllRuns.R'); //" $runscript
 fi
-sed -i "s/runDetermineRepresentativeSamples.R/${runRepSample}/" $runscript
+if [ "${detRepSample}" = "true" ]; then
+	 sed -i "s/runDetermineRepresentativeSamples.R/${runDetRepSample}/" $runscript
+else
+	sed -i "s/source('runDetermineRepresentativeSamples.R'); //" $runscript
+fi
 
 #############################################################################
 ############ Copying parameter ranges and scales ############################
