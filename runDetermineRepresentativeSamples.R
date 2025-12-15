@@ -28,14 +28,7 @@ if(nrow(samplePoints)!=numSample){
 }
 cat('done\n')
 # for input
-
- 
-
-location.runFiles <- file.path(location.output,'detectedParmSpace')
-runFilesList <- list.files(location.runFiles,pattern = 'workUnit-[0-9]+\\.RDS')
-if(length(runFilesList)==0){
-	stop('no run files to process\nHave you run runMLEandParmSpace?\n')
-}
+location.runFiles <- file.path(location.output,'detectedParmSpace','PerVarFiles-RDS')
 
 # collect time series ####
 cat('reading vars from run data...\n')
@@ -56,15 +49,12 @@ yearsToRead <- rownames(defRun)
 varsToRead <- subSample.TargetVars
 runsData <- array(NA,dim=c(nrow(defRun),nrow(samplePoints),length(varsToRead)))
 dimnames(runsData) <- list(rownames(defRun),1:nrow(samplePoints),varsToRead)
-for(f.i in 1:length(runFilesList)){
-	cat(sprintf('\r  reading chunk %i of %i',f.i,length(runFilesList)))
-	parOutput <- readRDS(file.path(location.output,'detectedParmSpace',paste0('workUnit-',f.i,'.RDS')))
-	for(l in 1:length(parOutput)){
-		runsData[,parOutput[[l]]$parmsIndex,] <- unlist(parOutput[[l]]$runDat[,varsToRead])
-	}
-	rm(parOutput)
+for(f.i in 1:length(varsToRead)){
+	cat(sprintf('reading file %i of %i: %s...',f.i,length(varsToRead),varsToRead[f.i]))
+	perVarData <- readPerVarFile(file.path(location.runFiles,varsToRead[f.i]))
+	runsData[,,f.i] <- t(perVarData)
+	cat('done\n')
 }
-cat('done\n')
 
 # prep quantiles ####
 # determine the values of the desired quantiles in all of the variables
