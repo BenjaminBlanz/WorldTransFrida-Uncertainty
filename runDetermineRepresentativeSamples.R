@@ -11,7 +11,7 @@ library('parallel')
 source('initialise.R')
 source('config.R')
 
-if(!exists('preexsistingBaselineFolder')&&!is.na(preexsistingBaselineFolder)){
+if(exists('preexsistingBaselineFolder')&&!is.na(preexsistingBaselineFolder)){
 	location.output <- preexsistingBaselineFolder
 	cat(sprintf('Overriding output location:\n%s\n',location.output))
 }
