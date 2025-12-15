@@ -12,4 +12,7 @@ source('funRunFRIDA.R')
 source('funPlot.R')
 source('funParmSpace.R')
 
+wideScreen <- function(howWide=Sys.getenv("COLUMNS")) {
+	options(width=as.integer(howWide))
+}
 
