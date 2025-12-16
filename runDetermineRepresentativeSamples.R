@@ -51,7 +51,7 @@ runsData <- array(NA,dim=c(nrow(defRun),nrow(samplePoints),length(varsToRead)))
 dimnames(runsData) <- list(rownames(defRun),1:nrow(samplePoints),varsToRead)
 for(f.i in 1:length(varsToRead)){
 	cat(sprintf('reading file %i of %i: %s...',f.i,length(varsToRead),varsToRead[f.i]))
-	perVarData <- readPerVarFile(file.path(location.runFiles,varsToRead[f.i]))
+	perVarData <- readPerVarFile(file.path(location.runFiles,varsToRead[f.i]),outputType = perVarOutputTypes[1])
 	runsData[,,f.i] <- t(perVarData)
 	cat('done\n')
 }
