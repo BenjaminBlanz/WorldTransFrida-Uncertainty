@@ -228,10 +228,10 @@ fi
 
 # modify runDetermineRepresentativeSamples
 if [ "${detRepSample}" = "true" ]; then
-	runRepSample=${expID}_runDetermineRepresentativeSamples.R
-	cp runDetermineRepresentativeSamples.R $runRepSample
-	sed -i "s/config.R/${config}/g" $runRepSample
-	sed -i "s/runInitialiseData.R/${runInit}/g" $runRepSample
+	runDetRepSample=${expID}_runDetermineRepresentativeSamples.R
+	cp runDetermineRepresentativeSamples.R $runDetRepSample
+	sed -i "s/config.R/${config}/g" $runDetRepSample
+	sed -i "s/runInitialiseData.R/${runInit}/g" $runDetRepSample
 fi
 
 
