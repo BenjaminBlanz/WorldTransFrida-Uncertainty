@@ -108,7 +108,7 @@ for(plotWeightType in plotWeightTypes){
 			for(years.i in 1:length(yearsToPlot.lst)){
 				for(alsoPlotMean in alsoPlotMean.vals){
 					for(alsoPlotDefaultRun in alsoPlotDefaultRun.vals){
-						for(alsoDrawWithRepSample in alsoDrawWithRepSample.vals){
+						for(alsoPlotRepSample in alsoPlotRepSample.vals){
 							yearsToPlot <- yearsToPlot.lst[[years.i]]
 							location.plots.ci <- file.path(location.output,location.plots,'CI-plots',
 																						 paste0(plotWeightType,'Weighted'),
@@ -116,7 +116,7 @@ for(plotWeightType in plotWeightTypes){
 																						 paste(uncertaintyType,
 																						 			ifelse(alsoPlotMean,'withMean','withoutMean'),
 																						 			ifelse(alsoPlotDefaultRun,'withDefaultRun','withoutDefaultRun'),
-																						 			ifelse(alsoDrawWithRepSample,'withRepSample','withoutRepSample'),sep='-'))
+																						 			ifelse(alsoPlotRepSample,'withRepSample','withoutRepSample'),sep='-'))
 							figuresToBeCreated[length(figuresToBeCreated)+1] <- 
 								file.path(location.plots.ci,paste0(paste(varName,plotWeightType,'weighted',sep='-'),'.png'))
 						}
@@ -185,11 +185,12 @@ for(plotWeightType in plotWeightTypes){
 				}
 				location.output.repSample <- file.path(location.output,'repSample',plotWeightType)
 				if(file.exists(file.path(location.output.repSample,'subSampleParameterIndices.RDS'))){
-					repSampleID <- readRDS(file.path(location.output.repSample,'subSampleParameterIndices.RDS'))
+					repSampleID <- unname(unlist(readRDS(file.path(location.output.repSample,'subSampleParameterIndices.RDS'))))
 					repSampleIDExists <- T
-					repSample <- varData[varData$id==repSampleID,]
+					repSample <- varData[,repSampleID]
 				} else {
 					repSampleIDExists <- F
+					alsoPlotRepSample.vals <- c(F)
 					repSample <- NULL
 				}
 				## save data ####
@@ -231,7 +232,7 @@ for(plotWeightType in plotWeightTypes){
 				for(years.i in 1:length(yearsToPlot.lst)){
 					for(alsoPlotMean in alsoPlotMean.vals){
 						for(alsoPlotDefaultRun in alsoPlotDefaultRun.vals){
-							for(alsoDrawWithRepSample in alsoDrawWithRepSample.vals){
+							for(alsoPlotRepSample in alsoPlotRepSample.vals){
 								yearsToPlot <- yearsToPlot.lst[[years.i]]
 								location.plots.ci <- file.path(location.output,location.plots,'CI-plots',
 																							 paste0(plotWeightType,'Weighted'),
@@ -239,7 +240,7 @@ for(plotWeightType in plotWeightTypes){
 																							 paste(uncertaintyType,
 																							 			ifelse(alsoPlotMean,'withMean','withoutMean'),
 																							 			ifelse(alsoPlotDefaultRun,'withDefaultRun','withoutDefaultRun'),
-																							 			ifelse(alsoDrawWithRepSample,'withRepSample','withoutRepSample'),sep='-'))
+																							 			ifelse(alsoPlotRepSample,'withRepSample','withoutRepSample'),sep='-'))
 								dir.create(location.plots.ci,F,T)
 								png(file.path(location.plots.ci,paste0(paste(varName,plotWeightType,'weighted',sep='-'),'.png')),
 										width = plotWidth,height = plotHeight,units = plotUnit,res = plotRes)
@@ -315,7 +316,7 @@ for(plotWeightType in plotWeightTypes){
 								if(alsoPlotDefaultRun){
 									lines(yearsToPlot,defRun[yearsToPlot,varName],lty=def.lty,lwd=def.lwd,col=def.col)
 								}
-								if(alsoPlotWithRepSample & repSampleIDExists){
+								if(alsoPlotRepSample & repSampleIDExists){
 									for(r.i in 1:length(repSampleID)){
 										lines(yearsToPlot,repSample[r.i,yearsToPlot],lty=rs.lty,lwd=rs.lwd,col=rs.col)
 									}

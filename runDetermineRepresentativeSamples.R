@@ -155,6 +155,8 @@ for(plotWeightType in plotWeightTypes){
 							append = F,sep = ',',row.names = F)
 	write.table(data.frame(id=minSSEidc),file.path(location.output.repSample,'subSampleParameterIndices.csv'),
 							append = F,sep = ',',row.names = F)
+	saveRDS(repSample,file.path(location.output.repSample,'subSampleParameterValues.RDS'))
+	saveRDS(data.frame(id=minSSEidc),file.path(location.output.repSample,'subSampleParameterIndices.RDS'))
 	cat('done\n')
 	
 	# plot ####
