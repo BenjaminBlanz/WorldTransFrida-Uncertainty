@@ -63,22 +63,8 @@ for(plotWeightType in plotWeightTypes){
 	if(plotWeightType %in% c('likelihood','logCutoff','linearly','completeEqually')){
 		# log like ####
 		cat(' reading log likelihoods...\n')
-		logLike <- rep(NA,numSample)
-		completeRunsSoFar <- 0
-		for(f.i in 1:length(runFilesList)){
-			cat(sprintf('\r chunk %i of %i',f.i,length(runFilesList)))
-			parOutput <- readRDS(file.path(location.output,'detectedParmSpace',paste0('workUnit-',f.i,'.RDS')))
-			for(l in 1:length(parOutput)){
-				logLike[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$logLike
-				if(!is.na(parOutput[[l]]$runDat[[1]][length(parOutput[[l]]$runDat[[1]])])){
-					completeRunsSoFar <- completeRunsSoFar + 1
-				}
-			}
-			rm(parOutput)
-		}
-		cat(sprintf('\r read %i files, collected %i sample log likes, %i runs in data where complete\n',
-								length(runFilesList),numSample,completeRunsSoFar))
-		samplePoints$logLike <- logLike
+		logLike <- readPerVarFile(file.path(location.runFiles,'logLike'),outputType = perVarOutputTypes[1])
+		samplePoints$logLike <- logLike$logLike
 		logLike.ecdf <- ecdf(logLike)
 	}
 	if(plotWeightType=='likelihood'){
