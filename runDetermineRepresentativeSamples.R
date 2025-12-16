@@ -28,7 +28,7 @@ if(nrow(samplePoints)!=numSample){
 }
 cat('done\n')
 # for input
-location.runFiles <- file.path(location.output,'detectedParmSpace','PerVarFiles-RDS')
+location.runFiles <- file.path(location.output,'detectedParmSpace',paste0('PerVarFiles-',perVarOutputTypes[1]))
 
 # collect time series ####
 cat('reading vars from run data...\n')
