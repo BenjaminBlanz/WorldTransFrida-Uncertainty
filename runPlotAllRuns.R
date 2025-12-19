@@ -21,7 +21,9 @@ resSigma <- readRDS(file.path(location.output,'sigma-indepParms.RDS'))
 colnames(resSigma) <- rownames(resSigma) <- colnames(calDat)
 
 # run files ####
-allVarNames <- read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN
+vars_info <- read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))
+vars_info$cleanNames <- cleanNames(vars_info$FRIDA.FQN)
+allVarNames <- vars_info$FRIDA.FQN
 allVarNames <- allVarNames[nchar(allVarNames)>4]
 allVarNames.orig <- c(varsForExport.fridaNames.orig,allVarNames)
 allVarNames.orig <- gsub(' \\[(\\d)\\]','\\[\\1\\]',allVarNames.orig)
@@ -97,6 +99,12 @@ for(plotWeightType in plotWeightTypes){
 	samplePoints$plotWeight[is.na(samplePoints$plotWeight)] <- 0
 	for(varName.i in 1:length(allVarNames)){
 		varName <- allVarNames[varName.i]
+		varUnit <- unlist(vars_info$Unit[which(vars_info$cleanNames==varName)])
+		if(is.null(varUnit)||length(varUnit)==0){
+			varUnit <- 'unit not specified'
+		} else if (length(varUnit)>1){
+			varUnit <- varUnit[1]
+		}
 		varName.orig <- allVarNames.orig[which(allVarNames==varName)]
 		if(length(varName.orig)>1){varName.orig<-varName.orig[1]}
 		cat(sprintf('(%i of %i) Plotting %s...\n  ',
