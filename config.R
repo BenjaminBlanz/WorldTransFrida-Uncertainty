@@ -56,6 +56,9 @@ rs.lwd <- '1'
 rs.col <- 'black'
 calDat.col <- 'red'
 alsoPlotRepSample.vals <- c(FALSE,TRUE)
+repSample.lty <- 1
+repSample.lwd <- 1
+repSample.col <- 'black'
 
 # sampling ####
 # file that contains the baseline parametrisation of the model

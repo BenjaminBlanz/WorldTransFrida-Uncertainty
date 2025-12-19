@@ -222,7 +222,7 @@ for(plotWeightType in plotWeightTypes){
 				}
 				if(repSampleIDExists){
 					for(r.i in 1:length(repSampleID)){
-						csvExport.df[[paste0('RepSample',r.i)]] <- repSample[r.i,]
+						csvExport.df[[paste0('RepSample',r.i)]] <- repSample[,r.i]
 					}
 				}
 				write.csv(csvExport.df,file.path(location.output,location.plots,'CI-plots',
@@ -242,34 +242,47 @@ for(plotWeightType in plotWeightTypes){
 																							 			ifelse(alsoPlotDefaultRun,'withDefaultRun','withoutDefaultRun'),
 																							 			ifelse(alsoPlotRepSample,'withRepSample','withoutRepSample'),sep='-'))
 								dir.create(location.plots.ci,F,T)
-								png(file.path(location.plots.ci,paste0(paste(varName,plotWeightType,'weighted',sep='-'),'.png')),
+								figFile <- file.path(location.plots.ci,paste0(paste(varName,plotWeightType,'weighted',sep='-'),'.png'))
+								if(file.exists(figFile)){
+									# skip existing files
+									break
+								}
+								png(figFile,
 										width = plotWidth,height = plotHeight,units = plotUnit,res = plotRes)
 								layout(matrix(c(2,1),nrow=2),heights = c(0.9,0.1))
 								par(mar=c(0,0,0,0))
 								plot(0,0,type='n',axes=F)
+								# construct the legend
 								legend.text=c(
 									if(alsoPlotMean&&uncertaintyType!='noise uncertainty'){'mean'},
 									if(alsoPlotDefaultRun){'frida default'},
 									'median',
 									paste0(CIsToPlot[-1]*100,'% CI'),
-									'Data')
+									if(alsoPlotRepSample & repSampleIDExists){'Rep. Samples'},
+									if(!is.null(calDat[[varName]])){'Data'})
 								legend.lty=c(
 									if(alsoPlotMean&&uncertaintyType!='noise uncertainty'){mean.lty},
 									if(alsoPlotDefaultRun){def.lty},
 									CIsToPlot.lty,
-									NA)
+									if(alsoPlotRepSample & repSampleIDExists){repSample.lty},
+									if(!is.null(calDat[[varName]])){NA})
 								legend.lwd=c(
 									if(alsoPlotMean&&uncertaintyType!='noise uncertainty'){mean.lwd},
 									if(alsoPlotDefaultRun){def.lwd},
 									CIsToPlot.lwd,
-									NA)
-								legend.pch=c(rep(NA,length(CIsToPlot)+
-																 	sum(c(alsoPlotMean&uncertaintyType!='noise uncertainty',alsoPlotDefaultRun))),20)
+									if(alsoPlotRepSample & repSampleIDExists){repSample.lwd},
+									if(!is.null(calDat[[varName]])){NA})
+								legend.pch=c(rep(NA,
+																 length(CIsToPlot)+
+																 	sum(c(alsoPlotMean&uncertaintyType!='noise uncertainty',alsoPlotDefaultRun,
+																 				alsoPlotRepSample & repSampleIDExists))),
+														 if(!is.null(calDat[[varName]])){20})
 								legend.col = c(
 									if(alsoPlotMean&&uncertaintyType!='noise uncertainty'){mean.col},
 									if(alsoPlotDefaultRun){def.col},
 									CIsToPlot.lcol,
-									calDat.col)
+									if(alsoPlotRepSample & repSampleIDExists){repSample.col}
+									if(!is.null(calDat[[varName]])){calDat.col})
 								legend('bottom',legend.text,lty=legend.lty,lwd=legend.lwd,pch=legend.pch,col=legend.col,
 											 horiz=T,xpd=T)
 								par(mar=c(3.1,4.1,4.1,2.1))
@@ -318,7 +331,7 @@ for(plotWeightType in plotWeightTypes){
 								}
 								if(alsoPlotRepSample & repSampleIDExists){
 									for(r.i in 1:length(repSampleID)){
-										lines(yearsToPlot,repSample[r.i,yearsToPlot],lty=rs.lty,lwd=rs.lwd,col=rs.col)
+										lines(yearsToPlot,repSample[yearsToPlot,r.i],lty=rs.lty,lwd=rs.lwd,col=rs.col)
 									}
 								}
 								if(!is.null(calDat[[varName]])){
