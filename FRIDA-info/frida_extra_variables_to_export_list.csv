@@ -191,4 +191,58 @@ For Billy,GDP,public investment in 2021c$,[*],GDP.public investment in 2021c$[*]
 For Billy,Employment,realised productivity,[*],Employment.realised productivity[*],dmnl
 For Billy,Inflation,Inflation Index,[*],Inflation.Inflation Index[*],1/year
 ,,,,,
-For econ paper by BB,Circular Flow,real private consumption 2021c$,[*],Circular Flow.real private consumption 2021c$[*],bc$/year
+For econ paper,Circular Flow,real private consumption 2021c$,[*],Circular Flow.real private consumption 2021c$[*],bc$/year
+,GDP,owner consumption in 2021c$,[*],GDP.owner consumption in 2021c$[*],bc$/year
+,GDP,worker consumption excluding transfers in 2021c$,[*],GDP.worker consumption excluding transfers in 2021c$[*],bc$/year
+,GDP,government transfers in 2021c$,[*],GDP.government transfers in 2021c$[*],bc$/year
+,GDP,public investment in 2021c$,[*],GDP.public investment in 2021c$[*],bc$/year
+,GDP,private investment in in 2021c$,[*],GDP.private investment in in 2021c$[*],bc$/year
+,GDP,government consumption in 2021c$,[*],GDP.government consumption in 2021c$[*],bc$/year
+,Circular Flow,owner consumption,[*],Circular Flow.owner consumption[*],b$/year
+,Circular Flow,worker consumption,[*],Circular Flow.worker consumption[*],b$/year
+,Government,government transfers,[*],Government.government transfers[*],b$/year
+,Government,public investment,[*],Government.public investment[*],b$/year
+,Circular Flow,private investment,[*],Circular Flow.private investment[*],b$/year
+,Government,government consumption,[*],Government.government consumption[*],b$/year
+,Circular Flow,non bank profits,[*],Circular Flow.non bank profits[*],b$/year
+,Circular Flow,rent,[*],Circular Flow.rent[*],b$/year
+,Circular Flow,bank profits,[*],Circular Flow.bank profits[*],b$/year
+,Circular Flow,owner savings interest,[*],Circular Flow.owner savings interest[*],b$/year
+,Circular Flow,transfers,[*],Circular Flow.transfers[*],b$/year
+,Circular Flow,worker savings interest,[*],Circular Flow.worker savings interest[*],b$/year
+,Circular Flow,wages,[*],Circular Flow.wages[*],b$/year
+,Circular Flow,wage tax,[*],Circular Flow.wage tax[*],b$/year
+,Circular Flow,rent tax,[*],Circular Flow.rent tax[*],b$/year
+,Circular Flow,profit tax,[*],Circular Flow.profit tax[*],b$/year
+,Circular Flow,net worker income,[*],Circular Flow.net worker income[*],b$/year
+,Circular Flow,net owner income,[*],Circular Flow.net owner income[*],b$/year
+,Circular Flow,gross income,[*],Circular Flow.gross income[*],b$/year
+,Circular Flow,gross income in 2021c$,[*],Circular Flow.gross income in 2021c$[*],bc$/year
+,Circular Flow,non bank profits in 2021c$,[*],Circular Flow.non bank profits in 2021c$[*],bc$/year
+,Circular Flow,rent in in 2021c$,[*],Circular Flow.rent in in 2021c$[*],bc$/year
+,Circular Flow,bank profits in 2021c$,[*],Circular Flow.bank profits in 2021c$[*],bc$/year
+,Circular Flow,owner savings interest in 2021c$,[*],Circular Flow.owner savings interest in 2021c$[*],bc$/year
+,Circular Flow,transfers in 2021c$,[*],Circular Flow.transfers in 2021c$[*],bc$/year
+,Circular Flow,worker savings interest in 2021c$,[*],Circular Flow.worker savings interest in 2021c$[*],bc$/year
+,Circular Flow,wages in 2021c$,[*],Circular Flow.wages in 2021c$[*],bc$/year
+,Circular Flow,wage tax in 2021c$,[*],Circular Flow.wage tax in 2021c$[*],bc$/year
+,Circular Flow,rent tax in 2021c$,[*],Circular Flow.rent tax in 2021c$[*],bc$/year
+,Circular Flow,profit tax in 2021c$,[*],Circular Flow.profit tax in 2021c$[*],bc$/year
+,Circular Flow,net worker income in 2021c$,[*],Circular Flow.net worker income in 2021c$[*],bc$/year
+,Circular Flow,net owner income in 2021c$,[*],Circular Flow.net owner income in 2021c$[*],bc$/year
+,Employment,wage rate in 2021c$,[*],Employment.wage rate in 2021c$[*],c$/p
+,Employment,Wage Rate,[*],Employment.Wage Rate[*],$/p
+,Government,Central Bank Safe Interest,[*],Government.Central Bank Safe Interest[*],1/year
+,Government,current government debt interest rate,[*],Government.current government debt interest rate[*],1/year
+,Finance,risky interest,[*],Finance.risky interest[*],1/year
+,Employment,realised productivity growth,[*],Employment.realised productivity growth[*],1/year
+,Finance,exploratory bank investments in 2021$,[*],Finance.exploratory bank investments in 2021$[*],1/year
+,Government,Government transfers as a share of public expenditure,[*],Government.Government transfers as a share of public expenditure[*],dmnl
+,Government,public expenditure in 2021$,[*],Government.public expenditure in 2021$[*],bc$/year
+,Government,government consumption and investment,[*],Government.government consumption and investment[*],b$/year
+,Government,government consumption and investment in 2021$,[*],Government.government consumption and investment in 2021$[*],bc$/year
+,Finance,perceived defaults of risky assets,[*],Finance.perceived defaults of risky assets[*],b$/year
+,Finance,perceived defaults of safe assets not caused by energy transition,[*],Finance.perceived defaults of safe assets not caused by energy transition[*],b$/year
+,Finance,perceived total defaults,[*],Finance.perceived total defaults[*],b$/year
+,Finance,measured default rate of all assets,[*],Finance.measured default rate of all assets[*],1/year
+,Finance,stranded capital related defaults,[*],Finance.stranded capital related defaults[*],b$/year
