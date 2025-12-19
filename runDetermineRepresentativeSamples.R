@@ -63,8 +63,8 @@ for(plotWeightType in plotWeightTypes){
 	if(plotWeightType %in% c('likelihood','logCutoff','linearly','completeEqually')){
 		# log like ####
 		cat(' reading log likelihoods...\n')
-		logLike <- readPerVarFile(file.path(location.runFiles,'logLike'),outputType = perVarOutputTypes[1])
-		samplePoints$logLike <- logLike$logLike
+		logLike <- readPerVarFile(file.path(location.runFiles,'logLike'),outputType = perVarOutputTypes[1])$logLike
+		samplePoints$logLike <- logLike
 		logLike.ecdf <- ecdf(logLike)
 	}
 	if(plotWeightType=='likelihood'){
