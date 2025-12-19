@@ -281,7 +281,7 @@ for(plotWeightType in plotWeightTypes){
 									if(alsoPlotMean&&uncertaintyType!='noise uncertainty'){mean.col},
 									if(alsoPlotDefaultRun){def.col},
 									CIsToPlot.lcol,
-									if(alsoPlotRepSample & repSampleIDExists){repSample.col}
+									if(alsoPlotRepSample & repSampleIDExists){repSample.col},
 									if(!is.null(calDat[[varName]])){calDat.col})
 								legend('bottom',legend.text,lty=legend.lty,lwd=legend.lwd,pch=legend.pch,col=legend.col,
 											 horiz=T,xpd=T)
