@@ -7,11 +7,11 @@ source('initialise.R')
 # Rscript runPolicyAnalysisWorkUnit.R 1
 args <- commandArgs(T)
 workUnit.i <- as.numeric(args[1])
-if(length(workUnit.i)!=1 && !is.numeric(workUnit.i)){
-	stop('Incorrect arg supplied as workUnit.i\n')
-}
 configFile <- as.character(args[2])
-if(grep('\\.R$',configFile)!=1){
+if(is.na(workUnit.i)){
+	stop('Supplied workunit.i is not a number\n')
+}
+if(sum(grep('\\.R$',configFile))!=1){
 	stop('Incorrect arg supplied as config file\n')
 }
 source(configFile)
