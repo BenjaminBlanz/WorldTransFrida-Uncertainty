@@ -1,0 +1,30 @@
+#!/bin/bash
+#SBATCH --partition=compute
+#SBATCH --account=REPLACEME
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=128
+#SBATCH --constraint=256G
+#SBATCH --mem=0
+#SBATCH --time=01:00:00
+#SBATCH --output=locationOutput/workUnits/workUnit-workUnitID/LOG_%j.log
+#SBATCH --error=locationOutput/workUnits/workUnit-workUnitID/LOG_%j.log
+#SBATCH --mail-user=jdoe@mail.com
+#SBATCH --mail-type=END
+#SBATCH --job-name=workUnitID-of-expID
+
+module load r/4.4.2-gcc-11.2.0
+
+set -eE  # same as: `set -o errexit -o errtrace`
+trap 'cleanup' ERR
+
+function cleanup(){
+  echo "FAILED! Cleaning up..."
+  echo failed > locationOutput/workUnits/workUnit-workUnitID/status.txt
+  Rscript -e "workUnit.i <- workUnitID;source('initialise.R');source('config.R'); source('cleanup.R')"
+}
+
+echo started > locationOutput/workUnits/workUnit-workUnitID/status.txt
+Rscript --max-connections=1024 runWorkUnit.R workUnitID config.R
+echo completed > locationOutput/workUnits/workUnit-workUnitID/status.txt
+
+
