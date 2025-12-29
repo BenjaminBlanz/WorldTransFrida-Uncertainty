@@ -42,6 +42,11 @@ copyID='UA_EMB_nS100000'
 copyParmRangesAndScales="false"
 copySamplePoints="false" # for run-by-run comparisons
 
+# Which baseline configuration file to use as the template
+configFile=config.R
+
+# where to store outputs
+baseOutputDir=workOutput
 
 outputType='both' # can be 'both', 'csv' or 'RDS'
 plotting='true' # avoiding the plotting can save quit some compute time
@@ -142,6 +147,12 @@ while [ $# -gt 0 ]; do
   	--lcr|--likeCutoffRatio)
   		likeCutoffRatio="$2"
   		;;
+    --configFile)
+      configFile="$2"
+      ;;
+    --baseOutputDir)
+      baseOutputDir="$2"
+      ;;
     *)
       printf "Error: Invalid argument: $1 \n"
       exit 1
@@ -161,7 +172,7 @@ fi
 ########
 # Modify the config file according to the settings above
 config=${expID}_config.R
-cp config.R $config
+cp $configFile $config
 
 sed -i "s/^numWorkers <-.*$/numWorkers <- ${numWorkers}/" $config
 sed -i "s/^numSample <-.*$/numSample <- ${numSample}/" $config
@@ -180,6 +191,7 @@ sed -i "s/^name.frida_external_ranges <-.*$/name.frida_external_ranges <- '${ext
 sed -i "s/^name.frida_parameter_exclusion_list <-.*$/name.frida_parameter_exclusion_list <- '${excludeParmFile}'/" $config
 sed -i "s/^name.frida_variable_exclusion_list <-.*$/name.frida_variable_exclusion_list <- '${excludeVarFile}'/" $config
 sed -i "s/^name.frida_extra_variables_to_export_list <-.*$/name.frida_extra_variables_to_export_list <- '${extraExportFile}'/" $config
+sed -i "s/'workOutput'/'${baseOutputDir}'/" $config
 
 if [ "$outputType" = "csv" ]; then
 	sed -i "/^perVarOutputTypes/c\perVarOutputTypes <- c('csv')" $config
