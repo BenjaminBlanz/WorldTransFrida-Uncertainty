@@ -142,7 +142,7 @@ done
 
 # Modify the config file according to the settings above
 config=${expID}_config.R
-cp $configFile $config
+cp "${configFile}" $config
 
 sed -i "s/^numWorkers <-.*$/numWorkers <- ${numWorkers}/" $config
 sed -i "s/^numSample <-.*$/numSample <- ${numSample}/" $config
@@ -180,7 +180,7 @@ sed -i "s/max-connections=1024/max-connections=$(($(($numWorkers+5)) > 128 ? $((
 sed -i "s/workUnitID/${workUnitID}/g" $runscript
 sed -i "s/expID/${expID}/g" $runscript
 sed -i "s/jdoe@mail.com/${email}/" $runscript
-sed -i "s/config.R/${configFile}/" $runscript
+sed -i "s/config.R/${config}/" $runscript
 
 #############################################################################
 #######                    Submit the Job                            ########
