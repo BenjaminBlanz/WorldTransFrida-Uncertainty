@@ -8,9 +8,15 @@ source('initialise.R')
 args <- commandArgs(T)
 workUnit.i <- as.numeric(args[1])
 configFile <- as.character(args[2])
+cat('Supplied workUnit.i: ')
+cat(workUnit.i)
+cat('\n')
 if(is.na(workUnit.i)){
 	stop('Supplied workunit.i is not a number\n')
 }
+cat('Supplied configFile: ')
+cat(configFile)
+cat('\n')
 if(sum(grep('\\.R$',configFile))!=1){
 	stop('Incorrect arg supplied as config file\n')
 }
