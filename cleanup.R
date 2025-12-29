@@ -26,7 +26,7 @@ if(basename(location.stella)%in%list.files(dirname(location.stella))){
 }
 # clean up working directories
 if(exists('workUnit.i')){
-	name.workDir <- paste0(name.workDir,'-',workUnit.i)
+	name.workDir <- paste0(origName.workDir,'-',workUnit.i)
 }
 if(basename(name.workDir)%in%list.files(dirname(name.workDir))){
 	system(paste('rm -rf',name.workDir))
