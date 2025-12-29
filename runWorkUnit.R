@@ -21,13 +21,17 @@ if(sum(grep('\\.R$',configFile))!=1){
 	stop('Incorrect arg supplied as config file\n')
 }
 source(configFile)
-if(!file.exists(file.path(location.output,'workUnits',paste0('workUnit-',workUnit.i)))){
+location.workunit <- file.path(location.output,'workUnits',paste0('workUnit-',workUnit.i))
+cat('workUnit directory:')
+cat(location.workunit)
+cat('\n')
+if(!file.exists(location.workunit)){
 	stop('Incorrect workUnit.i supplied as arg\n')
 }
 cat('location.output:\n')
 cat(paste0(location.output,'\n'))
 cat(sprintf('WorkUnit.i: %i\n',workUnit.i))
-write('running',file.path(location.output,'workUnits',paste0('workUnit-',workUnit.i),'status.txt'),append=F)
+write('running',file.path(location.workunit,'status.txt'),append=F)
 name.workerDirBasename <- paste0(origName.workerDirBasename,workUnit.i,'_')
 
 # load calDat and resSigma for likelihood
@@ -57,7 +61,7 @@ clusterExport(cl,list('writePerWorkerFiles',
 
 # load the sample points to evaluate/the workUnit
 cat('reading sample points\n')
-samplePoints <- readRDS(file.path(location.output,'workUnits',paste0('workUnit-',workUnit.i),'samplePoints.RDS'))
+samplePoints <- readRDS(file.path(location.workunit,'samplePoints.RDS'))
 workUnit <- 1:nrow(samplePoints)
 workerWorkUnits <- chunk(workUnit,numWorkers)
 # list of workers is provided by clusterHelp
@@ -78,5 +82,5 @@ cat('cluster runFridaParmsBySamplePoints\n')
 parOutput <- clusterEvalQ(cl,runFridaParmsBySamplePoints(policyMode=F))
 cat('cleanup\n')
 source('cleanup.R')
-write('completed',file.path(location.output,'workUnits',paste0('workUnit-',workUnit.i),'status.txt'),append=F)
+write('completed',file.path(location.workunit,'status.txt'),append=F)
 cat('done\n')
