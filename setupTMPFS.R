@@ -12,7 +12,7 @@ if(!exists('cl') &&
 		tmpfsDir <- paste0(origTmpfsDir,'-workUnit-',workUnit.i)
 		workDirLocation.frida <- paste0(baselocation.frida,'-',workUnit.i)
 		workDirLocation.stella <- paste0(baselocation.stella,'-',workUnit.i)
-		name.workDir <- paste0(name.workDir,'-',workUnit.i)
+		name.workDir <- paste0(origName.workDir,'-',workUnit.i)
 	} else {
 		workDirLocation.frida <- baselocation.frida
 		workDirLocation.stella <- baselocation.stella
