@@ -407,7 +407,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 	baseWD <- getwd()
 	# ensure path is interepreted correctly in case location.output is provided absolute
 	if(grepl('^/',location.output) && exists('baseWD')){
-		location.output <- system(paste0('realpath --relative-to="',baseWD,'" "',location.output,'"'))
+		location.output <- system(paste0('realpath --relative-to="',baseWD,'" "',location.output,'"'),intern = T)
 	}
 	if(!skipRunJustRead){
 		clusterExport(cl,list('location.output','baseWD','sampleParms',
@@ -646,7 +646,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 
 loadClusterRuns <- function(location.output){
 	if(grepl('^/',location.output) && exists('baseWD')){
-		location.output <- system(paste0('realpath --relative-to="',baseWD,'" "',location.output,'"'))
+		location.output <- system(paste0('realpath --relative-to="',baseWD,'" "',location.output,'"'),intern = T)
 	}
 	runFilesList <- list.files(file.path(baseWD,location.output),pattern = 'workUnit-[0-9]+\\.RDS')
 	retList <- c()
@@ -661,7 +661,7 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 																			 verbosity=0){
 	# ensure path is interepreted correctly in case location.output is provided absolute
 	if(grepl('^/',location.output) && exists('baseWD')){
-		location.output <- system(paste0('realpath --relative-to="',baseWD,'" "',location.output,'"'))
+		location.output <- system(paste0('realpath --relative-to="',baseWD,'" "',location.output,'"'),intern = T)
 	}
 	if(!exists('compressCsv')){compressCsv<-T}
 	varNames <- unique(parOutput[[1]]$origColNames)
@@ -784,7 +784,7 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T){
 	}
 	# ensure path is interepreted correctly in case location.output is provided absolute
 	if(grepl('^/',location.output) && exists('baseWD')){
-		location.output <- system(paste0('realpath --relative-to="',baseWD,'" "',location.output,'"'))
+		location.output <- system(paste0('realpath --relative-to="',baseWD,'" "',location.output,'"'),intern = T)
 	}
 	outputFolder <- file.path(baseWD,location.output,'detectedParmSpace')
 	outputTypeFolders <- basename(list.dirs(outputFolder,recursive = F))
