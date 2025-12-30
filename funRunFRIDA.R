@@ -776,7 +776,7 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 	unlink(perVarSubfolder,recursive = T,force = T)
 	if(verbosity>0){cat('done\n')}
 	rm(list=c('varData','filesContents.lst'))
-	gc()
+	gc(full = T)
 }
 mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T){
 	if(verbosity>0){
@@ -830,7 +830,7 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T){
 				if(verbosity>0){cat('done\n')}
 			}
 		} else if(parStrat==2){
-			if(verbosity>0){cat('Parallel proccessing all vars...')}
+			if(verbosity>0){cat(sprintf('Parallel proccessing all vars with %i workers...',length(cl())))}
 			parLapply(cl,1:length(varNames),workerMergePerVarFiles,
 								outputType=outputType,
 								outputTypeFolder=outputTypeFolder,
