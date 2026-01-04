@@ -191,7 +191,7 @@ sed -i "s/^name.frida_external_ranges <-.*$/name.frida_external_ranges <- '${ext
 sed -i "s/^name.frida_parameter_exclusion_list <-.*$/name.frida_parameter_exclusion_list <- '${excludeParmFile}'/" $config
 sed -i "s/^name.frida_variable_exclusion_list <-.*$/name.frida_variable_exclusion_list <- '${excludeVarFile}'/" $config
 sed -i "s/^name.frida_extra_variables_to_export_list <-.*$/name.frida_extra_variables_to_export_list <- '${extraExportFile}'/" $config
-sed -i "s/'workOutput'/'${baseOutputDir}'/" $config
+sed -i "s@'workOutput'@'${baseOutputDir}'@" $config # use @ as field boundaries as the path cotains /
 
 if [ "$outputType" = "csv" ]; then
 	sed -i "/^perVarOutputTypes/c\perVarOutputTypes <- c('csv')" $config
