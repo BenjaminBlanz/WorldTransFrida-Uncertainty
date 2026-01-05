@@ -779,6 +779,13 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 }
 workerMergePerVarFilesIndepProc <- function(v.i,outputType,outputTypeFolder,varNamesFileName,
 																						verbosity=0,compressCsv=T){
+	command <- paste0('Rscript workerFileMergeScript.R',' ',v.i,' ',outputType,
+										' "',outputTypeFolder,'" ',
+									 varNamesFileName,' ',verbosity,' ',compressCsv)
+	if(verbosity>1){
+		cat(command)
+		cat('\n')
+	}
 	system(paste('Rscript workerFileMergeScript.R',v.i,outputType,outputTypeFolder,
 							 varNamesFileName,verbosity,compressCsv))
 }
@@ -837,7 +844,7 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T){
 			if(verbosity>0){cat(sprintf('Parallel proccessing all vars with %i workers\n',numWorkersFileMerge))}
 			clFileMerge <- makePSOCKcluster(numWorkersFileMerge)
 			gobble <- clusterEvalQ(clFileMerge,source('funRunFRIDA.R'))
-			parLapplyLB(clFileMerge,idcToWorkChunks[[chunk.i]],workerMergePerVarFiles,
+			parLapplyLB(clFileMerge,1:length(varNames),workerMergePerVarFiles,
 								outputType=outputType,
 								outputTypeFolder=outputTypeFolder,
 								varNames=varNames,
@@ -851,12 +858,13 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T){
 																 '.RDS')
 			saveRDS(varNames,varNamesFileName)
 			clFileMerge <- makePSOCKcluster(numWorkersFileMerge)
-			parLapplyLB(clFileMerge,idcToWorkChunks[[chunk.i]],workerMergePerVarFilesIndepProc,
+			gobble <- parLapplyLB(clFileMerge,1:length(varNames),workerMergePerVarFilesIndepProc,
 									outputType=outputType,
 									outputTypeFolder=outputTypeFolder,
-									varNames=varNames,
+									varNamesFileName=varNamesFileName,
 									compressCsv=compressCsv,chunk.size = 1)
 			stopCluster(clFileMerge)
+			unlink(varNamesFileName,force = T)
 			if(verbosity>0){cat('done\n')}
 		} else {
 			stop('unkown parStrat\n')
