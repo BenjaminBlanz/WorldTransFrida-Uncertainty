@@ -48,7 +48,7 @@ configFile=config.R
 # where to store outputs
 baseOutputDir=workOutput
 
-outputType='both' # can be 'both', 'csv' or 'RDS'
+outputType='RDS' # can be 'both', 'csv' or 'RDS'
 plotting='true' # avoiding the plotting can save quit some compute time
 detRepSample='true' # needed for the plots that show the representative subsample
 #and for generating the rep sample
@@ -152,6 +152,9 @@ while [ $# -gt 0 ]; do
       ;;
     --baseOutputDir)
       baseOutputDir="$2"
+      ;;
+    --outputType)
+      outputType="$2"
       ;;
     *)
       printf "Error: Invalid argument: $1 \n"
