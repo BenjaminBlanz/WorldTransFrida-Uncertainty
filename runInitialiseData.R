@@ -25,6 +25,8 @@ calDat.orig <- read.csv(file.path(location.frida,'Data','Calibration Data.csv'),
 # store names of vars for export in frida format (including dots etc)
 # but remove trailing spaces as stella does not like those apparently
 # also remove first entry, that is time
+# NOTE: these are no longer exported, in runMLEandParmSpace.
+#       all exports have to be specified in the extraVarsForExport File
 varsForExport.fridaNames.orig <- gsub(' $','',calDat.orig$V1)[-1]
 varsForExport.cleanNames.orig <- cleanNames(varsForExport.fridaNames.orig)
 

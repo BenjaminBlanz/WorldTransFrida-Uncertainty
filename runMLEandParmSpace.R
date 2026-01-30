@@ -571,7 +571,7 @@ while(newMaxFound){
 	## write export spec ####
 	extraVarNamesForExport <- read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN
 	extraVarNamesForExport <- extraVarNamesForExport[nchar(extraVarNamesForExport)>4]
-	writeFRIDAExportSpec(varsForExport.fridaNames = unique(c(varsForExport.fridaNames.orig,extraVarNamesForExport)),
+	writeFRIDAExportSpec(varsForExport.fridaNames = unique(extraVarNamesForExport),
 											 location.frida)
 	source('clusterHelp.R') #make sure the workers also get the updated export spec
 	
