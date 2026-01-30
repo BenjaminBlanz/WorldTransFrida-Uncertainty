@@ -156,6 +156,9 @@ while [ $# -gt 0 ]; do
     --outputType)
       outputType="$2"
       ;;
+    --extraExportFile)
+    	extraExportFile="$2"
+    	;;
     *)
       printf "Error: Invalid argument: $1 \n"
       exit 1
