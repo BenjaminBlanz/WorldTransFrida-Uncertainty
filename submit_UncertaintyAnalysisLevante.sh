@@ -268,6 +268,7 @@ sed -i "s/ntasks-per-node=128/ntasks-per-node=${numWorkers}/" $runscript
 sed -i "s/constraint=256G/constraint=${memorySize}/" $runscript
 sed -i "s/expID/${expID}/g" $runscript
 sed -i "s/jdoe@mail.com/${email}/" $runscript
+sed -i "s@'workOutput'@'${baseOutputDir}'@" $runscript # use @ as field boundaries as the path cotains /
 sed -i "s/config.R/${config}/" $runscript
 sed -i "s/runMLEandParmSpace.R/${runMLE}/" $runscript
 if [ "${plotting}" = "true" ]; then
@@ -295,7 +296,7 @@ fi
 
 if [ "$copyParmRangesAndScales" = "true" ]; then
 	for filename in 'parscale.RDS' 'sampleParmsParscale.csv' 'sampleParmsParscaleRanged.csv' 'sampleParmsParscaleRanged.RDS' 'sigma-indepParms.RDS' 'sigma.RDS'; do
-		file=workOutput/${copyID}/${filename}
+		file=${baseOutputDir}/${copyID}/${filename}
 		if [ -e $file ]; then
 			cp ${file}  ${expDir}/
 		else
@@ -308,7 +309,7 @@ fi
 
 if [ "$copySamplePoints" = "true" ]; then
 	for filename in 'samplePoints.RDS'; do
-		file=workOutput/${copyID}/${filename}
+		file=${baseOutputDir}/${copyID}/${filename}
 		if [ -e $file ]; then
 			cp ${file}  ${expDir}/
 		else
