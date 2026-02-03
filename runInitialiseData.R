@@ -149,6 +149,7 @@ calDat <- calDat.afterImpute[,-exclude.idc]
 varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
 writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 defDat <- runFridaDefaultParms()
+defDat <- defDat[,colnames(calDat)]
 if(sum(colnames(defDat)!=colnames(calDat))!=0){
 	stop('Mismatch in the columns of calibration data and model result data')
 }
@@ -168,6 +169,7 @@ if(!treatVarsAsIndep){
 	varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
 	writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 	defDat <- runFridaDefaultParms()
+	defDat <- defDat[,colnames(calDat)]
 	if(sum(colnames(defDat)!=colnames(calDat))!=0){
 		stop('Mismatch in the columns of calibration data and model result data')
 	}
@@ -194,6 +196,7 @@ if(removeLinearCombinations&&!treatVarsAsIndep){
 	varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
 	writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 	defDat <- runFridaDefaultParms()
+	defDat <- defDat[,colnames(calDat)]
 	if(sum(colnames(defDat)!=colnames(calDat))!=0){
 		stop('Mismatch in the columns of calibration data and model result data')
 	}
@@ -215,6 +218,7 @@ if(removeLinearCombinations&&!treatVarsAsIndep){
 	varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
 	writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 	defDat <- runFridaDefaultParms()
+	defDat <- defDat[,colnames(calDat)]
 	if(sum(colnames(defDat)!=colnames(calDat))!=0){
 		stop('Mismatch in the columns of calibration data and model result data')
 	}
@@ -253,6 +257,7 @@ rm(calDat.afterImpute)
 varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
 writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 defDat <- runFridaDefaultParms()
+defDat <- defDat[,colnames(calDat)]
 resDat <- defDat[1:nrow(calDat),colnames(calDat)]-calDat
 
 # data Plots ####
