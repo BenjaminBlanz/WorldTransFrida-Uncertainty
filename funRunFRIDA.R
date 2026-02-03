@@ -86,7 +86,7 @@ writeFRIDAExportSpec <- function(varsForExport.fridaNames,location.frida){
 	for(i in 1:length(dupe.lst)){
 		nonDupeIdc[i] <- dupe.lst[[i]][1]
 	}
-	nonDupeIdc <- sort(nonDupeIdc)
+	# nonDupeIdc <- sort(nonDupeIdc)
 	varsForExport.fridaNames <- varsForExport.fridaNames[nonDupeIdc]
 	sink(file=file.path(location.frida,'Data',name.fridaExportVarsFile))
 	cat(paste0(varsForExport.fridaNames,collapse='\n'))
@@ -157,8 +157,13 @@ runFridaParmsByIndex <- function(runid,silent=T,policyMode=F){
 			rownames(runDat) <- runDat$year
 			runDat <- runDat[,-1]
 			if(!policyMode){
-				resDat <- calDat-runDat[1:nrow(calDat),colnames(calDat)]
-				logLike <- funLogLikelihood(resDat,resSigma)
+				calDatInRunDat <- which(colnames(calDat)%in%colnames(runDat))
+				if(length(calDatInRunDat)>0){
+					resDat <- calDat-runDat[1:nrow(calDat),colnames(calDat)]
+					logLike <- funLogLikelihood(resDat,resSigma)
+				} else {
+					logLike <- rep(1,nrow(runDat))
+				}
 				# If the logLike is not NA but the run did not complete assign 
 				# lowest nonzero value. We use this when narrowing the parms space
 				if(is.na(runDat[[1]][nrow(runDat)])||logLike==-Inf){
@@ -747,28 +752,43 @@ workerReadPerVarFiles <- function(i,outputType,perVarSubfolder,fileList){
 	readPerVarFile(file.path(perVarSubfolder,fileList[i]))
 }
 workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verbosity=0,
-																	 compressCsv=T){
+																	 compressCsv=T,mode=2,numSampleForPreallocation=0){
 	varName <- varNames[v.i]
 	perVarSubfolder <- file.path(outputTypeFolder,varName)
 	fileList <- list.files(perVarSubfolder)
 	if(verbosity>0){cat(sprintf('Processing %i files of %s...',length(fileList),varName))}
 	if(verbosity>0){cat('reading and merging...')}
-	
-	filesContents.lst <- list()
-	filesContents.lst[[1]] <- readPerVarFile(file.path(perVarSubfolder,fileList[1]),outputType)
-	for(f.i in 2:length(fileList)){
-		filesContents.lst[[f.i]] <- readPerVarFile(file.path(perVarSubfolder,fileList[f.i]),outputType)
-		# hack to deal with incomplete runs messing up column headers
-		# proper fix is in data generation, but this will make old results work
-		colnames(filesContents.lst[[f.i]]) <- colnames(filesContents.lst[[1]])
+	if(mode==1){
+		if(verbosity>0){cat('mode 1...')}
+		filesContents.lst <- list()
+		filesContents.lst[[1]] <- readPerVarFile(file.path(perVarSubfolder,fileList[1]),outputType)
+		for(f.i in 2:length(fileList)){
+			filesContents.lst[[f.i]] <- readPerVarFile(file.path(perVarSubfolder,fileList[f.i]),outputType)
+			# hack to deal with incomplete runs messing up column headers
+			# proper fix is in data generation, but this will make old results work
+			colnames(filesContents.lst[[f.i]]) <- colnames(filesContents.lst[[1]])
+		}
+		rbindStr <- paste0('varData <- base::rbind(filesContents.lst[[',
+											 paste(1:length(filesContents.lst),
+											 			collapse = ']],filesContents.lst[['),
+											 ']])')
+		eval(parse(text=rbindStr))
+		varData <- sort_by(varData,varData[,1])
+		colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
+	} else if(mode==2){
+		if(verbosity>0){cat('mode 2...')}
+		firstContent <- readPerVarFile(file.path(perVarSubfolder,fileList[1]),outputType)
+		# initialise data frame
+		dfString <- paste0('varData <- data.frame(',paste0('"',colnames(firstContent),'" = double(',numSample,')',collapse=','),')')
+		eval(parse(text=dfString))
+		varData[1:nrow(firstContent),] <- firstContent
+		lastIndex <- nrow(firstContent)
+		for(f.i in 2:length(fileList)){
+			nextFileContent <- readPerVarFile(file.path(perVarSubfolder,fileList[f.i]),outputType)
+			colnames(nextFileContent) <- colnames(firstContent)
+			carData[(lastIndex+1):(lastIndex+nrow),] <- nextFileContent
+		}
 	}
-	rbindStr <- paste0('varData <- base::rbind(filesContents.lst[[',
-										 paste(1:length(filesContents.lst),
-										 			collapse = ']],filesContents.lst[['),
-										 ']])')
-	eval(parse(text=rbindStr))
-	varData <- sort_by(varData,varData[,1])
-	colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
 	if(verbosity>0){cat('writing...')}
 	writePerVarFile(varData,file.path(outputTypeFolder,varName),
 									outputType=outputType,compressCsv=compressCsv)
@@ -778,10 +798,12 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 	rm(list=c('varData','filesContents.lst'))
 }
 workerMergePerVarFilesIndepProc <- function(v.i,outputType,outputTypeFolder,varNamesFileName,
-																						verbosity=0,compressCsv=T){
+																						verbosity=0,compressCsv=T,mode=2,
+																						numSampleForPreallocation=0){
 	command <- paste0('Rscript workerFileMergeScript.R',' ',v.i,' ',outputType,
 										' "',outputTypeFolder,'" ',
-									 varNamesFileName,' ',verbosity,' ',compressCsv)
+									 varNamesFileName,' ',verbosity,' ',compressCsv,' ',mode,' ',
+										numSampleForPreallocation)
 	if(verbosity>1){
 		cat(command)
 		cat('\n')
@@ -789,7 +811,10 @@ workerMergePerVarFilesIndepProc <- function(v.i,outputType,outputTypeFolder,varN
 	system(paste('Rscript workerFileMergeScript.R',v.i,outputType,outputTypeFolder,
 							 varNamesFileName,verbosity,compressCsv))
 }
-mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T){
+mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T,
+														 numSampleForPreallocation=numSample,
+														 outputTypeFoldersOverride = NULL,
+														 varNamesOverride = NULL){
 	if(verbosity>0){
 		cat('Merging per Var files\n')
 	}
@@ -798,12 +823,20 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T){
 		location.output <- system(paste0('realpath --relative-to="',baseWD,'" "',location.output,'"'),intern = T)
 	}
 	outputFolder <- file.path(baseWD,location.output,'detectedParmSpace')
-	outputTypeFolders <- basename(list.dirs(outputFolder,recursive = F))
+	if(!is.null(outputTypeFoldersOverride)){
+		outputTypeFolders <- outputTypeFoldersOverride
+	} else {
+		outputTypeFolders <- basename(list.dirs(outputFolder,recursive = F))
+	}
 	for(outputTypeFolder in outputTypeFolders){
 		if(verbosity>0){cat(paste('Entering',outputTypeFolder,'\n'))}
 		outputType <- strsplit(outputTypeFolder,'-')[[1]][2]
 		outputTypeFolder <- file.path(baseWD,location.output,'detectedParmSpace',outputTypeFolder)
-		varNames <- basename(list.dirs(outputTypeFolder,recursive = F))
+		if(!is.null(varNamesOverride)){
+			varNames <- varNamesOverride
+		} else {
+			varNames <- basename(list.dirs(outputTypeFolder,recursive = F))
+		}
 		if(verbosity>0){cat(sprintf('Found %i variable sub folder(s)\n',length(varNames)))}
 		if(length(varNames)==0){
 			next
@@ -862,7 +895,9 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T){
 									outputType=outputType,
 									outputTypeFolder=outputTypeFolder,
 									varNamesFileName=varNamesFileName,
-									compressCsv=compressCsv,chunk.size = 1)
+									compressCsv=compressCsv,
+									numSampleForPreallocation=numSampleForPreallocation,
+									chunk.size = 1)
 			stopCluster(clFileMerge)
 			unlink(varNamesFileName,force = T)
 			if(verbosity>0){cat('done\n')}
