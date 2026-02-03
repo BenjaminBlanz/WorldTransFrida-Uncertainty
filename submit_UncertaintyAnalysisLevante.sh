@@ -285,7 +285,7 @@ fi
 ############ Copying parameter ranges and scales ############################
 #############################################################################
 
-expDir="workOutput/${expID}"
+expDir="${baseOutputDir}/${expID}"
 if [ -d "$expDir" ]; then
 	echo $expDir already exists       
 else
