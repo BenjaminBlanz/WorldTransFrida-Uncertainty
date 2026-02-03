@@ -162,7 +162,7 @@ runFridaParmsByIndex <- function(runid,silent=T,policyMode=F){
 					resDat <- calDat-runDat[1:nrow(calDat),colnames(calDat)]
 					logLike <- funLogLikelihood(resDat,resSigma)
 				} else {
-					logLike <- rep(1,nrow(runDat))
+					logLike <- rep(1,ncol(runDat))
 				}
 				# If the logLike is not NA but the run did not complete assign 
 				# lowest nonzero value. We use this when narrowing the parms space
