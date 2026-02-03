@@ -125,10 +125,11 @@ if(F){
 		varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
 		writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 		defDat <- runFridaDefaultParms()
+		defDat <- defDat[,colnames(calDat)]
 		if(sum(colnames(defDat)!=colnames(calDat))!=0){
 			stop('Mismatch in the columns of calibration data and model result data')
 		}
-		resDat <- defDat[1:nrow(calDat),]-calDat
+		resDat <- defDat[1:nrow(calDat),colnames(calDat)]-calDat
 		
 		# check for zero var vars in resid ####
 		for(i in 1:ncol(resDat)){
@@ -151,7 +152,7 @@ defDat <- runFridaDefaultParms()
 if(sum(colnames(defDat)!=colnames(calDat))!=0){
 	stop('Mismatch in the columns of calibration data and model result data')
 }
-resDat <- defDat[1:nrow(calDat),]-calDat
+resDat <- defDat[1:nrow(calDat),colnames(calDat)]-calDat
 for(i in 1:ncol(resDat)){
 	res.sd <- sd(resDat[[i]],na.rm=T)
 	if(res.sd==0){
@@ -170,7 +171,7 @@ if(!treatVarsAsIndep){
 	if(sum(colnames(defDat)!=colnames(calDat))!=0){
 		stop('Mismatch in the columns of calibration data and model result data')
 	}
-	resDat <- defDat[1:nrow(calDat),]-calDat
+	resDat <- defDat[1:nrow(calDat),colnames(calDat)]-calDat
 	resDat.cor <- cor(resDat,use='complete.obs')
 	perfCors <- which((resDat.cor-diag(1,ncol(resDat)))==1,arr.ind=T)
 	if(nrow(perfCors)>0){
@@ -196,7 +197,7 @@ if(removeLinearCombinations&&!treatVarsAsIndep){
 	if(sum(colnames(defDat)!=colnames(calDat))!=0){
 		stop('Mismatch in the columns of calibration data and model result data')
 	}
-	resDat <- defDat[1:nrow(calDat),]-calDat
+	resDat <- defDat[1:nrow(calDat),colnames(calDat)]-calDat
 	linearCombos <- caret::findLinearCombos(resDat[complete.cases(resDat),])
 	if(length(linearCombos$remove)>0){
 		new.exclude.idc <- idxOfVarName(colnames(calDat)[linearCombos$remove],
@@ -217,7 +218,7 @@ if(removeLinearCombinations&&!treatVarsAsIndep){
 	if(sum(colnames(defDat)!=colnames(calDat))!=0){
 		stop('Mismatch in the columns of calibration data and model result data')
 	}
-	resDat <- defDat[1:nrow(calDat),]-calDat
+	resDat <- defDat[1:nrow(calDat),colnames(calDat)]-calDat
 	
 	tryCatch({resDat.cv <- cov(resDat,use='complete.obs')},
 					 error=function(e){resDat.cv <- NA})
@@ -252,7 +253,7 @@ rm(calDat.afterImpute)
 varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
 writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 defDat <- runFridaDefaultParms()
-resDat <- defDat[1:nrow(calDat),]-calDat
+resDat <- defDat[1:nrow(calDat),colnames(calDat)]-calDat
 
 # data Plots ####
 if(plotWhileRunning){
