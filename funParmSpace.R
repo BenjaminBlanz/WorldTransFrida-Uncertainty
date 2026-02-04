@@ -14,11 +14,13 @@ jnegLLikelihood.f <- function(jParVect){
 		resSigma[lower.tri(resSigma)] <- t(resSigma)[lower.tri(resSigma)]
 	}
 	runDat <- runFRIDASpecParms(parVect)
-	if(sum(colnames(calDat)==colnames(runDat))<ncol(calDat)){
-		stop('not all calDat columns in runDat\n')
+	calDatInRunDat <- which(colnames(calDat)%in%colnames(runDat))
+	if(length(calDatInRunDat)>0){
+		resDat <- calDat-runDat[1:nrow(calDat),colnames(calDat)]
+		lLikelihood <- funLogLikelihood(resDat,resSigma)
+	} else {
+		lLikelihood <- rep(1,ncol(runDat))
 	}
-	resDat <- calDat-runDat[1:nrow(calDat),colnames(calDat)]
-	lLikelihood <- funLogLikelihood(resDat,resSigma)
 	# If the logLike is not NA but the run did not complete assign 
 	# lowest value. We use this when narrowing the parms space
 	if(is.na(runDat[[1]][nrow(runDat)])){
@@ -28,11 +30,13 @@ jnegLLikelihood.f <- function(jParVect){
 }
 negLLike <- function(parVect){
 	runDat <- runFRIDASpecParms(parVect)
-	if(sum(colnames(calDat)==colnames(runDat))<ncol(calDat)){
-		stop('not all calDat columns in runDat\n')
+	calDatInRunDat <- which(colnames(calDat)%in%colnames(runDat))
+	if(length(calDatInRunDat)>0){
+		resDat <- calDat-runDat[1:nrow(calDat),colnames(calDat)]
+		lLikelihood <- funLogLikelihood(resDat,resSigma)
+	} else {
+		lLikelihood <- rep(1,ncol(runDat))
 	}
-	resDat <- calDat-runDat[1:nrow(calDat),colnames(calDat)]
-	lLikelihood <- funLogLikelihood(resDat,resSigma)
 	# If the logLike is not NA but the run did not complete assign 
 	# lowest value. We use this when narrowing the parms space
 	if(is.na(runDat[[1]][nrow(runDat)])){
