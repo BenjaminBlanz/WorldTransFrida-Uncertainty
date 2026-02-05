@@ -16,7 +16,7 @@ jnegLLikelihood.f <- function(jParVect){
 	runDat <- runFRIDASpecParms(parVect)
 	calDatInRunDat <- which(colnames(calDat)%in%colnames(runDat))
 	if(length(calDatInRunDat)>0){
-		resDat <- calDat-runDat[1:nrow(calDat),colnames(calDat)]
+		resDat <- calDat[calDatInRunDat]-runDat[1:nrow(calDat),colnames(calDat)[calDatInRunDat]]
 		lLikelihood <- funLogLikelihood(resDat,resSigma)
 	} else {
 		lLikelihood <- rep(1,ncol(runDat))
@@ -32,7 +32,7 @@ negLLike <- function(parVect){
 	runDat <- runFRIDASpecParms(parVect)
 	calDatInRunDat <- which(colnames(calDat)%in%colnames(runDat))
 	if(length(calDatInRunDat)>0){
-		resDat <- calDat-runDat[1:nrow(calDat),colnames(calDat)]
+		resDat <- calDat[calDatInRunDat]-runDat[1:nrow(calDat),colnames(calDat)[calDatInRunDat]]
 		lLikelihood <- funLogLikelihood(resDat,resSigma)
 	} else {
 		lLikelihood <- rep(1,ncol(runDat))

@@ -159,7 +159,7 @@ runFridaParmsByIndex <- function(runid,silent=T,policyMode=F){
 			if(!policyMode){
 				calDatInRunDat <- which(colnames(calDat)%in%colnames(runDat))
 				if(length(calDatInRunDat)>0){
-					resDat <- calDat-runDat[1:nrow(calDat),colnames(calDat)]
+					resDat <- calDat[calDatInRunDat]-runDat[1:nrow(calDat),colnames(calDat)[calDatInRunDat]]
 					logLike <- funLogLikelihood(resDat,resSigma)
 				} else {
 					logLike <- rep(1,ncol(runDat))
