@@ -779,7 +779,7 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 		if(verbosity>0){cat('mode 2...')}
 		firstContent <- readPerVarFile(file.path(perVarSubfolder,fileList[1]),outputType)
 		# initialise data frame
-		dfString <- paste0('varData <- data.frame(',paste0('"',colnames(firstContent),'" = double(',numSample,')',collapse=','),')')
+		dfString <- paste0('varData <- data.frame(',paste0('"',colnames(firstContent),'" = double(',numSampleForPreallocation,')',collapse=','),')')
 		eval(parse(text=dfString))
 		varData[1:nrow(firstContent),] <- firstContent
 		lastIndex <- nrow(firstContent)
@@ -881,7 +881,9 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T,
 								outputType=outputType,
 								outputTypeFolder=outputTypeFolder,
 								varNames=varNames,
-								compressCsv=compressCsv,chunk.size = 1)
+								compressCsv=compressCsv,
+								numSampleForPreallocation=numSampleForPreallocation,
+								chunk.size = 1)
 			stopCluster(clFileMerge)
 			if(verbosity>0){cat('done\n')}
 		} else if(parStrat==3){
