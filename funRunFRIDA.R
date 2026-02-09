@@ -145,9 +145,16 @@ runFridaParmsByIndex <- function(runid,silent=T,policyMode=F){
 			cat(row.names(samplePoints)[i],'\n')
 			sink()
 			writeFRIDAInput(colnames(samplePoints),samplePoints[i,],policyMode=policyMode)
-			system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
+			stella_simulator_exit_status <- system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
 									 file.path(location.frida,'FRIDA.stmx')),
 						 ignore.stdout = silent,ignore.stderr = silent,wait = T)
+			if(stella_simulator_exit_status!=0){
+				cat('Something wrong with stella simulator.\n')
+				system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',#'-s', #to output isdb
+										 file.path(location.frida,'FRIDA.stmx')),
+							 ignore.stdout = F,ignore.stderr = F,wait = T)
+				stop('Something wrong with stella simulator.\n')
+			}
 			runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
 			origColNames <- unname(unlist(read.table(file.path(location.frida,'Data',name.fridaOutputFile),
 															 sep=',')[1,]))[-1]
@@ -229,9 +236,16 @@ runFRIDASpecParms <- function(parVect,silent=T){
 	}else{
 		writeFRIDAInput(names(parVect),parVect)
 	}
-	system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',#'-s', #to output isdb
+	stella_simulator_exit_status <- system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',#'-s', #to output isdb
 							 file.path(location.frida,'FRIDA.stmx')),
 				 ignore.stdout = silent,ignore.stderr = silent,wait = T)
+	if(stella_simulator_exit_status!=0){
+		cat('Something wrong with stella simulator.\n')
+		system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',#'-s', #to output isdb
+								 file.path(location.frida,'FRIDA.stmx')),
+					 ignore.stdout = F,ignore.stderr = F,wait = T)
+		stop('Something wrong with stella simulator.\n')
+	}
 	runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
 	colnames(runDat) <- cleanNames(colnames(runDat))
 	if('year' %in% colnames(runDat) &&
