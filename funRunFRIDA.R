@@ -800,7 +800,7 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 		for(f.i in 2:length(fileList)){
 			nextFileContent <- readPerVarFile(file.path(perVarSubfolder,fileList[f.i]),outputType)
 			colnames(nextFileContent) <- colnames(firstContent)
-			carData[(lastIndex+1):(lastIndex+nrow),] <- nextFileContent
+			varData[(lastIndex+1):(lastIndex+nrow),] <- nextFileContent
 		}
 	}
 	if(verbosity>0){cat('writing...')}
