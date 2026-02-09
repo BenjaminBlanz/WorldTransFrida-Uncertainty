@@ -125,10 +125,11 @@ if(F){
 		varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
 		writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 		defDat <- runFridaDefaultParms()
-		defDat <- defDat[,colnames(calDat)]
-		if(sum(colnames(defDat)!=colnames(calDat))!=0){
+		calDatInDefDat <- which(colnames(calDat)%in%colnames(defDat))
+		if(length(calDatInDefDat) < ncol(calDat)){
 			stop('Mismatch in the columns of calibration data and model result data')
 		}
+		defDat <- defDat[,colnames(calDat)]
 		resDat <- defDat[1:nrow(calDat),colnames(calDat)]-calDat
 		
 		# check for zero var vars in resid ####
@@ -149,7 +150,8 @@ calDat <- calDat.afterImpute[,-exclude.idc]
 varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
 writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 defDat <- runFridaDefaultParms()
-if(sum(colnames(defDat)!=colnames(calDat))!=0){
+calDatInDefDat <- which(colnames(calDat)%in%colnames(defDat))
+if(length(calDatInDefDat) < ncol(calDat)){
 	stop('Mismatch in the columns of calibration data and model result data')
 }
 defDat <- defDat[,colnames(calDat)]
@@ -169,7 +171,8 @@ if(!treatVarsAsIndep){
 	varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
 	writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 	defDat <- runFridaDefaultParms()
-	if(sum(colnames(defDat)!=colnames(calDat))!=0){
+	calDatInDefDat <- which(colnames(calDat)%in%colnames(defDat))
+	if(length(calDatInDefDat) < ncol(calDat)){
 		stop('Mismatch in the columns of calibration data and model result data')
 	}
 	defDat <- defDat[,colnames(calDat)]
@@ -196,10 +199,11 @@ if(removeLinearCombinations&&!treatVarsAsIndep){
 	varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
 	writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 	defDat <- runFridaDefaultParms()
-	defDat <- defDat[,colnames(calDat)]
-	if(sum(colnames(defDat)!=colnames(calDat))!=0){
+	calDatInDefDat <- which(colnames(calDat)%in%colnames(defDat))
+	if(length(calDatInDefDat) < ncol(calDat)){
 		stop('Mismatch in the columns of calibration data and model result data')
 	}
+	defDat <- defDat[,colnames(calDat)]
 	resDat <- defDat[1:nrow(calDat),colnames(calDat)]-calDat
 	linearCombos <- caret::findLinearCombos(resDat[complete.cases(resDat),])
 	if(length(linearCombos$remove)>0){
@@ -218,10 +222,11 @@ if(removeLinearCombinations&&!treatVarsAsIndep){
 	varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
 	writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 	defDat <- runFridaDefaultParms()
-	defDat <- defDat[,colnames(calDat)]
-	if(sum(colnames(defDat)!=colnames(calDat))!=0){
+	calDatInDefDat <- which(colnames(calDat)%in%colnames(defDat))
+	if(length(calDatInDefDat) < ncol(calDat)){
 		stop('Mismatch in the columns of calibration data and model result data')
 	}
+	defDat <- defDat[,colnames(calDat)]
 	resDat <- defDat[1:nrow(calDat),colnames(calDat)]-calDat
 	
 	tryCatch({resDat.cv <- cov(resDat,use='complete.obs')},
@@ -271,10 +276,10 @@ if(plotWhileRunning){
 }
 
 # covar ####
-if(sum(colnames(defDat)!=colnames(calDat))!=0){
+calDatInDefDat <- which(colnames(calDat)%in%colnames(defDat))
+if(length(calDatInDefDat) < ncol(calDat)){
 	stop('Mismatch in the columns of calibration data and model result data')
 }
-
 
 cat('Determining the distribution of the residuals in the default case...\n')
 if(treatVarsAsIndep){
