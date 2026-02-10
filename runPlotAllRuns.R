@@ -15,7 +15,6 @@ cat(sprintf('processing the results in\n %s\n',
 						file.path(outputFolder,outputTypeFolder)))
 calDat <- readRDS(file.path(location.output,'calDat.RDS'))$calDat
 calDat.orig <- read.csv(file.path(location.frida,'Data','Calibration Data.csv'))
-varsForExport.fridaNames.orig <- calDat.orig[,1]
 
 resSigma <- readRDS(file.path(location.output,'sigma-indepParms.RDS'))
 colnames(resSigma) <- rownames(resSigma) <- colnames(calDat)
@@ -25,7 +24,7 @@ vars_info <- read.csv(file.path(location.frida.info,name.frida_extra_variables_t
 vars_info$cleanNames <- cleanNames(vars_info$FRIDA.FQN)
 allVarNames <- vars_info$FRIDA.FQN
 allVarNames <- allVarNames[nchar(allVarNames)>4]
-allVarNames.orig <- c(varsForExport.fridaNames.orig,allVarNames)
+allVarNames.orig <- c(allVarNames)
 allVarNames.orig <- gsub(' \\[(\\d)\\]','\\[\\1\\]',allVarNames.orig)
 allVarNames.orig <- unique(allVarNames.orig)
 allVarNames <- cleanNames(allVarNames.orig)
@@ -143,8 +142,8 @@ for(plotWeightType in plotWeightTypes){
 		}
 		varData <- readPerVarFile(file.path(outputFolder,outputTypeFolder,varName),outputType)
 		varData <- sort_by(varData,varData$id)
-		varData <- t(varData[,-1])
 		colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
+		varData <- t(varData[,-1])
 		cat('CI borders...')
 		CIsToPlot <- sort(CIsToPlot)
 		ciBoundQs <- unique(c(rev((1-CIsToPlot)/2),1-(1-CIsToPlot)/2))
