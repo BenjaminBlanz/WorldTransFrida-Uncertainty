@@ -113,7 +113,7 @@ while(newMaxFound){
 	baseNegLL <- jnegLLikelihood.f(jParVect)
 	
 	if(forceParBounds){
-		#cat('Forced using frida_info bounds\n')
+		cat('Forced using frida_info bounds\n')
 	} else if(!redoAllCalc&&file.exists(file.path(location.output,'sampleParmsParscaleRanged.RDS'))){
 		cat('loading existing sampleParmsParscaleRanged\n')
 		sampleParms <- readRDS(file.path(location.output,'sampleParmsParscaleRanged.RDS'))

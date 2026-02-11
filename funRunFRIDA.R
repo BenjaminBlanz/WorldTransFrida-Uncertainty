@@ -18,15 +18,20 @@ prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NU
 			temp <- unlist(frida_info[,columnsThatAreFlags])
 			temp[is.na(temp)] <- 0
 			frida_info[,columnsThatAreFlags] <- temp
+		} else if (colnames(frida_info)[1]=='SimpleParmFile'){ # this is a simple parm file wit Variable, Min, Max
+			columnsThatAreFlags <- NULL
 		} else { # this is a frida_info file proided by billy pre stella 4.11
 			columnsThatAreFlags <- c(2,3,4,5,6,7,8,9,10,11)
-		
 		}	
 		# select the parameters to be sampled
-		sampleParms <- frida_info[rowSums(frida_info[,columnsThatAreFlags])>0 &
-																frida_info$No.Sensi==0 &
-																frida_info$Policy==0,
-															-columnsThatAreFlags]
+		if(!is.null(columnsThatAreFlags)){
+			sampleParms <- frida_info[rowSums(frida_info[,columnsThatAreFlags])>0 &
+																	frida_info$No.Sensi==0 &
+																	frida_info$Policy==0,
+																-columnsThatAreFlags]
+		} else {
+			sampleParms <- frida_info[,-1]
+		}
 		invalidLines <- which(!((sampleParms$Max-sampleParms$Min)>0 &
 															sampleParms$Min <= sampleParms$Value &
 															sampleParms$Value <= sampleParms$Max))
