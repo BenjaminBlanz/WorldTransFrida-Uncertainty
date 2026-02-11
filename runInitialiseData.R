@@ -12,7 +12,7 @@ if(!exists('runFridaDefaultParms')){
 extraVarsToExport <- unique(read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN)
 extraVarsToExport <- extraVarsToExport[nchar(extraVarsToExport)>4]
 writeFRIDAExportSpec(extraVarsToExport,location.frida)
-test <- runFridaDefaultParms(silent=F)
+test <- runFridaDefaultParms(silent=F,testStellaGood=T)
 continue <- readline('Verify there are no errors in the above.\n  Enter for all clear, Ctrl+C for abort\n')
 
 # read calib data ####

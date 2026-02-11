@@ -135,7 +135,7 @@ disk.free <- function(path = getwd()) {
 #   sampleParms,samplePoints,location.frida, and name.fridaInputFile
 # If retNegLogLike also uses from global env:
 # 	calDat,resSigma
-runFridaParmsByIndex <- function(runid,silent=T,policyMode=F){
+runFridaParmsByIndex <- function(runid,silent=T,policyMode=F,testStellaGood=F){
 	retlist <- vector(mode = "list", length = length(runid))
 	cat('\n')
 	for(i in runid){
@@ -148,7 +148,7 @@ runFridaParmsByIndex <- function(runid,silent=T,policyMode=F){
 			stella_simulator_exit_status <- system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
 									 file.path(location.frida,'FRIDA.stmx')),
 						 ignore.stdout = silent,ignore.stderr = silent,wait = T)
-			if(stella_simulator_exit_status!=0){
+			if(testStellaGood&&stella_simulator_exit_status!=0){
 				cat('Something wrong with stella simulator.\n')
 				system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',#'-s', #to output isdb
 										 file.path(location.frida,'FRIDA.stmx')),
@@ -222,12 +222,12 @@ runFridaParmsBySamplePoints <- function(policyMode=F){
 # runFridaDefaultParms ####
 # Uses location.frida, and name.fridaInputFile
 # from the global environment
-runFridaDefaultParms <- function(silent=T){
-	return(runFRIDASpecParms(c(),silent))
+runFridaDefaultParms <- function(silent=T,testStellaGood=F){
+	return(runFRIDASpecParms(c(),silent=silent,testStellaGood = testStellaGood))
 }
 
 # runFRIDASpecParms ####
-runFRIDASpecParms <- function(parVect,silent=T){
+runFRIDASpecParms <- function(parVect,silent=T,testStellaGood=F){
 	if(is.null(names(parVect))&length(parVect)>0){
 		stop('need names in parVect to write FRIDA input\n')
 	}
@@ -239,7 +239,7 @@ runFRIDASpecParms <- function(parVect,silent=T){
 	stella_simulator_exit_status <- system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',#'-s', #to output isdb
 							 file.path(location.frida,'FRIDA.stmx')),
 				 ignore.stdout = silent,ignore.stderr = silent,wait = T)
-	if(stella_simulator_exit_status!=0){
+	if(testStellaGood&&stella_simulator_exit_status!=0){
 		cat('Something wrong with stella simulator.\n')
 		system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',#'-s', #to output isdb
 								 file.path(location.frida,'FRIDA.stmx')),
