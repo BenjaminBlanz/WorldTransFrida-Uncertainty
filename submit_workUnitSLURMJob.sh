@@ -128,6 +128,9 @@ while [ $# -gt 0 ]; do
     --baseOutputDir)
       baseOutputDir="$2"
       ;;
+    --extraExportFile)
+    	extraExportFile="$2"
+    	;;
     *)
       printf "Error: Invalid argument: $1 \n"
       exit 1
