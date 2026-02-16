@@ -1,3 +1,5 @@
+cat('\nRunning runPlotAllRuns.R\n\n')
+
 source('initialise.R')
 source('config.R')
 outputFolder <- file.path(location.output,'detectedParmSpace')
