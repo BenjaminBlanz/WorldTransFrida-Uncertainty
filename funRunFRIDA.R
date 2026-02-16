@@ -797,10 +797,14 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 	} else if(mode==2){
 		if(verbosity>0){cat('mode 2...')}
 		firstContent <- readPerVarFile(file.path(perVarSubfolder,fileList[1]),outputType)
-		firstContentColnames <- colnames(firstContent)[
-			1:which(colnames(firstContent)=='1980'|colnames(firstContent)=='X1980')[1]]
-		firstContentColnames <- c(firstContentColnames,as.character(
-			1981:(1981+length(colnames(firstContent))-length(firstContentColnames)-1)))
+		if('logLike' %in% colnames(firstContent)){
+			firstContentColnames <- colnames(firstContent)
+		} else {
+			firstContentColnames <- colnames(firstContent)[
+				1:which(colnames(firstContent)=='1980'|colnames(firstContent)=='X1980')[1]]
+			firstContentColnames <- c(firstContentColnames,as.character(
+				1981:(1981+length(colnames(firstContent))-length(firstContentColnames)-1)))
+		}
 		colnames(firstContent) <- firstContentColnames
 		# initialise data frame
 		dfString <- paste0('varData <- data.frame(',
@@ -811,10 +815,14 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 		lastIndex <- nrow(firstContent)
 		for(f.i in 2:length(fileList)){
 			nextFileContent <- readPerVarFile(file.path(perVarSubfolder,fileList[f.i]),outputType)
-			nextFileContentColnames <- colnames(nextFileContent)[
-				1:which(colnames(nextFileContent)=='1980'|colnames(nextFileContent)=='X1980')[1]]
-			nextFileContentColnames <- c(nextFileContentColnames,as.character(
-				1981:(1981+length(colnames(nextFileContent))-length(nextFileContentColnames)-1)))
+			if('logLike' %in% colnames(nextFileContent)){
+				nextFileContentColnames <- colnames(nextFileContent)
+			} else {
+				nextFileContentColnames <- colnames(nextFileContent)[
+					1:which(colnames(nextFileContent)=='1980'|colnames(nextFileContent)=='X1980')[1]]
+				nextFileContentColnames <- c(nextFileContentColnames,as.character(
+					1981:(1981+length(colnames(nextFileContent))-length(nextFileContentColnames)-1)))
+			}
 			colnames(nextFileContent) <- nextFileContentColnames
 			varData[(lastIndex+1):(lastIndex+nrow(nextFileContent)),nextFileContentColnames] <- nextFileContent
 		}
