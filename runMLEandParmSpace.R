@@ -1,3 +1,5 @@
+cat('\nRunning runMLEandParmSpace.R\n\n')
+
 source('initialise.R')
 
 # config ####
