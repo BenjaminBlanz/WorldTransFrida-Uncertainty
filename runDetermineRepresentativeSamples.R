@@ -7,6 +7,8 @@
 # a distribution with the variance at median and a mean of the difference between the
 # desired quantile and the median
 
+cat('\nRunning runDetermineRepresentativeSample.R\n\n')
+
 library('parallel')
 source('initialise.R')
 source('config.R')
