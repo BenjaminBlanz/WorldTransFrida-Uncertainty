@@ -1,6 +1,8 @@
 
 library(parallel,quietly=T,warn.conflicts = F)
 
+defRun <- runFridaDefaultParms(silent=T,testStellaGood=T)
+outputDataYears <- rownames(defRun)
 
 baseWD <- getwd()
 if(!exists('name.workerDirBasename')){
@@ -36,7 +38,8 @@ if(exists('cl')&&is.numeric(result)&&result==2){
 																	'name.fridaInputFile',
 																	'name.fridaOutputFile',
 																	'name.frida_extra_variables_to_export_list',
-																	'chunkSizePerWorker'))
+																	'chunkSizePerWorker',
+																	'outputDataYears'))
 	gobble <- clusterEvalQ(cl,suppressPackageStartupMessages({
 		library(Rmpfr,quietly=T,warn.conflicts = F) # use to calculate the likelihood from loglikelihood
 		library(optimx,quietly=T,warn.conflicts = F)
@@ -81,7 +84,8 @@ if(exists('cl')&&is.numeric(result)&&result==2){
 																	'name.fridaInputFile',
 																	'name.fridaOutputFile',
 																	'name.frida_extra_variables_to_export_list',
-																	'chunkSizePerWorker'))
+																	'chunkSizePerWorker',
+																	'outputDataYears'))
 	if(exists('location.frida.info')){
 		gobble <- clusterExport(cl,'location.frida.info')	
 	}
