@@ -701,10 +701,10 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 		numSOW <- length(varsIdc.lst[[cleanNames(varNamesNoSOW[v.i])]])
 		if(numSOW>1){
 			perVarData[[varName]] <- data.frame(matrix(NA,ncol=2+nrow(parOutput[[1]]$runDat),nrow=workUnitLength*numSOW))
-			colnames(perVarData[[varName]]) <- c('polID','sowID',rownames(parOutput[[1]]$runDat))
+			colnames(perVarData[[varName]]) <- c('polID','sowID',outputDataYears)
 		} else {
 			perVarData[[varName]] <- data.frame(matrix(NA,ncol=1+nrow(parOutput[[1]]$runDat),nrow=workUnitLength))
-			colnames(perVarData[[varName]]) <- c('id',rownames(parOutput[[1]]$runDat))
+			colnames(perVarData[[varName]]) <- c('id',outputDataYears)
 		}
 	}
 	varNames <- names(perVarData)
@@ -797,18 +797,22 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 	} else if(mode==2){
 		if(verbosity>0){cat('mode 2...')}
 		firstContent <- readPerVarFile(file.path(perVarSubfolder,fileList[1]),outputType)
-		firstContentColnames <- colnames(firstContent)[1:which(colnames(firstContent)=='1980')]
+		firstContentColnames <- colnames(firstContent)[
+			1:which(colnames(firstContent)=='1980'|colnames(firstContent)=='X1980')[1]]
 		firstContentColnames <- c(firstContentColnames,as.character(
 			1981:(1981+length(colnames(firstContent))-length(firstContentColnames)-1)))
 		colnames(firstContent) <- firstContentColnames
 		# initialise data frame
-		dfString <- paste0('varData <- data.frame(',paste0('"',firstContentColnames,'" = double(',numSampleForPreallocation,')',collapse=','),')')
+		dfString <- paste0('varData <- data.frame(',
+											 paste0('"',firstContentColnames,'" = double(',
+											 			 numSampleForPreallocation,')',collapse=','),')')
 		eval(parse(text=dfString))
 		varData[1:nrow(firstContent),firstContentColnames] <- firstContent
 		lastIndex <- nrow(firstContent)
 		for(f.i in 2:length(fileList)){
 			nextFileContent <- readPerVarFile(file.path(perVarSubfolder,fileList[f.i]),outputType)
-			nextFileContentColnames <- colnames(nextFileContent)[1:which(colnames(nextFileContent)=='1980')]
+			nextFileContentColnames <- colnames(nextFileContent)[
+				1:which(colnames(nextFileContent)=='1980'|colnames(nextFileContent)=='X1980')[1]]
 			nextFileContentColnames <- c(nextFileContentColnames,as.character(
 				1981:(1981+length(colnames(nextFileContent))-length(nextFileContentColnames)-1)))
 			colnames(nextFileContent) <- nextFileContentColnames
