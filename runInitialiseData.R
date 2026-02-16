@@ -8,11 +8,14 @@ if(!exists('runFridaDefaultParms')){
 	stop('run initialise.R first\n')
 }
 
+cat('Running runInitialiseData.R\n')
+
 # test that FRIDA runs ####
 extraVarsToExport <- unique(read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN)
 extraVarsToExport <- extraVarsToExport[nchar(extraVarsToExport)>4]
 writeFRIDAExportSpec(extraVarsToExport,location.frida)
-test <- runFridaDefaultParms(silent=F,testStellaGood=T)
+defRun <- runFridaDefaultParms(silent=F,testStellaGood=T)
+outputDataYears <- rownames(defRun)
 continue <- readline('Verify there are no errors in the above.\n  Enter for all clear, Ctrl+C for abort\n')
 
 # read calib data ####
