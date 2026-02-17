@@ -162,6 +162,9 @@ while [ $# -gt 0 ]; do
     --frb|--forceParBounds)
       forceParBounds="$2"
       ;;
+    --sym|--symmetricRanges)
+      symmetricRanges="$2"
+      ;;
     *)
       printf "Error: Invalid argument: $1 \n"
       exit 1
@@ -201,6 +204,7 @@ sed -i "s/^name.frida_parameter_exclusion_list <-.*$/name.frida_parameter_exclus
 sed -i "s/^name.frida_variable_exclusion_list <-.*$/name.frida_variable_exclusion_list <- '${excludeVarFile}'/" $config
 sed -i "s/^name.frida_extra_variables_to_export_list <-.*$/name.frida_extra_variables_to_export_list <- '${extraExportFile}'/" $config
 sed -i "s/^forceParBounds <-.*$/forceParBounds <- '${forceParBounds}'/" $config
+sed -i "s/^symmetricRanges <-.*$/symmetricRanges <- '${symmetricRanges}'/" $config
 sed -i "s@'workOutput'@'${baseOutputDir}'@" $config # use @ as field boundaries as the path cotains /
 
 if [ "$outputType" = "csv" ]; then
