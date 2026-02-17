@@ -700,10 +700,10 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 		varsIdc.lst[[varName]] <- which(varNamesNoSOW.all==varNamesNoSOW[v.i])
 		numSOW <- length(varsIdc.lst[[cleanNames(varNamesNoSOW[v.i])]])
 		if(numSOW>1){
-			perVarData[[varName]] <- data.frame(matrix(NA,ncol=2+nrow(parOutput[[1]]$runDat),nrow=workUnitLength*numSOW))
+			perVarData[[varName]] <- data.frame(matrix(NA,ncol=2+length(outputDataYears),nrow=workUnitLength*numSOW))
 			colnames(perVarData[[varName]]) <- c('polID','sowID',outputDataYears)
 		} else {
-			perVarData[[varName]] <- data.frame(matrix(NA,ncol=1+nrow(parOutput[[1]]$runDat),nrow=workUnitLength))
+			perVarData[[varName]] <- data.frame(matrix(NA,ncol=1+length(outputDataYears),nrow=workUnitLength))
 			colnames(perVarData[[varName]]) <- c('id',outputDataYears)
 		}
 	}
