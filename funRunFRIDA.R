@@ -807,10 +807,14 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 		}
 		colnames(firstContent) <- firstContentColnames
 		# initialise data frame
-		dfString <- paste0('varData <- data.frame(',
-											 paste0('"',firstContentColnames,'" = double(',
-											 			 numSampleForPreallocation,')',collapse=','),')')
+		dfString <- paste0("varData <- data.frame(",
+											 paste0("'",firstContentColnames,"' = double(",
+											 			 numSampleForPreallocation,")",collapse=","),")")
 		eval(parse(text=dfString))
+		# replace automatically added Xs before the year col names with nothing
+		# using regex with lookahead to make sure we only replace the initial X if it is
+		# actually only followed by numbers
+		colnames(varData) <- gsub('^X(?=\\d+$)','',colnames(varData),perl=T)
 		varData[1:nrow(firstContent),firstContentColnames] <- firstContent
 		lastIndex <- nrow(firstContent)
 		for(f.i in 2:length(fileList)){
@@ -825,6 +829,7 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 			}
 			colnames(nextFileContent) <- nextFileContentColnames
 			varData[(lastIndex+1):(lastIndex+nrow(nextFileContent)),nextFileContentColnames] <- nextFileContent
+			lastIndex <- lastIndex+nrow(nextFileContent)
 		}
 	}
 	if(verbosity>0){cat('writing...')}
@@ -861,15 +866,24 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T,
 		location.output <- system(paste0('realpath --relative-to="',baseWD,'" "',location.output,'"'),intern = T)
 	}
 	outputFolder <- file.path(baseWD,location.output,'detectedParmSpace')
+	# ensure detectedParmSpace is not duplicated
+	while(grepl('/detectedParmSpace/detectedParmSpace',outputFolder)){
+		outputFolder <- gsub('/detectedParmSpace/detectedParmSpace','/detectedParmSpace',outputFolder)
+	}
 	if(!is.null(outputTypeFoldersOverride)){
 		outputTypeFolders <- outputTypeFoldersOverride
 	} else {
 		outputTypeFolders <- basename(list.dirs(outputFolder,recursive = F))
 	}
 	for(outputTypeFolder in outputTypeFolders){
-		if(verbosity>0){cat(paste('Entering',outputTypeFolder,'\n'))}
 		outputType <- strsplit(outputTypeFolder,'-')[[1]][2]
-		outputTypeFolder <- file.path(baseWD,location.output,'detectedParmSpace',outputTypeFolder)
+		if(!outputType %in% perVarOutputTypes){
+			stop(sprintf(
+				'Bug in processing script causing incorrect output type to be specified\n %s not in perVarOutputTypes',
+				outputType))
+		}
+		outputTypeFolder <- file.path(outputFolder,outputTypeFolder)
+		if(verbosity>0){cat(paste('Entering',outputTypeFolder,'\n'))}
 		if(!is.null(varNamesOverride)){
 			varNames <- varNamesOverride
 		} else {
