@@ -380,6 +380,8 @@ while(newMaxFound){
 		}
 	}
 	## make borders symmetric ####
+	sampleParms$MaxAfterDet <- sampleParms$Max
+	sampleParms$MinAfterDet <- sampleParms$Min
 	if(symmetricRanges%in%c('Max','Min')){
 		cat('Symmetrifying parameter ranges\n')
 		if(symmetricRanges=='Max'){
@@ -396,8 +398,6 @@ while(newMaxFound){
 																	 sampleParms$Max-sampleParms$Value)
 		}
 		# those that would have a distance of zero, we do not reassign
-		sampleParms$MaxAfterDet <- sampleParms$Max
-		sampleParms$MinAfterDet <- sampleParms$Min
 		if(allowAssymetricToAvoidZeroRanges){
 			sampleParms$Max[sampleParms$distance!=0] <- 
 				sampleParms$Value[sampleParms$distance!=0]+sampleParms$distance[sampleParms$distance!=0]
@@ -409,8 +409,8 @@ while(newMaxFound){
 		}
 	}
 	## read manual borders ####
-	if(ignoreParBounds){
-		cat('Not reading manual ranges, as ignoreParBounds==TRUE\n')
+	if(ignoreParBounds || forceParBounds){
+		cat('Not reading manual ranges, as ignoreParBounds||forceParBounds==TRUE\n')
 	} else {
 		manualBorders <- read.csv(file.path(location.frida.info,name.frida_external_ranges))
 		manualBorders <- manualBorders[manualBorders$Variable %in% sampleParms$Variable,]
