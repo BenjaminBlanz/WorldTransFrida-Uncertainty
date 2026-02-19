@@ -52,7 +52,8 @@ outputType='RDS' # can be 'both', 'csv' or 'RDS'
 plotting='true' # avoiding the plotting can save quit some compute time
 detRepSample='true' # needed for the plots that show the representative subsample
 #and for generating the rep sample
-
+forceParBounds=F
+symmetricRanges=Min
 
 #### OPTIONAL: USING DIFFERENT INPUT FILES?
 # FRIDA folder
@@ -165,6 +166,9 @@ while [ $# -gt 0 ]; do
     --sym|--symmetricRanges)
       symmetricRanges="$2"
       ;;
+    --conf|--configFile)
+    	configFile="$2"
+    	;;
     *)
       printf "Error: Invalid argument: $1 \n"
       exit 1
