@@ -18,7 +18,7 @@ prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NU
 			temp <- unlist(frida_info[,columnsThatAreFlags])
 			temp[is.na(temp)] <- 0
 			frida_info[,columnsThatAreFlags] <- temp
-		} else if (colnames(frida_info)[1]=='SimpleParmFile'){ # this is a simple parm file wit Variable, Min, Max
+		} else if (ncol(frida_info) <= 5 && sum(colnames(frida_info)==c('Variable','Value','Min','Max'))){ # this is a simple parm file wit Variable, Min, Max
 			columnsThatAreFlags <- NULL
 		} else { # this is a frida_info file proided by billy pre stella 4.11
 			columnsThatAreFlags <- c(2,3,4,5,6,7,8,9,10,11)
