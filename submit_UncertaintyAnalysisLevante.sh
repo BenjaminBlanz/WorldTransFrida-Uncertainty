@@ -124,6 +124,9 @@ while [ $# -gt 0 ]; do
     --frida|--FRIDA)
       FRIDA="$2"
       ;;
+    --infoFile)
+      infoFile="$2"
+      ;;
     --pol|--policyFile)
       policyFile="$2"
       ;;
