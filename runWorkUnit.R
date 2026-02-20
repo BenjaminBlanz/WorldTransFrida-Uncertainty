@@ -34,10 +34,6 @@ cat(sprintf('WorkUnit.i: %i\n',workUnit.i))
 write('running',file.path(location.workunit,'status.txt'),append=F)
 name.workerDirBasename <- paste0(origName.workerDirBasename,workUnit.i,'_')
 
-extraVarsToExport <- unique(read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN)
-extraVarsToExport <- extraVarsToExport[nchar(extraVarsToExport)>4]
-writeFRIDAExportSpec(extraVarsToExport,location.frida)
-
 # load calDat and resSigma for likelihood
 if(file.exists(file.path(location.output,'calDat.RDS'))){
 	calDat.lst <- readRDS(file.path(location.output,'calDat.RDS'))
@@ -63,6 +59,12 @@ if(treatVarsAsIndep&&
 	stop('Missing covariance matrix file. Run runInitialiseData.R first.\n')
 }
 
+# setup frida working directory
+source('setupTMPFS.R')
+# write export spec
+extraVarsToExport <- unique(read.csv(file.path(location.frida.info,name.frida_extra_variables_to_export_list))$FRIDA.FQN)
+extraVarsToExport <- extraVarsToExport[nchar(extraVarsToExport)>4]
+writeFRIDAExportSpec(extraVarsToExport,location.frida)
 # start the cluster
 cat('starting cluster\n')
 source('clusterHelp.R')
