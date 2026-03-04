@@ -815,7 +815,7 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 		# using regex with lookahead to make sure we only replace the initial X if it is
 		# actually only followed by numbers
 		colnames(varData) <- gsub('^X(?=\\d+$)','',colnames(varData),perl=T)
-		varData[1:nrow(firstContent),firstContentColnames] <- firstContent
+		varData[firstContent$id,firstContentColnames] <- firstContent
 		lastIndex <- nrow(firstContent)
 		for(f.i in 2:length(fileList)){
 			nextFileContent <- readPerVarFile(file.path(perVarSubfolder,fileList[f.i]),outputType)
@@ -828,9 +828,11 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 					1981:(1981+length(colnames(nextFileContent))-length(nextFileContentColnames)-1)))
 			}
 			colnames(nextFileContent) <- nextFileContentColnames
-			varData[(lastIndex+1):(lastIndex+nrow(nextFileContent)),nextFileContentColnames] <- nextFileContent
+			varData[nextFileContent$id,nextFileContentColnames] <- nextFileContent
 			lastIndex <- lastIndex+nrow(nextFileContent)
 		}
+		# should not be necessary as we now correctly save by id but just to be sure
+		varData <- sort_by(varData,varData[,1])
 	}
 	if(verbosity>0){cat('writing...')}
 	writePerVarFile(varData,file.path(outputTypeFolder,varName),
