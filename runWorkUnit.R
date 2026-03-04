@@ -8,6 +8,11 @@ source('initialise.R')
 args <- commandArgs(T)
 workUnit.i <- as.numeric(args[1])
 configFile <- as.character(args[2])
+if(length(args)>=3){
+	location.output.override <- as.character(args[3])
+} else {
+	location.output.override <- NA
+}
 cat('Supplied workUnit.i: ')
 cat(workUnit.i)
 cat('\n')
@@ -17,10 +22,18 @@ if(is.na(workUnit.i)){
 cat('Supplied configFile: ')
 cat(configFile)
 cat('\n')
+if(length(args)>=3){
+	cat('Supplied location.output.override:')
+	cat(location.output.override)
+	cat('\n')
+}
 if(sum(grep('\\.R$',configFile))!=1){
 	stop('Incorrect arg supplied as config file\n')
 }
 source(configFile)
+if(!is.na(location.output.override)){
+	location.output <- location.output.override
+}
 location.workunit <- file.path(location.output,'workUnits',paste0('workUnit-',workUnit.i))
 cat('workUnit directory:')
 cat(location.workunit)

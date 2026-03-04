@@ -24,7 +24,7 @@ function cleanup(){
 }
 
 echo started > locationOutput/workUnits/workUnit-workUnitID/status.txt
-Rscript --max-connections=1024 runWorkUnit.R workUnitID config.R
+Rscript --max-connections=1024 runWorkUnit.R workUnitID config.R locationOutput
 echo completed > locationOutput/workUnits/workUnit-workUnitID/status.txt
 
 
