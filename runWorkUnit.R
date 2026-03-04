@@ -13,17 +13,17 @@ if(length(args)>=3){
 } else {
 	location.output.override <- NA
 }
-cat('Supplied workUnit.i: ')
+cat('Supplied workUnit.i:\n')
 cat(workUnit.i)
 cat('\n')
 if(is.na(workUnit.i)){
 	stop('Supplied workunit.i is not a number\n')
 }
-cat('Supplied configFile: ')
+cat('Supplied configFile:\n')
 cat(configFile)
 cat('\n')
 if(length(args)>=3){
-	cat('Supplied location.output.override:')
+	cat('Supplied location.output.override:\n')
 	cat(location.output.override)
 	cat('\n')
 }
