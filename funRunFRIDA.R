@@ -792,7 +792,6 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 											 			collapse = ']],filesContents.lst[['),
 											 ']])')
 		eval(parse(text=rbindStr))
-		varData <- sort_by(varData,varData[,1])
 		colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
 	} else if(mode==2){
 		if(verbosity>0){cat('mode 2...')}
@@ -815,7 +814,7 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 		# using regex with lookahead to make sure we only replace the initial X if it is
 		# actually only followed by numbers
 		colnames(varData) <- gsub('^X(?=\\d+$)','',colnames(varData),perl=T)
-		varData[firstContent$id,firstContentColnames] <- firstContent
+		varData[1:nrow(firstContent),firstContentColnames] <- firstContent
 		lastIndex <- nrow(firstContent)
 		for(f.i in 2:length(fileList)){
 			nextFileContent <- readPerVarFile(file.path(perVarSubfolder,fileList[f.i]),outputType)
@@ -828,12 +827,12 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 					1981:(1981+length(colnames(nextFileContent))-length(nextFileContentColnames)-1)))
 			}
 			colnames(nextFileContent) <- nextFileContentColnames
-			varData[nextFileContent$id,nextFileContentColnames] <- nextFileContent
+			varData[(lastIndex+1):(lastIndex+nrow(nextFileContent)),nextFileContentColnames] <- nextFileContent
 			lastIndex <- lastIndex+nrow(nextFileContent)
 		}
-		# should not be necessary as we now correctly save by id but just to be sure
-		varData <- sort_by(varData,varData[,1])
 	}
+	# the order files are read in may be shuffled so sort
+	varData <- sort_by(varData,varData[,1])
 	if(verbosity>0){cat('writing...')}
 	writePerVarFile(varData,file.path(outputTypeFolder,varName),
 									outputType=outputType,compressCsv=compressCsv)
