@@ -11,6 +11,7 @@ suppressPackageStartupMessages({
 	#library(imputeTS,quietly=T,warn.conflicts = F) # used for interpolating missing values # Only needed for interpolation after MLE, fails for R v4.4 on Levante
 	library(parallel)
 })
+source('naturalsort.R') # used to sort the chunked per var files before reading
 
 source('funRunFRIDA.R')
 source('funPlot.R')

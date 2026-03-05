@@ -774,7 +774,7 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 																	 compressCsv=T,mode=2,numSampleForPreallocation=0){
 	varName <- varNames[v.i]
 	perVarSubfolder <- file.path(outputTypeFolder,varName)
-	fileList <- list.files(perVarSubfolder)
+	fileList <- naturalsort(list.files(perVarSubfolder))
 	if(verbosity>0){cat(sprintf('Processing %i files of %s...',length(fileList),varName))}
 	if(verbosity>0){cat('reading and merging...')}
 	if(mode==1){
@@ -898,7 +898,7 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T,
 			for(v.i in 1:length(varNames)){
 				varName <- varNames[v.i]
 				perVarSubfolder <- file.path(outputTypeFolder,varName)
-				fileList <- list.files(perVarSubfolder)
+				fileList <- naturalsort(list.files(perVarSubfolder))
 				if(verbosity>0){cat(sprintf('(%i of %i) Processing %i files of %s...reading...',
 																		v.i, length(varNames),
 																		length(fileList),varName))}
