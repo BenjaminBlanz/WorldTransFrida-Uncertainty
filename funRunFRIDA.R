@@ -930,6 +930,7 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T,
 			if(verbosity>0){cat(sprintf('Parallel proccessing all vars with %i workers\n',numWorkersFileMerge))}
 			clFileMerge <- makePSOCKcluster(numWorkersFileMerge)
 			gobble <- clusterEvalQ(clFileMerge,source('funRunFRIDA.R'))
+			gobble <- clusterEvalQ(clFileMerge,source('naturalsort.R'))
 			parLapplyLB(clFileMerge,1:length(varNames),workerMergePerVarFiles,
 								outputType=outputType,
 								outputTypeFolder=outputTypeFolder,
