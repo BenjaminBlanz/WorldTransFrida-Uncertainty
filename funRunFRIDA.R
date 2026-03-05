@@ -800,9 +800,9 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 			firstContentColnames <- colnames(firstContent)
 		} else {
 			firstContentColnames <- colnames(firstContent)[
-				1:which(colnames(firstContent)=='1980'|colnames(firstContent)=='X1980')[1]]
+				1:(which(colnames(firstContent)=='1980'|colnames(firstContent)=='X1980')[1]-1)]
 			firstContentColnames <- c(firstContentColnames,as.character(
-				1981:(1981+length(colnames(firstContent))-length(firstContentColnames)-1)))
+				1980:(1980+length(colnames(firstContent))-length(firstContentColnames)-1)))
 		}
 		colnames(firstContent) <- firstContentColnames
 		# initialise data frame
@@ -822,9 +822,9 @@ workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verb
 				nextFileContentColnames <- colnames(nextFileContent)
 			} else {
 				nextFileContentColnames <- colnames(nextFileContent)[
-					1:which(colnames(nextFileContent)=='1980'|colnames(nextFileContent)=='X1980')[1]]
+					1:(which(colnames(nextFileContent)=='1980'|colnames(nextFileContent)=='X1980')[1]-1)]
 				nextFileContentColnames <- c(nextFileContentColnames,as.character(
-					1981:(1981+length(colnames(nextFileContent))-length(nextFileContentColnames)-1)))
+					1980:(1980+length(colnames(nextFileContent))-length(nextFileContentColnames)-1)))
 			}
 			colnames(nextFileContent) <- nextFileContentColnames
 			varData[(lastIndex+1):(lastIndex+nrow(nextFileContent)),nextFileContentColnames] <- nextFileContent
