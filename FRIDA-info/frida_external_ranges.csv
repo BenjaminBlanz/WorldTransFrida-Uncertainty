@@ -38,3 +38,16 @@ Food Demand.animal product demand per person 1980[1],0.138,0.158
 Climate Risk Perception.additional time horizon of reference SLR flooding exposure[1],41,55
 Animal Products Demand.reference GDP per person for socioeconomic effect[1],35000,45000
 Total Food Demand.reference GDP per person for socioeconomic effect[1],45000,55000
+Behavior Change Policy.APD value shift policy effect multiplier[1],0.2,0.3
+Behavior Change Policy.TFD value shift policy effect multiplier[1],0.1,0.2
+Behavior Change Policy.value shift policy time to fully take effect[1],10,20
+Behavior Change Policy.APD consumption risk policy effect multiplier[1],0.2,0.4
+Behavior Change Policy.TFD consumption risk policy multiplier[1],0.2,0.4
+Behavior Change Policy.consumption risk policy time to fully take effect[1],5,15
+Behavior Change Policy.APD cultural revaluation policy effect multiplier[1],0.1,0.3
+Behavior Change Policy.TFD cultural revaluation policy multiplier[1],0.1,0.3
+Behavior Change Policy.cultural revaluation policy time to fully take effect[1],15,25
+Behavior Change Policy.APD climate attribution policy effect multiplier[1],0.1,0.3
+Behavior Change Policy.TFD climate attribution policy multiplier[1],0.1,0.3
+Behavior Change Policy.CRP climate attribution policy multiplier[1],0.1,0.3
+Behavior Change Policy.climate attribution policy time to fully take effect[1],5,15
