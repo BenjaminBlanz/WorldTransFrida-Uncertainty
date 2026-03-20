@@ -46,7 +46,7 @@ else
 	# reset your model to be the main model
 	echo "Resetting your FRIDA to be the latest..."
 	cd ./FRIDAforUncertaintyAnalysisGit
-	git fetch origin main
+	git fetch --depth 1 origin main
 	git reset --hard origin/main
 	
 	cd ..
