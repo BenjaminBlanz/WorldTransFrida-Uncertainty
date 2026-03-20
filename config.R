@@ -163,10 +163,10 @@ name.frida_external_ranges <-'frida_external_ranges.csv'
 # found in the FRIDAforUncertaintyAnalysis folder. This step of the config tests
 # if that file exists and sets it for use, otherwise falling back to the manually
 # updated file.
+suppressWarnings(rm('name.frida_info'))
 # If you want to use a user specified frida_info file, e.g. for certain uncertainty analysis,
 # uncomment the following lines to specify name.frida_info and place the file in location.frida.info
 # 
-suppressWarnings(rm('name.frida_info'))
 # name.frida_info <- 'frida_info_override.csv'
 if(exists('name.frida_info')){
 	frida_info_type <- 'user'
