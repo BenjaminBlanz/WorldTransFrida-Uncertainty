@@ -42,7 +42,7 @@ If using a user supplied frida_info ensure the columns 'Variable','Value','Min',
 		invalidLines <- which(!((sampleParms$Max-sampleParms$Min)>0 &
 															sampleParms$Min <= sampleParms$Value &
 															sampleParms$Value <= sampleParms$Max))
-		suppressWarnings(file.remove('frida_info_errorCases.csv'))
+		suppressWarnings(file.remove(file.path(location.output,'frida_info_errorCases.csv')))
 		if(length(invalidLines)>0){
 			cat('invalid lines detected, see frida_info_errorCases.csv...')
 		}
