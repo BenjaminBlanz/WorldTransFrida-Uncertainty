@@ -164,7 +164,7 @@ name.frida_external_ranges <-'frida_external_ranges.csv'
 # if that file exists and sets it for use, otherwise falling back to the manually
 # updated file.
 if(file.exists(file.path(baselocation.frida,'Parameter Info.csv'))){
-	system(sprintf('ln -s "%s/Parameter Info.csv" "%s/link_to_frida_info_from_model_repo.csv"',
+	system(sprintf('ln -s "../%s/Parameter Info.csv" "%s/link_to_frida_info_from_model_repo.csv"',
 								 baselocation.frida, location.frida.info))
 	name.frida_info <- 'link_to_frida_info_from_model_repo.csv'
 } else {
