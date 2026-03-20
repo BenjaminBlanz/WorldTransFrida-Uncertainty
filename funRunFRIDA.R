@@ -46,7 +46,7 @@ If using a user supplied frida_info ensure the columns 'Variable','Value','Min',
 		if(length(invalidLines)>0){
 			cat('invalid lines detected, see frida_info_errorCases.csv...')
 		}
-		write.csv(sampleParms[invalidLines,],'frida_info_errorCases.csv')
+		write.csv(sampleParms[invalidLines,],file.path(location.output,'frida_info_errorCases.csv'))
 	} else {
 		invalidLines <- c()
 	}
