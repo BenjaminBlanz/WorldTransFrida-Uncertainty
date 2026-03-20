@@ -61,7 +61,7 @@ If using a user supplied frida_info ensure the columns 'Variable','Value','Min',
 	excludedIdc <- which(sampleParms$Variable %in% excludeNames)
 	if(length(c(invalidLines,excludedIdc))>0){
 		cat('excluding invalid and excluded parms...')
-		excludeIdc <- unique(c(invalidLines,excludedIdc))
+		excludedIdc <- unique(c(invalidLines,excludedIdc))
 		sampleParms <- sampleParms[-excludedIdc,]
 	}
 	# add the integer vars e.g. climate case
