@@ -10,7 +10,8 @@ prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NU
 		cat('reading frida_info...')
 		# read in the parameters in frida that have ranges defined
 		frida_info <- read.csv(file.path(location.frida.info,name.frida_info))
-		if(!is.null(frida_info$A.LTM)){ # this file is from the new export in stella 4.11
+		if(frida_info_type == 'StellaExport'){ 
+			# this file is from the new export in stella 4.11
 			columnsThatAreFlags <- c(5,6,7,8,9,10,11,12,13,14,15,which(colnames(frida_info)=='X'))
 			# skip lines that are not parameters with ranges
 			frida_info <- frida_info[!is.na(frida_info$Min)&!is.na(frida_info$Max),]
@@ -18,11 +19,16 @@ prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NU
 			temp <- unlist(frida_info[,columnsThatAreFlags])
 			temp[is.na(temp)] <- 0
 			frida_info[,columnsThatAreFlags] <- temp
-		} else if (ncol(frida_info) <= 5 && sum(c('Variable','Value','Min','Max')%in%colnames(frida_info))==4){ # this is a simple parm file wit Variable, Min, Max
-			columnsThatAreFlags <- NULL
-		} else { # this is a frida_info file proided by billy pre stella 4.11
+		} else if (frida_info_type == 'OldStyleFromBilly'){ 
+			# this is a frida_info file proided by billy pre stella 4.11
 			columnsThatAreFlags <- c(2,3,4,5,6,7,8,9,10,11)
-		}	
+		}	else if (frida_info_type =='user' && sum(c('Variable','Value','Min','Max')%in%colnames(frida_info))==4){ 
+			# this is a simple parm file with Variable, Min, Max
+			columnsThatAreFlags <- NULL
+		} else {
+			stop("Unkown frida_info type check config. 
+If using a user supplied frida_info ensure the columns 'Variable','Value','Min','Max' are present.\n")
+		}
 		# select the parameters to be sampled
 		if(!is.null(columnsThatAreFlags)){
 			sampleParms <- frida_info[rowSums(frida_info[,columnsThatAreFlags])>0 &

@@ -163,12 +163,27 @@ name.frida_external_ranges <-'frida_external_ranges.csv'
 # found in the FRIDAforUncertaintyAnalysis folder. This step of the config tests
 # if that file exists and sets it for use, otherwise falling back to the manually
 # updated file.
-if(file.exists(file.path(baselocation.frida,'Parameter Info.csv'))){
-	system(sprintf('ln -s "../%s/Parameter Info.csv" "%s/link_to_frida_info_from_model_repo.csv"',
-								 baselocation.frida, location.frida.info))
-	name.frida_info <- 'link_to_frida_info_from_model_repo.csv'
+# If you want to use a user specified frida_info file, e.g. for certain uncertainty analysis,
+# uncomment the following lines to specify name.frida_info and place the file in location.frida.info
+# 
+suppressWarnings(rm('name.frida_info'))
+# name.frida_info <- 'frida_info_override.csv'
+if(exists('name.frida_info')){
+	frida_info_type <- 'user'
 } else {
-	name.frida_info <- 'frida_info_preV3.csv'
+	if(file.exists(file.path(baselocation.frida,'Parameter Info.csv'))){
+		if(file.exists(file.path(location.frida.info,"link_to_frida_info_from_model_repo.csv"))){
+			system(sprintf('rm "%s/link_to_frida_info_from_model_repo.csv"',
+										 location.frida.info))
+		}
+		system(sprintf('ln -s "../%s/Parameter Info.csv" "%s/link_to_frida_info_from_model_repo.csv"',
+									 baselocation.frida, location.frida.info))
+		name.frida_info <- 'link_to_frida_info_from_model_repo.csv'
+		frida_info_type <- 'StellaExport'
+	} else {
+		name.frida_info <- 'frida_info_preV3.csv'
+		frida_info_type <- 'OldStyleFromBilly'
+	}
 }
 name.frida_integer_parms <- 'frida_integer_parms.csv'
 name.frida_parameter_exclusion_list <- 'frida_parameter_exclusion_list.csv'
