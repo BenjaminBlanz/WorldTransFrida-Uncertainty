@@ -157,7 +157,19 @@ location.frida.configs <- './FRIDA-configs'
 # export preferences etc
 location.frida.info <- './FRIDA-info'
 name.frida_external_ranges <-'frida_external_ranges.csv'
-name.frida_info <- 'frida_info.csv'
+# file containing names of uncertainty parameters and ranges set by the authors
+# pre v3.1 this is a file that has to be manually updated.
+# post v3.1 this is a file that is generated as part of the frida files and can be 
+# found in the FRIDAforUncertaintyAnalysis folder. This step of the config tests
+# if that file exists and sets it for use, otherwise falling back to the manually
+# updated file.
+if(file.exists(file.path(baselocation.frida,'Parameter Info.csv'))){
+	system(sprintf('ln -s "%s/Parameter Info.csv" "%s/link_to_frida_info_from_model_repo.csv"',
+								 baselocation.frida, location.frida.info))
+	name.frida_info <- 'link_to_frida_info_from_model_repo.csv'
+} else {
+	name.frida_info <- 'frida_info_preV3.csv'
+}
 name.frida_integer_parms <- 'frida_integer_parms.csv'
 name.frida_parameter_exclusion_list <- 'frida_parameter_exclusion_list.csv'
 # list of variables to exclude from the likelihood calculations
