@@ -12,7 +12,7 @@ prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NU
 		frida_info <- read.csv(file.path(location.frida.info,name.frida_info))
 		if(frida_info_type == 'StellaExport'){ 
 			# this file is from the new export in stella 4.11
-			columnsThatAreFlags <- c(5,6,7,8,9,10,11,12,13,14,15,which(colnames(frida_info)=='X'))
+			columnsThatAreFlags <- c(5,6,7,8,9,10,11,12,13,14,15)
 			# skip lines that are not parameters with ranges
 			frida_info <- frida_info[!is.na(frida_info$Min)&!is.na(frida_info$Max),]
 			# write zeroes for NAs in columns that are flags
@@ -21,7 +21,7 @@ prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NU
 			frida_info[,columnsThatAreFlags] <- temp
 		} else if (frida_info_type == 'OldStyleFromBilly'){ 
 			# this is a frida_info file proided by billy pre stella 4.11
-			columnsThatAreFlags <- c(2,3,4,5,6,7,8,9,10,11)
+			columnsThatAreFlags <- c(2,3,4,5,6,7,8,9,10,11,12)
 		}	else if (frida_info_type =='user' && sum(c('Variable','Value','Min','Max')%in%colnames(frida_info))==4){ 
 			# this is a simple parm file with Variable, Min, Max
 			columnsThatAreFlags <- NULL
@@ -33,7 +33,8 @@ If using a user supplied frida_info ensure the columns 'Variable','Value','Min',
 		if(!is.null(columnsThatAreFlags)){
 			sampleParms <- frida_info[rowSums(frida_info[,columnsThatAreFlags])>0 &
 																	frida_info$No.Sensi==0 &
-																	frida_info$Policy==0,
+																	frida_info$Policy==0 &
+																	frida_info$Unit==0,
 																-columnsThatAreFlags]
 		} else {
 			sampleParms <- frida_info[,-1]
