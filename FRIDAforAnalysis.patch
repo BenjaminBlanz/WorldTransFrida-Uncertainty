@@ -6,7 +6,7 @@ index 50900c0..a2cef7d 100644
  	<isee:number_format_extenders/>
  	<default_format scale_by="1"/>
  	<data>
-+		<export frequency="on_demand" resource="r../Data/uncertainty_analysis_exported_variables.csv" interval="DT" precomputed="false" isee:format="numbers">
++		<export frequency="on_demand" resource="r../Data/uncertainty_analysis_exported_variables.csv" interval="1" precomputed="false" isee:format="numbers">
 +			<list>r../Data/varsForExport.txt</list>
 +		</export>
  		<import isee:overwrite="false" isee:timevarying="true" resource="r../Data/frida_input_data.csv"/>

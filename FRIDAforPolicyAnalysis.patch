@@ -8,7 +8,7 @@ index a31e0f2..d36f25a 100644
  	<data>
 -		<import isee:overwrite="false" isee:timevarying="true" resource="r../Data/frida_input_data.csv"/>
 -		<import frequency="on_demand" isee:overwrite="true" resource="r../Data/uncertainty_parameters.csv"/>
-+	<export frequency="on_demand" resource="r../Data/uncertainty_analysis_exported_variables.csv" interval="DT" precomputed="false" isee:format="numbers">
++	<export frequency="on_demand" resource="r../Data/uncertainty_analysis_exported_variables.csv" interval="1" precomputed="false" isee:format="numbers">
 +	<list>r../Data/varsForExport.txt</list>
 +	</export>
 +	<import isee:overwrite="false" isee:timevarying="true" resource="r../Data/frida_input_data.csv"/>
