@@ -2,8 +2,6 @@
 source('initialise.R')
 source('configPolicyAnalysis.R')
 source('funPolicyAnalysisPlots.R')
-#override location.output
-location.output <- 'policy-workOutput/AllPolicies1e6-moreExports'
 filterResFolder <- file.path(location.output,'filterResults')
 # save reference file
 system(paste('cp','configPolicyAnalysis.R',file.path(location.output,'configPolicyAnalysisUsedForPlotting.R')))
