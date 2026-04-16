@@ -37,3 +37,7 @@ filterSpecsAreEqual <- function(filterSpec1,filterSpec2){
 	}
 	return(T)
 }
+
+wideScreen <- function(howWide=Sys.getenv("COLUMNS")) {
+	options(width=as.integer(howWide))
+}
