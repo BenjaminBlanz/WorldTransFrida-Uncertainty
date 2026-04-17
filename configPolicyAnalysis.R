@@ -134,11 +134,11 @@ desiredFilterSpec <- list()
 # desiredFilterSpec$gdp_real_gdp_in_2021c$level <- 1.5e5 # a bit less than the 2023 median level
 # desiredFilterSpec$gdp_real_gdp_in_2021c$allowedTransgressions <- 4 # ~37% of cases with default 11 runs
 # desiredFilterSpec$gdp_real_gdp_in_2021c$years <- 2023:2150 # the years in which this filter applies
-# desiredFilterSpec$energy_balance_model_surface_temperature_anomaly <- list()
-# desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$type <- 'gtval'
-# desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$level <- 2
-# desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$allowedTransgressions <- 5 # 5/11 allowed to transgress
-# desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$years <- 2150 # allow overshoot
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly <- list()
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$type <- 'gtval'
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$level <- 2
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$allowedTransgressions <- 5 # 5/11 allowed to transgress
+desiredFilterSpec$energy_balance_model_surface_temperature_anomaly$years <- 2150 # allow overshoot
 # desiredFilterSpec$gdp_future_year_in_recession <- list()
 # desiredFilterSpec$gdp_future_year_in_recession$type <- 'gtval'
 # desiredFilterSpec$gdp_future_year_in_recession$level <- 10
@@ -152,7 +152,7 @@ filtersToPlot <- c(length(desiredFilterSpec))
 #select a specific run to highlight and output the policies
 discountRate <- 0.02 #discount rate to calculate discounted welfare
 selectedRunSpec <- list()
-selectedRunSpec$var <- paste0('expected_welfare_discounted_at_',gsub('.','',as.character(discountRate)))
+selectedRunSpec$var <- paste0('expected_welfare_discounted_at_',gsub('\\.','_',as.character(discountRate)))
 selectedRunSpec$year <- 2150
 selectedRunSpec$optimize <- 'max'
 selectedRunSpec$sow <- 6 # median SOW, but for expected... values makes no difference all SOW are equal
