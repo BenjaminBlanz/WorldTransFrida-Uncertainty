@@ -30,8 +30,8 @@ generatedVars <- c('real GDP growth rate',
 									 'real GDP per capita',
 									 'welfare',
 									 'expected welfare',
-									 paste0('welfare discounted at',discountRate),
-									 paste0('expected welfare discounted at',discountRate))
+									 paste0('welfare discounted at ',discountRate),
+									 paste0('expected welfare discounted at ',discountRate))
 nGenVar <- length(generatedVars)
 generatedVarsMeta <- data.frame("IMPORTANT..NO.WHITESPACE.AT.THE.END.OF.FIELDS."=rep('',nGenVar),
 																"FRIDA.Module"=rep('',nGenVar),
@@ -435,7 +435,8 @@ if(exists('selectedRunSpec')&&
 		tic()
 		cat(sprintf('plotting %i vars with %i threads plot type %s...',
 								length(thingsToPlot),numPlotThreads,plotType))
-		funFigFolder <- file.path(figuresFolder,paste0('plotType',plotType,'-desiredFilters-',i,'-withSelPolID'))
+		funFigFolder <- file.path(figuresFolder,paste0('plotType',plotType,'-desiredFilters-',
+																									 length(desiredFilterSpec),'-withSelPolID'))
 		logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
 		colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
 		parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
