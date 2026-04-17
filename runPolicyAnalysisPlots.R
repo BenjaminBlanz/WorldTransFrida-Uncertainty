@@ -25,14 +25,23 @@ outputFolder <- file.path(location.output,'detectedParmSpace','PerVarFiles-RDS')
 
 # generate missing computable variables ####
 
-generatedVarsMeta <- data.frame("IMPORTANT..NO.WHITESPACE.AT.THE.END.OF.FIELDS."=rep('',3),
-																"FRIDA.Module"=rep('',3),
-																"FRIDA.Name"=c('real GDP growth rate','surface temperature anomaly growth rate','real GDP per capita'),
-																"Index"=rep('[*]',3),
-																"FRIDA.FQN"=c('real GDP growth rate','surface temperature anomaly growth rate','real GDP per capita'),
-																"Unit" =c('rate','rate','2021c$/p'))
+generatedVars <- c('real GDP growth rate',
+									 'surface temperature anomaly growth rate',
+									 'real GDP per capita',
+									 'welfare',
+									 'expected welfare',
+									 paste0('welfare discounted at',discountRate),
+									 paste0('expected welfare discounted at',discountRate))
+nGenVar <- length(generatedVars)
+generatedVarsMeta <- data.frame("IMPORTANT..NO.WHITESPACE.AT.THE.END.OF.FIELDS."=rep('',nGenVar),
+																"FRIDA.Module"=rep('',nGenVar),
+																"FRIDA.Name"=generatedVars,
+																"Index"=rep('[*]',nGenVar),
+																"FRIDA.FQN"=generatedVars,
+																"Unit" =c('rate','rate','2021c$/p',rep('welfare',4)))
 generatedVarsMeta$cleanName <- cleanNames(generatedVarsMeta$FRIDA.FQN)
 
+#gdpgr
 if(!file.exists(file.path(outputFolder,paste0(generatedVarsMeta$cleanName[1],'.RDS')))){
 	tic()
 	cat('gdpgr does not exist generating...')
@@ -54,6 +63,7 @@ if(!file.exists(file.path(outputFolder,paste0(generatedVarsMeta$cleanName[1],'.R
 	cat('done\n')
 	toc()
 }
+#STAgr
 if(!file.exists(file.path(outputFolder,paste0(generatedVarsMeta$cleanName[2],'.RDS')))){
 	tic()
 	cat('stagr does not exist generating...')
@@ -75,6 +85,7 @@ if(!file.exists(file.path(outputFolder,paste0(generatedVarsMeta$cleanName[2],'.R
 	cat('done\n')
 	toc()
 }
+# gdppc
 if(!file.exists(file.path(outputFolder,paste0(generatedVarsMeta$cleanName[3],'.RDS')))){
 	tic()
 	cat('gdppc does not exist generating...')
@@ -88,12 +99,99 @@ if(!file.exists(file.path(outputFolder,paste0(generatedVarsMeta$cleanName[3],'.R
 		stop('missing gdp_real_gdp_in_2021c.RDS or demographics_population.RDS in output files\n')
 	}
 	cat('calculating...')
-	gdppc <- gdp/(pop/1000) # divide by 1000 so that the unit is $/p instead of 1000$/p
+	gdppc <- gdp
+	gdppc[,3:(ncol(gdp)-1)] <- gdp[,3:(ncol(gdp)-1)]/(pop[,3:(ncol(gdp)-1)]/1000) # divide by 1000 so that the unit is $/p instead of 1000$/p
 	cat('saving...')
 	saveRDS(gdppc,file.path(outputFolder,paste0(generatedVarsMeta$cleanName[3],'.RDS')))
 	rm(gdp)
 	rm(pop)
 	rm(gdppc)
+	quietgc()
+	cat('done\n')
+	toc()
+}
+# welfare
+if(!file.exists(file.path(outputFolder,paste0(generatedVarsMeta$cleanName[4],'.RDS')))||
+	 !file.exists(file.path(outputFolder,paste0(generatedVarsMeta$cleanName[5],'.RDS')))||
+	 !file.exists(file.path(outputFolder,paste0(generatedVarsMeta$cleanName[6],'.RDS')))||
+	 !file.exists(file.path(outputFolder,paste0(generatedVarsMeta$cleanName[7],'.RDS')))){
+		tic()
+	cat('welfare does not exist generating...')
+	if(file.exists(file.path(outputFolder,paste0(generatedVarsMeta$cleanName[3],'.RDS')))){
+		cat('reading gdppc...')
+		gdppc <- readRDS(file.path(outputFolder,paste0(generatedVarsMeta$cleanName[3],'.RDS')))
+	} else {
+		stop(paste0('missing ',paste0(generatedVarsMeta$cleanName[3],'.RDS')),' in output files\n')
+	}
+	cat('calculating utility...')
+	welfare <- gdppc
+	dataCols <- 3:ncol(welfare)
+	rm(gdppc)
+	polIDs <- unique(welfare$polID)
+	numPol <- length(polIDs)
+	sowIDs <- unique(welfare$sowID)
+	numSOW <- length(sowIDs)
+	welfare[welfare<0] <- 0
+	welfare[,dataCols] <- suppressWarnings(log(welfare[,dataCols]))
+	cat('discounting and accumulating...')
+	discountedWelfare <-welfare
+	for(col in 4:ncol(welfare)){
+		welfare[,col] <- welfare[,col] + welfare[,(col-1)]
+		tForDisc <- col - 3
+		discountedWelfare[,col] <- welfare[,col] / (1+discountRate)^tForDisc
+		discountedWelfare[,col] <- discountedWelfare[,col] + discountedWelfare[,(col-1)]
+	}
+	cat('expectation.')
+	expectedWelfare.fn <- function(polID){
+		polRows <- (numSOW*(polID-1)+1):(numSOW*polID)
+		return(rep(colSums(welfare[polRows,dataCols])/length(polRows),length(polRows)))
+	}
+	expectedDiscountedWelfare.fn <- function(polID){
+		polRows <- (numSOW*(polID-1)+1):(numSOW*polID)
+		return(rep(colSums(discountedWelfare[polRows,dataCols])/length(polRows),length(polRows)))
+	}
+	sowIDpolID.df <- welfare[,c(1,2)]
+	clExpectation <- makeForkCluster(ceiling(numWorkers/2))
+	cat('.')
+	parExpectedWelfare <- parLapply(clExpectation,unique(welfare$polID),expectedWelfare.fn)
+	expectedWelfare.data <- data.frame(matrix(unlist(parExpectedWelfare),byrow=T,nrow=numPol*numSOW))
+	colnames(expectedWelfare.data) <- colnames(welfare)[dataCols]
+	rm(parExpectedWelfare)
+	expectedWelfare <- cbind(sowIDpolID.df,expectedWelfare.data)
+	rm(expectedWelfare.data)
+	cat('.')
+	parExpectedDiscountedWelfare <- parLapply(clExpectation,unique(welfare$polID),expectedDiscountedWelfare.fn)
+	expectedDiscountedWelfare.data <- data.frame(matrix(unlist(parExpectedDiscountedWelfare),byrow=T,nrow=numPol*numSOW))
+	colnames(expectedDiscountedWelfare.data) <- colnames(welfare)[dataCols]
+	rm(parExpectedDiscountedWelfare)
+	expectedDiscountedWelfare <- cbind(sowIDpolID.df,expectedDiscountedWelfare.data)
+	rm(expectedDiscountedWelfare.data)
+	cat('.')
+	stopCluster(clExpectation)
+	rm(clExpectation)
+	cat('saving...')
+	saveCommands <- c("saveRDS(welfare,file.path(outputFolder,paste0(generatedVarsMeta$cleanName[4],'.RDS')))",
+										"saveRDS(expectedWelfare,file.path(outputFolder,paste0(generatedVarsMeta$cleanName[5],'.RDS')))",
+										"saveRDS(discountedWelfare,file.path(outputFolder,paste0(generatedVarsMeta$cleanName[6],'.RDS')))",
+										"saveRDS(expectedDiscountedWelfare,file.path(outputFolder,paste0(generatedVarsMeta$cleanName[7],'.RDS')))")
+	clSave <- makeForkCluster(min(length(saveCommands),numWorkers))
+	saveFun <- function(i){
+		eval(parse(text=saveCommands[i]))
+	}
+	gobble <- parLapply(clSave,1:length(saveCommands),saveFun)
+	stopCluster(clSave)
+	# saveRDS(welfare,file.path(outputFolder,paste0(generatedVarsMeta$cleanName[4],'.RDS')))
+	# cat('.')
+	# saveRDS(expectedWelfare,file.path(outputFolder,paste0(generatedVarsMeta$cleanName[5],'.RDS')))
+	# cat('.')
+	# saveRDS(discountedWelfare,file.path(outputFolder,paste0(generatedVarsMeta$cleanName[6],'.RDS')))
+	# cat('.')
+	# saveRDS(expectedDiscountedWelfare,file.path(outputFolder,paste0(generatedVarsMeta$cleanName[7],'.RDS')))
+	# cat('.')
+	rm(welfare)
+	rm(discountedWelfare)
+	rm(expectedWelfare)
+	rm(expectedDiscountedWelfare)
 	quietgc()
 	cat('done\n')
 	toc()
@@ -235,67 +333,69 @@ for(p.i in 1:length(baselinePlotPropsParRes)){
 # desired filtering  and plotting ####
 polIDsToDropDesired <- sort(unique(unlist(polIDsToDrop.lst)))
 polIDsToDropDesired.lst <- list()
-for(i in 1:length(desiredFilterSpec)){
-	filteredFile <- paste0(names(desiredFilterSpec)[i],'.RDS')
-	cat(sprintf('Desired filter %i of %i ',i,length(desiredFilterSpec)))
-	cat(sprintf(' filtering %s %s %s',names(desiredFilterSpec)[i],
-							desiredFilterSpec[[i]]$type,desiredFilterSpec[[i]]$level))
-	if(!is.null(desiredFilterSpec[[i]]$sowID)){
-		cat(sprintf(' SOW %i',desiredFilterSpec[[i]]$sowID))
-	}
-	if(!is.null(desiredFilterSpec[[i]]$allowedTransgressions)){
-		cat(sprintf(' number of allowed transgressions per year %i',desiredFilterSpec[[i]]$allowedTransgressions))
-	}
-	if(!is.null(desiredFilterSpec[[i]]$years)){
-		rangeFilterYears <- range(desiredFilterSpec[[i]]$years)
-		numFilterYears <- length(desiredFilterSpec[[i]]$years)
-		numFilterYearsStr <- ifelse(numFilterYears==(diff(rangeFilterYears)+1),'all',as.character(numFilterYears))
-		cat(sprintf(' filter applies in %s years between %i and %i',numFilterYearsStr,rangeFilterYears[1],rangeFilterYears[2]))
-	} else {
-		cat(' filter applies in all years')
-	}
-	cat('\n')
-	tic()
-	if(filteredFile %in% varsFiles){
-		system(paste('Rscript --max-connections=1024 --no-site-file runPolicyAnalysisFilterResults.R', 
-								 '-f', filteredFile, '-c',min(171/2,detectCores()), '-o',location.output,
-								 '-d',TRUE))
-		polIDsToDropDesired.lst[[i+1]] <- readRDS(file.path(location.output,'filterResults',
-																								 paste0(names(desiredFilterSpec)[i],'-desiredFilter.RDS')))
-		polIDsToDropDesired.old <- polIDsToDropDesired
-		polIDsToDropDesired <- sort(unique(c(polIDsToDropDesired,unlist(polIDsToDropDesired.lst[[i+1]]))))
-	} else {
-		cat('no such file\n')
-	}
-	timing <- toc(quiet=T)
-	cat(sprintf('  PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %i PolIDs left. %s.\n',
-							length(polIDsToDropDesired), 100*length(polIDsToDropDesired)/numPolIDs,
-							length(polIDsToDropDesired.lst[[i+1]]),
-							length(polIDsToDropDesired)-length(polIDsToDropDesired.old),
-							numPolIDs-length(polIDsToDropDesired),
-							timing$callback_msg))
-	if(length(polIDsToDropDesired) >= numPolIDs){
-		stop('All policies have been filtered out, nothing left to do\n')
-	}
-	if(i %in% filtersToPlot){
-		clPlotting <- makeForkCluster(numPlotThreads)
-		for(plotType in plotTypes){
-			tic()
-			cat(sprintf('plotting %i vars with %i threads plot type %s...',
-									length(thingsToPlot),numPlotThreads,plotType))
-			funFigFolder <- file.path(figuresFolder,paste0('plotType',plotType,'-desiredFilters-',i))
-			logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
-			colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
-			parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
-														varsFiles=varsFiles,
-														polIDsToDrop=polIDsToDropDesired,
-														funFigFolder=funFigFolder,
-														plotType=plotType,
-														colLevels=colLevels,
-														baselinePlotProps=baselinePlotProps)
-			cat(sprintf('done %s\n',timing$callback_msg))
+if(length(desiredFilterSpec) >=1){
+	for(i in 1:length(desiredFilterSpec)){
+		filteredFile <- paste0(names(desiredFilterSpec)[i],'.RDS')
+		cat(sprintf('Desired filter %i of %i ',i,length(desiredFilterSpec)))
+		cat(sprintf(' filtering %s %s %s',names(desiredFilterSpec)[i],
+								desiredFilterSpec[[i]]$type,desiredFilterSpec[[i]]$level))
+		if(!is.null(desiredFilterSpec[[i]]$sowID)){
+			cat(sprintf(' SOW %i',desiredFilterSpec[[i]]$sowID))
 		}
-		stopCluster(clPlotting)
+		if(!is.null(desiredFilterSpec[[i]]$allowedTransgressions)){
+			cat(sprintf(' number of allowed transgressions per year %i',desiredFilterSpec[[i]]$allowedTransgressions))
+		}
+		if(!is.null(desiredFilterSpec[[i]]$years)){
+			rangeFilterYears <- range(desiredFilterSpec[[i]]$years)
+			numFilterYears <- length(desiredFilterSpec[[i]]$years)
+			numFilterYearsStr <- ifelse(numFilterYears==(diff(rangeFilterYears)+1),'all',as.character(numFilterYears))
+			cat(sprintf(' filter applies in %s years between %i and %i',numFilterYearsStr,rangeFilterYears[1],rangeFilterYears[2]))
+		} else {
+			cat(' filter applies in all years')
+		}
+		cat('\n')
+		tic()
+		if(filteredFile %in% varsFiles){
+			system(paste('Rscript --max-connections=1024 --no-site-file runPolicyAnalysisFilterResults.R', 
+									 '-f', filteredFile, '-c',min(171/2,detectCores()), '-o',location.output,
+									 '-d',TRUE))
+			polIDsToDropDesired.lst[[i+1]] <- readRDS(file.path(location.output,'filterResults',
+																									 paste0(names(desiredFilterSpec)[i],'-desiredFilter.RDS')))
+			polIDsToDropDesired.old <- polIDsToDropDesired
+			polIDsToDropDesired <- sort(unique(c(polIDsToDropDesired,unlist(polIDsToDropDesired.lst[[i+1]]))))
+		} else {
+			cat('no such file\n')
+		}
+		timing <- toc(quiet=T)
+		cat(sprintf('  PolIDs dropped so far: %i (%0.2f%%) (%i in this file %i new) %i PolIDs left. %s.\n',
+								length(polIDsToDropDesired), 100*length(polIDsToDropDesired)/numPolIDs,
+								length(polIDsToDropDesired.lst[[i+1]]),
+								length(polIDsToDropDesired)-length(polIDsToDropDesired.old),
+								numPolIDs-length(polIDsToDropDesired),
+								timing$callback_msg))
+		if(length(polIDsToDropDesired) >= numPolIDs){
+			stop('All policies have been filtered out, nothing left to do\n')
+		}
+		if(i %in% filtersToPlot){
+			clPlotting <- makeForkCluster(numPlotThreads)
+			for(plotType in plotTypes){
+				tic()
+				cat(sprintf('plotting %i vars with %i threads plot type %s...',
+										length(thingsToPlot),numPlotThreads,plotType))
+				funFigFolder <- file.path(figuresFolder,paste0('plotType',plotType,'-desiredFilters-',i))
+				logmax <- log(numInitialJointPol*ifelse(plotType==3,11,1))
+				colLevels <- exp(seq(0,logmax,length.out=plot.numColLevels))
+				parRes <- parLapplyLB(clPlotting,thingsToPlot,parPlotPolResults,
+															varsFiles=varsFiles,
+															polIDsToDrop=polIDsToDropDesired,
+															funFigFolder=funFigFolder,
+															plotType=plotType,
+															colLevels=colLevels,
+															baselinePlotProps=baselinePlotProps)
+				cat(sprintf('done %s\n',timing$callback_msg))
+			}
+			stopCluster(clPlotting)
+		}
 	}
 }
 
