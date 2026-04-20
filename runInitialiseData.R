@@ -128,8 +128,10 @@ if(F){
 		varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
 		writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 		defDat <- runFridaDefaultParms()
-		calDatInDefDat <- which(colnames(calDat)%in%colnames(defDat))
-		if(length(calDatInDefDat) < ncol(calDat)){
+		calDatNotInDefDat <- which(!colnames(calDat)%in%colnames(defDat))
+		if(length(calDatNotInDefDat) > 0){
+			cat('Missing variables from calibration not in model result data:\n')
+			cat(print(varsForExport.fridaNames[calDatNotInDefDat]))
 			stop('Mismatch in the columns of calibration data and model result data')
 		}
 		defDat <- defDat[,colnames(calDat)]
@@ -153,8 +155,10 @@ calDat <- calDat.afterImpute[,-exclude.idc]
 varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
 writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 defDat <- runFridaDefaultParms()
-calDatInDefDat <- which(colnames(calDat)%in%colnames(defDat))
-if(length(calDatInDefDat) < ncol(calDat)){
+calDatNotInDefDat <- which(!colnames(calDat)%in%colnames(defDat))
+if(length(calDatNotInDefDat) > 0){
+	cat('Missing variables from calibration not in model result data:\n')
+	cat(print(varsForExport.fridaNames[calDatNotInDefDat]))
 	stop('Mismatch in the columns of calibration data and model result data')
 }
 defDat <- defDat[,colnames(calDat)]
@@ -174,8 +178,10 @@ if(!treatVarsAsIndep){
 	varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
 	writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 	defDat <- runFridaDefaultParms()
-	calDatInDefDat <- which(colnames(calDat)%in%colnames(defDat))
-	if(length(calDatInDefDat) < ncol(calDat)){
+	calDatNotInDefDat <- which(!colnames(calDat)%in%colnames(defDat))
+	if(length(calDatNotInDefDat) > 0){
+		cat('Missing variables from calibration not in model result data:\n')
+		cat(print(varsForExport.fridaNames[calDatNotInDefDat]))
 		stop('Mismatch in the columns of calibration data and model result data')
 	}
 	defDat <- defDat[,colnames(calDat)]
@@ -202,8 +208,10 @@ if(removeLinearCombinations&&!treatVarsAsIndep){
 	varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
 	writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 	defDat <- runFridaDefaultParms()
-	calDatInDefDat <- which(colnames(calDat)%in%colnames(defDat))
-	if(length(calDatInDefDat) < ncol(calDat)){
+	calDatNotInDefDat <- which(!colnames(calDat)%in%colnames(defDat))
+	if(length(calDatNotInDefDat) > 0){
+		cat('Missing variables from calibration not in model result data:\n')
+		cat(print(varsForExport.fridaNames[calDatNotInDefDat]))
 		stop('Mismatch in the columns of calibration data and model result data')
 	}
 	defDat <- defDat[,colnames(calDat)]
@@ -225,8 +233,10 @@ if(removeLinearCombinations&&!treatVarsAsIndep){
 	varsForExport.fridaNames <- varsForExport.fridaNames.orig[-exclude.idc]
 	writeFRIDAExportSpec(varsForExport.fridaNames,location.frida)
 	defDat <- runFridaDefaultParms()
-	calDatInDefDat <- which(colnames(calDat)%in%colnames(defDat))
-	if(length(calDatInDefDat) < ncol(calDat)){
+	calDatNotInDefDat <- which(!colnames(calDat)%in%colnames(defDat))
+	if(length(calDatNotInDefDat) > 0){
+		cat('Missing variables from calibration not in model result data:\n')
+		cat(print(varsForExport.fridaNames[calDatNotInDefDat]))
 		stop('Mismatch in the columns of calibration data and model result data')
 	}
 	defDat <- defDat[,colnames(calDat)]
@@ -279,8 +289,10 @@ if(plotWhileRunning){
 }
 
 # covar ####
-calDatInDefDat <- which(colnames(calDat)%in%colnames(defDat))
-if(length(calDatInDefDat) < ncol(calDat)){
+calDatNotInDefDat <- which(!colnames(calDat)%in%colnames(defDat))
+if(length(calDatNotInDefDat) > 0){
+	cat('Missing variables from calibration not in model result data:\n')
+	cat(print(varsForExport.fridaNames[calDatNotInDefDat]))
 	stop('Mismatch in the columns of calibration data and model result data')
 }
 
