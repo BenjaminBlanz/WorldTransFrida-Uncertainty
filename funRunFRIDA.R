@@ -37,7 +37,7 @@ If using a user supplied frida_info ensure the columns 'Variable','Value','Min',
 																	frida_info$Unit==0,
 																-columnsThatAreFlags]
 		} else {
-			sampleParms <- frida_info[,-1]
+			sampleParms <- frida_info[,c('Variable','Value','Min','Max')]
 		}
 		invalidLines <- which(!((sampleParms$Max-sampleParms$Min)>0 &
 															sampleParms$Min <= sampleParms$Value &
