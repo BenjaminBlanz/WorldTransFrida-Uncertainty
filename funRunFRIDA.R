@@ -66,7 +66,7 @@ If using a user supplied frida_info ensure the columns 'Variable','Value','Min',
 	}
 	# add the integer vars e.g. climate case
 	sampleParms$isInteger <- rep(FALSE,nrow(sampleParms))
-	if(!is.null(integerParms)){
+	if(!is.null(integerParms) && nrow(integerParms)>0){
 		cat('adding integer parms...')
 		for(p.i in 1:nrow(integerParms)){
 			if(!integerParms$Variable[p.i]%in%excludeNames &&
