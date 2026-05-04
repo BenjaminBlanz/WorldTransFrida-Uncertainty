@@ -131,6 +131,9 @@ while [ $# -gt 0 ]; do
     --integerParmsFile)
       integerParmsFile="$2"
       ;;
+    --excludeParmFile)
+    	excludeParmFile="$2"
+      ;;
     --pol|--policyFile)
       policyFile="$2"
       ;;
