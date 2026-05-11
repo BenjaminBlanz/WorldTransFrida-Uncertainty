@@ -38,7 +38,7 @@ generatedVarsMeta <- data.frame("IMPORTANT..NO.WHITESPACE.AT.THE.END.OF.FIELDS."
 																"FRIDA.Name"=generatedVars,
 																"Index"=rep('[*]',nGenVar),
 																"FRIDA.FQN"=generatedVars,
-																"Unit" =c('rate','rate','2021c$/p',rep('welfare',4)))
+																"Unit" =c('rate','rate','2021c$/Year/p',rep('welfare',4)))
 generatedVarsMeta$cleanName <- cleanNames(generatedVarsMeta$FRIDA.FQN)
 
 #gdpgr
@@ -126,12 +126,13 @@ if(!file.exists(file.path(outputFolder,paste0(generatedVarsMeta$cleanName[4],'.R
 	cat('calculating utility...')
 	welfare <- gdppc
 	dataCols <- 3:ncol(welfare)
-	rm(gdppc)
 	polIDs <- unique(welfare$polID)
 	numPol <- length(polIDs)
 	sowIDs <- unique(welfare$sowID)
 	numSOW <- length(sowIDs)
-	welfare[welfare<0] <- 0
+	welfare[welfare<0] <- 0 # set negative values to zero to prevent NAs being generated
+	                        # in the next row. Should not be an issue, we shouldn't be
+	                        # having negative gdppc anyway.
 	welfare[,dataCols] <- suppressWarnings(log(welfare[,dataCols]))
 	cat('discounting and accumulating...')
 	discountedWelfare <-welfare
