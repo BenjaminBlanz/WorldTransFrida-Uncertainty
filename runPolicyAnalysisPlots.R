@@ -321,7 +321,7 @@ for(plotType in plotTypes){
 stopCluster(clPlotting)
 baselinePlotProps <- list()
 for(p.i in 1:length(baselinePlotPropsParRes)){
-	baselinePlotProps[[thingsToPlot[p.i]]] <- baselinePlotPropsParRes[[p.i]]
+	baselinePlotProps[[baselinePlotPropsParRes[[p.i]]$varName]] <- baselinePlotPropsParRes[[p.i]]
 }
 
 # desired filtering  and plotting ####
