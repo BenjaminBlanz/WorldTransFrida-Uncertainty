@@ -49,7 +49,7 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 	} 
 	if(verbosity>0){cat(sprintf('reading %s...',varName))}
 	retlist <- list()
-	tetlist$varName <- varName
+	retlist$varName <- varName
 	varDat <- readPerVarFile(file.path(outputFolder,varFile))
 	# if the last column is entirely NA this is probably
 	# a generated variable, drop that col to not mess with the filter
