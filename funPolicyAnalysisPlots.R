@@ -57,7 +57,7 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 		varDat <- varDat[,-ncol(varDat)]
 	}
 	varUnit <- varsMeta$Unit[varsMeta$cleanName==varName]
-	retkust$varUnit <- varUnit
+	retlist$varUnit <- varUnit
 	if(is.null(varUnit)){
 		varUnit <- varName
 	}
