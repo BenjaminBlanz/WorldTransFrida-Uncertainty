@@ -49,6 +49,7 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 	} 
 	if(verbosity>0){cat(sprintf('reading %s...',varName))}
 	retlist <- list()
+	tetlist$varName <- varName
 	varDat <- readPerVarFile(file.path(outputFolder,varFile))
 	# if the last column is entirely NA this is probably
 	# a generated variable, drop that col to not mess with the filter
@@ -56,22 +57,28 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 		varDat <- varDat[,-ncol(varDat)]
 	}
 	varUnit <- varsMeta$Unit[varsMeta$cleanName==varName]
+	retkust$varUnit <- varUnit
 	if(is.null(varUnit)){
 		varUnit <- varName
 	}
 	varFullName <- varsMeta$FRIDA.FQN[varsMeta$cleanName==varName]
+	retlist$varFullName <- varFullName
 	cat('applying filters...')
 	varDat <- varDat[!varDat$polID %in% polIDsToDrop,]
 	if(verbosity>0){cat('plotting...')}
 	years <- as.numeric(colnames(varDat)[3:ncol(varDat)])
+	retlist$years <- years
 	png(file.path(funFigFolder,paste0(varName,'.png')),
 			width = plotWidth,height = plotHeight,units = plotUnit,res = plotRes)
-	if(useYlimOverrides && exists('plot.ylimOverrides') &&
-		 !is.null(plot.ylimOverrides[[varName]])){
-	 	ylims <- plot.ylimOverrides[[varName]]
-	} else if(is.null(ylims)){
-		ylims <- quantile(varDat[,seq(3,ncol(varDat),3)],probs=plot.relyrange,na.rm=T)
+	if(is.null(ylims)){
+		if(useYlimOverrides && exists('plot.ylimOverrides') &&
+			 !is.null(plot.ylimOverrides[[varName]])){
+		 	ylims <- plot.ylimOverrides[[varName]]
+		} else if(is.null(ylims)){
+			ylims <- quantile(varDat[,seq(3,ncol(varDat),3)],probs=plot.relyrange,na.rm=T)
+		}
 	}
+	retlist$ylims <- ylims
 	if(plotType==0){
 		plot(0,0,type='n',
 				 xlim=range(years),
@@ -157,6 +164,7 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 		filled.contour(years,breaksMids,t(counts),
 									 xlim=range(years),
 									 ylim=ylims,
+									 zlim=c(0,max(breaks)),
 									 xlab='year',
 									 xaxs='i',
 									 levels=levels,
@@ -204,7 +212,6 @@ plotPolResults <- function(varFile,polIDsToDrop=NULL,funFigFolder=NULL,
 	}
 	dev.off()
 	if(verbosity>0){cat('done\n')}
-	retlist$ylims <- ylims
 	dir.create(file.path(funFigFolder,'plotMetaData'),F,T)
 	saveRDS(retlist,plotMetaDataFilePath)
 	return(retlist)
