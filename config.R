@@ -60,6 +60,7 @@ alsoPlotRepSample.vals <- c(FALSE,TRUE)
 repSample.lty <- 'solid'
 repSample.lwd <- 1
 repSample.col <- 'black'
+shareOfYearsThatYlimShouldAdjustTo <- 0.9
 
 # sampling ####
 # file that contains the baseline parametrisation of the model

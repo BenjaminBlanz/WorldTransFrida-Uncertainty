@@ -237,6 +237,7 @@ for(plotWeightType in plotWeightTypes){
 				write.csv(csvExport.df,file.path(location.output,location.plots,'CI-plots',
 																				 paste0(plotWeightType,'Weighted'),'plotData',
 																				 paste0(paste(varName,uncertaintyType,plotWeightType,'weighted',sep='-'),'.csv')))
+				## plot data ####
 				cat('drawing...')
 				for(years.i in 1:length(yearsToPlot.lst)){
 					for(alsoPlotMean in alsoPlotMean.vals){
@@ -295,8 +296,16 @@ for(plotWeightType in plotWeightTypes){
 								legend('bottom',legend.text,lty=legend.lty,lwd=legend.lwd,pch=legend.pch,col=legend.col,
 											 horiz=T,xpd=T)
 								par(mar=c(3.1,4.1,4.1,2.1))
+								byYearRange <- array(NA,dim=c(nrow(ciBounds),2))
+								for(byYearRange.i in 1:length(yearsToPlot)){
+									byYearRange[byYearRange.i,] <- range(c(ciBounds[byYearRange.i,],calDat[yearsToPlot[byYearRange.i],varName]),na.rm=T)
+								}
+								ylimFittingXPct <- c(quantile(byYearRange[,1],0.1),quantile(byYearRange[,2],shareOfYearsThatYlimShouldAdjustTo))
+								ylimFittingAll <- range(c(ciBounds,calDat[yearsToPlot,varName]),na.rm=T)
+								ylimChosen <- c(ifelse(abs(ylimFittingXPct[1]-ylimFittingAll[1])<=diff(ylimFittingXPct),ylimFittingAll[1],ylimFittingXPct[1]),
+																ifelse(abs(ylimFittingXPct[2]-ylimFittingAll[2])<=diff(ylimFittingXPct),ylimFittingAll[2],ylimFittingXPct[2]))
 								plot(yearsToPlot,ciBounds[yearsToPlot,medianQIdx],
-										 ylim=range(c(ciBounds,calDat[yearsToPlot,varName]),na.rm=T),
+										 ylim=ylimChosen,
 										 xlim=range(as.numeric(yearsToPlot)),
 										 xaxs='i',
 										 type='n',
