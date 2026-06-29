@@ -91,6 +91,7 @@ if(!redoAllCalc){
 	}
 }
 ordersOfMagGuesses.parvect <- funOrderOfMagnitude(sampleParms$Max-sampleParms$Min)
+names(ordersOfMagGuesses.parvect) <- sampleParms$Variable
 ordersOfMagGuesses.resSigmaVect <- funOrderOfMagnitude(resSigmaVect)-6
 ordersOfMagGuesses <- c(ordersOfMagGuesses.parvect,ordersOfMagGuesses.resSigmaVect)
 
