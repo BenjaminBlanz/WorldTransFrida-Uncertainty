@@ -12,7 +12,10 @@ prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NU
 		frida_info <- read.csv(file.path(location.frida.info,name.frida_info))
 		if(frida_info_type == 'StellaExport'){ 
 			# this file is from the new export in stella 4.11
-			columnsThatAreFlags <- c(5,6,7,8,9,10,11,12,13,14,15)
+			columnsThatAreFlags <- c('Assumption', 'Calibrated.Output', 'Climate.Impact.Parameter', 
+															 'Discrete.Outflow', 'Explanatory.Variable', 'External.Parameter', 
+															 'Internal.Calibration.Parameter', 'No.Sensi', 'Output', 
+															 'Parameter', 'Policy', 'Unit')
 			# skip lines that are not parameters with ranges
 			frida_info <- frida_info[!is.na(frida_info$Min)&!is.na(frida_info$Max),]
 			# write zeroes for NAs in columns that are flags
@@ -35,7 +38,7 @@ If using a user supplied frida_info ensure the columns 'Variable','Value','Min',
 																	frida_info$No.Sensi==0 &
 																	frida_info$Policy==0 &
 																	frida_info$Unit==0,
-																-columnsThatAreFlags]
+																-which(!colnames(frida_info)%in%c('Variable','Value','Min','Max'))]
 		} else {
 			sampleParms <- frida_info[,c('Variable','Value','Min','Max')]
 		}
