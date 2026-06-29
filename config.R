@@ -142,6 +142,8 @@ policyFileName <- 'policy_EMB.csv'#'policy_100DollarCarbonTax.csv' #'policy_EMB.
 
 
 # locations and names ####
+# branch of frida to use
+name.frida_branch <- 'main'
 # location of frida/stella for running
 baselocation.frida <-location.frida <- './FRIDAforUncertaintyAnalysis'
 baselocation.stella <- location.stella <- './Stella_Simulator_Linux'
@@ -158,6 +160,7 @@ location.frida.configs <- './FRIDA-configs'
 # export preferences etc
 location.frida.info <- './FRIDA-info'
 name.frida_external_ranges <-'frida_external_ranges.csv'
+
 # file containing names of uncertainty parameters and ranges set by the authors
 # pre v3.1 this is a file that has to be manually updated.
 # post v3.1 this is a file that is generated as part of the frida files and can be 

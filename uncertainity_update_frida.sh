@@ -3,6 +3,8 @@
 RED='\033[0;31m'
 NOCOLOR='\033[0m'
 
+frida_branch=$(grep name.frida_branch config.R | sed 's/name.frida_branch <- //' | sed "s/['\"]//g")
+
 function cleanup_uncertainty_repo() {
 	cd ./FRIDAforUncertaintyAnalysisGit
 
@@ -37,17 +39,17 @@ function cleanup_uncertainty_repo() {
 
 if [ ! -d ./FRIDAforUncertaintyAnalysisGit ] ; then
 	#clone the FRIDA model so you always have the latest
-	echo "Cloning FRIDA from the main metno/WorldTransFRIDA repo"
-	git clone -b main --depth 1 https://github.com/metno/WorldTransFRIDA.git FRIDAforUncertaintyAnalysisGit
+	echo "Cloning FRIDA from the ${frida_branch} metno/WorldTransFRIDA repo"
+	git clone -b ${frida_branch} --depth 1 https://github.com/metno/WorldTransFRIDA.git FRIDAforUncertaintyAnalysisGit
 
 	cleanup_uncertainty_repo
 
 else
-	# reset your model to be the main model
+	# reset your model to be the ${frida_branch} model
 	echo "Resetting your FRIDA to be the latest..."
 	cd ./FRIDAforUncertaintyAnalysisGit
-	git fetch --depth 1 origin main
-	git reset --hard origin/main
+	git fetch --depth 1 origin ${frida_branch}
+	git reset --hard origin/${frida_branch}
 	
 	cd ..
 
