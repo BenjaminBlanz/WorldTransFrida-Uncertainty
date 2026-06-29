@@ -2,10 +2,20 @@
 # uses output of the runPlotAllRuns script, so that has to be run first for each 
 # overlayed ensemble
 
+source('initialise.R')
+source('config.R')
+alsoPlotMean <- F
+alsoPlotDefaultRun <- T
 # specify output folders
-dataForOverlayedFiguresFolders <- c('workOutput/JeffEMB_figures/CI-plots/equalyWeighted/plotData/',
-																		'workOutput/JeffGDP_figures/CI-plots/equalyWeighted/plotData/')
+dataForOverlayedFiguresFolders <- c('/home/benjamin/mnt/levante/work/mh0033/b383346/Legacy_WorldTransFrida-Uncertainty/workOutput/UA_EMBv6Try2_nS100000/figures/CI-plots/completeEquallyWeighted/plotData/',
+																		'/home/benjamin/mnt/levante/work/uc1275/u244021/WorldTransFrida-Uncertainty-FRIDA-development/workOutput/N-10000-ChS-100-LCR-1000-IgB-FALSE-FrB-FALSE-KcE-FALSE-Sym-Min-AAZ-FALSE-CFB-On-Pol-policy_EMB-CTO-Off/figures/CI-plots/completeEquallyWeighted/plotData/')
 overlayColors <- c('black','blue')
+overlayNames <- c('v2.1','v3.1')
+
+location.plots <- file.path('workOutput','overlayed',paste0(overlayNames,collapse='-'))
+
+# just for plot specification
+plotWeightType <- 'completeEqually'
 
 # For specialised overlayed figures:
 # prepare folder structure such that folders for each of the names exist, with only a single file contained
@@ -61,12 +71,12 @@ overlayColors <- c('black','blue')
 # overlayColors <- c('black','blue')
 
 
-# just for plot specification
-plotWeightType <- 'equaly'
-
-location.plots <- file.path('workOutput','jeffsOverlayedFigures','fit uncertainty')
 dir.create(location.plots,F,T)
-for(file in list.files(dataForOverlayedFiguresFolders[1],pattern = '*RDS')){
+file.i <- 0
+files <- list.files(dataForOverlayedFiguresFolders[1],pattern = '*RDS')
+for(file in files){
+	file.i <- file.i +1
+	cat(sprintf('(%i of %i) %s\n',file.i, length(files), file))
 	if(sum(file.exists(file.path(dataForOverlayedFiguresFolders,file)))==length(dataForOverlayedFiguresFolders)){
 		varName <- tools::file_path_sans_ext(file)
 		png(file.path(location.plots,paste0(varName,'.png')),
@@ -191,7 +201,7 @@ for(file in list.files(dataForOverlayedFiguresFolders[1],pattern = '*RDS')){
 				lines(yearsToPlot,means[yearsToPlot],lty=mean.lty,lwd=mean.lwd,col=mean.col)
 			}
 			if(alsoPlotDefaultRun){
-				lines(yearsToPlot,defRun[yearsToPlot,varName],lty=def.lty,lwd=def.lwd,col=def.col)
+				lines(yearsToPlot,defRun[yearsToPlot],lty=def.lty,lwd=def.lwd,col=def.col)
 			}
 			if(!is.null(calDat)){
 				points(yearsToPlot[1:length(calDat)],calDat,
