@@ -144,7 +144,7 @@ policyFileName <- 'policy_EMB.csv'#'policy_100DollarCarbonTax.csv' #'policy_EMB.
 # locations and names ####
 # location of frida/stella for running
 baselocation.frida <-location.frida <- './FRIDAforUncertaintyAnalysis'
-baselocation.stella <- location.stella<- './Stella_Simulator_Linux'
+baselocation.stella <- location.stella <- './Stella_Simulator_Linux'
 # location frida/stella is stored while the above is located in tmpfs
 location.frida.storage <- './FRIDAforUncertaintyAnalysis-store'
 location.stella.storage <- './Stella_Simulator_Linux-store'
