@@ -10,9 +10,10 @@ function cleanup_uncertainty_repo() {
 
 	#remove all the stuff we don't need
 	rm -rf "./Data Processing"
+	rm -rf "./docs"
 	rm -f FRIDA.isdb
 	rm -f LICENSE
-	rm -f ReadMe.md
+	rm -f README.md
 
 	#save what we need to save from the /Data folder
 	mv "./Data/Calibration Data.csv" "Calibration Data.csv"
@@ -48,9 +49,12 @@ else
 	# reset your model to be the ${frida_branch} model
 	echo "Resetting your FRIDA to be the latest..."
 	cd ./FRIDAforUncertaintyAnalysisGit
-	git fetch --depth 1 origin ${frida_branch}
-	git reset --hard origin/${frida_branch}
-	
+	# explicit refspec so this works even when the existing clone was made
+	# single-branch (--depth 1 -b X) against a *different* branch
+	git fetch --depth 1 origin "+refs/heads/${frida_branch}:refs/remotes/origin/${frida_branch}"
+	git checkout -B ${frida_branch} "origin/${frida_branch}"
+	git reset --hard "origin/${frida_branch}"
+
 	cd ..
 
 	cleanup_uncertainty_repo
