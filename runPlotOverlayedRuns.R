@@ -75,12 +75,31 @@ dir.create(location.plots,F,T)
 writeLines(paste(c('data for overalyed plots',
 									 paste(overlayNames,dataForOverlayedFiguresFolders))),
 					 file.path(location.plots,'metadata.txt'))
-file.i <- 0
+
+# --- startup summary ---
+cat('=== runPlotOverlayedRuns ===\n')
+cat(sprintf('Output folder : %s\n', location.plots))
+cat(sprintf('Overlaying %i ensemble(s):\n', length(overlayNames)))
+for(o.i in seq_along(overlayNames)){
+	folderExists <- dir.exists(dataForOverlayedFiguresFolders[o.i])
+	cat(sprintf('  [%i] %-20s  %s  %s\n',
+						o.i, overlayNames[o.i],
+						dataForOverlayedFiguresFolders[o.i],
+						ifelse(folderExists, '(found)', '*** FOLDER NOT FOUND ***')))
+}
+cat('---------------------------\n')
+
+file.i    <- 0
+n.plotted <- 0
+n.skipped <- 0
 files <- list.files(dataForOverlayedFiguresFolders[1],pattern = '*RDS')
+cat(sprintf('Found %i RDS file(s) in reference folder.\n\n', length(files)))
+
 for(file in files){
 	file.i <- file.i +1
-	cat(sprintf('(%i of %i) %s\n',file.i, length(files), file))
-	if(sum(file.exists(file.path(dataForOverlayedFiguresFolders,file)))==length(dataForOverlayedFiguresFolders)){
+	cat(sprintf('(%i/%i) %s ... ', file.i, length(files), file))
+	fileExists <- file.exists(file.path(dataForOverlayedFiguresFolders,file))
+	if(sum(fileExists)==length(dataForOverlayedFiguresFolders)){
 		varName <- tools::file_path_sans_ext(file)
 		png(file.path(location.plots,paste0(varName,'.png')),
 				width = plotWidth,height = plotHeight,units = plotUnit,res = plotRes)
@@ -102,30 +121,36 @@ for(file in files){
 		ciBoundQs.lwd <- c(rev(CIsToPlot.lwd),CIsToPlot.lwd[-1])
 		ciBoundQs.lcol <- c(rev(CIsToPlot.lcol),CIsToPlot.lcol[-1])
 		medianQIdx <- which(ciBoundQs==0.5)
+		# brighter versions of each overlay colour for default-run lines
+		def.cols <- sapply(overlayColors, function(col) {
+			h <- rgb2hsv(col2rgb(col))
+			hsv(h[1], max(0, h[2] - 0.3), min(1, h[3] * 1.4 + 0.3))
+		})
 		layout(matrix(c(3,2,1),nrow=3),heights = c(0.9,0.05,0.04))
 		par(mar=c(0,0,0,0))
 		plot(0,0,type='n',axes=F)
 		legend.text=c(
 			if(alsoPlotMean&&uncertaintyType!='noise uncertainty'){'mean'},
-			if(alsoPlotDefaultRun){'frida default'},
+			if(alsoPlotDefaultRun){paste('frida default', overlayNames)},
 			'median',
 			paste0(CIsToPlot[-1]*100,'% CI'),
 			'Data')
 		legend.lty=c(
 			if(alsoPlotMean&&uncertaintyType!='noise uncertainty'){mean.lty},
-			if(alsoPlotDefaultRun){def.lty},
+			if(alsoPlotDefaultRun){rep(def.lty, length(overlayNames))},
 			CIsToPlot.lty,
 			NA)
 		legend.lwd=c(
 			if(alsoPlotMean&&uncertaintyType!='noise uncertainty'){mean.lwd},
-			if(alsoPlotDefaultRun){def.lwd},
+			if(alsoPlotDefaultRun){rep(def.lwd, length(overlayNames))},
 			CIsToPlot.lwd,
 			NA)
 		legend.pch=c(rep(NA,length(CIsToPlot)+
-										 	sum(c(alsoPlotMean&uncertaintyType!='noise uncertainty',alsoPlotDefaultRun))),20)
+										 	sum(c(alsoPlotMean&uncertaintyType!='noise uncertainty',FALSE))+
+										 	ifelse(alsoPlotDefaultRun, length(overlayNames), 0)),20)
 		legend.col = c(
 			if(alsoPlotMean&&uncertaintyType!='noise uncertainty'){mean.col},
-			if(alsoPlotDefaultRun){def.col},
+			if(alsoPlotDefaultRun){def.cols},
 			CIsToPlot.lcol,
 			calDat.col)
 		legend('bottom',legend.text,lty=legend.lty,lwd=legend.lwd,pch=legend.pch,col=legend.col,
@@ -204,7 +229,7 @@ for(file in files){
 				lines(yearsToPlot,means[yearsToPlot],lty=mean.lty,lwd=mean.lwd,col=mean.col)
 			}
 			if(alsoPlotDefaultRun){
-				lines(yearsToPlot,defRun[yearsToPlot],lty=def.lty,lwd=def.lwd,col=def.col)
+				lines(yearsToPlot,defRun[yearsToPlot],lty=def.lty,lwd=def.lwd,col=def.cols[o.i])
 			}
 			if(!is.null(calDat)){
 				points(yearsToPlot[1:length(calDat)],calDat,
@@ -213,5 +238,18 @@ for(file in files){
 		}
 		box()
 		dev.off()
+		cat(sprintf('plotted -> %s\n', file.path(location.plots, paste0(varName, '.png'))))
+		n.plotted <- n.plotted + 1
+	} else {
+		missing <- overlayNames[!fileExists]
+		cat(sprintf('SKIPPED (missing in: %s)\n', paste(missing, collapse=', ')))
+		n.skipped <- n.skipped + 1
 	}
 }
+
+# --- final summary ---
+cat('===========================\n')
+cat(sprintf('Done. Figures plotted : %i\n', n.plotted))
+cat(sprintf('       Files skipped  : %i (data missing in >=1 ensemble folder)\n', n.skipped))
+cat(sprintf('Output saved to       : %s\n', location.plots))
+
