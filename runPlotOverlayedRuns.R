@@ -72,6 +72,9 @@ plotWeightType <- 'completeEqually'
 
 
 dir.create(location.plots,F,T)
+writeLines(paste(c('data for overalyed plots',
+									 paste(overlayNames,dataForOverlayedFiguresFolders))),
+					 file.path(location.plots,'metadata.txt'))
 file.i <- 0
 files <- list.files(dataForOverlayedFiguresFolders[1],pattern = '*RDS')
 for(file in files){
