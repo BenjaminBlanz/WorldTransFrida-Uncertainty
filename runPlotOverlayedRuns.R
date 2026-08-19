@@ -95,6 +95,18 @@ n.skipped <- 0
 files <- list.files(dataForOverlayedFiguresFolders[1],pattern = '*RDS')
 cat(sprintf('Found %i RDS file(s) in reference folder.\n\n', length(files)))
 
+# loop-invariant: depend only on config, not on per-file data
+ciBoundQs <- unique(c(rev((1-CIsToPlot)/2),1-(1-CIsToPlot)/2))
+ciBoundQs.lty <- c(rev(CIsToPlot.lty),CIsToPlot.lty[-1])
+ciBoundQs.lwd <- c(rev(CIsToPlot.lwd),CIsToPlot.lwd[-1])
+ciBoundQs.lcol <- c(rev(CIsToPlot.lcol),CIsToPlot.lcol[-1])
+medianQIdx <- which(ciBoundQs==0.5)
+# brighter versions of each overlay colour for default-run lines
+def.cols <- sapply(overlayColors, function(col) {
+	h <- rgb2hsv(col2rgb(col))
+	hsv(h[1], max(0, h[2] - 0.3), min(1, h[3] * 1.4 + 0.3))
+})
+
 for(file in files){
 	file.i <- file.i +1
 	cat(sprintf('(%i/%i) %s ... ', file.i, length(files), file))
@@ -108,24 +120,10 @@ for(file in files){
 			plotData.lst[[o.i]] <- readRDS(file.path(dataForOverlayedFiguresFolders[o.i],file))
 		}
 		plotData <- plotData.lst[[1]]
-		yearsToPlot <- plotData$years
+		years <- plotData$years
 		uncertaintyType <- plotData$uncertaintyType
-		ciBoundQs <- plotData$ciBoundQs
 		ciBounds <- plotData$ciBounds
-		means <- plotData$means
-		defRun <- plotData$defaultRun
 		varName.orig <- plotData$varName.orig
-		calDat <- plotData$calDat
-		ciBoundQs <- unique(c(rev((1-CIsToPlot)/2),1-(1-CIsToPlot)/2))
-		ciBoundQs.lty <- c(rev(CIsToPlot.lty),CIsToPlot.lty[-1])
-		ciBoundQs.lwd <- c(rev(CIsToPlot.lwd),CIsToPlot.lwd[-1])
-		ciBoundQs.lcol <- c(rev(CIsToPlot.lcol),CIsToPlot.lcol[-1])
-		medianQIdx <- which(ciBoundQs==0.5)
-		# brighter versions of each overlay colour for default-run lines
-		def.cols <- sapply(overlayColors, function(col) {
-			h <- rgb2hsv(col2rgb(col))
-			hsv(h[1], max(0, h[2] - 0.3), min(1, h[3] * 1.4 + 0.3))
-		})
 		layout(matrix(c(3,2,1),nrow=3),heights = c(0.9,0.05,0.04))
 		par(mar=c(0,0,0,0))
 		plot(0,0,type='n',axes=F)
@@ -166,9 +164,9 @@ for(file in files){
 			ymax <- max(ymax,plotData.lst[[o.i]]$ciBounds,na.rm=T)
 			ymin <- min(ymin,plotData.lst[[o.i]]$ciBounds,na.rm=T)
 		}
-		plot(yearsToPlot,ciBounds[yearsToPlot,medianQIdx],
+		plot(years,ciBounds[years,medianQIdx],
 				 ylim=c(ymin,ymax),
-				 xlim=range(as.numeric(yearsToPlot)),
+				 xlim=range(as.numeric(years)),
 				 xaxs='i',
 				 type='n',
 				 xlab='',
@@ -176,14 +174,14 @@ for(file in files){
 				 xaxt='n',
 				 main=ifelse(exists('extraTitle'),extraTitle,varName.orig))
 		mtext(paste('Samples',plotWeightType,'weighted. Ranges show ',uncertaintyType,'.'),3,0.5,cex=par('cex'))
-		xax <- axis(1,at=seq(as.numeric(yearsToPlot[1]),as.numeric(yearsToPlot[length(yearsToPlot)]),10))
+		xax <- axis(1,at=seq(as.numeric(years[1]),as.numeric(years[length(years)]),10))
 		mtext('year',1,3)
 		grid(nx=length(xax)-1,ny=NA)
 		abline(h=axTicks(2),lty='dotted',col='gray')
 		for(o.i in 1:length(dataForOverlayedFiguresFolders)){
 			ciBoundQs.lcol <- rep(overlayColors[o.i],length(ciBoundQs.lcol))
 			plotData <- plotData.lst[[o.i]]
-			yearsToPlot <- plotData$years
+			years <- plotData$years
 			uncertaintyType <- plotData$uncertaintyType
 			ciBoundQs <- plotData$ciBoundQs
 			ciBounds <- plotData$ciBounds
@@ -198,13 +196,13 @@ for(file in files){
 					if((length(ciBoundQs)%%2)==0){
 						idxOfLowCiBounds1 <- length(ciBoundQs)/2
 						ciBound.low <- ciBounds[,idxOfLowCiBounds1-ci.i+1]
-						ciBound.high <- ciBounds[yearsToPlot,idxOfLowCiBounds1+ci.i]
+						ciBound.high <- ciBounds[years,idxOfLowCiBounds1+ci.i]
 					} else {
 						idxOfLowCiBounds1 <- length(ciBoundQs)/2
-						ciBound.low <- ciBounds[yearsToPlot,idxOfLowCiBounds1-ci.i+1.5]
-						ciBound.high <- ciBounds[yearsToPlot,idxOfLowCiBounds1+ci.i-.5]
+						ciBound.low <- ciBounds[years,idxOfLowCiBounds1-ci.i+1.5]
+						ciBound.high <- ciBounds[years,idxOfLowCiBounds1+ci.i-.5]
 					}
-					polygon(c(yearsToPlot,rev(yearsToPlot)),c(ciBound.low,rev(ciBound.high)),
+					polygon(c(years,rev(years)),c(ciBound.low,rev(ciBound.high)),
 									col=CIsToPlot.col[ci.i],lty = 0)
 				}
 			}
@@ -212,7 +210,7 @@ for(file in files){
 		for(o.i in 1:length(dataForOverlayedFiguresFolders)){
 			ciBoundQs.lcol <- rep(overlayColors[o.i],length(ciBoundQs.lcol))
 			plotData <- readRDS(file.path(dataForOverlayedFiguresFolders[o.i],file))
-			yearsToPlot <- plotData$years
+			years <- plotData$years
 			uncertaintyType <- plotData$uncertaintyType
 			ciBoundQs <- plotData$ciBoundQs
 			ciBounds <- plotData$ciBounds
@@ -220,16 +218,16 @@ for(file in files){
 			defRun <- plotData$defaultRun
 			calDat <- plotData$calDat
 			for(q.i in 1:length(ciBoundQs)){
-				lines(yearsToPlot,ciBounds[yearsToPlot,q.i],
+				lines(years,ciBounds[years,q.i],
 							lty=ciBoundQs.lty[q.i],
 							lwd=ciBoundQs.lwd[q.i],
 							col=ciBoundQs.lcol[q.i])
 			}
 			if(alsoPlotMean){
-				lines(yearsToPlot,means[yearsToPlot],lty=mean.lty,lwd=mean.lwd,col=mean.col)
+				lines(years,means,lty=mean.lty,lwd=mean.lwd,col=mean.col)
 			}
 			if(alsoPlotDefaultRun){
-				lines(yearsToPlot,defRun[yearsToPlot],lty=def.lty,lwd=def.lwd,col=def.cols[o.i])
+				lines(yearsToPlot,defRun,lty=def.lty,lwd=def.lwd,col=def.cols[o.i])
 			}
 			if(!is.null(calDat)){
 				points(yearsToPlot[1:length(calDat)],calDat,
@@ -238,7 +236,7 @@ for(file in files){
 		}
 		box()
 		dev.off()
-		cat(sprintf('plotted -> %s\n', file.path(location.plots, paste0(varName, '.png'))))
+		cat('plotted\n')
 		n.plotted <- n.plotted + 1
 	} else {
 		missing <- overlayNames[!fileExists]
