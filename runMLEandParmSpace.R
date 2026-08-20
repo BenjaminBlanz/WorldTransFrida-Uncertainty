@@ -13,6 +13,9 @@ cat(paste0(
 	'\n###############################################################\n'))
 sink()
 sink(file.path(location.output,'log.txt'),append=T,split=T)
+# stop right here if anything the config specifies is missing, rather than
+# silently running with e.g. the policy file of whatever ran here before
+source('configValidator.R')
 source('runInitialiseData.R')
 continue <- readline(paste0('Output location created. Move any files to be used here\n',location.output,'\nHit ENTER when done.\n'))
 # read covariance matrix used for baseNegLL
