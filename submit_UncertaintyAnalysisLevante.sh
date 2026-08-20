@@ -192,6 +192,42 @@ if [ -n "${baselineParmFile%.*}" ]; then
 	expID=${expID}-${baselineParmFile%.*}
 fi
 #############################################################################
+########              Validate input files                         ##########
+#############################################################################
+
+# Config template (working directory)
+if [ ! -f "${configFile}" ]; then
+  echo "Error: configFile '${configFile}' not found in working directory"
+  exit 1
+fi
+
+# FRIDA-configs/ files
+for f in "${climateFeedbackFile}" "${climateSTAOverrideFile}" "${climateSTAOverrideFileTS}"; do
+  if [ ! -f "FRIDA-configs/${f}" ]; then
+    echo "Error: '${f}' not found in FRIDA-configs/"
+    exit 1
+  fi
+done
+
+if [ -n "${policyFile}" ] && [ ! -f "FRIDA-configs/${policyFile}" ]; then
+  echo "Error: policyFile '${policyFile}' not found in FRIDA-configs/"
+  exit 1
+fi
+
+if [ -n "${baselineParmFile}" ] && [ ! -f "FRIDA-configs/${baselineParmFile}" ]; then
+  echo "Error: baselineParmFile '${baselineParmFile}' not found in FRIDA-configs/"
+  exit 1
+fi
+
+# FRIDA-info/ files
+for f in "${infoFile}" "${integerParmsFile}" "${externalRangesFile}" "${excludeParmFile}" "${excludeVarFile}" "${extraExportFile}"; do
+  if [ ! -f "FRIDA-info/${f}" ]; then
+    echo "Error: '${f}' not found in FRIDA-info/"
+    exit 1
+  fi
+done
+
+#############################################################################
 ########     Preparing the R-scripts and the runscript             ##########
 #############################################################################
 
