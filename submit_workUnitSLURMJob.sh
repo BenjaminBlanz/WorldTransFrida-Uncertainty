@@ -46,7 +46,7 @@ FRIDA='FRIDAforUncertaintyAnalysis'
 policyFile='policy_EMB.csv'
 climateFeedbackFile='ClimateFeedback_On.csv'
 climateSTAOverrideFile='ClimateSTAOverride_Off.csv'
-climateSTAOverrideFileTS='ClimateSTAOverrideTS.csv'
+climateSTAOverrideFileTS='ClimateSTAOverrideTS_none.csv'
 baselineParmFile=''
 
 # These need to be located in the FRIDA-info/ folder!
