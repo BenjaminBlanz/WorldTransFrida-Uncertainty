@@ -303,6 +303,10 @@ if(!file.exists(cfgVal.stellaBin)){
 # silently, so check both that the source exists and that the copy actually
 # arrived with the same content. Otherwise a run inherits the settings of
 # whatever ran here before.
+# An empty spec file is valid and means stella runs without any changes from
+# it, e.g. ClimateSTAOverrideTS_none.csv for no override at all. It is only
+# reported as a warning, so that a file that is empty by accident is still
+# visible in the log.
 cfgVal.configFiles <- list(
 	list(var='climateFeedbackSpecFile', dest='climateFeedbackSwitches.csv'),
 	list(var='policyFileName',          dest='policyParameters.csv'),
@@ -311,15 +315,19 @@ cfgVal.configFiles <- list(
 for(cfgVal.cf in cfgVal.configFiles){
 	cfgVal.what <- sprintf('%s (copied to Data/%s)',cfgVal.cf$var,cfgVal.cf$dest)
 	if(!cfgVal.isSet(cfgVal.cf$var)){
-		# no empty setting allowed here, config.R copies these unconditionally.
-		# if you want no policy/no override, point at a file that says so.
-		cfgVal.error('%s is not set, config.R copies it to Data/%s unconditionally, specify a file in %s (a spec file that sets nothing if that is what you want)',
-								 cfgVal.cf$var,cfgVal.cf$dest,location.frida.configs)
+		# config.R copies these unconditionally, so an unset name means the
+		# previous Data/%s stays in place. For no policy/no override name an
+		# empty spec file instead.
+		cfgVal.error('%s is not set, config.R copies it to Data/%s unconditionally, name a file in %s (an empty spec file if you want no %s at all)',
+								 cfgVal.cf$var,cfgVal.cf$dest,location.frida.configs,cfgVal.cf$var)
 		next
 	}
 	cfgVal.src <- file.path(location.frida.configs,cfgVal.get(cfgVal.cf$var))
-	if(!isTRUE(cfgVal.checkFile(cfgVal.src,cfgVal.what))){
+	if(!isTRUE(cfgVal.checkFile(cfgVal.src,cfgVal.what,allowEmpty=TRUE))){
 		next
+	}
+	if(file.size(cfgVal.src)==0){
+		cfgVal.warning('%s is empty, the model runs without any settings from it',cfgVal.src)
 	}
 	if(!isTRUE(cfgVal.fridaOK)){
 		next

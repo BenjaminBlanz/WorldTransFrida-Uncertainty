@@ -137,7 +137,7 @@ subSample.TargetVars <- c('energy_balance_model_surface_temperature_anomaly')
 # FRIDA config ####
 climateFeedbackSpecFile <- 'ClimateFeedback_On.csv'
 climateOverrideSpecFile <- 'ClimateSTAOverride_Off.csv'
-climateOverrideSpecFileTS <- 'ClimateSTAOverrideTS_EMB.csv'
+climateOverrideSpecFileTS <- 'ClimateSTAOverrideTS_none.csv'
 policyFileName <- 'policy_EMB.csv'#'policy_100DollarCarbonTax.csv' #'policy_EMB.csv'
 
 
