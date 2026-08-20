@@ -50,7 +50,10 @@ climateSTAOverrideFileTS='ClimateSTAOverrideTS_none.csv'
 baselineParmFile=''
 
 # These need to be located in the FRIDA-info/ folder!
-infoFile='frida_info.csv'
+# infoFile only needs to be set to override the automatic choice in config.R,
+# which uses the Parameter Info.csv distributed with FRIDA if it is present and
+# falls back to frida_info_preV3.csv for older versions of the model.
+infoFile=''
 externalRangesFile='frida_external_ranges.csv'
 excludeParmFile='frida_parameter_exclusion_list.csv'
 excludeVarFile='frida_variable_exclusion_list.csv'
@@ -154,7 +157,13 @@ sed -i "s/^chunkSizePerWorker <-.*$/chunkSizePerWorker <- ${chunkSizePerWorker}/
 sed -i "s/^name.output <-.*$/name.output <- '${expID}'/" $config
 sed -i "s/config.R/${config}/g" $config
 sed -i "s/FRIDAforUncertaintyAnalysis/${FRIDA}/" $config
-sed -i "s/^name.frida_info <-.*$/name.frida_info <- '${infoFile}'/" $config
+# config.R assigns name.frida_info only inside its auto detection branches, so
+# there is no top level line to replace. Instead activate the commented out
+# override line, which config.R checks for with exists('name.frida_info').
+# Without an infoFile the auto detection in config.R is left alone.
+if [ -n "${infoFile}" ]; then
+	sed -i "s|^# name.frida_info <-.*$|name.frida_info <- '${infoFile}'|" $config
+fi
 sed -i "s/^policyFileName <-.*$/policyFileName <- '${policyFile}'/" $config
 sed -i "s/^climateFeedbackSpecFile <-.*$/climateFeedbackSpecFile <- '${climateFeedbackFile}'/" $config
 sed -i "s/^climateOverrideSpecFile <-.*$/climateOverrideSpecFile <- '${climateSTAOverrideFile}'/" $config

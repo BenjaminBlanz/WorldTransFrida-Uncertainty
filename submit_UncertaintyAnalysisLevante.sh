@@ -67,7 +67,10 @@ climateSTAOverrideFileTS='ClimateSTAOverrideTS_none.csv'
 baselineParmFile=''
 
 # These need to be located in the FRIDA-info/ folder!
-infoFile='frida_info.csv'
+# infoFile only needs to be set to override the automatic choice in config.R,
+# which uses the Parameter Info.csv distributed with FRIDA if it is present and
+# falls back to frida_info_preV3.csv for older versions of the model.
+infoFile=''
 integerParmsFile='frida_integer_parms.csv'
 externalRangesFile='frida_external_ranges.csv'
 excludeParmFile='frida_parameter_exclusion_list.csv'
@@ -220,7 +223,13 @@ if [ -n "${baselineParmFile}" ] && [ ! -f "FRIDA-configs/${baselineParmFile}" ];
 fi
 
 # FRIDA-info/ files
-for f in "${infoFile}" "${integerParmsFile}" "${externalRangesFile}" "${excludeParmFile}" "${excludeVarFile}" "${extraExportFile}"; do
+# infoFile is optional, config.R picks one itself if it is not given
+if [ -n "${infoFile}" ] && [ ! -f "FRIDA-info/${infoFile}" ]; then
+  echo "Error: infoFile '${infoFile}' not found in FRIDA-info/"
+  exit 1
+fi
+
+for f in "${integerParmsFile}" "${externalRangesFile}" "${excludeParmFile}" "${excludeVarFile}" "${extraExportFile}"; do
   if [ ! -f "FRIDA-info/${f}" ]; then
     echo "Error: '${f}' not found in FRIDA-info/"
     exit 1
@@ -243,7 +252,13 @@ sed -i "s/^chunkSizePerWorker <-.*$/chunkSizePerWorker <- ${chunkSizePerWorker}/
 sed -i "s/^name.output <-.*$/name.output <- '${expID}'/" $config
 sed -i "s/config.R/${config}/g" $config
 sed -i "s/FRIDAforUncertaintyAnalysis/${FRIDA}/" $config
-sed -i "s/^name.frida_info <-.*$/name.frida_info <- '${infoFile}'/" $config
+# config.R assigns name.frida_info only inside its auto detection branches, so
+# there is no top level line to replace. Instead activate the commented out
+# override line, which config.R checks for with exists('name.frida_info').
+# Without an infoFile the auto detection in config.R is left alone.
+if [ -n "${infoFile}" ]; then
+	sed -i "s|^# name.frida_info <-.*$|name.frida_info <- '${infoFile}'|" $config
+fi
 sed -i "s/^name.frida_integer_parms <-.*$/name.frida_integer_parms <- '${integerParmsFile}'/" $config
 sed -i "s/^policyFileName <-.*$/policyFileName <- '${policyFile}'/" $config
 sed -i "s/^climateFeedbackSpecFile <-.*$/climateFeedbackSpecFile <- '${climateFeedbackFile}'/" $config
