@@ -24,7 +24,7 @@ jnegLLikelihood.f <- function(jParVect){
 	# If the logLike is not NA but the run did not complete assign 
 	# lowest value. We use this when narrowing the parms space
 	if(is.na(runDat[[1]][nrow(runDat)])){
-		lLikelihood <- -.Machine$double.xmax+(sum(!is.na(runDat[[1]]))*.Machine$double.eps)
+		lLikelihood <- logLike.failedRun+(sum(!is.na(runDat[[1]]))*logLike.quasiEps)
 	}
 	return(-lLikelihood)
 }
@@ -40,7 +40,7 @@ negLLike <- function(parVect){
 	# If the logLike is not NA but the run did not complete assign 
 	# lowest value. We use this when narrowing the parms space
 	if(is.na(runDat[[1]][nrow(runDat)])){
-		lLikelihood <- -.Machine$double.xmax+(sum(!is.na(runDat[[1]]))*.Machine$double.eps)
+		lLikelihood <- logLike.failedRun+(sum(!is.na(runDat[[1]]))*logLike.quasiEps)
 	}
 	return(-lLikelihood)
 }

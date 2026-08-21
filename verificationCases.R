@@ -1,5 +1,9 @@
 source('initialise.R')
 source('config.R')
+# This script compares the run data of single threaded and clustered runs, so it
+# needs the workers to hand their runDat back rather than only writing it to the
+# per variable files. Overrides whatever config.R set.
+doNotReturnRunDataSavePerWorkerOnly <- FALSE
 location.output <- file.path('workOutput','testCases')
 source('runInitialiseData.R')
 calDat <- readRDS(file.path(location.output,'calDat.RDS'))$calDat

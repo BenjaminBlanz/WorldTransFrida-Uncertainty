@@ -215,6 +215,7 @@ if(cfgVal.has('rangeTol')){
 cfgVal.checkNumber('minObsForLike',min=1,integer=TRUE)
 cfgVal.checkNumber('subSample.NumSamplePerVar',min=1,integer=TRUE)
 for(cfgVal.v in c('redoAllCalc','writePerWorkerFiles','doNotReturnRunDataSavePerWorkerOnly',
+									'compressCsv','perVarRdsCompress','perVarFullPrecision',
 									'plotWhileRunning','plotDatWhileRunning','plotDatPerChunWhileRunning',
 									'restretchSamplePoints','imputeMissingVars','removeLinearCombinations',
 									'treatVarsAsIndep','checkBorderErrors','kickParmsErrorRangeDet',
@@ -491,9 +492,8 @@ if(length(cfgVal.exportedNames)>0){
 # prefixed per run names, so checking the templates here would say nothing
 # about the run.
 if(!file.exists('workerFileMergeScript.R')){
-	# started with system(), whose exit status is discarded in
-	# workerMergePerVarFilesIndepProc, so this fails without a complaint
-	cfgVal.error('workerFileMergeScript.R not found in the working directory %s, merging the per variable files would silently do nothing',
+	# only used by mergePerVarFiles(parStrat=3), which starts it with system()
+	cfgVal.error('workerFileMergeScript.R not found in the working directory %s, merging the per variable files with parStrat 3 would fail',
 							 getwd())
 }
 if(!file.exists('setupTMPFS.R')){

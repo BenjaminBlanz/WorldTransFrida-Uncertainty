@@ -36,17 +36,6 @@ location.runFiles <- file.path(location.output,'detectedParmSpace',paste0('PerVa
 cat('reading vars from run data...\n')
 defRun <- runFridaDefaultParms()
 yearsToRead <- rownames(defRun)
-# varsToRead.lst <- list()
-# workUnitBoundaries <- seq(1,ncol(calDat)+1,100000000)
-# workUnitBoundaries <- c(workUnitBoundaries,ncol(calDat)+1)
-# for(i in 1:(length(workUnitBoundaries)-1)){
-# 	varsToRead.lst[[i]] <- colnames(calDat)[workUnitBoundaries[i]:(workUnitBoundaries[i+1]-1)]
-# }
-# vars.i <- 1
-# cat(sprintf('Reading %i vars: %i to %i of %i total vars...\n   ',
-# 						length(varsToRead),workUnitBoundaries[vars.i],workUnitBoundaries[vars.i+1]-1,ncol(calDat)))
-# cat(paste0(varsToRead,collapse='\n   '))
-# cat('\n')
 # dimensions time in rows, run IDs in columns,  variables to read
 varsToRead <- subSample.TargetVars
 runsData <- array(NA,dim=c(nrow(defRun),nrow(samplePoints),length(varsToRead)))
@@ -80,7 +69,7 @@ for(plotWeightType in plotWeightTypes){
 	} else if(plotWeightType == 'completeEqually'){
 		# equal weighting of completed runs
 		samplePoints$plotWeight <- 0
-		samplePoints$plotWeight[samplePoints$logLike > -.Machine$double.xmax+(1000*.Machine$double.eps)] <- 1
+		samplePoints$plotWeight[samplePoints$logLike > logLike.failedRun.max] <- 1
 	} else if(plotWeightType == 'linearly'){
 		samplePoints$plotWeight <- order(logLike)/nrow(samplePoints)
 	} else {

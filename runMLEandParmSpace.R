@@ -232,7 +232,6 @@ while(newMaxFound){
 				cat(sprintf('Running likelihood maximization (min neg log like) iteration %i...',
 										iteration))
 				oldVal <- newVal
-				# sv <- sv * 1.1
 				# specifying limits breaks the parscale info for bobyqa!
 				lower <- c(sampleParms$Min,resSigmaVect-abs(parscale.resSigmaVect)*100)
 				names(lower) <- names(jParVect)
@@ -590,7 +589,7 @@ while(newMaxFound){
 																						 plotDatWhileRunning=F,
 																						 plotDatPerChunWhileRunning=plotDatPerChunWhileRunning,
 																						 baseLL=-baseNegLL)
-	logLikes[logLikes==-Inf] <- -.Machine$double.xmax
+	logLikes[logLikes==-Inf] <- logLike.failedRun
 	if(plotWhileRunning){
 		plotCape <- capabilities()
 		if(!(plotCape['X11']|plotCape['aqua'])){

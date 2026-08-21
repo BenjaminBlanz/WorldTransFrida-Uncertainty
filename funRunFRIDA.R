@@ -368,10 +368,10 @@ runFridaParmsByIndex <- function(runid,silent=T,policyMode=F,testStellaGood=F){
 				# If the logLike is not NA but the run did not complete assign 
 				# lowest nonzero value. We use this when narrowing the parms space
 				if(is.na(runDat[[1]][nrow(runDat)])||logLike==-Inf){
-					logLike <- -.Machine$double.xmax+sum(!is.na(runDat[[1]]))*.Machine$double.eps
+					logLike <- logLike.failedRun+sum(!is.na(runDat[[1]]))*logLike.quasiEps
 				}
 			} else {
-				logLike <- -.Machine$double.xmax+sum(!is.na(runDat[[1]]))*.Machine$double.eps
+				logLike <- logLike.failedRun+sum(!is.na(runDat[[1]]))*logLike.quasiEps
 			}
 			suppressWarnings(parmsIndex<-as.numeric(row.names(samplePoints)[i]))
 			if(is.na(parmsIndex)){
@@ -748,7 +748,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 		# if there is a full assembled logLike.df use it
 		if(exists('logLike.df')){
 			logLike[logLike.df$id] <- logLike.df$logLike
-			completeRunsSoFar <- sum(logLike > -.Machine$double.xmax+(200*.Machine$double.eps))
+			completeRunsSoFar <- sum(logLike > logLike.failedRun.max)
 		} else {
 			# otherwise assemble the logLikes 
 			for(l in 1:length(parOutput)){
@@ -759,7 +759,7 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 					# otherwise collect the logLikes
 					logLike[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$logLike 
 				}
-				if(parOutput[[l]]$logLike > -.Machine$double.xmax+(200*.Machine$double.eps)){
+				if(parOutput[[l]]$logLike > logLike.failedRun.max){
 					completeRunsSoFar <- completeRunsSoFar + 1
 				}
 			}
@@ -857,6 +857,11 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 	return(logLike)
 }
 
+# loadClusterRuns ####
+# Reads back the whole parOutput of every work unit, run data included. That
+# needs the work units to have been run with doNotReturnRunDataSavePerWorkerOnly
+# set to FALSE, otherwise the workUnit-<i>.RDS files hold only parameter indices
+# and log likelihoods. For the per variable results use readPerVarFile instead.
 loadClusterRuns <- function(location.output){
 	if(grepl('^/',location.output) && exists('baseWD')){
 		location.output <- system(paste0('realpath --relative-to="',baseWD,'" "',location.output,'"'),intern = T)
@@ -876,7 +881,6 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 	if(grepl('^/',location.output) && exists('baseWD')){
 		location.output <- system(paste0('realpath --relative-to="',baseWD,'" "',location.output,'"'),intern = T)
 	}
-	if(!exists('compressCsv')){compressCsv<-T}
 	varNames <- unique(parOutput[[1]]$origColNames)
 	workUnitLength <- length(parOutput)
 	perVarData <- list()
@@ -927,127 +931,427 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 	if(verbosity>0){
 		cat('\nWriting to files\n')
 	}
-	# outpuperVarOutputTypestTypes from config
-	for(outputType in perVarOutputTypes){
-		for(varName in varNames){
-			if(verbosity>0){
-				cat(sprintf('\rWriting var %i of %i: %s %s', run.i, workUnitLength, varName, rep(' ',100)))
-			}
-			dir.create(file.path(baseWD,location.output,'detectedParmSpace',paste0('PerVarFiles-',outputType),varName),
-								 showWarnings = F,recursive = T)
-			writePerVarFile(perVarData[[varName]],
-											file = file.path(baseWD,location.output,'detectedParmSpace',paste0('PerVarFiles-',outputType),varName,
-																			 paste0(varName,'-',workUnit.i,'-',workerID)),
-											outputType = outputType, compressCsv = compressCsv)
-		}
+	# The chunks are always written as a single plain uncompressed csv, no matter
+	# which final formats perVarOutputTypes asks for. mergePerVarFiles derives all
+	# of those from these intermediates by streaming them together, which needs
+	# them uncompressed and in one format only. See writePerVarChunkFile.
+	chunkFolder <- file.path(baseWD,location.output,'detectedParmSpace','PerVarChunks')
+	fullPrecision <- if(exists('perVarFullPrecision')){perVarFullPrecision}else{TRUE}
+	for(varName in varNames){
 		if(verbosity>0){
-			cat(sprintf('\rWriting logLike %s', rep(' ',100)))
+			cat(sprintf('\rWriting var %i of %i: %s %s', run.i, workUnitLength, varName, rep(' ',100)))
 		}
-		dir.create(file.path(baseWD,location.output,'detectedParmSpace',paste0('PerVarFiles-',outputType),'logLike'),
-						 showWarnings = F,recursive = T)
-		writePerVarFile(logLike,
-										file.path(baseWD,location.output,'detectedParmSpace',paste0('PerVarFiles-',outputType),'logLike',
-															paste0('logLike','-',workUnit.i,'-',workerID)),
-										outputType = outputType, compressCsv = compressCsv)
+		dir.create(file.path(chunkFolder,varName),showWarnings = F,recursive = T)
+		writePerVarChunkFile(perVarData[[varName]],
+												 file.path(chunkFolder,varName,
+												 					paste0(varName,'-',workUnit.i,'-',workerID,'.csv')),
+												 fullPrecision=fullPrecision)
 	}
+	if(verbosity>0){
+		cat(sprintf('\rWriting logLike %s', rep(' ',100)))
+	}
+	dir.create(file.path(chunkFolder,'logLike'),showWarnings = F,recursive = T)
+	writePerVarChunkFile(logLike,
+											 file.path(chunkFolder,'logLike',
+											 					paste0('logLike','-',workUnit.i,'-',workerID,'.csv')),
+											 fullPrecision=fullPrecision)
 	if(verbosity>0){
 		cat('\n')
 	}
 	return(logLike)
 }
 
-workerReadPerVarFiles <- function(i,outputType,perVarSubfolder,fileList){
-	readPerVarFile(file.path(perVarSubfolder,fileList[i]))
-}
-workerMergePerVarFiles <- function(v.i,outputType,outputTypeFolder,varNames,verbosity=0,
-																	 compressCsv=T,mode=2,numSampleForPreallocation=0){
-	varName <- varNames[v.i]
-	perVarSubfolder <- file.path(outputTypeFolder,varName)
-	fileList <- naturalsort(list.files(perVarSubfolder))
-	if(verbosity>0){cat(sprintf('Processing %i files of %s...',length(fileList),varName))}
-	if(verbosity>0){cat('reading and merging...')}
-	if(mode==1){
-		if(verbosity>0){cat('mode 1...')}
-		filesContents.lst <- list()
-		filesContents.lst[[1]] <- readPerVarFile(file.path(perVarSubfolder,fileList[1]),outputType)
-		for(f.i in 2:length(fileList)){
-			filesContents.lst[[f.i]] <- readPerVarFile(file.path(perVarSubfolder,fileList[f.i]),outputType)
-			# hack to deal with incomplete runs messing up column headers
-			# proper fix is in data generation, but this will make old results work
-			colnames(filesContents.lst[[f.i]]) <- colnames(filesContents.lst[[1]])
-		}
-		rbindStr <- paste0('varData <- base::rbind(filesContents.lst[[',
-											 paste(1:length(filesContents.lst),
-											 			collapse = ']],filesContents.lst[['),
-											 ']])')
-		eval(parse(text=rbindStr))
-		colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
-	} else if(mode==2){
-		if(verbosity>0){cat('mode 2...')}
-		firstContent <- readPerVarFile(file.path(perVarSubfolder,fileList[1]),outputType)
-		if('logLike' %in% colnames(firstContent)){
-			firstContentColnames <- colnames(firstContent)
-		} else {
-			firstContentColnames <- colnames(firstContent)[
-				1:(which(colnames(firstContent)=='1980'|colnames(firstContent)=='X1980')[1]-1)]
-			firstContentColnames <- c(firstContentColnames,as.character(
-				1980:(1980+length(colnames(firstContent))-length(firstContentColnames)-1)))
-		}
-		colnames(firstContent) <- firstContentColnames
-		# initialise data frame
-		dfString <- paste0("varData <- data.frame(",
-											 paste0("'",firstContentColnames,"' = double(",
-											 			 numSampleForPreallocation,")",collapse=","),")")
-		eval(parse(text=dfString))
-		# replace automatically added Xs before the year col names with nothing
-		# using regex with lookahead to make sure we only replace the initial X if it is
-		# actually only followed by numbers
-		colnames(varData) <- gsub('^X(?=\\d+$)','',colnames(varData),perl=T)
-		varData[1:nrow(firstContent),firstContentColnames] <- firstContent
-		lastIndex <- nrow(firstContent)
-		for(f.i in 2:length(fileList)){
-			nextFileContent <- readPerVarFile(file.path(perVarSubfolder,fileList[f.i]),outputType)
-			if('logLike' %in% colnames(nextFileContent)){
-				nextFileContentColnames <- colnames(nextFileContent)
-			} else {
-				nextFileContentColnames <- colnames(nextFileContent)[
-					1:(which(colnames(nextFileContent)=='1980'|colnames(nextFileContent)=='X1980')[1]-1)]
-				nextFileContentColnames <- c(nextFileContentColnames,as.character(
-					1980:(1980+length(colnames(nextFileContent))-length(nextFileContentColnames)-1)))
+# per variable chunk and merged file handling ####
+# The workers write one plain uncompressed csv per (variable, work unit, worker)
+# into
+#   <location.output>/detectedParmSpace/PerVarChunks/<varName>/
+# mergePerVarFiles then assembles one file per variable and per requested final
+# format into
+#   <location.output>/detectedParmSpace/PerVarFiles-<outputType>/<varName>.<ext>
+# The merge streams the chunks into the final file rather than holding them in
+# memory, so its memory use does not grow with numSample. See
+# workerMergePerVarFiles.
+
+# fwritePerVarCsv ####
+# The one place per variable csv is written, so that chunks and merged files
+# agree on their format down to the byte.
+# fwrite writes doubles with 15 significant digits, which is not enough to
+# reproduce a double exactly. fullPrecision spells them out in full instead,
+# which costs about three times the writing time and 10% more bytes. It matters
+# here because the merged files, the RDS included, are built from these csvs
+# rather than from the doubles themselves.
+# The marker for a failed run is chosen to survive either setting, see
+# logLike.failedRun.
+fwritePerVarCsv <- function(varData,file,fullPrecision=TRUE,compress='none'){
+	if(fullPrecision){
+		varData <- data.table::as.data.table(varData)
+		for(j in seq_along(varData)){
+			if(is.double(varData[[j]])){
+				data.table::set(varData,j=j,value=sprintf('%.17g',varData[[j]]))
 			}
-			colnames(nextFileContent) <- nextFileContentColnames
-			varData[(lastIndex+1):(lastIndex+nrow(nextFileContent)),nextFileContentColnames] <- nextFileContent
-			lastIndex <- lastIndex+nrow(nextFileContent)
 		}
 	}
-	# the order files are read in may be shuffled so sort
-	varData <- sort_by(varData,varData[,1])
-	if(verbosity>0){cat('writing...')}
-	writePerVarFile(varData,file.path(outputTypeFolder,varName),
-									outputType=outputType,compressCsv=compressCsv)
+	data.table::fwrite(varData,file,quote=FALSE,na='NA',nThread=1,
+										 showProgress=FALSE,compress=compress)
+}
+
+# writePerVarChunkFile ####
+# Writes a single chunk of one variable. Always plain uncompressed csv with an
+# unquoted header, so that all chunks of a variable share a byte identical
+# header line and can be concatenated without being parsed.
+writePerVarChunkFile <- function(varData,file,fullPrecision=TRUE){
+	fwritePerVarCsv(varData,file,fullPrecision=fullPrecision,compress='none')
+}
+
+# peekCsvBounds ####
+# Cheap probe of a chunk csv. Returns its header line, the byte offset at which
+# the data starts, and the id (first column) of its first and its last data row,
+# without parsing the file. Returns NULL when the file is empty, has no data
+# rows, or does not end on a complete line, which is what a worker that died
+# mid write leaves behind.
+peekCsvBounds <- function(file,tailBytes=65536L){
+	size <- file.info(file)$size
+	if(is.na(size) || size<=0){return(NULL)}
+	con <- file(file,'rb')
+	on.exit(close(con),add=TRUE)
+	# header line, and with it the offset at which the data starts
+	headBuf <- readBin(con,'raw',n=min(size,tailBytes))
+	nlPos <- which(headBuf==as.raw(10L))
+	if(length(nlPos)<2){return(NULL)} # need a header and at least one data line
+	header <- sub('\r$','',rawToChar(headBuf[1:(nlPos[1]-1L)]))
+	firstLine <- rawToChar(headBuf[(nlPos[1]+1L):(nlPos[2]-1L)])
+	# last data line, read from the tail of the file. Widen the window in the
+	# unlikely case that it does not hold two line endings.
+	window <- min(size,as.numeric(tailBytes))
+	repeat{
+		seek(con,size-window)
+		tailBuf <- readBin(con,'raw',n=window)
+		nlTail <- which(tailBuf==as.raw(10L))
+		if(length(nlTail)>=2 || window>=size){break}
+		window <- min(size,window*8)
+	}
+	if(length(nlTail)<2 || nlTail[length(nlTail)]!=length(tailBuf)){
+		return(NULL) # truncated, the file does not end on a complete line
+	}
+	lastLine <- rawToChar(tailBuf[(nlTail[length(nlTail)-1L]+1L):(nlTail[length(nlTail)]-1L)])
+	firstId <- suppressWarnings(as.numeric(sub(',.*','',firstLine)))
+	lastId <- suppressWarnings(as.numeric(sub(',.*','',lastLine)))
+	if(is.na(firstId) || is.na(lastId)){return(NULL)}
+	return(list(file=file,header=header,dataOffset=nlPos[1],
+							firstId=firstId,lastId=lastId,size=size))
+}
+
+# verifyChunkOrder ####
+# Decides whether the chunks of one variable can simply be concatenated in id
+# order. Returns a list with
+#   ok     TRUE when concatenating is safe
+#   reason why it is not, when it is not
+#   bounds the chunk bounds ordered by their first id
+#   warn   things that are odd but do not make concatenating wrong
+# Concatenating is safe when all chunks agree on their header, each chunk is
+# itself ascending in its first column, and the chunks do not overlap. Gaps in
+# the id coverage do not make the result wrong, only incomplete, so they are
+# reported as a warning rather than rejected. That is also all the fallback
+# path could do about them.
+verifyChunkOrder <- function(bounds,expectedFirstId=1){
+	warn <- character(0)
+	if(length(bounds)==0){
+		return(list(ok=FALSE,reason='no chunk files',bounds=bounds,warn=warn))
+	}
+	bad <- vapply(bounds,is.null,logical(1))
+	if(any(bad)){
+		return(list(ok=FALSE,
+								reason=sprintf('%i of %i chunk files are empty or truncated',
+															 sum(bad),length(bad)),
+								bounds=bounds,warn=warn))
+	}
+	headers <- vapply(bounds,function(b){b$header},character(1))
+	if(any(headers!=headers[1])){
+		return(list(ok=FALSE,
+								reason=sprintf('chunk files disagree on their header (%i distinct ones)',
+															 length(unique(headers))),
+								bounds=bounds,warn=warn))
+	}
+	firstIds <- vapply(bounds,function(b){b$firstId},double(1))
+	lastIds <- vapply(bounds,function(b){b$lastId},double(1))
+	if(any(lastIds<firstIds)){
+		return(list(ok=FALSE,reason='a chunk file is not sorted by its first column',
+								bounds=bounds,warn=warn))
+	}
+	ord <- order(firstIds)
+	bounds <- bounds[ord]
+	firstIds <- firstIds[ord]
+	lastIds <- lastIds[ord]
+	if(length(bounds)>1){
+		overlap <- firstIds[-1]<=lastIds[-length(lastIds)]
+		if(any(overlap)){
+			return(list(ok=FALSE,
+									reason=sprintf('the id ranges of %i chunk files overlap',sum(overlap)+1),
+									bounds=bounds,warn=warn))
+		}
+		gaps <- sum(firstIds[-1]!=(lastIds[-length(lastIds)]+1))
+		if(gaps>0){
+			warn <- c(warn,sprintf('%i gap(s) in the id coverage of the chunk files',gaps))
+		}
+	}
+	if(firstIds[1]!=expectedFirstId){
+		warn <- c(warn,sprintf('the chunk files start at id %g rather than %g',
+													 firstIds[1],expectedFirstId))
+	}
+	return(list(ok=TRUE,reason=NA_character_,bounds=bounds,warn=warn))
+}
+
+# coercePerVarTypes ####
+# fread infers each column type from the values it happens to see, so an id
+# column, or a variable that holds only whole numbers in this particular run,
+# would come back as integer. The per variable data is a double matrix when the
+# workers build it, so put every column back to double.
+coercePerVarTypes <- function(d){
+	for(cn in names(d)){
+		if(!is.double(d[[cn]])){
+			data.table::set(d,j=cn,value=as.double(d[[cn]]))
+		}
+	}
+	invisible(d)
+}
+
+# rbindChunkList ####
+# Row binds the chunks of one variable, used by the paths that cannot simply
+# concatenate. When all chunks agree on their number of columns the names of the
+# first are imposed on all of them, which is what makes headers that differ only
+# in how they were written (X1980 versus 1980) mergeable. Chunks of differing
+# width are matched by name and padded instead.
+rbindChunkList <- function(chunks){
+	nCol <- vapply(chunks,ncol,integer(1))
+	if(all(nCol==nCol[1])){
+		for(k in seq_along(chunks)){
+			data.table::setnames(chunks[[k]],names(chunks[[1]]))
+		}
+	}
+	return(data.table::rbindlist(chunks,use.names=TRUE,fill=TRUE))
+}
+
+# concatChunkCsvs ####
+# Streams the data rows (header line skipped) of the given chunk files into an
+# open binary connection. Nothing is parsed and never more than blockSize bytes
+# are held at once, so the memory used is independent of how large the variable
+# is.
+concatChunkCsvs <- function(bounds,outCon,blockSize=32L*1024L*1024L){
+	for(b in bounds){
+		con <- file(b$file,'rb')
+		seek(con,b$dataOffset)
+		repeat{
+			buf <- readBin(con,'raw',n=blockSize)
+			if(length(buf)==0){break}
+			writeBin(buf,outCon)
+		}
+		close(con)
+	}
+	invisible(NULL)
+}
+
+# openCsvGzSink ####
+# A binary connection that gzips into file. Prefers piping through the gzip
+# binary, so that compressing happens in its own process alongside the reading
+# R process, and falls back to Rs own gzfile.
+openCsvGzSink <- function(file){
+	gzBin <- ''
+	if(nzchar(Sys.which('pigz'))){
+		gzBin <- 'pigz -p 1 -c'
+	} else if(nzchar(Sys.which('gzip'))){
+		gzBin <- 'gzip -c'
+	}
+	if(nzchar(gzBin)){
+		con <- try(pipe(paste0(gzBin,' > ',shQuote(file)),'wb'),silent=TRUE)
+		if(!inherits(con,'try-error')){return(con)}
+	}
+	return(gzfile(file,'wb'))
+}
+
+# workerMergePerVarFiles ####
+# Merges all chunk files of one variable into one final file per requested
+# output type.
+# The fast path concatenates the chunk csvs byte wise in id order, which needs
+# neither parsing nor sorting nor holding the variable in memory. It is taken
+# whenever verifyChunkOrder says the chunks line up, which is what the work unit
+# and per worker splitting in clusterRunFridaForSamplePoints produces. Otherwise
+# everything is read in, sorted and written out, which is correct but needs the
+# whole variable in memory.
+workerMergePerVarFiles <- function(v.i,varNames,chunkFolder,outputFolder,
+																	 outputTypes=perVarOutputTypes,
+																	 verbosity=0,compressCsv=T,rdsCompress=TRUE,
+																	 fullPrecision=TRUE){
+	varName <- varNames[v.i]
+	perVarSubfolder <- file.path(chunkFolder,varName)
+	fileList <- file.path(perVarSubfolder,naturalsort(list.files(perVarSubfolder)))
+	if(length(fileList)==0){
+		if(verbosity>0){cat(sprintf('No chunk files for %s, skipping\n',varName))}
+		return(invisible(NULL))
+	}
+	if(verbosity>0){cat(sprintf('Processing %i files of %s...',length(fileList),varName))}
+	if(length(outputTypes)==0 || !all(outputTypes %in% c('RDS','csv'))){
+		stop(sprintf('outputTypes must be a non empty subset of RDS and csv, is c(%s)\n',
+								 paste0("'",outputTypes,"'",collapse=',')))
+	}
+	outFile <- list()
+	for(outputType in outputTypes){
+		dir.create(file.path(outputFolder,paste0('PerVarFiles-',outputType)),
+							 showWarnings = F,recursive = T)
+		outFile[[outputType]] <- file.path(outputFolder,paste0('PerVarFiles-',outputType),varName)
+	}
+	wantCsv <- 'csv' %in% outputTypes
+	wantRDS <- 'RDS' %in% outputTypes
+	check <- verifyChunkOrder(lapply(fileList,peekCsvBounds))
+	for(w in check$warn){
+		warning(sprintf('%s: %s',varName,w),call.=FALSE,immediate.=TRUE)
+	}
+	if(check$ok){
+		if(verbosity>0){cat('streaming...')}
+		# an uncompressed csv is needed as an intermediate whenever an RDS is
+		# wanted. It is gzipped afterwards, or removed when no csv was asked for.
+		if(wantCsv){
+			plainCsv <- paste0(outFile[['csv']],'.csv')
+		} else {
+			plainCsv <- file.path(outputFolder,paste0('PerVarFiles-',outputTypes[1]),
+														paste0(varName,'-merging.csv'))
+		}
+		if(wantRDS || !compressCsv){
+			outCon <- file(plainCsv,'wb')
+		} else {
+			outCon <- openCsvGzSink(paste0(outFile[['csv']],'.csv.gz'))
+		}
+		writeBin(charToRaw(paste0(check$bounds[[1]]$header,'\n')),outCon)
+		concatChunkCsvs(check$bounds,outCon)
+		# for a pipe this is the exit status of the compressor, a truncated output
+		# would otherwise go unnoticed
+		status <- close(outCon)
+		if(is.numeric(status) && length(status)==1 && !is.na(status) && status!=0){
+			stop(sprintf('compressing the merged csv of %s failed with status %i\n',varName,status))
+		}
+		if(wantRDS){
+			if(verbosity>0){cat('RDS...')}
+			varData <- data.table::fread(plainCsv,nThread=1,showProgress=FALSE)
+			coercePerVarTypes(varData)
+			data.table::setDF(varData)
+			saveRDS(varData,paste0(outFile[['RDS']],'.RDS'),compress=rdsCompress)
+			rm(varData)
+		}
+		if(wantCsv && compressCsv && file.exists(plainCsv)){
+			if(verbosity>0){cat('gzip...')}
+			status <- system2('gzip',c('-f',shQuote(plainCsv)))
+			if(status!=0){
+				stop(sprintf('gzip of the merged csv of %s failed with status %i\n',varName,status))
+			}
+		} else if(!wantCsv){
+			unlink(plainCsv,force=TRUE)
+		}
+	} else {
+		warning(sprintf('%s: cannot concatenate the chunk files (%s), reading them all instead',
+										varName,check$reason),call.=FALSE,immediate.=TRUE)
+		if(verbosity>0){cat(sprintf('fallback (%s)...',check$reason))}
+		varData <- rbindChunkList(
+			lapply(fileList,data.table::fread,nThread=1,showProgress=FALSE))
+		data.table::setorderv(varData,names(varData)[1])
+		coercePerVarTypes(varData)
+		data.table::setDF(varData)
+		for(outputType in outputTypes){
+			writePerVarFile(varData,outFile[[outputType]],outputType=outputType,
+											compressCsv=compressCsv,rdsCompress=rdsCompress,
+											fullPrecision=fullPrecision)
+		}
+		rm(varData)
+	}
 	if(verbosity>0){cat('removing split files...')}
 	unlink(perVarSubfolder,recursive = T,force = T)
 	if(verbosity>0){cat('done\n')}
-	rm(list=c('varData','filesContents.lst'))
+	invisible(NULL)
 }
-workerMergePerVarFilesIndepProc <- function(v.i,outputType,outputTypeFolder,varNamesFileName,
-																						verbosity=0,compressCsv=T,mode=2,
-																						numSampleForPreallocation=0){
-	command <- paste0('Rscript workerFileMergeScript.R',' ',v.i,' ',outputType,
-										' "',outputTypeFolder,'" ',
-									 varNamesFileName,' ',verbosity,' ',compressCsv,' ',mode,' ',
-										numSampleForPreallocation)
+
+# workerMergePerVarFilesIndepProc ####
+# Same as workerMergePerVarFiles but in a process of its own, so that the memory
+# of the fallback path is handed back to the OS after every variable.
+workerMergePerVarFilesIndepProc <- function(v.i,varNamesFileName,chunkFolder,outputFolder,
+																						outputTypes,verbosity=0,compressCsv=T,
+																						rdsCompress=TRUE,fullPrecision=TRUE,
+																						baseWD=getwd()){
+	command <- paste('Rscript',shQuote(file.path(baseWD,'workerFileMergeScript.R')),
+									 v.i,shQuote(varNamesFileName),shQuote(chunkFolder),
+									 shQuote(outputFolder),shQuote(paste(outputTypes,collapse=',')),
+									 verbosity,compressCsv,rdsCompress,fullPrecision,shQuote(baseWD))
 	if(verbosity>1){
 		cat(command)
 		cat('\n')
 	}
-	system(paste('Rscript workerFileMergeScript.R',v.i,outputType,outputTypeFolder,
-							 varNamesFileName,verbosity,compressCsv))
+	status <- system(command)
+	if(status!=0){
+		warning(sprintf('merge subprocess for variable %i exited with status %i',v.i,status),
+						call.=FALSE)
+	}
+	invisible(status)
 }
+
+# workerMergePerVarFilesLegacy ####
+# Merges chunk files that sit per output type in PerVarFiles-<outputType>/<varName>/
+# rather than in the csv tree in PerVarChunks/. Reads them all at once, so it
+# needs the whole variable in memory.
+workerMergePerVarFilesLegacy <- function(v.i,varNames,outputTypeFolder,outputType,
+																				 verbosity=0,compressCsv=T,rdsCompress=TRUE,
+																				 fullPrecision=TRUE){
+	varName <- varNames[v.i]
+	perVarSubfolder <- file.path(outputTypeFolder,varName)
+	fileList <- file.path(perVarSubfolder,naturalsort(list.files(perVarSubfolder)))
+	if(length(fileList)==0){
+		if(verbosity>0){cat(sprintf('No legacy chunk files for %s, skipping\n',varName))}
+		return(invisible(NULL))
+	}
+	if(verbosity>0){cat(sprintf('Processing %i legacy files of %s...',length(fileList),varName))}
+	varData <- rbindChunkList(
+		lapply(fileList,function(f){
+			d <- data.table::as.data.table(readPerVarFile(f,outputType))
+			data.table::setnames(d,gsub('(^X)([0-9]{4})','\\2',names(d),perl = T))
+			d
+		}))
+	data.table::setorderv(varData,names(varData)[1])
+	coercePerVarTypes(varData)
+	data.table::setDF(varData)
+	writePerVarFile(varData,file.path(outputTypeFolder,varName),outputType=outputType,
+									compressCsv=compressCsv,rdsCompress=rdsCompress,
+									fullPrecision=fullPrecision)
+	unlink(perVarSubfolder,recursive = T,force = T)
+	if(verbosity>0){cat('done\n')}
+	invisible(NULL)
+}
+
+# startFileMergeCluster ####
+# A PSOCK cluster set up to run the merge workers. Sourcing is done from baseWD
+# rather than from the inherited working directory, which is not necessarily the
+# project root.
+startFileMergeCluster <- function(numWorkersFileMerge,baseWD){
+	clFileMerge <- makePSOCKcluster(numWorkersFileMerge)
+	clusterExport(clFileMerge,'baseWD',envir=environment())
+	gobble <- clusterEvalQ(clFileMerge,{
+		suppressPackageStartupMessages(
+			library(data.table,quietly=TRUE,warn.conflicts=FALSE))
+		# we parallelise over variables, no additional OpenMP threads please
+		data.table::setDTthreads(1)
+		source(file.path(baseWD,'funRunFRIDA.R'))
+		source(file.path(baseWD,'naturalsort.R'))
+	})
+	return(clFileMerge)
+}
+
+# mergePerVarFiles ####
+# Assembles the per chunk files the workers wrote into one file per variable,
+# for every format in outputTypes.
+# parStrat 1 processes the variables one after another in this process, 2 (the
+# default) spreads them over a PSOCK cluster of numWorkersFileMerge workers and
+# 3 gives every variable its own R process.
 mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T,
-														 numSampleForPreallocation=numSample,
 														 outputTypeFoldersOverride = NULL,
-														 varNamesOverride = NULL){
+														 varNamesOverride = NULL,
+														 outputTypes=perVarOutputTypes,
+														 rdsCompress=if(exists('perVarRdsCompress')){perVarRdsCompress}else{TRUE},
+														 fullPrecision=if(exists('perVarFullPrecision')){perVarFullPrecision}else{TRUE}){
 	if(verbosity>0){
 		cat('Merging per Var files\n')
 	}
@@ -1055,11 +1359,101 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T,
 	if(grepl('^/',location.output) && exists('baseWD')){
 		location.output <- system(paste0('realpath --relative-to="',baseWD,'" "',location.output,'"'),intern = T)
 	}
+	baseWD <- if(exists('baseWD')){baseWD}else{getwd()}
 	outputFolder <- file.path(baseWD,location.output,'detectedParmSpace')
 	# ensure detectedParmSpace is not duplicated
 	while(grepl('/detectedParmSpace/detectedParmSpace',outputFolder)){
 		outputFolder <- gsub('/detectedParmSpace/detectedParmSpace','/detectedParmSpace',outputFolder)
 	}
+	chunkFolder <- file.path(outputFolder,'PerVarChunks')
+	if(!dir.exists(chunkFolder)){
+		if(verbosity>0){
+			cat(sprintf('No %s, looking for chunk folders of the previous layout\n',chunkFolder))
+		}
+		return(invisible(mergePerVarFilesLegacy(outputFolder=outputFolder,baseWD=baseWD,
+																						verbosity=verbosity,parStrat=parStrat,
+																						compressCsv=compressCsv,
+																						rdsCompress=rdsCompress,
+																						fullPrecision=fullPrecision,
+																						outputTypeFoldersOverride=outputTypeFoldersOverride,
+																						varNamesOverride=varNamesOverride)))
+	}
+	if(!is.null(varNamesOverride)){
+		varNames <- varNamesOverride
+	} else {
+		varNames <- basename(list.dirs(chunkFolder,recursive = F))
+	}
+	if(verbosity>0){
+		cat(sprintf('Entering %s\n',chunkFolder))
+		cat(sprintf('Found %i variable sub folder(s), writing %s\n',
+								length(varNames),paste(outputTypes,collapse=' and ')))
+	}
+	if(length(varNames)==0){
+		return(invisible(NULL))
+	}
+	if(parStrat==1){
+		for(v.i in 1:length(varNames)){
+			if(verbosity>0){cat(sprintf('(%i of %i) ',v.i,length(varNames)))}
+			workerMergePerVarFiles(v.i,varNames=varNames,chunkFolder=chunkFolder,
+														 outputFolder=outputFolder,outputTypes=outputTypes,
+														 verbosity=verbosity,compressCsv=compressCsv,
+														 rdsCompress=rdsCompress,
+														 fullPrecision=fullPrecision)
+		}
+	} else if(parStrat==2){
+		if(verbosity>0){cat(sprintf('Parallel proccessing all vars with %i workers\n',numWorkersFileMerge))}
+		clFileMerge <- startFileMergeCluster(numWorkersFileMerge,baseWD)
+		gobble <- parLapplyLB(clFileMerge,1:length(varNames),workerMergePerVarFiles,
+													varNames=varNames,
+													chunkFolder=chunkFolder,
+													outputFolder=outputFolder,
+													outputTypes=outputTypes,
+													compressCsv=compressCsv,
+													rdsCompress=rdsCompress,
+													fullPrecision=fullPrecision,
+													chunk.size = 1)
+		stopCluster(clFileMerge)
+	} else if(parStrat==3){
+		if(verbosity>0){cat(sprintf('Parallel proccessing all vars with %i workers in independent processes\n',numWorkersFileMerge))}
+		varNamesFileName <- file.path(baseWD,paste0('tempVarNamesListForFileMerge',
+																								gsub('\\.','-',format(Sys.time(), "%Y-%m-%d-%H-%M-%OS3")),
+																								'.RDS'))
+		saveRDS(varNames,varNamesFileName)
+		clFileMerge <- makePSOCKcluster(numWorkersFileMerge)
+		gobble <- parLapplyLB(clFileMerge,1:length(varNames),workerMergePerVarFilesIndepProc,
+													varNamesFileName=varNamesFileName,
+													chunkFolder=chunkFolder,
+													outputFolder=outputFolder,
+													outputTypes=outputTypes,
+													verbosity=verbosity,
+													compressCsv=compressCsv,
+													rdsCompress=rdsCompress,
+													fullPrecision=fullPrecision,
+													baseWD=baseWD,
+													chunk.size = 1)
+		stopCluster(clFileMerge)
+		unlink(varNamesFileName,force = T)
+	} else {
+		stop('unkown parStrat\n')
+	}
+	# every worker removes its own variable sub folder, so this should be empty
+	if(length(list.files(chunkFolder,all.files = T,no.. = T))==0){
+		unlink(chunkFolder,recursive = T,force = T)
+	} else {
+		warning(sprintf('%s is not empty after merging, leaving it in place',chunkFolder),
+						call.=FALSE,immediate.=TRUE)
+	}
+	if(verbosity>0){cat('done\n')}
+	invisible(NULL)
+}
+
+# mergePerVarFilesLegacy ####
+# The merge for the chunk layout where every output type has its own tree of
+# chunk files, rather than the single csv tree in PerVarChunks/.
+mergePerVarFilesLegacy <- function(outputFolder,baseWD,verbosity=1,parStrat=2,
+																	 compressCsv=T,rdsCompress=TRUE,fullPrecision=TRUE,
+																	 outputTypeFoldersOverride = NULL,
+																	 varNamesOverride = NULL){
 	if(!is.null(outputTypeFoldersOverride)){
 		outputTypeFolders <- outputTypeFoldersOverride
 	} else {
@@ -1067,10 +1461,8 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T,
 	}
 	for(outputTypeFolder in outputTypeFolders){
 		outputType <- strsplit(outputTypeFolder,'-')[[1]][2]
-		if(!outputType %in% perVarOutputTypes){
-			stop(sprintf(
-				'Bug in processing script causing incorrect output type to be specified\n %s not in perVarOutputTypes',
-				outputType))
+		if(is.na(outputType) || !outputType %in% perVarOutputTypes){
+			next
 		}
 		outputTypeFolder <- file.path(outputFolder,outputTypeFolder)
 		if(verbosity>0){cat(paste('Entering',outputTypeFolder,'\n'))}
@@ -1085,73 +1477,32 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T,
 		}
 		if(parStrat==1){
 			for(v.i in 1:length(varNames)){
-				varName <- varNames[v.i]
-				perVarSubfolder <- file.path(outputTypeFolder,varName)
-				fileList <- naturalsort(list.files(perVarSubfolder))
-				if(verbosity>0){cat(sprintf('(%i of %i) Processing %i files of %s...reading...',
-																		v.i, length(varNames),
-																		length(fileList),varName))}
-				filesContents.lst <- parLapply(cl,1:length(fileList),workerReadPerVarFiles,
-																			 outputType=outputType,
-																			 perVarSubfolder=perVarSubfolder,
-																			 fileList=fileList)
-				if(verbosity>0){cat('merging...')}
-				varData <- filesContents.lst[[1]]
-				for(i in 2:length(filesContents.lst)){
-					colnames(filesContents.lst[[i]]) <- colnames(varData)
-				}
-				rbindStr <- paste0('varData <- base::rbind(filesContents.lst[[',
-													 paste(1:length(filesContents.lst),
-													 			collapse = ']],filesContents.lst[['),
-													 ']])')
-				eval(parse(text=rbindStr))
-				varData <- sort_by(varData,varData[,1])
-				colnames(varData) <- gsub('(^X)([0-9]{4})','\\2',colnames(varData),perl = T)
-				if(verbosity>0){cat('writing...')}
-				writePerVarFile(varData,file.path(outputTypeFolder,varName),
-												outputType = outputType,
-												compressCsv = compressCsv)
-				if(verbosity>0){cat('removing split files...')}
-				unlink(perVarSubfolder,recursive = T,force = T)
-				if(verbosity>0){cat('done\n')}
+				if(verbosity>0){cat(sprintf('(%i of %i) ',v.i,length(varNames)))}
+				workerMergePerVarFilesLegacy(v.i,varNames=varNames,
+																		 outputTypeFolder=outputTypeFolder,
+																		 outputType=outputType,verbosity=verbosity,
+																		 compressCsv=compressCsv,rdsCompress=rdsCompress,
+																		 fullPrecision=fullPrecision)
 			}
-		} else if(parStrat==2){
-			if(verbosity>0){cat(sprintf('Parallel proccessing all vars with %i workers\n',numWorkersFileMerge))}
-			clFileMerge <- makePSOCKcluster(numWorkersFileMerge)
-			gobble <- clusterEvalQ(clFileMerge,source('funRunFRIDA.R'))
-			gobble <- clusterEvalQ(clFileMerge,source('naturalsort.R'))
-			parLapplyLB(clFileMerge,1:length(varNames),workerMergePerVarFiles,
-								outputType=outputType,
-								outputTypeFolder=outputTypeFolder,
-								varNames=varNames,
-								compressCsv=compressCsv,
-								numSampleForPreallocation=numSampleForPreallocation,
-								chunk.size = 1)
-			stopCluster(clFileMerge)
-			if(verbosity>0){cat('done\n')}
-		} else if(parStrat==3){
-			if(verbosity>0){cat(sprintf('Parallel proccessing all vars with %i workers in independent processes\n',numWorkersFileMerge))}
-			varNamesFileName <- paste0('tempVarNamesListForFileMerge',
-																 gsub('\\.','-',format(Sys.time(), "%Y-%m-%d-%H-%M-%OS3")),
-																 '.RDS')
-			saveRDS(varNames,varNamesFileName)
-			clFileMerge <- makePSOCKcluster(numWorkersFileMerge)
-			gobble <- parLapplyLB(clFileMerge,1:length(varNames),workerMergePerVarFilesIndepProc,
-									outputType=outputType,
-									outputTypeFolder=outputTypeFolder,
-									varNamesFileName=varNamesFileName,
-									compressCsv=compressCsv,
-									numSampleForPreallocation=numSampleForPreallocation,
-									chunk.size = 1)
-			stopCluster(clFileMerge)
-			unlink(varNamesFileName,force = T)
-			if(verbosity>0){cat('done\n')}
 		} else {
-			stop('unkown parStrat\n')
+			if(verbosity>0){cat(sprintf('Parallel proccessing all vars with %i workers\n',numWorkersFileMerge))}
+			clFileMerge <- startFileMergeCluster(numWorkersFileMerge,baseWD)
+			gobble <- parLapplyLB(clFileMerge,1:length(varNames),workerMergePerVarFilesLegacy,
+														varNames=varNames,
+														outputTypeFolder=outputTypeFolder,
+														outputType=outputType,
+														compressCsv=compressCsv,
+														rdsCompress=rdsCompress,
+														fullPrecision=fullPrecision,
+														chunk.size = 1)
+			stopCluster(clFileMerge)
 		}
+		if(verbosity>0){cat('done\n')}
 	}
+	invisible(NULL)
 }
 
+# readPerVarFile ####
 readPerVarFile <- function(file,outputType=NULL){
 	if(is.null(outputType)){
 		outputType <- tools::file_ext(file)
@@ -1167,18 +1518,26 @@ readPerVarFile <- function(file,outputType=NULL){
 	fileNoExt <- gsub('\\.csv','',fileNoExt)
 	fileNoExt <- gsub('\\.RDS','',fileNoExt)
 	if(outputType=='csv'){
-		if(!file.exists(paste0(fileNoExt,'.csv')) && 
-			 file.exists(paste0(fileNoExt,'.csv.gz'))){
-			return(read.csv(gzfile(paste0(fileNoExt,'.csv.gz'))))
+		csvFile <- paste0(fileNoExt,'.csv')
+		if(!file.exists(csvFile) && file.exists(paste0(fileNoExt,'.csv.gz'))){
+			csvFile <- paste0(fileNoExt,'.csv.gz')
 		}
-		return(read.csv(paste0(fileNoExt,'.csv')))
-		
+		varData <- data.table::fread(csvFile,nThread=1,showProgress=FALSE)
+		coercePerVarTypes(varData)
+		# the callers index the result with data.frame semantics (varData[,-1]),
+		# which means something else on a data.table
+		data.table::setDF(varData)
+		# some files carry the X that read.csv puts in front of the year column names
+		colnames(varData) <- gsub('^X(?=\\d+$)','',colnames(varData),perl = T)
+		return(varData)
 	} else if(outputType=='RDS'){
 		return(readRDS(paste0(fileNoExt,'.RDS')))
 	}
 }
 
-writePerVarFile <- function(varData,file,outputType=NULL,compressCsv=T){
+# writePerVarFile ####
+writePerVarFile <- function(varData,file,outputType=NULL,compressCsv=T,rdsCompress=TRUE,
+													fullPrecision=TRUE){
 	if(is.null(outputType)){
 		outputType <- tools::file_ext(file)
 		if(outputType==''){
@@ -1194,13 +1553,18 @@ writePerVarFile <- function(varData,file,outputType=NULL,compressCsv=T){
 	fileNoExt <- gsub('\\.csv','',fileNoExt)
 	fileNoExt <- gsub('\\.RDS','',fileNoExt)
 	if(outputType=='csv'){
-		write.table(varData,paste0(fileNoExt,'.csv'),
-								row.names = F,sep=',')
 		if(compressCsv){
-			system(paste('gzip -f',paste0(fileNoExt,'.csv')))
+			fwritePerVarCsv(varData,paste0(fileNoExt,'.csv.gz'),
+										fullPrecision=fullPrecision,compress='gzip')
+			# fwrite compresses straight into the .gz, so an uncompressed leftover of
+			# an earlier run would otherwise shadow it in readPerVarFile
+			unlink(paste0(fileNoExt,'.csv'),force=TRUE)
+		} else {
+			fwritePerVarCsv(varData,paste0(fileNoExt,'.csv'),
+										fullPrecision=fullPrecision,compress='none')
 		}
 	} else if(outputType=='RDS'){
-		saveRDS(varData,paste0(fileNoExt,'.RDS'))
+		saveRDS(varData,paste0(fileNoExt,'.RDS'),compress=rdsCompress)
 	} else {
 		stop('No outputType\n')
 	}

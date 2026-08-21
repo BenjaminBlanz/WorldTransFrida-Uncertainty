@@ -198,7 +198,7 @@ while(i<(length(workUnitBoundaries)-1)){
 	}
 	logLike <- c()
 	logLike[logLike.df$id] <- logLike.df$logLike
-	completeRunsSoFar <- sum(logLike > -.Machine$double.xmax+(200*.Machine$double.eps))
+	completeRunsSoFar <- sum(logLike > logLike.failedRun.max)
 	cat('\r   ')
 }
 cat(sprintf('\r    complete runs %i (%.2f%%), average chunk time %i sec (%.2f r/s, %.2f r/s/thread), over all run time %s %s\n',

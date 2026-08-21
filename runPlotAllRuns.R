@@ -4,6 +4,9 @@ source('initialise.R')
 source('config.R')
 outputFolder <- file.path(location.output,'detectedParmSpace')
 outputTypeFolders <- basename(list.dirs(outputFolder,recursive = F))
+# PerVarChunks holds the per chunk intermediates and is only there when a merge
+# was interrupted, it is not an output type folder
+outputTypeFolders <- outputTypeFolders[grepl('^PerVarFiles-',outputTypeFolders)]
 if(length(outputTypeFolders)==0){
 	stop('PerVar output folders have not been created yet. Outdated output.\n')
 }
@@ -69,7 +72,7 @@ for(plotWeightType in plotWeightTypes){
 		# log like ####
 		cat(' reading log likelihoods...\n')
 		logLike <- readPerVarFile(file.path(outputFolder,outputTypeFolder,'logLike'),outputType)$logLike
-		completeRunsSoFar <- sum(logLike > -.Machine$double.xmax+(1000*.Machine$double.eps))
+		completeRunsSoFar <- sum(logLike > logLike.failedRun.max)
 		cat(sprintf('Collected %i sample log likes, %i runs in data where complete\n',
 								numSample,completeRunsSoFar))
 		samplePoints$logLike <- logLike
@@ -91,7 +94,7 @@ for(plotWeightType in plotWeightTypes){
 	} else if(plotWeightType == 'completeEqually'){
 		# equal weighting of completed runs
 		samplePoints$plotWeight <- 0
-		samplePoints$plotWeight[samplePoints$logLike > -.Machine$double.xmax+(1000*.Machine$double.eps)] <- 1
+		samplePoints$plotWeight[samplePoints$logLike > logLike.failedRun.max] <- 1
 	}else if(plotWeightType == 'linearly'){
 		samplePoints$plotWeight <- order(logLike)/nrow(samplePoints)
 	} else {

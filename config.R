@@ -6,7 +6,13 @@ redoAllCalc <- F
 #	numWorkers <- min(parallel::detectCores(), 120)
 #}
 numWorkers <- parallel::detectCores()
-numWorkersFileMerge <- 5
+# Workers used to merge the per chunk files into one file per variable.
+# The merge streams the chunk files into the final file, so for csv only output
+# its memory footprint is a fixed buffer per worker and this can be set high.
+# If 'RDS' is among the perVarOutputTypes, budget roughly
+# numSample * length(outputDataYears) * 8 bytes per worker on top of that,
+# as building an RDS requires the whole variable to be in memory once.
+numWorkersFileMerge <- numWorkers
 # How large the chunks of work are, smaller means more frequent pauses to write out
 # itermediate results (and update the diagnostic output).
 chunkSizePerWorker <- 100
@@ -19,8 +25,36 @@ clusterType <- 'psock'
 # If true each worker writes its results to disk in a seperate file. This should be
 # much faster than handling all output in a single thread.
 writePerWorkerFiles <- TRUE
-doNotReturnRunDataSavePerWorkerOnly <- FALSE
+# When the workers write their own files, the run data is already on disk by the
+# time they return, so there is no reason to also serialise it back to the main
+# thread and store a second copy of it in workUnit-<i>.RDS. With this set the
+# workers return only the parameter index and the log likelihood, which is all
+# the main thread and the resume logic need. Costs about 207 kB per run of
+# memory in the main thread and as much again on disk when it is off.
+# Set it to FALSE if you need whole runs back, as verificationCases.R does via
+# loadClusterRuns. Plotting while running does not need it, that path already
+# turns writePerWorkerFiles off.
+doNotReturnRunDataSavePerWorkerOnly <- TRUE
+# Format(s) of the *final* one file per variable results.
+# The per chunk intermediates the workers write are always plain uncompressed
+# csv, mergePerVarFiles derives every requested final format from those.
 perVarOutputTypes <- c('RDS','csv')
+# gzip the final per variable csv files. The per chunk intermediates stay
+# uncompressed either way, so that the merge can concatenate them byte wise.
+compressCsv <- TRUE
+# compression of the final per variable RDS files. FALSE is markedly faster to
+# write and to read back, at the cost of much larger files.
+perVarRdsCompress <- TRUE
+# write the doubles of the per chunk csv intermediates with enough digits to
+# reproduce them exactly. The merged files, RDS included, are built from those
+# intermediates, so with this off they carry a relative error of some 1e-15
+# against what the model produced. Off writes the chunks about three times
+# faster and 10% smaller. The marker for a failed run (logLike.failedRun in
+# initialise.R) survives either setting.
+# Eps values indicating incomplete years of a run have now been chosen large enough to survive
+# the lower precision. None of the mode results require such high precision.
+# Safe to be off.
+perVarFullPrecision <- FALSE
 
 #plotting ####
 #related things

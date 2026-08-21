@@ -7,11 +7,14 @@ resSigma <- readRDS(file.path(location.output,'sigma-indepParms.RDS'))
 
 # run files ####
 # for input
-location.runFiles <- file.path(location.output,'detectedParmSpace')
-runFilesList <- list.files(location.runFiles,pattern = 'workUnit-[0-9]+\\.RDS')
-
-if(length(runFilesList)==0){
-	stop('no run files to process\nHave you run runMLEandParmSpace?\n')
+# The log likelihoods come from the merged per variable logLike file, so
+# mergePerVarFiles has to have run before this script.
+location.runFiles <- file.path(location.output,'detectedParmSpace',
+													 paste0('PerVarFiles-',perVarOutputTypes[1]))
+file.logLike <- file.path(location.runFiles,'logLike')
+if(!any(file.exists(paste0(file.logLike,c('.RDS','.csv','.csv.gz'))))){
+	stop(sprintf('no merged logLike file in %s\nHave you run runMLEandParmSpace, and did the per variable files get merged?\n',
+							 location.runFiles))
 }
 
 # read ####
@@ -32,22 +35,19 @@ if(ncol(samplePoints)!=nrow(sampleParms)){
 cat('done\n')
 
 # log like ####
-cat('reading log likelihoods...\n')
+cat('reading log likelihoods...')
 logLike <- rep(NA,numSample)
-completeRunsSoFar <- 0
-for(f.i in 1:length(runFilesList)){
-	cat(sprintf('\r chunk %i of %i',f.i,length(runFilesList)))
-	parOutput <- readRDS(file.path(location.output,'detectedParmSpace',paste0('workUnit-',f.i,'.RDS')))
-	for(l in 1:length(parOutput)){
-		logLike[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$logLike
-		if(!is.na(parOutput[[l]]$runDat[[1]][length(parOutput[[l]]$runDat[[1]])])){
-			completeRunsSoFar <- completeRunsSoFar + 1
-		}
-	}
-	rm(parOutput)
-}
-cat(sprintf('\r read %i files, collected %i sample log likes, %i runs in data where complete\n',
-						length(runFilesList),numSample,completeRunsSoFar))
+logLike.perVar <- readPerVarFile(file.logLike,outputType = perVarOutputTypes[1])
+logLike[logLike.perVar$id] <- logLike.perVar$logLike
+rm(logLike.perVar)
+# A complete run is one that produced a usable log likelihood. Runs that failed
+# or stopped early carry one of the logLike.failedRun markers instead. This is
+# the same test funRunFRIDA.R, runPlotAllRuns.R and runPolicyAnalysis.R apply,
+# and it is the one the logLike.badRM cutoff below uses, so the two counts this
+# script reports agree with each other.
+completeRunsSoFar <- sum(logLike > logLike.failedRun.max,na.rm = T)
+cat(sprintf('done\n collected %i sample log likes, %i runs in data where complete\n',
+						sum(!is.na(logLike)),completeRunsSoFar))
 
 
 samplePoints$logLike <- logLike
@@ -57,7 +57,7 @@ names(parVect) <- sampleParms$Variable
 baseLogLike <- -negLLike(parVect)
 
 logLike.badRM <- logLike
-logLike.badRM[logLike.badRM <= -.Machine$double.xmax+.Machine$double.eps*(1+nrow(calDat))] <- NA
+logLike.badRM[logLike.badRM <= logLike.failedRun.max] <- NA
 cat(sprintf('%i bad log likelihoods\n',sum(is.na(logLike.badRM))))
 png(file.path(location.output,'logLikeHist.png'),
 		width=10,height=10,res=150,units='cm')
