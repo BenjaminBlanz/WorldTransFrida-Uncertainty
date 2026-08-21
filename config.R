@@ -147,6 +147,10 @@ name.frida_branch <- 'main'
 # location of frida/stella for running
 baselocation.frida <-location.frida <- './FRIDAforUncertaintyAnalysis'
 baselocation.stella <- location.stella <- './Stella_Simulator_Linux'
+# git checkout the model files come from. FRIDAforUncertaintyAnalysis itself is an
+# rsync copy without the .git directory, so the version of frida in use has to be
+# read from here. Maintained by uncertainity_update_frida.sh.
+location.frida.git <- paste0(baselocation.frida,'Git')
 # location frida/stella is stored while the above is located in tmpfs
 location.frida.storage <- './FRIDAforUncertaintyAnalysis-store'
 location.stella.storage <- './Stella_Simulator_Linux-store'
@@ -267,3 +271,25 @@ file.copy(file.path(location.frida.configs,climateOverrideSpecFile),
 file.copy(file.path(location.frida.configs,climateOverrideSpecFileTS),
 					file.path(location.frida,'Data','ClimateSTAOverrideTS.csv'),T)
 
+# record the frida version ####
+# Which version of frida produced a set of results is not visible from the output
+# folder name, so write it into the folder itself.
+# Only the process that runs the analysis does this. Workers re-source this config
+# from their own work dirs, where writing the file would neither be correct nor
+# useful. They are the ones without setupTMPFS.R, same test as above.
+if(file.exists('setupTMPFS.R')&&exists('funWriteFridaVersionFile',mode='function')){
+	fridaVersion <- funWriteFridaVersionFile(
+		location.output,location.frida.git,location.frida,name.output,
+		# the files this analysis writes into the frida Data directory say nothing
+		# about the version of the model
+		exclude=c('climateFeedbackSwitches.csv','policyParameters.csv',
+							'ClimateSTAOverride.csv','ClimateSTAOverrideTS.csv',
+							name.fridaExportVarsFile,name.fridaInputFile,name.fridaOutputFile))
+	if(fridaVersion['commit']=='noGit'){
+		cat('FRIDA version: could not be determined, see fridaVersion.txt\n')
+	} else {
+		cat(sprintf('FRIDA version: %s (%s, %s)\n',
+								substr(fridaVersion['commit'],1,7),
+								fridaVersion['branch'],fridaVersion['date']))
+	}
+}

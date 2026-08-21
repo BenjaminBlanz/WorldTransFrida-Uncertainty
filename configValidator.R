@@ -298,6 +298,31 @@ if(!file.exists(cfgVal.stellaBin)){
 	cfgVal.error('stella simulator is not executable: %s',cfgVal.stellaBin)
 }
 
+# frida version ####
+# The version of frida used is recorded in fridaVersion.txt in the output folder.
+# That record is only as good as the git checkout it is read from.
+if(cfgVal.has('location.frida.git')){
+	if(!file.exists(file.path(location.frida.git,'.git'))){
+		cfgVal.warning('no git checkout at %s, the frida version can not be determined and will be recorded as noGit',
+									 location.frida.git)
+	} else if(isTRUE(cfgVal.fridaOK)&&exists('funFridaCheckoutDiff',mode='function')){
+		# the model directory is an rsync copy of the checkout, if the two have
+		# drifted apart the recorded commit does not describe the model being run.
+		# The edits uncertainity_update_frida.sh makes to FRIDA.stmx do not count,
+		# funFridaCheckoutDiff sorts that out.
+		cfgVal.checkoutDiff <- funFridaCheckoutDiff(
+			location.frida,location.frida.git,
+			exclude=c('climateFeedbackSwitches.csv','policyParameters.csv',
+								'ClimateSTAOverride.csv','ClimateSTAOverrideTS.csv',
+								name.fridaExportVarsFile,name.fridaInputFile,name.fridaOutputFile))
+		if(cfgVal.checkoutDiff$verdict=='differs'){
+			cfgVal.warning('the model in %s does not match the checkout in %s, so the recorded frida version will not describe the model being run: %s',
+										 location.frida,location.frida.git,
+										 funFridaCheckoutDiffNote(cfgVal.checkoutDiff))
+		}
+	}
+}
+
 # frida config files ####
 # These are copied into the frida Data directory by config.R. file.copy fails
 # silently, so check both that the source exists and that the copy actually

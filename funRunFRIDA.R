@@ -145,6 +145,185 @@ disk.free <- function(path = getwd()) {
 	}
 }
 
+# funFridaVersionInfo ####
+# Version of the frida model, read from the git checkout the model files were
+# rsynced from. FRIDAforUncertaintyAnalysis itself has no .git, it is an rsync
+# copy made with --exclude=".*".
+# Returns a named character vector. commit is 'noGit' when the checkout is not
+# available, so callers always have something to report.
+funFridaVersionInfo <- function(location.frida.git){
+	info <- c(commit='noGit',branch=NA,date=NA,author=NA,subject=NA,origin=NA)
+	if(is.null(location.frida.git)||!file.exists(file.path(location.frida.git,'.git'))){
+		return(info)
+	}
+	gitOut <- function(args){
+		out <- suppressWarnings(
+			try(system(sprintf('git -C "%s" %s 2>/dev/null',location.frida.git,args),
+								 intern=TRUE),silent=TRUE))
+		if(inherits(out,'try-error')||length(out)<1||is.na(out[1])||!nzchar(out[1])){
+			return(NA)
+		}
+		out[1]
+	}
+	commit <- gitOut('rev-parse HEAD')
+	if(is.na(commit)||!grepl('^[0-9a-f]+$',commit)){
+		return(info)
+	}
+	info['commit'] <- commit
+	info['branch'] <- gitOut('rev-parse --abbrev-ref HEAD')
+	info['date'] <- gitOut('log -1 --format=%cd --date=short')
+	info['author'] <- gitOut('log -1 --format=%an')
+	info['subject'] <- gitOut('log -1 --format=%s')
+	info['origin'] <- gitOut('config --get remote.origin.url')
+	return(info)
+}
+
+# funFridaFilesChecksum ####
+# Checksums the model files as they are actually run: FRIDA.stmx, the module
+# .itmx files and the input data. The files this analysis writes into the Data
+# directory are excluded, they say nothing about the model version and change
+# from run to run.
+# Returns the aggregate checksum and the md5 of each file, in path order.
+funFridaFilesChecksum <- function(location.frida,exclude=c()){
+	files <- list.files(location.frida,recursive=TRUE)
+	files <- sort(files[!basename(files)%in%exclude])
+	if(length(files)==0){
+		return(list(checksum=NA,files=character(0)))
+	}
+	md5s <- unname(tools::md5sum(file.path(location.frida,files)))
+	names(md5s) <- files
+	# base R has no hash for strings, so the aggregate is the md5 of the per file
+	# lines written out to a temporary file
+	aggFile <- tempfile()
+	writeLines(paste0(md5s,'  ',files),aggFile)
+	checksum <- unname(tools::md5sum(aggFile))
+	unlink(aggFile)
+	return(list(checksum=checksum,files=md5s))
+}
+
+# funFridaCheckoutDiff ####
+# Compares the model files that are actually run against the git checkout they
+# came from, to catch a checkout that has moved on since the last
+# uncertainity_update_frida.sh, in which case the recorded commit does not
+# describe the model being run.
+# Only files present in both are compared, the checkout has no Data files of ours
+# and we have no .git.
+# uncertainity_update_frida.sh edits FRIDA.stmx before it rsyncs the model out
+# (the sed on sim_specs plus FRIDAforAnalysis.patch). Those edits must not count
+# as a mismatch, so if FRIDA.stmx is the only file that differs and git reports
+# it as unmodified in the checkout, the difference is exactly the update script's
+# doing and the verdict stays clean.
+# verdict is one of
+#   inSync                   nothing differs
+#   updateScriptChangesOnly  only FRIDA.stmx differs, and only by those edits
+#   differs                  a real mismatch, name the files
+#   unknown                  nothing to compare against
+funFridaCheckoutDiff <- function(location.frida,location.frida.git,exclude=c()){
+	res <- list(compared=character(0),differing=character(0),
+							stmxPatched=NA,verdict='unknown')
+	if(is.null(location.frida.git)||!dir.exists(location.frida.git)){
+		return(res)
+	}
+	files <- list.files(location.frida,recursive=TRUE)
+	files <- sort(files[!basename(files)%in%exclude])
+	files <- files[file.exists(file.path(location.frida.git,files))]
+	if(length(files)==0){
+		return(res)
+	}
+	res$compared <- files
+	same <- unname(tools::md5sum(file.path(location.frida,files)))==
+		unname(tools::md5sum(file.path(location.frida.git,files)))
+	# unreadable files give NA, treat those as differing rather than as equal
+	res$differing <- files[!same%in%TRUE]
+	# has the update script applied its changes to the stmx in the checkout?
+	if(file.exists(file.path(location.frida.git,'.git'))){
+		status <- suppressWarnings(
+			try(system(sprintf('git -C "%s" status --porcelain -- FRIDA.stmx 2>/dev/null',
+												 location.frida.git),intern=TRUE),silent=TRUE))
+		if(!inherits(status,'try-error')){
+			res$stmxPatched <- length(status)>0&&any(grepl('^.?M',status))
+		}
+	}
+	if(length(res$differing)==0){
+		res$verdict <- 'inSync'
+	} else if(identical(res$differing,'FRIDA.stmx')&&isFALSE(res$stmxPatched)){
+		res$verdict <- 'updateScriptChangesOnly'
+	} else {
+		res$verdict <- 'differs'
+	}
+	return(res)
+}
+
+# funFridaCheckoutDiffNote ####
+# One line summary of funFridaCheckoutDiff, for the version file and the validator.
+funFridaCheckoutDiffNote <- function(cmp,maxNames=5){
+	if(cmp$verdict=='inSync'){
+		sprintf('all %i files shared with the checkout are identical',length(cmp$compared))
+	} else if(cmp$verdict=='updateScriptChangesOnly'){
+		sprintf('the %i other files shared with the checkout are identical, FRIDA.stmx differs only by the changes uncertainity_update_frida.sh applies to it',
+						length(cmp$compared)-1)
+	} else if(cmp$verdict=='differs'){
+		names <- cmp$differing
+		if(length(names)>maxNames){
+			names <- c(names[1:maxNames],sprintf('and %i more',length(names)-maxNames))
+		}
+		sprintf('%i of %i files shared with the checkout DIFFER (%s), re-run uncertainity_update_frida.sh',
+						length(cmp$differing),length(cmp$compared),paste(names,collapse=', '))
+	} else {
+		'could not be compared to the checkout'
+	}
+}
+
+# funWriteFridaVersionFile ####
+# Writes a human readable record of the model version into the output folder, so
+# that a result folder can still be traced back to a model version later.
+# The folder names are unchanged by this, all of the information lives in the file.
+funWriteFridaVersionFile <- function(location.output,location.frida.git,location.frida,
+																		 name.output=NULL,exclude=c(),
+																		 fileName='fridaVersion.txt'){
+	info <- funFridaVersionInfo(location.frida.git)
+	checksums <- funFridaFilesChecksum(location.frida,exclude=exclude)
+	orUnknown <- function(x){
+		if(is.null(x)||length(x)!=1||is.na(x)||!nzchar(as.character(x))){'unknown'}else{as.character(x)}
+	}
+	field <- function(label,value){sprintf('%-12s %s',label,orUnknown(value))}
+	# is the model directory still what the checkout says it is?
+	stmx <- file.path(location.frida,'FRIDA.stmx')
+	stmx.md5 <- if(file.exists(stmx)){unname(tools::md5sum(stmx))}else{NA}
+	cmp <- funFridaCheckoutDiff(location.frida,location.frida.git,exclude=exclude)
+	lines <- c('FRIDA model version used for this run',
+						 '=====================================',
+						 '',
+						 field('commit',info['commit']),
+						 field('branch',info['branch']),
+						 field('date',info['date']),
+						 field('author',info['author']),
+						 field('subject',info['subject']),
+						 field('origin',info['origin']),
+						 '',
+						 field('model dir',location.frida),
+						 field('git dir',location.frida.git),
+						 sprintf('%-12s %s  (md5 over %i files, listed below)',
+						 				'model files',orUnknown(checksums$checksum),length(checksums$files)),
+						 field('FRIDA.stmx',stmx.md5),
+						 field('vs checkout',funFridaCheckoutDiffNote(cmp)),
+						 '',
+						 'The model files are the checkout above after uncertainity_update_frida.sh',
+						 'has applied its cleanup and FRIDAforAnalysis.patch, so they do not match',
+						 'the commit byte for byte. The checksums below cover the model as it ran,',
+						 'excluding the files this analysis writes into the Data directory.',
+						 '',
+						 field('run',name.output),
+						 field('written',format(Sys.time(),'%Y-%m-%d %H:%M:%S')),
+						 '',
+						 'model file checksums',
+						 '--------------------',
+						 paste0(ifelse(is.na(checksums$files),strrep(' ',32),checksums$files),
+						 			 '  ',names(checksums$files)))
+	writeLines(lines,file.path(location.output,fileName))
+	invisible(info)
+}
+
 # runFridaParmsByIndex ####
 # Uses from global env:
 #   sampleParms,samplePoints,location.frida, and name.fridaInputFile
