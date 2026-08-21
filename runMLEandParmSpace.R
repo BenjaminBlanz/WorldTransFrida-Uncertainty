@@ -8,7 +8,7 @@ source('config.R')
 sink(file.path(location.output,'log.txt'),append=T)
 cat(paste0(
 	'\n###############################################################\n',
-	format(Sys.Date(), "%c"),
+	format(Sys.time(), "%c"),
 	location.output,
 	'\n###############################################################\n'))
 sink()
