@@ -632,3 +632,15 @@ while(newMaxFound){
 	# disable looping
 	newMaxFound <- F
 }
+
+# stop cluster ####
+# The sample point evaluation at the end of the loop above is the last thing that uses
+# the cluster. The scripts that run after this one share this R session, so a cluster
+# left running here would keep its workers alive for the rest of the job, and
+# setupTMPFS.R would take a still existing cl as the sign that it has nothing to do.
+if(exists('cl')){
+	cat('stopping cluster...')
+	tryCatch(stopCluster(cl),error=function(e){})
+	rm(cl)
+	cat('done\n')
+}
