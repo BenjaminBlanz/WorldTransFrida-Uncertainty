@@ -339,6 +339,10 @@ runFridaParmsByIndex <- function(runid,silent=T,policyMode=F,testStellaGood=F){
 			cat(row.names(samplePoints)[i],'\n')
 			sink()
 			writeFRIDAInput(colnames(samplePoints),samplePoints[i,],policyMode=policyMode)
+			# see runFRIDASpecParms, same reasoning. Here a stale read would not even fail,
+			# it would score this sample point with the results of the previous one.
+			outputFile <- file.path(location.frida,'Data',name.fridaOutputFile)
+			outputFile.mtimeBefore <- file.mtime(outputFile)
 			stella_simulator_exit_status <- system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',
 									 file.path(location.frida,'FRIDA.stmx')),
 						 ignore.stdout = silent,ignore.stderr = silent,wait = T)
@@ -349,8 +353,21 @@ runFridaParmsByIndex <- function(runid,silent=T,policyMode=F,testStellaGood=F){
 							 ignore.stdout = F,ignore.stderr = F,wait = T)
 				stop('Something wrong with stella simulator.\n')
 			}
-			runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
-			origColNames <- unname(unlist(read.table(file.path(location.frida,'Data',name.fridaOutputFile),
+			outputFile.mtimeAfter <- file.mtime(outputFile)
+			if(is.na(outputFile.mtimeAfter)||
+				 (!is.na(outputFile.mtimeBefore)&&outputFile.mtimeAfter<=outputFile.mtimeBefore)){
+				stop(sprintf(paste0('The stella simulator wrote no output for sample point %s.\n',
+														'  exit status: %i\n',
+														'  output file: %s\n',
+														'  %s\n',
+														'Reading it would have returned the result of an earlier run.\n'),
+										 row.names(samplePoints)[i],stella_simulator_exit_status,outputFile,
+										 ifelse(is.na(outputFile.mtimeAfter),'does not exist',
+										 			 sprintf('unchanged since %s',
+										 			 				format(outputFile.mtimeAfter,'%Y-%m-%d %H:%M:%OS3')))))
+			}
+			runDat <- read.csv(outputFile)
+			origColNames <- unname(unlist(read.table(outputFile,
 															 sep=',')[1,]))[-1]
 			colnames(runDat) <- cleanNames(colnames(runDat))
 			# catch failed runs causing NAs in year variable and crash in the rownames assignment
@@ -430,6 +447,11 @@ runFRIDASpecParms <- function(parVect,silent=T,testStellaGood=F){
 	}else{
 		writeFRIDAInput(names(parVect),parVect)
 	}
+	# the simulator overwrites the output file, so remember the state of the one that is
+	# there now. Whatever we read below has to be newer than this, otherwise it is the
+	# result of some earlier run and not of this one.
+	outputFile <- file.path(location.frida,'Data',name.fridaOutputFile)
+	outputFile.mtimeBefore <- file.mtime(outputFile)
 	stella_simulator_exit_status <- system(paste(file.path(location.stella,'stella_simulator'),'-i','-x','-q',#'-s', #to output isdb
 							 file.path(location.frida,'FRIDA.stmx')),
 				 ignore.stdout = silent,ignore.stderr = silent,wait = T)
@@ -440,7 +462,29 @@ runFRIDASpecParms <- function(parVect,silent=T,testStellaGood=F){
 					 ignore.stdout = F,ignore.stderr = F,wait = T)
 		stop('Something wrong with stella simulator.\n')
 	}
-	runDat <- read.csv(file.path(location.frida,'Data',name.fridaOutputFile))
+	# A run that leaves the output file untouched has not produced the result we are
+	# about to read. Without this check read.csv silently returns whatever the last run
+	# wrote, and the run before that may well have exported a different set of
+	# variables. That surfaces much later, as a mismatch between the columns of the
+	# calibration data and of the model result data, far away from what caused it.
+	# Runs that do not complete are a normal outcome when the optimiser tries extreme
+	# parameters. Those still write output, with NAs from the point they stopped on, and
+	# the callers detect them by that. So a non zero exit status is only an error when
+	# the output file is stale as well, and then it is the reason to report.
+	outputFile.mtimeAfter <- file.mtime(outputFile)
+	if(is.na(outputFile.mtimeAfter)||
+		 (!is.na(outputFile.mtimeBefore)&&outputFile.mtimeAfter<=outputFile.mtimeBefore)){
+		stop(sprintf(paste0('The stella simulator wrote no output.\n',
+												'  exit status: %i\n',
+												'  output file: %s\n',
+												'  %s\n',
+												'Reading it would have returned the result of an earlier run.\n'),
+								 stella_simulator_exit_status,outputFile,
+								 ifelse(is.na(outputFile.mtimeAfter),'does not exist',
+								 			 sprintf('unchanged since %s',
+								 			 				format(outputFile.mtimeAfter,'%Y-%m-%d %H:%M:%OS3')))))
+	}
+	runDat <- read.csv(outputFile)
 	colnames(runDat) <- cleanNames(colnames(runDat))
 	if('year' %in% colnames(runDat) &&
 		 sum(is.na(runDat$year))<nrow(runDat)){
