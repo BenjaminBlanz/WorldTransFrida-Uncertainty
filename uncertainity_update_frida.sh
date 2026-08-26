@@ -49,6 +49,7 @@ else
 	# reset your model to be the ${frida_branch} model
 	echo "Resetting your FRIDA to be the latest..."
 	cd ./FRIDAforUncertaintyAnalysisGit
+	git reset --hard 
 	# explicit refspec so this works even when the existing clone was made
 	# single-branch (--depth 1 -b X) against a *different* branch
 	git fetch --depth 1 origin "+refs/heads/${frida_branch}:refs/remotes/origin/${frida_branch}"
