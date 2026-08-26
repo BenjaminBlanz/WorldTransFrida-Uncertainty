@@ -142,6 +142,16 @@ treatVarsAsIndep <- T
 likeCutoffRatio <- 1000
 # tolerance for the search of the likelihood border
 rangeTol <- 1e-15
+# Should we drop parameters for which we can not determine the parameter scale?
+# This is likely because they do not affect the run.
+# However we often run EMB first, where policy related parameters have no effect, 
+# but then use those sample points to run scenarios with policies. Dropping these
+# parameters would undersample the uncertainty of the policies as their uncertain 
+# parameters would have been dropped in emb. So only set this to true if you are 
+# certain the samplePoints won't be reused for experiments with other specified 
+# policies.
+kickParmsParScaleDet <-FALSE
+# Should we check for errors in determining the likelihood border
 checkBorderErrors <- FALSE
 kickParmsErrorRangeDet <- FALSE
 kickParmsErrorRangeDet.tolerance <- 1e-2

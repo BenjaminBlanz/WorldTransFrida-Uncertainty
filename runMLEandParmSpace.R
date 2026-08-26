@@ -17,7 +17,8 @@ sink(file.path(location.output,'log.txt'),append=T,split=T)
 # silently running with e.g. the policy file of whatever ran here before
 source('configValidator.R')
 source('runInitialiseData.R')
-continue <- readline(paste0('Output location created. Move any files to be used here\n',location.output,'\nHit ENTER when done.\n'))
+continue <- readline(paste0('Output location created. Move any files to be used here\n',
+														location.output,'\nHit ENTER when done.\n'))
 # read covariance matrix used for baseNegLL
 if(treatVarsAsIndep&&
 	 file.exists(file.path(location.output,'sigma-indepParms.RDS'))){
@@ -186,20 +187,20 @@ while(newMaxFound){
 			cat('  No problem cases in resSigmaVect\n')
 		}
 		if(length(problemCasesIdc.parVect)>0){
-			cat(sprintf('  %i in parVect, these parms will be dropped\n',length(problemCasesIdc.parVect)))
 			parscale.parvect <- parscale.parvect[-problemCasesIdc.parVect]
-			excludeParmNames <- sampleParms$Variable[problemCasesIdc.parVect]
-			cat(paste(excludeParmNames,collapse='\n'))
-			cat('\n')
-			sampleParms <- prepareSampleParms(excludeNames = c(excludeParmNames,excludedParmsForBeingIntegers))
-			if(file.exists(file.path(location.frida.info,name.frida_parameter_exclusion_list))&&
-				 file.size(file.path(location.frida.info,name.frida_parameter_exclusion_list))>0){
-				oldExclusionList <- read.csv(file.path(location.frida.info,name.frida_parameter_exclusion_list))
-				exclusionList <- data.frame(excludedName=unique(c(oldExclusionList$excludedName,excludeParmNames)))
+			scaleErrorParmNames <- sampleParms$Variable[problemCasesIdc.parVect]
+			if(kickParmsParScaleDet){
+				cat(sprintf('  %i in parVect, these parms will be dropped\n',length(problemCasesIdc.parVect)))
+				cat(paste(scaleErrorParmNames,collapse='\n'))
+				cat('\n')
+				exclusionList <- data.frame(excludedName=scaleErrorParmNames)
+				write.csv(exclusionList,file.path(location.output,name.frida_parameter_exclusion_list))
 			} else {
-				exclusionList <- data.frame(excludedName=excludeParmNames)
+				cat(sprintf('  %i in parVect, these parms will be noted to ignore for ranging (using frida ranges).\n',length(problemCasesIdc.parVect)))
+				cat(paste(scaleErrorParmNames,collapse='\n'))
+				cat('\n')
 			}
-			write.csv(exclusionList,file.path(location.frida.info,name.frida_parameter_exclusion_list))
+			sampleParms <- prepareSampleParms(excludeNames = c(scaleErrorParmNames,excludedParmsForBeingIntegers))
 			parVect <- sampleParms$Value
 			names(parVect) <- sampleParms$Variable 
 			jParVect <- c(parVect,resSigmaVect)
@@ -417,6 +418,14 @@ while(newMaxFound){
 	} else {
 		manualBorders <- read.csv(file.path(location.frida.info,name.frida_external_ranges))
 		manualBorders <- manualBorders[manualBorders$Variable %in% sampleParms$Variable,]
+		if(!kickParmsParScaleDet){
+			if(length(scaleErrorParmNames)>0){
+				errorcasesBorders <- sampleParms.orig[which(sampleParms.orig$Variable%in%scaleErrorParmNames)&
+																								!scaleErrorParmNames%in%manualBorders$Variable,
+																							colnames(manualBorders)]
+				manualBorders <- rbind(manualBorders, errorcasesBorders)
+			}
+		}
 		cat(sprintf('applying manual ranges for %i parameters...',nrow(manualBorders)))
 		if(nrow(manualBorders)>0){
 			for(r.i in 0:nrow(manualBorders)){
