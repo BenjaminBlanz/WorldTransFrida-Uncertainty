@@ -145,25 +145,26 @@ disk.free <- function(path = getwd()) {
 	}
 }
 
-# funFridaVersionInfo ####
-# Version of the frida model, read from the git checkout the model files were
-# rsynced from. FRIDAforUncertaintyAnalysis itself has no .git, it is an rsync
-# copy made with --exclude=".*".
-# Returns a named character vector. commit is 'noGit' when the checkout is not
-# available, so callers always have something to report.
-funFridaVersionInfo <- function(location.frida.git){
-	info <- c(commit='noGit',branch=NA,date=NA,author=NA,subject=NA,origin=NA)
-	if(is.null(location.frida.git)||!file.exists(file.path(location.frida.git,'.git'))){
+# funGitInfo ####
+# The state of a git checkout: which commit it is on and whether it has been
+# modified since. Used both for the frida model checkout and for the checkout of
+# these analysis scripts themselves.
+# Returns a named character vector. commit is 'noGit' when the directory is not
+# a checkout, so callers always have something to report.
+funGitInfo <- function(location.git){
+	info <- c(commit='noGit',branch=NA,date=NA,author=NA,subject=NA,origin=NA,
+						dirty=NA,dirtyFiles=NA)
+	if(is.null(location.git)||!file.exists(file.path(location.git,'.git'))){
 		return(info)
 	}
-	gitOut <- function(args){
+	gitOut <- function(args,all=FALSE){
 		out <- suppressWarnings(
-			try(system(sprintf('git -C "%s" %s 2>/dev/null',location.frida.git,args),
+			try(system(sprintf('git -C "%s" %s 2>/dev/null',location.git,args),
 								 intern=TRUE),silent=TRUE))
 		if(inherits(out,'try-error')||length(out)<1||is.na(out[1])||!nzchar(out[1])){
-			return(NA)
+			return(if(all){character(0)}else{NA})
 		}
-		out[1]
+		if(all){out}else{out[1]}
 	}
 	commit <- gitOut('rev-parse HEAD')
 	if(is.na(commit)||!grepl('^[0-9a-f]+$',commit)){
@@ -175,7 +176,78 @@ funFridaVersionInfo <- function(location.frida.git){
 	info['author'] <- gitOut('log -1 --format=%an')
 	info['subject'] <- gitOut('log -1 --format=%s')
 	info['origin'] <- gitOut('config --get remote.origin.url')
+	# uncommitted changes mean the commit above does not fully describe what ran
+	status <- gitOut('status --porcelain',all=TRUE)
+	info['dirty'] <- as.character(length(status))
+	if(length(status)>0){
+		names <- sub('^...','',status)
+		if(length(names)>10){
+			names <- c(names[1:10],sprintf('and %i more',length(names)-10))
+		}
+		info['dirtyFiles'] <- paste(names,collapse=', ')
+	}
 	return(info)
+}
+
+# funFridaVersionInfo ####
+# Version of the frida model, read from the git checkout the model files were
+# rsynced from. FRIDAforUncertaintyAnalysis itself has no .git, it is an rsync
+# copy made with --exclude=".*".
+funFridaVersionInfo <- function(location.frida.git){
+	return(funGitInfo(location.frida.git))
+}
+
+# funParseConfigAssignments ####
+# The top level name <- value assignments of a config file, as text, keyed by
+# name. Reading the file rather than sourcing it is deliberate: sourcing
+# config.R copies files into the frida directory, creates the output folder and
+# writes the run metadata file, none of which may happen just to inspect it.
+funParseConfigAssignments <- function(lines){
+	lines <- sub('#.*$','',lines)
+	m <- regmatches(lines,regexec('^([A-Za-z.][A-Za-z0-9._]*)[ \t]*<-[ \t]*(.*[^ \t])[ \t]*$',lines))
+	assignments <- c()
+	for(mm in m){
+		if(length(mm)==3){
+			assignments[mm[2]] <- mm[3]
+		}
+	}
+	return(assignments)
+}
+
+# funConfigDiffToDefault ####
+# Which config settings this run used that the default config does not.
+# The default is the committed config.R, which is the template the submit script
+# copies and seds per experiment, falling back to the config.R on disk when
+# there is no git to read it out of.
+# Returns a data frame of name, default and used, or an empty one when the run
+# used the default unchanged.
+funConfigDiffToDefault <- function(configFile='config.R',location.git='.',
+																	 defaultRef='HEAD:config.R',defaultFile='config.R'){
+	res <- data.frame(name=character(0),default=character(0),used=character(0))
+	if(is.null(configFile)||!file.exists(configFile)){
+		return(res)
+	}
+	defaultLines <- suppressWarnings(
+		try(system(sprintf('git -C "%s" show %s 2>/dev/null',location.git,defaultRef),
+							 intern=TRUE),silent=TRUE))
+	if(inherits(defaultLines,'try-error')||length(defaultLines)==0){
+		if(!file.exists(defaultFile)){
+			return(res)
+		}
+		defaultLines <- readLines(defaultFile,warn=FALSE)
+	}
+	default <- funParseConfigAssignments(defaultLines)
+	used <- funParseConfigAssignments(readLines(configFile,warn=FALSE))
+	# bookkeeping the submit script rewrites, not a setting anybody chose
+	names.all <- setdiff(union(names(default),names(used)),'name.configFile')
+	for(n in names.all){
+		d <- if(n%in%names(default)){default[[n]]}else{NA}
+		u <- if(n%in%names(used)){used[[n]]}else{NA}
+		if(!identical(d,u)){
+			res[nrow(res)+1,] <- list(n,d,u)
+		}
+	}
+	return(res)
 }
 
 # funFridaFilesChecksum ####
@@ -274,14 +346,18 @@ funFridaCheckoutDiffNote <- function(cmp,maxNames=5){
 	}
 }
 
-# funWriteFridaVersionFile ####
+# funWriteRunMetadataFile ####
 # Writes a human readable record of the model version into the output folder, so
 # that a result folder can still be traced back to a model version later.
 # The folder names are unchanged by this, all of the information lives in the file.
-funWriteFridaVersionFile <- function(location.output,location.frida.git,location.frida,
-																		 name.output=NULL,exclude=c(),
-																		 fileName='fridaVersion.txt'){
+funWriteRunMetadataFile <- function(location.output,location.frida.git,location.frida,
+																		name.output=NULL,exclude=c(),
+																		fileName='runMetadata.txt',
+																		configFile='config.R',location.analysis.git='.'){
 	info <- funFridaVersionInfo(location.frida.git)
+	analysisInfo <- funGitInfo(location.analysis.git)
+	configDiff <- funConfigDiffToDefault(configFile=configFile,
+																			 location.git=location.analysis.git)
 	checksums <- funFridaFilesChecksum(location.frida,exclude=exclude)
 	orUnknown <- function(x){
 		if(is.null(x)||length(x)!=1||is.na(x)||!nzchar(as.character(x))){'unknown'}else{as.character(x)}
@@ -291,6 +367,16 @@ funWriteFridaVersionFile <- function(location.output,location.frida.git,location
 	stmx <- file.path(location.frida,'FRIDA.stmx')
 	stmx.md5 <- if(file.exists(stmx)){unname(tools::md5sum(stmx))}else{NA}
 	cmp <- funFridaCheckoutDiff(location.frida,location.frida.git,exclude=exclude)
+	dirtyNote <- function(gitInfo){
+		if(is.na(gitInfo['dirty'])){
+			'unknown'
+		} else if(gitInfo['dirty']=='0'){
+			'clean, the commit above describes what ran'
+		} else {
+			sprintf('%s file(s) UNCOMMITTED, the commit above does not fully describe what ran (%s)',
+							gitInfo['dirty'],orUnknown(gitInfo['dirtyFiles']))
+		}
+	}
 	lines <- c('FRIDA model version used for this run',
 						 '=====================================',
 						 '',
@@ -314,8 +400,43 @@ funWriteFridaVersionFile <- function(location.output,location.frida.git,location
 						 'excluding the files this analysis writes into the Data directory.',
 						 '',
 						 field('run',name.output),
-						 field('written',format(Sys.time(),'%Y-%m-%d %H:%M:%S')),
+						 field('written',format(Sys.time(),'%Y-%m-%d %H:%M:%S')))
+	# the analysis scripts are as much a part of what produced these results as
+	# the model is. The submit script copies them to <expID>_*.R before running
+	# them, so the state of this checkout is the only record of what they were.
+	lines <- c(lines,'',
+						 'Analysis scripts used for this run',
+						 '==================================',
 						 '',
+						 field('commit',analysisInfo['commit']),
+						 field('branch',analysisInfo['branch']),
+						 field('date',analysisInfo['date']),
+						 field('author',analysisInfo['author']),
+						 field('subject',analysisInfo['subject']),
+						 field('origin',analysisInfo['origin']),
+						 field('script dir',normalizePath(location.analysis.git,mustWork=FALSE)),
+						 field('working tree',dirtyNote(analysisInfo)))
+	# which settings this run does not share with the default config
+	lines <- c(lines,'',
+						 'Config settings differing from the default',
+						 '==========================================',
+						 '',
+						 field('config used',configFile),
+						 field('default',sprintf('%s as committed',orUnknown('config.R'))),
+						 '')
+	if(nrow(configDiff)==0){
+		lines <- c(lines,'none, this run used the default config unchanged')
+	} else {
+		width <- max(nchar(configDiff$name))
+		lines <- c(lines,
+							 sprintf('%-*s  %s',width,'setting','default -> used'),
+							 sprintf('%-*s  %s -> %s',width,configDiff$name,
+							 				ifelse(is.na(configDiff$default),'(not set)',configDiff$default),
+							 				ifelse(is.na(configDiff$used),'(not set)',configDiff$used)))
+	}
+	# the run completion summary is appended here by funAppendRunCompletionSummary
+	# once the ensemble has run
+	lines <- c(lines,'',
 						 'model file checksums',
 						 '--------------------',
 						 paste0(ifelse(is.na(checksums$files),strrep(' ',32),checksums$files),

@@ -290,6 +290,10 @@ if(file.exists(location.output)){
 }
 # save the config to the output folder
 file.copy('config.R',location.output,overwrite = T)
+# which config file this run is using. The submit script rewrites every mention
+# of config.R in its copy of this file, so this ends up naming the copy, which is
+# what the run metadata needs to diff against the default config.
+name.configFile <- 'config.R'
 
 # run setupTMPFS now, so that location.frida points to the one specific for this
 # configuration
@@ -315,22 +319,25 @@ file.copy(file.path(location.frida.configs,climateOverrideSpecFile),
 file.copy(file.path(location.frida.configs,climateOverrideSpecFileTS),
 					file.path(location.frida,'Data','ClimateSTAOverrideTS.csv'),T)
 
-# record the frida version ####
-# Which version of frida produced a set of results is not visible from the output
-# folder name, so write it into the folder itself.
+# record the run metadata ####
+# Which version of frida, which version of these scripts and which config
+# settings produced a set of results is not visible from the output folder name,
+# so write it into the folder itself. The completion of the ensemble is appended
+# to the same file once it has run, by funAppendRunCompletionSummary.
 # Only the process that runs the analysis does this. Workers re-source this config
 # from their own work dirs, where writing the file would neither be correct nor
 # useful. They are the ones without setupTMPFS.R, same test as above.
-if(file.exists('setupTMPFS.R')&&exists('funWriteFridaVersionFile',mode='function')){
-	fridaVersion <- funWriteFridaVersionFile(
+if(file.exists('setupTMPFS.R')&&exists('funWriteRunMetadataFile',mode='function')){
+	fridaVersion <- funWriteRunMetadataFile(
 		location.output,location.frida.git,location.frida,name.output,
+		configFile=name.configFile,
 		# the files this analysis writes into the frida Data directory say nothing
 		# about the version of the model
 		exclude=c('climateFeedbackSwitches.csv','policyParameters.csv',
 							'ClimateSTAOverride.csv','ClimateSTAOverrideTS.csv',
 							name.fridaExportVarsFile,name.fridaInputFile,name.fridaOutputFile))
 	if(fridaVersion['commit']=='noGit'){
-		cat('FRIDA version: could not be determined, see fridaVersion.txt\n')
+		cat('FRIDA version: could not be determined, see runMetadata.txt\n')
 	} else {
 		cat(sprintf('FRIDA version: %s (%s, %s)\n',
 								substr(fridaVersion['commit'],1,7),

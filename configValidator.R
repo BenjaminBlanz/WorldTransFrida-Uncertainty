@@ -300,7 +300,7 @@ if(!file.exists(cfgVal.stellaBin)){
 }
 
 # frida version ####
-# The version of frida used is recorded in fridaVersion.txt in the output folder.
+# The version of frida used is recorded in runMetadata.txt in the output folder.
 # That record is only as good as the git checkout it is read from.
 if(cfgVal.has('location.frida.git')){
 	if(!file.exists(file.path(location.frida.git,'.git'))){
