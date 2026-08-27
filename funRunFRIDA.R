@@ -1150,10 +1150,25 @@ verifyChunkOrder <- function(bounds,expectedFirstId=1){
 # column, or a variable that holds only whole numbers in this particular run,
 # would come back as integer. The per variable data is a double matrix when the
 # workers build it, so put every column back to double.
+# integer64 needs its own branch. A column of whole numbers too large for an
+# int32, which is what money and volume quantities look like, comes back from
+# fread as bit64::integer64, and that stores a 64 bit integer in the bits of a
+# double. So is.double() is TRUE for it and the plain test below would leave it
+# alone, and unclassing it reinterprets those bits: 2608405563540 reads back as
+# 1.288724e-311 and an NA reads back as 0, which is.na() then does not
+# recognise. Converting has to go through bit64 for that reason.
+# The fread calls all pass integer64='double' so this should not come up, but a
+# call added without it would otherwise corrupt the data silently.
 coercePerVarTypes <- function(d){
 	for(cn in names(d)){
-		if(!is.double(d[[cn]])){
-			data.table::set(d,j=cn,value=as.double(d[[cn]]))
+		col <- d[[cn]]
+		if(inherits(col,'integer64')){
+			if(!requireNamespace('bit64',quietly=TRUE)){
+				stop('an integer64 column needs bit64 to be converted without corrupting it\n')
+			}
+			data.table::set(d,j=cn,value=bit64::as.double.integer64(col))
+		} else if(!is.double(col)){
+			data.table::set(d,j=cn,value=as.double(col))
 		}
 	}
 	invisible(d)
@@ -1274,7 +1289,8 @@ workerMergePerVarFiles <- function(v.i,varNames,chunkFolder,outputFolder,
 		}
 		if(wantRDS){
 			if(verbosity>0){cat('RDS...')}
-			varData <- data.table::fread(plainCsv,nThread=1,showProgress=FALSE)
+			varData <- data.table::fread(plainCsv,nThread=1,showProgress=FALSE,
+																	 integer64='double')
 			coercePerVarTypes(varData)
 			data.table::setDF(varData)
 			saveRDS(varData,paste0(outFile[['RDS']],'.RDS'),compress=rdsCompress)
@@ -1294,7 +1310,8 @@ workerMergePerVarFiles <- function(v.i,varNames,chunkFolder,outputFolder,
 										varName,check$reason),call.=FALSE,immediate.=TRUE)
 		if(verbosity>0){cat(sprintf('fallback (%s)...',check$reason))}
 		varData <- rbindChunkList(
-			lapply(fileList,data.table::fread,nThread=1,showProgress=FALSE))
+			lapply(fileList,data.table::fread,nThread=1,showProgress=FALSE,
+						 integer64='double'))
 		data.table::setorderv(varData,names(varData)[1])
 		coercePerVarTypes(varData)
 		data.table::setDF(varData)
@@ -1566,7 +1583,8 @@ readPerVarFile <- function(file,outputType=NULL){
 		if(!file.exists(csvFile) && file.exists(paste0(fileNoExt,'.csv.gz'))){
 			csvFile <- paste0(fileNoExt,'.csv.gz')
 		}
-		varData <- data.table::fread(csvFile,nThread=1,showProgress=FALSE)
+		varData <- data.table::fread(csvFile,nThread=1,showProgress=FALSE,
+																 integer64='double')
 		coercePerVarTypes(varData)
 		# the callers index the result with data.frame semantics (varData[,-1]),
 		# which means something else on a data.table
