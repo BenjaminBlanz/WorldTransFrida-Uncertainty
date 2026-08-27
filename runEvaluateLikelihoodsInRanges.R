@@ -40,14 +40,24 @@ logLike <- rep(NA,numSample)
 logLike.perVar <- readPerVarFile(file.logLike,outputType = perVarOutputTypes[1])
 logLike[logLike.perVar$id] <- logLike.perVar$logLike
 rm(logLike.perVar)
-# A complete run is one that produced a usable log likelihood. Runs that failed
-# or stopped early carry one of the logLike.failedRun markers instead. This is
-# the same test funRunFRIDA.R, runPlotAllRuns.R and runPolicyAnalysis.R apply,
-# and it is the one the logLike.badRM cutoff below uses, so the two counts this
-# script reports agree with each other.
-completeRunsSoFar <- sum(logLike > logLike.failedRun.max,na.rm = T)
+# Whether a run completed is read from the run status rather than diagnosed from
+# the log likelihood markers. For output that predates the runStatus file
+# funReadRunStatus decodes it back out of those markers, so this works either
+# way. Indexed by id, so a run that is missing from the file entirely stays NA
+# rather than shifting everything after it.
+runStatus <- funReadRunStatus(location.output,outputType = perVarOutputTypes[1],
+															numSample = numSample)
+completed <- rep(NA,numSample)
+completed[runStatus$id] <- runStatus$completed
+likelihoodOK <- rep(NA,numSample)
+likelihoodOK[runStatus$id] <- runStatus$likelihoodOK
+completeRunsSoFar <- sum(completed%in%1)
 cat(sprintf('done\n collected %i sample log likes, %i runs in data where complete\n',
 						sum(!is.na(logLike)),completeRunsSoFar))
+if(sum(completed%in%1&likelihoodOK%in%0)>0){
+	cat(sprintf(' %i run(s) reached the final year but produced no usable log likelihood\n',
+							sum(completed%in%1&likelihoodOK%in%0)))
+}
 
 
 samplePoints$logLike <- logLike
@@ -56,8 +66,10 @@ parVect <- sampleParms$Value
 names(parVect) <- sampleParms$Variable
 baseLogLike <- -negLLike(parVect)
 
+# a log likelihood is usable when the run reached the final year and the
+# likelihood itself could be computed, which is what the marker test used to say
 logLike.badRM <- logLike
-logLike.badRM[logLike.badRM <= logLike.failedRun.max] <- NA
+logLike.badRM[!(completed%in%1&likelihoodOK%in%1)] <- NA
 cat(sprintf('%i bad log likelihoods\n',sum(is.na(logLike.badRM))))
 png(file.path(location.output,'logLikeHist.png'),
 		width=10,height=10,res=150,units='cm')

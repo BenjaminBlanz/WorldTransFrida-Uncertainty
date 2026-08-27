@@ -54,7 +54,19 @@ for(plotWeightType in plotWeightTypes){
 	if(plotWeightType %in% c('likelihood','logCutoff','linearly','completeEqually')){
 		# log like ####
 		cat(' reading log likelihoods...\n')
-		logLike <- readPerVarFile(file.path(location.runFiles,'logLike'),outputType = perVarOutputTypes[1])$logLike
+		logLike.perVar <- readPerVarFile(file.path(location.runFiles,'logLike'),outputType = perVarOutputTypes[1])
+		logLike <- rep(NA,nrow(samplePoints))
+		logLike[logLike.perVar$id] <- logLike.perVar$logLike
+		rm(logLike.perVar)
+		# whether a run completed comes from the run status rather than from the log
+		# likelihood markers, indexed by id so that a run missing from the file does
+		# not shift everything after it
+		runStatus <- funReadRunStatus(location.output,outputType = perVarOutputTypes[1],
+																	numSample = nrow(samplePoints))
+		completed <- rep(NA,nrow(samplePoints))
+		completed[runStatus$id] <- runStatus$completed
+		likelihoodOK <- rep(NA,nrow(samplePoints))
+		likelihoodOK[runStatus$id] <- runStatus$likelihoodOK
 		samplePoints$logLike <- logLike
 		logLike.ecdf <- ecdf(logLike)
 	}
@@ -67,9 +79,12 @@ for(plotWeightType in plotWeightTypes){
 		# equal weighting
 		samplePoints$plotWeight <- rep(1,nrow(samplePoints))
 	} else if(plotWeightType == 'completeEqually'){
-		# equal weighting of completed runs
+		# equal weighting of completed runs. A run counts when it reached the final
+		# year and its log likelihood is a real value, which is what the marker test
+		# used to say. likelihoodOK is NA where there is no calibration likelihood
+		# at all, and that must not zero every weight.
 		samplePoints$plotWeight <- 0
-		samplePoints$plotWeight[samplePoints$logLike > logLike.failedRun.max] <- 1
+		samplePoints$plotWeight[completed%in%1 & !(likelihoodOK%in%0)] <- 1
 	} else if(plotWeightType == 'linearly'){
 		samplePoints$plotWeight <- order(logLike)/nrow(samplePoints)
 	} else {

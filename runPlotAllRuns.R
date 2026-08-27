@@ -71,8 +71,20 @@ for(plotWeightType in plotWeightTypes){
 	if(plotWeightType %in% c('likelihood','logCutoff','linearly','logLikelihood','completeEqually')){
 		# log like ####
 		cat(' reading log likelihoods...\n')
-		logLike <- readPerVarFile(file.path(outputFolder,outputTypeFolder,'logLike'),outputType)$logLike
-		completeRunsSoFar <- sum(logLike > logLike.failedRun.max)
+		logLike.perVar <- readPerVarFile(file.path(outputFolder,outputTypeFolder,'logLike'),outputType)
+		logLike <- rep(NA,numSample)
+		logLike[logLike.perVar$id] <- logLike.perVar$logLike
+		rm(logLike.perVar)
+		# whether a run completed comes from the run status rather than from the log
+		# likelihood markers, indexed by id so that a run missing from the file does
+		# not shift everything after it
+		runStatus <- funReadRunStatus(location.output,outputType = outputType,
+																	numSample = numSample)
+		completed <- rep(NA,numSample)
+		completed[runStatus$id] <- runStatus$completed
+		likelihoodOK <- rep(NA,numSample)
+		likelihoodOK[runStatus$id] <- runStatus$likelihoodOK
+		completeRunsSoFar <- sum(completed%in%1)
 		cat(sprintf('Collected %i sample log likes, %i runs in data where complete\n',
 								numSample,completeRunsSoFar))
 		samplePoints$logLike <- logLike
@@ -92,9 +104,12 @@ for(plotWeightType in plotWeightTypes){
 		# equal weighting
 		samplePoints$plotWeight <- rep(1,nrow(samplePoints))
 	} else if(plotWeightType == 'completeEqually'){
-		# equal weighting of completed runs
+		# equal weighting of completed runs. A run counts when it reached the final
+		# year and its log likelihood is a real value, which is what the marker test
+		# used to say. likelihoodOK is NA where there is no calibration likelihood
+		# at all, and that must not zero every weight.
 		samplePoints$plotWeight <- 0
-		samplePoints$plotWeight[samplePoints$logLike > logLike.failedRun.max] <- 1
+		samplePoints$plotWeight[completed%in%1 & !(likelihoodOK%in%0)] <- 1
 	}else if(plotWeightType == 'linearly'){
 		samplePoints$plotWeight <- order(logLike)/nrow(samplePoints)
 	} else {

@@ -152,6 +152,7 @@ cat(sprintf('Run of %i runs split up into %i work units of size %i (%i per worke
 						numSample,length(workUnitBoundaries)-1,chunkSizePerWorker*numWorkers,chunkSizePerWorker))
 chunkTimes <- c()
 completeRunsSoFar <- 0
+runStatus.all <- NULL
 i <- 0
 while(i<(length(workUnitBoundaries)-1)){
 	i <- i+1
@@ -193,12 +194,18 @@ while(i<(length(workUnitBoundaries)-1)){
 	cat('\r(d)') # diagnostics
 	chunkTimes[i] <- timing$toc-timing$tic
 	logLike.df <- data.frame(id=integer(),logLike=double())
+	runStatus.df <- NULL
 	for(r.i in 1:length(parOutput)){
 		logLike.df <- rbind(logLike.df,parOutput[[r.i]]$logLike.df)
+		runStatus.df <- rbind(runStatus.df,parOutput[[r.i]]$runStatus.df)
 	}
 	logLike <- c()
 	logLike[logLike.df$id] <- logLike.df$logLike
-	completeRunsSoFar <- sum(logLike > logLike.failedRun.max)
+	# There is no calibration likelihood in policy mode, so every logLike here is
+	# one of the failed run markers and the old test counted nothing as complete.
+	# The run status says it directly, per policy and state of the world.
+	runStatus.all <- rbind(runStatus.all,runStatus.df)
+	completeRunsSoFar <- sum(runStatus.all$completed%in%1)
 	cat('\r   ')
 }
 cat(sprintf('\r    complete runs %i (%.2f%%), average chunk time %i sec (%.2f r/s, %.2f r/s/thread), over all run time %s %s\n',
@@ -216,6 +223,19 @@ numWorkers <- numWorkersFileMerge
 skipExtraVars <- T
 source('clusterHelp.R')
 mergePerVarFiles(verbosity = 1,compressCsv=compressCsv)
+# completion of the ensemble, read back from the merged file so that what is
+# reported is what actually made it to disk
+runStatus <- tryCatch(funReadRunStatus(location.output,outputType = perVarOutputTypes[1],
+																			 policyMode = T),
+											error=function(e){
+												warning(sprintf('could not read the merged run status: %s',
+																				conditionMessage(e)),call.=FALSE,immediate.=TRUE)
+												runStatus.all
+											})
+if(!is.null(runStatus)){
+	funWriteRunStatusPlainCsv(runStatus,location.output)
+	funAppendRunCompletionSummary(runStatus=runStatus,location.output=location.output)
+}
 source('cleanup.R')
 numWorkers <- origNumWorkers
 

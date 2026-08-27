@@ -445,6 +445,310 @@ funWriteRunMetadataFile <- function(location.output,location.frida.git,location.
 	invisible(info)
 }
 
+# run completion status ####
+# The log likelihood doubles as a record of whether a run completed: a run that
+# failed carries logLike.failedRun plus one logLike.quasiEps per year of output
+# it produced (see initialise.R). That is precise but unreadable, so every run
+# also reports its completion directly, in the runStatus pseudo variable.
+#   completed     1 when the run produced output for the final year
+#   failYear      the first year without output, NA when completed
+#   likelihoodOK  1 when logLike is a real value rather than one of the markers,
+#                 NA in policy mode, where there is no calibration likelihood to
+#                 compute and logLike is unconditionally a marker
+# completed is about the model run reaching the end, likelihoodOK about the
+# likelihood being computable. Both together are what the log likelihood test
+# logLike > logLike.failedRun.max used to say on its own.
+
+# funRunStatusOfRun ####
+# The completion status of a single FRIDA execution, one row per state of the
+# world. In policy mode one execution carries numSOW states of the world at
+# once, and they can stop at different times, so the status is determined per
+# SOW rather than per execution. Outside policy mode there is one SOW and this
+# returns a single row.
+# The failure year is the first year in which any variable of that SOW is in a
+# failed state, so the run is reported as having failed the moment anything in
+# the model goes bad, not once the bulk of it has.
+# Two things a failed state looks like, and both have to be caught: stella
+# writes fewer rows than the model horizon has years, and it writes rows whose
+# values are NA. So the candidates are the first NA of every column and, when
+# the output is short, the first year that has no row at all, and the failure
+# year is the earliest of them. Whether the run completed is that measured
+# against outputDataYears, the horizon of the default run, never against
+# nrow(runDat), which is itself short for a truncated run.
+funRunStatusOfRun <- function(runDat,origColNames,logLike,policyMode=F,
+															years=if(exists('outputDataYears')){outputDataYears}else{rownames(runDat)}){
+	numYears <- length(years)
+	# the state of the world each column belongs to, 1 for columns without a
+	# [n] suffix
+	sowOfCol <- suppressWarnings(as.integer(sub('^.*\\[(\\d+)\\].*$','\\1',origColNames)))
+	sowOfCol[is.na(sowOfCol)] <- 1L
+	if(length(sowOfCol)!=ncol(runDat)){
+		# nothing to group by, treat the run as a single state of the world
+		sowOfCol <- rep(1L,ncol(runDat))
+	}
+	sowIDs <- sort(unique(sowOfCol))
+	# a run whose output is short has already failed in the first year it has no
+	# row for, whatever its columns say
+	firstFailIdx <- rep(nrow(runDat)+1L,length(sowIDs))
+	for(s.i in seq_along(sowIDs)){
+		cols <- which(sowOfCol==sowIDs[s.i])
+		isNA <- is.na(as.matrix(runDat[,cols,drop=FALSE]))
+		# the first year each column of this SOW is in a failed state
+		perColFirstNA <- apply(isNA,2,function(col){
+			failed <- which(col)
+			if(length(failed)==0){NA_integer_}else{min(failed)}
+		})
+		perColFirstNA <- perColFirstNA[!is.na(perColFirstNA)]
+		if(length(perColFirstNA)>0){
+			firstFailIdx[s.i] <- min(firstFailIdx[s.i],min(perColFirstNA))
+		}
+	}
+	completed <- as.integer(firstFailIdx>numYears)
+	failYear <- ifelse(completed==1,NA_real_,
+										 suppressWarnings(as.numeric(years[firstFailIdx])))
+	likelihoodOK <- if(policyMode){
+		NA_integer_
+	} else {
+		as.integer(length(logLike)==1&&is.finite(logLike)&&logLike>logLike.failedRun.max)
+	}
+	return(data.frame(sowID=seq_along(sowIDs),
+										completed=completed,
+										failYear=failYear,
+										likelihoodOK=rep(likelihoodOK,length(sowIDs))))
+}
+
+# funDecodeLogLikeRunStatus ####
+# Reconstructs the run status from the log likelihood markers, for output that
+# predates the runStatus file and for work unit files resumed from such a run.
+# The decode is the inverse of the marker arithmetic in runFridaParmsByIndex:
+# the number of years of output a failed run produced is how many
+# logLike.quasiEps it sits above logLike.failedRun.
+# This encoding has no per SOW resolution, so the result is always one row per
+# run, with an id key.
+funDecodeLogLikeRunStatus <- function(logLike,ids=seq_along(logLike),
+																			years=outputDataYears,policyMode=F){
+	logLike <- as.numeric(logLike)
+	numYears <- length(years)
+	isMarker <- !is.na(logLike)&logLike<=logLike.failedRun.max
+	nYears <- rep(numYears,length(logLike))
+	nYears[isMarker] <- round((logLike[isMarker]-logLike.failedRun)/logLike.quasiEps)
+	nYears[is.na(logLike)] <- NA
+	completed <- as.integer(nYears>=numYears)
+	failYear <- rep(NA_real_,length(logLike))
+	incomplete <- which(completed%in%0)
+	failYear[incomplete] <- suppressWarnings(as.numeric(years[nYears[incomplete]+1]))
+	likelihoodOK <- if(policyMode){
+		rep(NA_integer_,length(logLike))
+	} else {
+		as.integer(!isMarker)
+	}
+	likelihoodOK[is.na(logLike)] <- NA
+	return(data.frame(id=ids,completed=completed,failYear=failYear,
+										likelihoodOK=likelihoodOK))
+}
+
+
+# funRunStatusFolders ####
+# The two folders the run status is written to. location.output is sometimes
+# handed in already pointing at detectedParmSpace (runMLEandParmSpace.R does
+# that), so collapse a doubled detectedParmSpace the same way mergePerVarFiles
+# does, and derive the run folder by stripping it off again.
+funRunStatusFolders <- function(location.output,baseWD=NULL){
+	folder <- location.output
+	if(!is.null(baseWD)&&!grepl('^/',folder)){
+		folder <- file.path(baseWD,folder)
+	}
+	while(grepl('/detectedParmSpace/detectedParmSpace',folder)){
+		folder <- gsub('/detectedParmSpace/detectedParmSpace','/detectedParmSpace',folder)
+	}
+	folder <- sub('/detectedParmSpace/?$','',folder)
+	return(list(run=folder,detectedParmSpace=file.path(folder,'detectedParmSpace')))
+}
+
+# funWriteRunStatusPlainCsv ####
+# A plain uncompressed copy of the merged run status at the top of the run
+# folder, so that the completion of an ensemble can be read without unpacking
+# anything. na='' is what makes failYear come out empty for completed runs.
+funWriteRunStatusPlainCsv <- function(runStatus,location.output,baseWD=NULL,
+																			fileName='runStatus.csv'){
+	folders <- funRunStatusFolders(location.output,baseWD)
+	file <- file.path(folders$run,fileName)
+	write.csv(runStatus,file,row.names=FALSE,na='',quote=FALSE)
+	return(invisible(file))
+}
+
+# funOutputDataYearsFromPerVarFiles ####
+# The years of the model output, read off the column names of any merged per
+# variable file. outputDataYears is only in scope for scripts that ran
+# runInitialiseData.R or clusterHelp.R, and decoding a failure year out of the
+# log likelihood markers needs the years whatever the caller sourced.
+funOutputDataYearsFromPerVarFiles <- function(location.runFiles,outputType='RDS'){
+	files <- list.files(location.runFiles)
+	varNames <- setdiff(gsub('\\.RDS$|\\.csv\\.gz$|\\.csv$','',files),
+											c('logLike','runStatus'))
+	for(varName in varNames){
+		varData <- try(readPerVarFile(file.path(location.runFiles,varName),
+																	outputType=outputType),silent=TRUE)
+		if(inherits(varData,'try-error')){next}
+		years <- suppressWarnings(as.numeric(colnames(varData)))
+		years <- colnames(varData)[!is.na(years)]
+		if(length(years)>0){return(years)}
+	}
+	return(NULL)
+}
+
+# funReadRunStatus ####
+# The run status of an ensemble, from the merged runStatus file when there is
+# one and decoded out of the merged log likelihood markers when there is not,
+# which is what output produced before the runStatus file looks like.
+# With numSample given the result covers every expected id, so that a run that
+# never produced any output at all shows up as NA rather than being absent.
+funReadRunStatus <- function(location.output,outputType=perVarOutputTypes[1],
+														 numSample=NULL,baseWD=NULL,policyMode=F){
+	folders <- funRunStatusFolders(location.output,baseWD)
+	location.runFiles <- file.path(folders$detectedParmSpace,paste0('PerVarFiles-',outputType))
+	file.runStatus <- file.path(location.runFiles,'runStatus')
+	file.logLike <- file.path(location.runFiles,'logLike')
+	exts <- c('.RDS','.csv','.csv.gz')
+	if(any(file.exists(paste0(file.runStatus,exts)))){
+		runStatus <- readPerVarFile(file.runStatus,outputType=outputType)
+	} else if(any(file.exists(paste0(file.logLike,exts)))){
+		logLike.perVar <- readPerVarFile(file.logLike,outputType=outputType)
+		years <- if(exists('outputDataYears')){outputDataYears}else{NULL}
+		if(is.null(years)){
+			years <- funOutputDataYearsFromPerVarFiles(location.runFiles,outputType=outputType)
+		}
+		if(is.null(years)){
+			stop(sprintf(paste0('no merged runStatus file in %s, and the years of the model output\n',
+													'could not be determined to decode the failure years out of the log\n',
+													'likelihood markers instead\n'),location.runFiles))
+		}
+		runStatus <- funDecodeLogLikeRunStatus(logLike.perVar$logLike,
+																					 ids=logLike.perVar[[1]],
+																					 years=years,
+																					 policyMode=policyMode)
+	} else {
+		stop(sprintf(paste0('no merged runStatus and no merged logLike file in %s\n',
+												'Have you run runMLEandParmSpace, and did the per variable files get merged?\n'),
+								 location.runFiles))
+	}
+	# the merged file comes back as doubles (coercePerVarTypes), the decoder
+	# produces integers. Normalise, so that callers see the same thing either way.
+	for(cn in colnames(runStatus)){
+		runStatus[[cn]] <- as.double(runStatus[[cn]])
+	}
+	# pad out to every expected id, so missing runs are visible
+	if(!is.null(numSample)&&!'polID'%in%colnames(runStatus)){
+		missing <- setdiff(1:numSample,runStatus$id)
+		if(length(missing)>0){
+			pad <- runStatus[rep(NA_integer_,length(missing)),]
+			pad$id <- missing
+			runStatus <- rbind(runStatus,pad)
+		}
+		runStatus <- runStatus[order(runStatus$id),]
+		rownames(runStatus) <- NULL
+	}
+	return(runStatus)
+}
+
+# funRunCompletionSummary ####
+# The completion of an ensemble as lines of text, for the run metadata file and
+# for the terminal.
+funRunCompletionSummary <- function(runStatus,numSample=NULL,maxYears=50){
+	isPolicy <- 'polID'%in%colnames(runStatus)
+	numRuns <- nrow(runStatus)
+	present <- !is.na(runStatus$completed)
+	complete <- sum(runStatus$completed%in%1)
+	incomplete <- sum(runStatus$completed%in%0)
+	noLike <- sum(runStatus$completed%in%1&runStatus$likelihoodOK%in%0)
+	missing <- sum(!present)
+	if(!is.null(numSample)&&!isPolicy){
+		missing <- missing+max(0,numSample-numRuns)
+		numRuns <- max(numRuns,numSample)
+	}
+	pct <- function(n){if(numRuns>0){sprintf(' (%.2f%%)',100*n/numRuns)}else{''}}
+	field <- function(label,n,withPct=TRUE){
+		sprintf('%-16s %8i%s',label,n,if(withPct){pct(n)}else{''})
+	}
+	lines <- c('run completion',
+						 '--------------',
+						 field(if(isPolicy){'policy runs'}else{'runs'},numRuns,FALSE),
+						 field('complete',complete),
+						 field('incomplete',incomplete),
+						 field('no likelihood',noLike),
+						 field('missing',missing))
+	if(isPolicy){
+		lines <- c(lines,
+							 sprintf('%-16s %8i','policies',length(unique(runStatus$polID))),
+							 sprintf('%-16s %8i','states of world',length(unique(runStatus$sowID))),
+							 '',
+							 'One row per policy and state of the world. There is no calibration',
+							 'likelihood in policy mode, so likelihoodOK is not applicable.')
+	}
+	failYears <- runStatus$failYear[!is.na(runStatus$failYear)]
+	if(length(failYears)>0){
+		tab <- table(failYears)
+		years <- as.numeric(names(tab))
+		ord <- order(years)
+		tab <- tab[ord]
+		years <- years[ord]
+		shown <- min(length(tab),maxYears)
+		lines <- c(lines,'',
+							 sprintf('%-16s %8s','failure year','runs'),
+							 sprintf('%-16.0f %8i',years[1:shown],as.integer(tab)[1:shown]))
+		if(length(tab)>shown){
+			lines <- c(lines,sprintf('and %i further year(s), see runStatus.csv',
+															 length(tab)-shown))
+		}
+	} else if(incomplete>0){
+		lines <- c(lines,'','no failure year could be determined for the incomplete runs')
+	}
+	return(lines)
+}
+
+# funAppendRunCompletionSummary ####
+# Puts the completion summary into the run metadata file and onto the terminal.
+# The metadata file is written by funWriteRunMetadataFile at config time, long
+# before the ensemble has run, and by the time it has the tmpfs frida directory
+# may be gone, so this appends to the file rather than rebuilding it. The block
+# goes in front of the model file checksums, so that the long checksum list
+# stays at the end where it does not get in the way.
+funAppendRunCompletionSummary <- function(location.output,runStatus,numSample=NULL,
+																					baseWD=NULL,fileName='runMetadata.txt',
+																					printToTerminal=TRUE){
+	lines <- funRunCompletionSummary(runStatus,numSample=numSample)
+	if(printToTerminal){
+		cat(paste0(paste(lines,collapse='\n'),'\n'))
+	}
+	folders <- funRunStatusFolders(location.output,baseWD)
+	file <- file.path(folders$run,fileName)
+	if(!file.exists(file)){
+		warning(sprintf('no %s to write the run completion summary into',file),
+						call.=FALSE,immediate.=TRUE)
+		return(invisible(NULL))
+	}
+	old <- readLines(file,warn=FALSE)
+	# an earlier summary of the same run would otherwise accumulate
+	start <- which(old=='run completion')
+	if(length(start)>0){
+		start <- start[1]
+		ends <- which(old=='model file checksums')
+		end <- if(any(ends>start)){min(ends[ends>start])-1}else{length(old)}
+		old <- old[-(start:end)]
+	}
+	at <- which(old=='model file checksums')
+	block <- c(lines,'')
+	if(length(at)>0){
+		at <- at[1]
+		new <- c(old[1:(at-1)],block,old[at:length(old)])
+	} else {
+		new <- c(old,'',block)
+	}
+	writeLines(new,file)
+	return(invisible(file))
+}
+
+
 # runFridaParmsByIndex ####
 # Uses from global env:
 #   sampleParms,samplePoints,location.frida, and name.fridaInputFile
@@ -511,18 +815,21 @@ runFridaParmsByIndex <- function(runid,silent=T,policyMode=F,testStellaGood=F){
 			} else {
 				logLike <- logLike.failedRun+sum(!is.na(runDat[[1]]))*logLike.quasiEps
 			}
+			runStatus <- funRunStatusOfRun(runDat,origColNames,logLike,policyMode=policyMode)
 			suppressWarnings(parmsIndex<-as.numeric(row.names(samplePoints)[i]))
 			if(is.na(parmsIndex)){
 				retlist[[i]] <- (list(parmsName=row.names(samplePoints)[i],
 															parmsIndex=i,
 															runDat=runDat,
 															origColNames=origColNames,
-															logLike=logLike))
+															logLike=logLike,
+															runStatus=runStatus))
 			} else {
 				retlist[[i]] <- (list(parmsIndex=parmsIndex,
 															runDat=runDat,
 															origColNames=origColNames,
-															logLike=logLike))
+															logLike=logLike,
+															runStatus=runStatus))
 			}
 		}
 	}
@@ -536,17 +843,19 @@ runFridaParmsBySamplePoints <- function(policyMode=F){
 	if(writePerWorkerFiles){
 		workerID <- ifelse(exists('workerID'),workerID,0)
 		workUnit.i <- ifelse(exists('workUnit.i'),workUnit.i,0)
-		logLike.df <- saveParOutputToPerVarFiles(parOutput = retlist,workUnit.i = workUnit.i,
-														 workerID = workerID)
+		perVarRet <- saveParOutputToPerVarFiles(parOutput = retlist,workUnit.i = workUnit.i,
+														 workerID = workerID,policyMode = policyMode)
 		if(doNotReturnRunDataSavePerWorkerOnly){
 			newRetlist <- list()
 			for(i in 1:length(retlist)){
 				newRetlist[[i]] <- list(parmsIndex=retlist[[i]]$parmsIndex,
-																logLike=retlist[[i]]$logLike)
+																logLike=retlist[[i]]$logLike,
+																runStatus=retlist[[i]]$runStatus)
 			}
 			retlist <- newRetlist
 		}
-		retlist[['logLike.df']] <- logLike.df
+		retlist[['logLike.df']] <- perVarRet$logLike
+		retlist[['runStatus.df']] <- perVarRet$runStatus
 	}
 	return(retlist)
 }
@@ -815,11 +1124,15 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 							numSample,length(workUnitBoundaries)-1,chunkSizePerWorker*numWorkers,chunkSizePerWorker))
 	chunkTimes <- c()
 	completeRunsSoFar <- 0
+	runStatus.all <- NULL
 	i <- 0
 	while(i<(length(workUnitBoundaries)-1)){
 		i <- i+1
 		workUnit.i <- i
 		clusterExport(cl,list('workUnit.i'),envir=environment())
+		# unlike logLike.df this is deliberately per iteration, so that a work unit
+		# without a status cannot silently inherit the one of its predecessor
+		if(exists('runStatus.df')){rm(runStatus.df)}
 		if(!redoAllCalc && file.exists(file.path(baseWD,location.output,paste0('workUnit-',i,'.RDS')))){
 			cat(sprintf('\r(r) Using existing unit %i',i))
 			tryCatch({parOutput <- readRDS(file.path(baseWD,location.output,paste0('workUnit-',i,'.RDS')))},
@@ -828,6 +1141,10 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 				lastChunkSize <- length(parOutput)
 				if(!is.null(parOutput$logLike.df)){
 					logLike.df <- parOutput$logLike.df
+					lastChunkSize <- lastChunkSize-1
+				}
+				if(!is.null(parOutput$runStatus.df)){
+					runStatus.df <- parOutput$runStatus.df
 					lastChunkSize <- lastChunkSize-1
 				}
 				if(lastChunkSize>(workUnitBoundaries[i+1]-workUnitBoundaries[i])){
@@ -892,19 +1209,24 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 			chunkTimes[i] <- timing$toc-timing$tic
 			if(writePerWorkerFiles){
 				logLike.df <- data.frame(id=integer(),logLike=double())
+				runStatus.df <- NULL
 				for(r.i in 1:length(parOutput)){
 					logLike.df <- rbind(logLike.df,parOutput[[r.i]]$logLike.df)
+					runStatus.df <- rbind(runStatus.df,parOutput[[r.i]]$runStatus.df)
 					parOutput[[r.i]]$logLike.df <- NULL
+					parOutput[[r.i]]$runStatus.df <- NULL
 				}
 			}
 			cat('\r(s)')
 			parOutput <-  unlist(parOutput, recursive = F)
 			if(writePerWorkerFiles){
 				parOutput$logLike.df <- logLike.df
+				parOutput$runStatus.df <- runStatus.df
 			}
 			saveRDS(parOutput,file.path(baseWD,location.output,paste0('workUnit-',i,'.RDS')))
 			if(!writePerWorkerFiles){
-				saveParOutputToPerVarFiles(parOutput=parOutput, workUnit.i=i)
+				runStatus.df <- saveParOutputToPerVarFiles(parOutput=parOutput,
+																									 workUnit.i=i)$runStatus
 			}
 			cat('\r   ')
 		}
@@ -913,7 +1235,6 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 		# if there is a full assembled logLike.df use it
 		if(exists('logLike.df')){
 			logLike[logLike.df$id] <- logLike.df$logLike
-			completeRunsSoFar <- sum(logLike > logLike.failedRun.max)
 		} else {
 			# otherwise assemble the logLikes 
 			for(l in 1:length(parOutput)){
@@ -924,11 +1245,17 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 					# otherwise collect the logLikes
 					logLike[parOutput[[l]]$parmsIndex] <- parOutput[[l]]$logLike 
 				}
-				if(parOutput[[l]]$logLike > logLike.failedRun.max){
-					completeRunsSoFar <- completeRunsSoFar + 1
-				}
 			}
 		}
+		# how many runs completed now comes from the run status rather than from
+		# the log likelihood markers. A work unit resumed from output that predates
+		# the run status gets it decoded back out of those markers.
+		if(!exists('runStatus.df')||is.null(runStatus.df)){
+			unitIds <- workUnitBoundaries[i]:(workUnitBoundaries[i+1]-1)
+			runStatus.df <- funDecodeLogLikeRunStatus(logLike[unitIds],ids=unitIds)
+		}
+		runStatus.all <- rbind(runStatus.all,runStatus.df)
+		completeRunsSoFar <- sum(runStatus.all$completed==1,na.rm=T)
 		cat('\r   ')
 		if(plotDatWhileRunning&&!plotDatPerChunWhileRunning){
 			cat('\r(p)')
@@ -1019,6 +1346,20 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 	}
 	# merge all the individual per Var files into one complete one
 	mergePerVarFiles()
+	# the completion of the ensemble, read back from the merged file so that what
+	# is reported is what actually made it to disk
+	runStatus <- tryCatch(funReadRunStatus(location.output,numSample=numSample,baseWD=baseWD),
+												error=function(e){
+													warning(sprintf('could not read the merged run status: %s',
+																					conditionMessage(e)),call.=FALSE,immediate.=TRUE)
+													runStatus.all
+												})
+	if(!is.null(runStatus)){
+		funWriteRunStatusPlainCsv(runStatus,location.output,baseWD=baseWD)
+		funAppendRunCompletionSummary(runStatus=runStatus,location.output=location.output,
+																	numSample=numSample,baseWD=baseWD)
+		attr(logLike,'runStatus') <- runStatus
+	}
 	return(logLike)
 }
 
@@ -1041,7 +1382,7 @@ loadClusterRuns <- function(location.output){
 }
 
 saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
-																			 verbosity=0){
+																			 verbosity=0, policyMode=F){
 	# ensure path is interepreted correctly in case location.output is provided absolute
 	if(grepl('^/',location.output) && exists('baseWD')){
 		location.output <- system(paste0('realpath --relative-to="',baseWD,'" "',location.output,'"'),intern = T)
@@ -1066,6 +1407,29 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 		}
 	}
 	varNames <- names(perVarData)
+	# runStatus is keyed the same way as the data it describes: per (polID,sowID)
+	# when a run carries several states of the world, per run otherwise. Its first
+	# column has to be the one that ascends across chunk files, so that
+	# verifyChunkOrder can take the streaming merge path, which is polID.
+	# taken from the status the run itself reported where there is one, so that the
+	# frame allocated here and the rows filled into it cannot disagree
+	numSOW.status <- if(!is.null(parOutput[[1]]$runStatus)){
+		nrow(parOutput[[1]]$runStatus)
+	} else {
+		length(varsIdc.lst[[1]])
+	}
+	if(numSOW.status>1){
+		runStatus <- data.frame(polID=rep(NA,workUnitLength*numSOW.status),
+														sowID=rep(NA,workUnitLength*numSOW.status),
+														completed=rep(NA,workUnitLength*numSOW.status),
+														failYear=rep(NA,workUnitLength*numSOW.status),
+														likelihoodOK=rep(NA,workUnitLength*numSOW.status))
+	} else {
+		runStatus <- data.frame(id=rep(NA,workUnitLength),
+														completed=rep(NA,workUnitLength),
+														failYear=rep(NA,workUnitLength),
+														likelihoodOK=rep(NA,workUnitLength))
+	}
 	if(verbosity>0){
 		cat('Reading parOutput:\n')
 	}
@@ -1092,6 +1456,28 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 			}
 		}
 		logLike[run.i,] <- c(parOutput[[run.i]]$parmsIndex,parOutput[[run.i]]$logLike)
+		# parOutput of a run that predates the runStatus output carries no status,
+		# fall back to decoding it out of the log likelihood marker
+		runStatus.run <- parOutput[[run.i]]$runStatus
+		if(is.null(runStatus.run)){
+			runStatus.run <- funDecodeLogLikeRunStatus(parOutput[[run.i]]$logLike,
+																								 ids=1,policyMode=policyMode)
+			runStatus.run$sowID <- 1
+			runStatus.run <- runStatus.run[rep(1,numSOW.status),]
+			runStatus.run$sowID <- 1:numSOW.status
+		}
+		if(numSOW.status>1){
+			runStatusIndices <- ((run.i-1)*numSOW.status+1):(run.i*numSOW.status)
+			runStatus[runStatusIndices,'polID'] <- parOutput[[run.i]]$parmsIndex
+			runStatus[runStatusIndices,'sowID'] <- runStatus.run$sowID
+			runStatus[runStatusIndices,c('completed','failYear','likelihoodOK')] <-
+				runStatus.run[,c('completed','failYear','likelihoodOK')]
+		} else {
+			runStatus[run.i,] <- c(parOutput[[run.i]]$parmsIndex,
+														 runStatus.run$completed[1],
+														 runStatus.run$failYear[1],
+														 runStatus.run$likelihoodOK[1])
+		}
 	}
 	if(verbosity>0){
 		cat('\nWriting to files\n')
@@ -1121,9 +1507,17 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 											 					paste0('logLike','-',workUnit.i,'-',workerID,'.csv')),
 											 fullPrecision=fullPrecision)
 	if(verbosity>0){
+		cat(sprintf('\rWriting runStatus %s', rep(' ',100)))
+	}
+	dir.create(file.path(chunkFolder,'runStatus'),showWarnings = F,recursive = T)
+	writePerVarChunkFile(runStatus,
+											 file.path(chunkFolder,'runStatus',
+											 					paste0('runStatus','-',workUnit.i,'-',workerID,'.csv')),
+											 fullPrecision=fullPrecision)
+	if(verbosity>0){
 		cat('\n')
 	}
-	return(logLike)
+	return(list(logLike=logLike,runStatus=runStatus))
 }
 
 # per variable chunk and merged file handling ####
