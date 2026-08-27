@@ -294,7 +294,9 @@ fi
 runInit=${expID}_runInitialiseData.R
 cp runInitialiseData.R $runInit
 
-sed -i "/^continue <- readline/d" $runInit
+# keep the message, drop the waiting: readline would block a batch job forever,
+# and deleting the line would take the second line of a call that spans two with it
+sed -i "s/^continue <- readline(/cat(/" $runInit
 
 # modify clusterHelp to use correct config
 clusterHelp=${expID}_clusterHelp.R
@@ -309,7 +311,7 @@ cp runMLEandParmSpace.R $runMLE
 sed -i "s/config.R/${config}/g" $runMLE
 sed -i "s/runInitialiseData.R/${runInit}/g" $runMLE
 sed -i "s/clusterHelp.R/${clusterHelp}/g" $runMLE
-sed -i "/^continue <- readline/d" $runMLE
+sed -i "s/^continue <- readline(/cat(/" $runMLE
 
 # modify runPlotAllRuns
 if [ "${plotting}" = "true" ]; then
