@@ -1,0 +1,180 @@
+#!/bin/bash
+# Stand-in for slurm's squeue, listing the jobs started by the local sbatch.
+#
+# Hands over to a real squeue if one is installed. Otherwise it prints the jobs
+# from the local registry in the same table the real squeue would.
+
+source "$(dirname -- "$(readlink -f -- "$0")")/common.sh"
+
+delegateToRealBinary squeue "$@"
+
+filterJobs=''
+filterUsers=''
+filterNames=''
+filterPartitions=''
+filterStates=''
+showHeader=true
+format=''
+
+takeValue(){
+	if [ "$optHasInlineValue" = true ]; then
+		printf '%s\n' "$optInlineValue"
+	else
+		printf '%s\n' "$2"
+	fi
+}
+
+while [ $# -gt 0 ]; do
+	arg="$1"
+	optHasInlineValue=false
+	optInlineValue=''
+	case "$arg" in
+		--*=*)
+			optInlineValue="${arg#*=}"
+			optHasInlineValue=true
+			arg="${arg%%=*}"
+			;;
+	esac
+	case "$arg" in
+		-j|--jobs)       filterJobs=$(takeValue "$arg" "$2");       [ "$optHasInlineValue" = true ] || shift ;;
+		-u|--user)       filterUsers=$(takeValue "$arg" "$2");      [ "$optHasInlineValue" = true ] || shift ;;
+		-n|--name)       filterNames=$(takeValue "$arg" "$2");      [ "$optHasInlineValue" = true ] || shift ;;
+		-p|--partition)  filterPartitions=$(takeValue "$arg" "$2"); [ "$optHasInlineValue" = true ] || shift ;;
+		-t|--states)     filterStates=$(takeValue "$arg" "$2");     [ "$optHasInlineValue" = true ] || shift ;;
+		-o|--format)     format=$(takeValue "$arg" "$2");           [ "$optHasInlineValue" = true ] || shift ;;
+		-h|--noheader)   showHeader=false ;;
+		--help)
+			printf 'Usage: squeue [-j jobs] [-u users] [-n names] [-p partitions] [-t states] [-o format] [-h]\n'
+			printf 'Local stand-in for slurm squeue, see localSlurm/README.md\n'
+			exit 0
+			;;
+		-*) localSlurmNote "ignoring option ${arg}" ;;
+		*)  filterJobs="${filterJobs:+${filterJobs},}${arg}" ;;
+	esac
+	shift
+done
+
+# Is the value in the comma separated list? An empty list matches everything.
+matchesList(){
+	local list="$1" value="$2"
+	[ -n "$list" ] || return 0
+	local IFS=,
+	local entry
+	for entry in $list; do
+		[ "$entry" = "$value" ] && return 0
+	done
+	return 1
+}
+
+# Without -t only the jobs that are still going are listed, as in slurm.
+matchesState(){
+	local state="$1" code
+	code=$(localSlurmStateCode "$state")
+	if [ -z "$filterStates" ]; then
+		case "$state" in
+			RUNNING|PENDING|CONFIGURING) return 0 ;;
+			*) return 1 ;;
+		esac
+	fi
+	local upper
+	upper=$(printf '%s' "$filterStates" | tr '[:lower:]' '[:upper:]')
+	case ",${upper}," in
+		*,ALL,*) return 0 ;;
+	esac
+	matchesList "$upper" "$state" || matchesList "$upper" "$code"
+}
+
+# one field of the output, by the slurm format letter
+fieldValue(){
+	case "$1" in
+		i) printf '%s' "${localSlurmJob[JobId]}" ;;
+		j) printf '%s' "${localSlurmJob[JobName]}" ;;
+		u) printf '%s' "${localSlurmJob[User]}" ;;
+		P) printf '%s' "${localSlurmJob[Partition]}" ;;
+		a) printf '%s' "${localSlurmJob[Account]}" ;;
+		t) localSlurmStateCode "${localSlurmJob[State]}" | tr -d '\n' ;;
+		T) printf '%s' "${localSlurmJob[State]}" ;;
+		M) printf '%s' "$(localSlurmFormatElapsed \
+			"$(localSlurmJobElapsed "${localSlurmJob[StartTime]}" "${localSlurmJob[EndTime]}")")" ;;
+		l) printf '%s' "${localSlurmJob[TimeLimit]:-UNLIMITED}" ;;
+		D) printf '%s' "${localSlurmJob[Nodes]:-1}" ;;
+		N|R) printf '%s' "$localSlurmHost" ;;
+		Z) printf '%s' "${localSlurmJob[WorkDir]}" ;;
+		o) printf '%s' "${localSlurmJob[StdOut]}" ;;
+		*) printf '' ;;
+	esac
+}
+
+# Renders one line, either the default table or a -o format string. Called with
+# 'header' to get the column titles instead of the values.
+renderLine(){
+	local mode="$1"
+	local spec="${format:-%.18i %.9P %.8j %.8u %.2t %.10M %.6D %R}"
+	local out='' rest="$spec" char width align title value padded
+	while [ -n "$rest" ]; do
+		char="${rest:0:1}"
+		if [ "$char" != '%' ]; then
+			out+="$char"; rest="${rest:1}"; continue
+		fi
+		rest="${rest:1}"
+		if [ "${rest:0:1}" = '%' ]; then
+			out+='%'; rest="${rest:1}"; continue
+		fi
+		align='-'   # slurm pads to the right unless a dot asks for right align
+		if [ "${rest:0:1}" = '.' ]; then
+			align=''
+			rest="${rest:1}"
+		fi
+		width=''
+		while [[ "${rest:0:1}" =~ [0-9] ]]; do
+			width+="${rest:0:1}"
+			rest="${rest:1}"
+		done
+		char="${rest:0:1}"
+		rest="${rest:1}"
+		if [ "$mode" = header ]; then
+			case "$char" in
+				i) title=JOBID ;;
+				j) title=NAME ;;
+				u) title=USER ;;
+				P) title=PARTITION ;;
+				a) title=ACCOUNT ;;
+				t) title=ST ;;
+				T) title=STATE ;;
+				M) title=TIME ;;
+				l) title=TIME_LIMIT ;;
+				D) title=NODES ;;
+				N) title=NODELIST ;;
+				R) title='NODELIST(REASON)' ;;
+				Z) title=WORK_DIR ;;
+				o) title=STDOUT ;;
+				*) title='' ;;
+			esac
+			value="$title"
+		else
+			value=$(fieldValue "$char")
+		fi
+		# printf -v, as a command substitution would eat the padding of a
+		# left aligned field
+		printf -v padded "%${align}${width}s" "$value"
+		out+="$padded"
+	done
+	printf '%s\n' "$out"
+}
+
+localSlurmInitRegistry
+[ "$showHeader" = true ] && renderLine header
+
+for jobId in $(localSlurmListJobIds); do
+	# a job whose process is gone without a trace is no longer running
+	localSlurmReapJob "$jobId" >/dev/null 2>&1
+	localSlurmReadJob "$jobId" || continue
+	matchesList "$filterJobs" "${localSlurmJob[JobId]}" || continue
+	matchesList "$filterUsers" "${localSlurmJob[User]}" || continue
+	matchesList "$filterNames" "${localSlurmJob[JobName]}" || continue
+	matchesList "$filterPartitions" "${localSlurmJob[Partition]}" || continue
+	matchesState "${localSlurmJob[State]}" || continue
+	renderLine values
+done
+
+exit 0

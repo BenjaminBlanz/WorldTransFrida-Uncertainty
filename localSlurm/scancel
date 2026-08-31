@@ -1,0 +1,167 @@
+#!/bin/bash
+# Stand-in for slurm's scancel, stopping jobs started by the local sbatch.
+#
+# Hands over to a real scancel if one is installed. Otherwise it signals the
+# process group of the job, which is what reaches the Rscript and its workers
+# and not just the shell that started them.
+
+source "$(dirname -- "$(readlink -f -- "$0")")/common.sh"
+
+delegateToRealBinary scancel "$@"
+
+jobIds=()
+filterUsers=''
+filterNames=''
+filterPartitions=''
+filterStates=''
+signal=''
+
+takeValue(){
+	if [ "$optHasInlineValue" = true ]; then
+		printf '%s\n' "$optInlineValue"
+	else
+		printf '%s\n' "$2"
+	fi
+}
+
+while [ $# -gt 0 ]; do
+	arg="$1"
+	optHasInlineValue=false
+	optInlineValue=''
+	case "$arg" in
+		--*=*)
+			optInlineValue="${arg#*=}"
+			optHasInlineValue=true
+			arg="${arg%%=*}"
+			;;
+	esac
+	case "$arg" in
+		-u|--user)      filterUsers=$(takeValue "$arg" "$2");      [ "$optHasInlineValue" = true ] || shift ;;
+		-n|--name)      filterNames=$(takeValue "$arg" "$2");      [ "$optHasInlineValue" = true ] || shift ;;
+		-p|--partition) filterPartitions=$(takeValue "$arg" "$2"); [ "$optHasInlineValue" = true ] || shift ;;
+		-t|--state)     filterStates=$(takeValue "$arg" "$2");     [ "$optHasInlineValue" = true ] || shift ;;
+		-s|--signal)    signal=$(takeValue "$arg" "$2");           [ "$optHasInlineValue" = true ] || shift ;;
+		-h|--help)
+			printf 'Usage: scancel [-s signal] [-u user] [-n name] [-p partition] [-t state] [jobid ...]\n'
+			printf 'Local stand-in for slurm scancel, see localSlurm/README.md\n'
+			exit 0
+			;;
+		-*) localSlurmNote "ignoring option ${arg}" ;;
+		*)  jobIds+=("$arg") ;;
+	esac
+	shift
+done
+
+if [ ${#jobIds[@]} -eq 0 ] && [ -z "$filterUsers" ] && [ -z "$filterNames" ] \
+	&& [ -z "$filterPartitions" ] && [ -z "$filterStates" ]; then
+	printf 'scancel: error: No job identification provided\n' >&2
+	exit 1
+fi
+
+matchesList(){
+	local list="$1" value="$2"
+	[ -n "$list" ] || return 0
+	local IFS=,
+	local entry
+	for entry in $list; do
+		[ "$entry" = "$value" ] && return 0
+	done
+	return 1
+}
+
+# Signals the whole process group of the job. TERM first and KILL to whatever
+# survives it, the way slurm gives a job its KillWait grace period.
+killJob(){
+	local jobId="$1"
+	local pgid="${localSlurmJob[PGid]}"
+
+	# a job submitted a moment ago may not have reported its group yet
+	local waited=0
+	while [ -z "$pgid" ] && [ "${localSlurmJob[State]}" = CONFIGURING ] && [ "$waited" -lt 100 ]; do
+		sleep 0.02
+		waited=$((waited + 1))
+		localSlurmReadJob "$jobId" || return 1
+		pgid="${localSlurmJob[PGid]}"
+	done
+	[ -n "$pgid" ] || return 1
+
+	if [ -n "$signal" ]; then
+		kill -"$signal" -- "-${pgid}" 2>/dev/null || true
+	else
+		kill -TERM -- "-${pgid}" 2>/dev/null || true
+		local waitedForExit=0
+		while localSlurmJobIsAlive "$pgid" "${localSlurmJob[PGidStartTime]}" \
+			&& [ "$waitedForExit" -lt 50 ]; do
+			sleep 0.1
+			waitedForExit=$((waitedForExit + 1))
+		done
+		if localSlurmJobIsAlive "$pgid" "${localSlurmJob[PGidStartTime]}"; then
+			kill -KILL -- "-${pgid}" 2>/dev/null || true
+		fi
+	fi
+
+	# only a real cancellation changes the record, a plain -s USR1 does not
+	if [ -z "$signal" ] || [ "$signal" = TERM ] || [ "$signal" = KILL ] \
+		|| [ "$signal" = 9 ] || [ "$signal" = 15 ]; then
+		localSlurmReadJob "$jobId" || return 0
+		localSlurmJob[State]=CANCELLED
+		localSlurmJob[EndTime]="${localSlurmJob[EndTime]:-$(date +%s)}"
+		localSlurmJob[ExitCode]="${localSlurmJob[ExitCode]:-0}"
+		localSlurmJob[Reason]='cancelled by user'
+		localSlurmWriteJob
+		printf 'localSlurm: job %s cancelled at %s\n' "$jobId" "$(date '+%F %T')" \
+			>> "${localSlurmJob[StdOut]}" 2>/dev/null || true
+	fi
+	return 0
+}
+
+rc=0
+localSlurmInitRegistry
+
+# explicit job ids first, they are the ones that get an error if unknown
+for jobId in "${jobIds[@]}"; do
+	if ! localSlurmReadJob "$jobId"; then
+		printf 'scancel: error: Kill job error on job id %s: Invalid job id specified\n' \
+			"$jobId" >&2
+		rc=1
+		continue
+	fi
+	localSlurmReapJob "$jobId" >/dev/null 2>&1
+	localSlurmReadJob "$jobId"
+	case "${localSlurmJob[State]}" in
+		RUNNING|CONFIGURING|PENDING) ;;
+		*)
+			printf 'scancel: error: Kill job error on job id %s: Job/step already completing or completed\n' \
+				"$jobId" >&2
+			rc=1
+			continue
+			;;
+	esac
+	killJob "$jobId" || {
+		printf 'scancel: error: Kill job error on job id %s: Invalid job id specified\n' \
+			"$jobId" >&2
+		rc=1
+	}
+done
+
+# then everything the filters select, silently as slurm does
+if [ ${#jobIds[@]} -eq 0 ]; then
+	for jobId in $(localSlurmListJobIds); do
+		localSlurmReapJob "$jobId" >/dev/null 2>&1
+		localSlurmReadJob "$jobId" || continue
+		case "${localSlurmJob[State]}" in
+			RUNNING|CONFIGURING|PENDING) ;;
+			*) continue ;;
+		esac
+		matchesList "$filterUsers" "${localSlurmJob[User]}" || continue
+		matchesList "$filterNames" "${localSlurmJob[JobName]}" || continue
+		matchesList "$filterPartitions" "${localSlurmJob[Partition]}" || continue
+		if [ -n "$filterStates" ]; then
+			matchesList "$(printf '%s' "$filterStates" | tr '[:lower:]' '[:upper:]')" \
+				"${localSlurmJob[State]}" || continue
+		fi
+		killJob "$jobId" || true
+	done
+fi
+
+exit "$rc"
