@@ -1,0 +1,273 @@
+#!/bin/bash
+# Stand-in for slurm's sbatch on machines without a slurm installation.
+#
+# If a real sbatch is installed it is used and this script does nothing else.
+# Otherwise the job script is run right here, detached, with the same log files
+# and the same "Submitted batch job" output the real sbatch would produce, so
+# that the submit_*.sh scripts of this repository work unchanged.
+#
+# See localSlurm/README.md for the details.
+
+source "$(dirname -- "$(readlink -f -- "$0")")/common.sh"
+
+delegateToRealBinary sbatch "$@"
+
+# command line ###############################################################
+
+optOutput=''
+optError=''
+optJobName=''
+optChdir=''
+optMailUser=''
+optMailType=''
+optParsable=false
+optWait=false
+script=''
+scriptArgs=()
+
+# Value of an option, either from --opt=value or from the next argument.
+takeValue(){
+	if [ "$optHasInlineValue" = true ]; then
+		printf '%s\n' "$optInlineValue"
+	else
+		printf '%s\n' "$2"
+	fi
+}
+
+while [ $# -gt 0 ]; do
+	arg="$1"
+	# the first thing that is a readable file is the job script, everything
+	# after it belongs to the job
+	if [ -f "$arg" ] && [ -r "$arg" ] && [ -z "$script" ]; then
+		script="$arg"
+		shift
+		scriptArgs=("$@")
+		break
+	fi
+	optHasInlineValue=false
+	optInlineValue=''
+	case "$arg" in
+		--*=*)
+			optInlineValue="${arg#*=}"
+			optHasInlineValue=true
+			arg="${arg%%=*}"
+			;;
+	esac
+	case "$arg" in
+		-o|--output)   optOutput=$(takeValue "$arg" "$2");   [ "$optHasInlineValue" = true ] || shift ;;
+		-e|--error)    optError=$(takeValue "$arg" "$2");    [ "$optHasInlineValue" = true ] || shift ;;
+		-J|--job-name) optJobName=$(takeValue "$arg" "$2");  [ "$optHasInlineValue" = true ] || shift ;;
+		-D|--chdir)    optChdir=$(takeValue "$arg" "$2");    [ "$optHasInlineValue" = true ] || shift ;;
+		--mail-user)   optMailUser=$(takeValue "$arg" "$2"); [ "$optHasInlineValue" = true ] || shift ;;
+		--mail-type)   optMailType=$(takeValue "$arg" "$2"); [ "$optHasInlineValue" = true ] || shift ;;
+		--parsable)    optParsable=true ;;
+		-W|--wait)     optWait=true ;;
+		-h|--help)
+			printf 'Usage: sbatch [options] script [args]\n'
+			printf 'Local stand-in for slurm sbatch, see localSlurm/README.md\n'
+			exit 0
+			;;
+		-*)
+			# every remaining option is a scheduling hint that means nothing
+			# on a single machine
+			localSlurmNote "ignoring option ${arg}"
+			;;
+		*)
+			printf 'sbatch: error: Unable to open file %s\n' "$arg" >&2
+			exit 1
+			;;
+	esac
+	shift
+done
+
+if [ -z "$script" ]; then
+	printf 'sbatch: error: no batch script given\n' >&2
+	exit 1
+fi
+
+# #SBATCH directives #########################################################
+
+dirOutput=''
+dirError=''
+dirJobName=''
+dirChdir=''
+dirPartition=''
+dirAccount=''
+dirNtasks=''
+dirNodes=''
+dirTime=''
+dirMailUser=''
+dirMailType=''
+
+# slurm stops looking for directives at the first line that is neither blank
+# nor a comment, so the module load line ends the header.
+while IFS= read -r line; do
+	case "$line" in
+		'#!'*) continue ;;
+		'#SBATCH'*|'#SBATCH	'*) ;;
+		''|'#'*) continue ;;
+		*) break ;;
+	esac
+	# everything after the #SBATCH keyword, possibly several options
+	directives="${line#\#SBATCH}"
+	for directive in $directives; do
+		value="${directive#*=}"
+		case "$directive" in
+			--output=*)          dirOutput="$value" ;;
+			--error=*)           dirError="$value" ;;
+			--job-name=*)        dirJobName="$value" ;;
+			--chdir=*)           dirChdir="$value" ;;
+			--partition=*)       dirPartition="$value" ;;
+			--account=*)         dirAccount="$value" ;;
+			--ntasks-per-node=*) dirNtasks="$value" ;;
+			--nodes=*)           dirNodes="$value" ;;
+			--time=*)            dirTime="$value" ;;
+			--mail-user=*)       dirMailUser="$value" ;;
+			--mail-type=*)       dirMailType="$value" ;;
+		esac
+	done
+done < "$script"
+
+# the command line wins over the script, as with the real sbatch
+jobName="${optJobName:-${dirJobName:-$(basename -- "$script")}}"
+workDir="${optChdir:-${dirChdir:-$PWD}}"
+partition="${dirPartition:-local}"
+account="$dirAccount"
+ntasks="${dirNtasks:-1}"
+nodes="${dirNodes:-1}"
+timeLimit="$dirTime"
+mailUser="${optMailUser:-$dirMailUser}"
+mailType="${optMailType:-${dirMailType:-NONE}}"
+outPattern="${optOutput:-${dirOutput:-slurm-%j.out}}"
+errPattern="${optError:-$dirError}"
+
+# job id and log files #######################################################
+
+jobId=$(localSlurmNextJobId)
+
+# the filename patterns slurm expands
+expandPattern(){
+	# separate statements: local expands all of its arguments before it
+	# assigns any of them, so rest could not be initialised from pattern here
+	local out='' char
+	local rest="$1"
+	while [ -n "$rest" ]; do
+		char="${rest:0:1}"
+		if [ "$char" = '%' ]; then
+			case "${rest:1:1}" in
+				j|J) out+="$jobId"; rest="${rest:2}"; continue ;;
+				x)   out+="$jobName"; rest="${rest:2}"; continue ;;
+				u)   out+="$localSlurmUser"; rest="${rest:2}"; continue ;;
+				N)   out+="$localSlurmHost"; rest="${rest:2}"; continue ;;
+				A)   out+="$jobId"; rest="${rest:2}"; continue ;;
+				%)   out+='%'; rest="${rest:2}"; continue ;;
+			esac
+		fi
+		out+="$char"
+		rest="${rest:1}"
+	done
+	printf '%s\n' "$out"
+}
+
+stdOut=$(expandPattern "$outPattern")
+case "$stdOut" in /*) ;; *) stdOut="${workDir}/${stdOut}" ;; esac
+if [ -n "$errPattern" ]; then
+	stdErr=$(expandPattern "$errPattern")
+	case "$stdErr" in /*) ;; *) stdErr="${workDir}/${stdErr}" ;; esac
+else
+	# without an explicit --error slurm merges stderr into the output file
+	stdErr="$stdOut"
+fi
+
+for logFile in "$stdOut" "$stdErr"; do
+	if ! mkdir -p "$(dirname -- "$logFile")" 2>/dev/null; then
+		printf 'sbatch: error: cannot create directory for %s\n' "$logFile" >&2
+		exit 1
+	fi
+done
+
+# the registry record ########################################################
+
+# the terminal this was submitted from, so that the job can report back to it
+notifyTty=''
+if [ -t 2 ]; then
+	# no 2>/dev/null here, that would redirect the very fd we are looking at
+	notifyTty=$(readlink -f /proc/self/fd/2)
+	case "$notifyTty" in
+		/dev/pts/*|/dev/tty*) ;;
+		*) notifyTty='' ;;
+	esac
+fi
+
+localSlurmInitRegistry
+declare -A localSlurmJob=(
+	[JobId]="$jobId"
+	[JobName]="$jobName"
+	[User]="$localSlurmUser"
+	[Partition]="$partition"
+	[Account]="$account"
+	[WorkDir]="$workDir"
+	[Script]="$(readlink -f -- "$script")"
+	[ScriptArgs]="${scriptArgs[*]}"
+	[StdOut]="$stdOut"
+	[StdErr]="$stdErr"
+	[NTasks]="$ntasks"
+	[Nodes]="$nodes"
+	[TimeLimit]="$timeLimit"
+	[MailUser]="$mailUser"
+	[MailType]="$mailType"
+	[NotifyTty]="$notifyTty"
+	[SubmitTime]="$(date +%s)"
+	[State]=CONFIGURING
+	[PGid]=''
+	[PGidStartTime]=''
+	[StartTime]=''
+	[EndTime]=''
+	[ExitCode]=''
+)
+localSlurmWriteJob
+
+# keep the registry from growing forever
+localSlurmPruneJobs
+
+# launch #####################################################################
+
+# slurm truncates the log at the start of the job
+: > "$stdOut"
+[ "$stdErr" = "$stdOut" ] || : > "$stdErr"
+
+runner="source '${localSlurmDir}/common.sh'; localSlurmRunJob '${jobId}'"
+if [ "$stdErr" = "$stdOut" ]; then
+	setsid bash -c "$runner" < /dev/null >> "$stdOut" 2>&1 &
+else
+	setsid bash -c "$runner" < /dev/null >> "$stdOut" 2>> "$stdErr" &
+fi
+disown 2>/dev/null || true
+
+# Wait for the job to report its process group, so that a squeue or scancel
+# right after the submission already finds it. Milliseconds in practice.
+for _ in $(seq 1 250); do
+	localSlurmReadJob "$jobId" || break
+	[ "${localSlurmJob[State]}" = CONFIGURING ] || break
+	sleep 0.02
+done
+
+if [ "$optParsable" = true ]; then
+	printf '%s\n' "$jobId"
+else
+	printf 'Submitted batch job %s\n' "$jobId"
+fi
+
+# --wait blocks until the job is done and reports its exit code, as slurm does
+if [ "$optWait" = true ]; then
+	while localSlurmReadJob "$jobId"; do
+		case "${localSlurmJob[State]}" in
+			COMPLETED|FAILED|CANCELLED) break ;;
+		esac
+		localSlurmReapJob "$jobId"
+		sleep 1
+	done
+	exit "${localSlurmJob[ExitCode]:-0}"
+fi
+
+exit 0
