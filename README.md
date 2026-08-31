@@ -42,6 +42,20 @@ The shell script that creates the scripts is currently called **```submit_Uncert
 - If you want to use the scales and ranges from a different experiment, a respective switch can be set to true and the reference experiment ID has to be given.
 - If you designed specific new input files for the analysis (e.g. a policy file), you can define them here too.
 
+### Running the same job without SLURM
+On a machine that has no SLURM installation the submit scripts above work unchanged if the stand-ins in ```localSlurm/``` are put in front of the PATH:
+
+```sh
+export PATH="$PWD/localSlurm:$PATH"
+./submit_UncertaintyAnalysisLevante.sh -w 12 -n 100 -k 10
+```
+
+```sbatch``` then runs the generated runscript right away, detached, and ```squeue``` and ```scancel``` work on those local jobs. All three hand over to the real SLURM binaries when they are installed, so the same commands keep working on Levante.
+
+Two things differ from the cluster:
+- The job runs in the background. Its output goes to the same ```workOutput/<expID>/LOG.<expID>_<jobid>.log``` the runscript names, and when it finishes the terminal it was submitted from gets a one line message (the ```--mail-type``` of the runscript decides when, ```LOCAL_SLURM_NOTIFY``` decides how, see ```localSlurm/README.md```).
+- The number of workers is not adjusted for you. The default fits a Levante node, so pass a ```-w``` that your machine can actually host. (The local ```sbatch``` does set ```_R_CHECK_LIMIT_CORES_=false``` for the job, without which the cluster setup would refuse more than two workers, see ```localSlurm/README.md```.)
+
 
 ### Running in an interactive session
 
