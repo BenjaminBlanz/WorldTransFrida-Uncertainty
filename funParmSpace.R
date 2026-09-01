@@ -105,7 +105,20 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 		idcToMod <- idcToMod[[parIdx]]
 	}
 	idcToMod.base <- idcToMod
-	for(idcsToMod.i in seq_len(length(idcToMod.base)-1)+1){
+	# One pass per widening of the set of parameters that move with parIdx. With a
+	# single element there is nothing to widen to, but the border for parIdx itself
+	# still has to be found, so the loop runs once rather than not at all.
+	# 2:length(idcToMod.base) used to give c(2,1) in that case, indexing past the
+	# end on a second pass that should not have happened.
+	idcsToModSeq <- if(length(idcToMod.base)<2){
+		seq_along(idcToMod.base)
+	} else {
+		2:length(idcToMod.base)
+	}
+	if(length(idcsToModSeq)==0){
+		stop('idcToMod is empty, there is nothing to search\n')
+	}
+	for(idcsToMod.i in idcsToModSeq){
 		idcToMod <- idcToMod.base[c(1:idcsToMod.i)]
 		if(trace>0&&!ceterisParibusPars){
 			cat('Running with idcToMod ',idcToMod,'\n')
@@ -196,6 +209,10 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 				}
 				# maximize density at root using other parms
 				otherIdx <- setdiff(idcToMod,parIdx)
+				if(length(otherIdx)==0){
+					# nothing to reoptimise against, so this is the ceteris paribus answer
+					return(par.val)
+				}
 				otherPars <- parVect[otherIdx]
 				res <- suppressWarnings(optimx(otherPars,densMaxGivenParFun,
 																			 method = 'Nelder-Mead',
