@@ -964,6 +964,18 @@ runFridaDefaultParms <- function(silent=T,testStellaGood=F){
 
 # runFRIDASpecParms ####
 runFRIDASpecParms <- function(parVect,silent=T,testStellaGood=F){
+	# Wall clock in the parscale and range determinations is the number of stella
+	# runs divided by the number of workers, so that count is the thing to measure
+	# when either is being made faster. Inert unless developmentTools has switched
+	# it on; see developmentTools/countModelRuns.R, which is where everything else
+	# about it lives.
+	if(exists('devTools.countModelRuns')&&isTRUE(devTools.countModelRuns)){
+		devTools.modelRunCount <<- if(exists('devTools.modelRunCount')){
+			devTools.modelRunCount+1
+		} else {
+			1
+		}
+	}
 	if(is.null(names(parVect))&length(parVect)>0){
 		stop('need names in parVect to write FRIDA input\n')
 	}
