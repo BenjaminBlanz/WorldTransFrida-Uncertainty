@@ -165,7 +165,12 @@ for(plotWeightType in plotWeightTypes){
 	repSample <- samplePoints[as.vector(minSSEidc),]
 	colnames(repSample) <- gsub('\\[1\\]','',colnames(repSample))
 	colnames(repSample) <- gsub('\\[1,','[*,',colnames(repSample))
-	repSample <- repSample[,-which(colnames(repSample)=='plotWeight')]
+	# plotWeight and logLike are bookkeeping this script put on samplePoints, not
+	# model parameters. Both have to go before the file is written: FRIDA imports it
+	# as a parameter file (see policy_update_frida.sh), so a column left in here
+	# reaches the model looking like a parameter. Selecting by name rather than by
+	# -which() also avoids dropping every column when neither is present.
+	repSample <- repSample[,!colnames(repSample)%in%c('plotWeight','logLike')]
 	cat('done\n')
 	cat('writing out to subSampleParameterValues.csv ...')
 	location.output.repSample <- file.path(location.output,'repSample',plotWeightType)
