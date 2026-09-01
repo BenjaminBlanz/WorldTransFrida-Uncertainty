@@ -1,0 +1,131 @@
+# testDeterminationKey.R ####
+#
+# A cached determination used to be reused whenever the file existed and had the
+# right columns (plan item 7). Nothing checked that it had been computed from the
+# same model, the same calibration data or the same likelihood settings, so the
+# parscales and ranges of one model could be handed to another in silence.
+#
+# The value of a cache check is entirely in its negative paths, so those are what
+# this exercises: every field of the key, one at a time, has to reject the cache
+# and say which one moved.
+#
+# Run from the repository root:
+#   Rscript developmentTools/testDeterminationKey.R
+
+source('funParmSpace.R')
+
+tmp <- tempfile('determinationKeyTest')
+dir.create(tmp)
+dir.create(file.path(tmp,'frida'))
+dir.create(file.path(tmp,'info'))
+on.exit(unlink(tmp,recursive=TRUE))
+
+writeLines('a model',con=file.path(tmp,'frida','FRIDA.stmx'))
+writeLines('Variable,Value',con=file.path(tmp,'info','frida_info.csv'))
+
+calDat <- data.frame(a=1:5,b=6:10)
+resSigma <- diag(2)
+parNames <- c('p1','p2','p3')
+settings <- list(treatVarsAsIndep=TRUE,likeCutoffRatio=1000,rangeTol=1e-15,
+								 ignoreParBounds=FALSE,forceParBounds=FALSE,
+								 rangeRootTol=1e-4,rangeRootMaxIter=60)
+
+buildKey <- function(calDat=get('calDat',envir=parent.frame()),
+										 resSigma=get('resSigma',envir=parent.frame()),
+										 parNames=get('parNames',envir=parent.frame()),
+										 settings=get('settings',envir=parent.frame()),
+										 baseNegLL=100){
+	funDeterminationKey(file.path(tmp,'frida'),file.path(tmp,'info'),'frida_info.csv',
+											calDat,resSigma,parNames,settings,baseNegLL=baseNegLL)
+}
+
+base <- buildKey()
+
+ok <- 0
+fail <- 0
+check <- function(label,cond,detail=''){
+	if(isTRUE(cond)){cat(sprintf('  ok   %s\n',label)); ok <<- ok+1}
+	else{cat(sprintf('  FAIL %s%s\n',label,ifelse(nchar(detail)>0,paste0('\n       ',detail),'')))
+		fail <<- fail+1}
+}
+# the mismatch must name what moved, not merely report that something did
+namesIt <- function(mismatch,what){
+	length(mismatch)>0 && any(grepl(what,mismatch,fixed=TRUE))
+}
+
+cat('an unchanged key is accepted\n')
+check('no mismatch against itself',length(funDeterminationKeyMismatch(base,buildKey()))==0)
+check('and the parameter list agrees',!funDeterminationParNameMismatch(base,buildKey()))
+
+cat('every field is checked\n')
+# put the file back byte for byte and timestamp for timestamp afterwards, so the
+# checks that follow are not comparing against a file this test just touched
+withChangedFile <- function(path,newContent){
+	original <- readLines(path,warn=FALSE)
+	originalTime <- file.info(path)$mtime
+	Sys.sleep(0.01)
+	writeLines(newContent,con=path)
+	m <- funDeterminationKeyMismatch(base,buildKey())
+	writeLines(original,con=path)
+	Sys.setFileTime(path,originalTime)
+	m
+}
+m <- withChangedFile(file.path(tmp,'frida','FRIDA.stmx'),'a different model')
+check('a changed model file is caught and named',namesIt(m,'FRIDA model'),
+			paste(m,collapse='; '))
+check('and the file is restored, so nothing after this sees it as changed',
+			length(funDeterminationKeyMismatch(base,buildKey()))==0)
+
+m <- withChangedFile(file.path(tmp,'info','frida_info.csv'),'Variable,Value,Extra')
+check('changed frida_info is caught and named',namesIt(m,'frida_info'),
+			paste(m,collapse='; '))
+
+m <- funDeterminationKeyMismatch(base,buildKey(calDat=data.frame(a=1:5,b=11:15)))
+check('changed calibration data is caught and named',namesIt(m,'calibration data'),
+			paste(m,collapse='; '))
+
+m <- funDeterminationKeyMismatch(base,buildKey(resSigma=diag(2)*2))
+check('a changed residual covariance is caught and named',
+			namesIt(m,'residual covariance'),paste(m,collapse='; '))
+
+for(setting in names(settings)){
+	changed <- settings
+	changed[[setting]] <- if(is.logical(settings[[setting]])){
+		!settings[[setting]]
+	} else {
+		settings[[setting]]*2
+	}
+	m <- funDeterminationKeyMismatch(base,buildKey(settings=changed))
+	check(sprintf('a changed %s is caught and named',setting),namesIt(m,setting),
+				paste(m,collapse='; '))
+}
+
+m <- funDeterminationKeyMismatch(base,buildKey(baseNegLL=100.5))
+check('a moved starting likelihood is caught and named',
+			namesIt(m,'likelihood at the starting parameters'),paste(m,collapse='; '))
+
+cat('the parameter list is reported apart from the rest\n')
+newPars <- buildKey(parNames=c('p1','p2','p3','p4'))
+check('a new parameter does not invalidate everything else',
+			length(funDeterminationKeyMismatch(base,newPars))==0)
+check('but is reported on its own',funDeterminationParNameMismatch(base,newPars))
+
+cat('a cache with no key at all\n')
+check('is rejected, saying so',
+			identical(funDeterminationKeyMismatch(NULL,base),'no key was recorded with it'))
+check('and counts as a parameter mismatch too',funDeterminationParNameMismatch(NULL,base))
+
+cat('the readers act on it\n')
+saveRDS(list(parscale=setNames(c(1,2,3),parNames),
+						 status=setNames(rep('determined',3),parNames),
+						 key=base),file.path(tmp,'parscale.RDS'))
+kept <- funReadCachedParscale(file.path(tmp,'parscale.RDS'),parNames,currentKey=base)
+check('a matching key lets the parscales through',all(kept$parscale==c(1,2,3)))
+dropped <- funReadCachedParscale(file.path(tmp,'parscale.RDS'),parNames,
+																 currentKey=buildKey(baseNegLL=999))
+check('a mismatched key drops them',all(is.na(dropped$parscale)))
+
+cat(sprintf('\n%d ok, %d failed\n',ok,fail))
+if(fail>0){
+	stop('the determination key does not reject what it should\n')
+}

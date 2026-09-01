@@ -118,6 +118,21 @@ if(!exists('rangeRootTol')){
 if(!exists('rangeRootMaxIter')){
 	rangeRootMaxIter <- 1e3
 }
+# What a determination depends on, so a cache written from something else is not
+# silently reused. Rebuilt where it is needed rather than held in a variable,
+# because jParVect can be rebuilt under kickParmsParScaleDet.
+funCurrentDeterminationKey <- function(baseNegLL=NULL){
+	funDeterminationKey(location.frida,location.frida.info,name.frida_info,
+											calDat,resSigma,names(jParVect),
+											baseNegLL=baseNegLL,
+											settings=list(treatVarsAsIndep=treatVarsAsIndep,
+													 likeCutoffRatio=likeCutoffRatio,
+													 rangeTol=rangeTol,
+													 ignoreParBounds=ignoreParBounds,
+													 forceParBounds=forceParBounds,
+													 rangeRootTol=rangeRootTol,
+													 rangeRootMaxIter=rangeRootMaxIter))
+}
 # A parscale a previous run could not determine is a result to keep, not work to
 # redo. See funReadCachedParscale.
 if(redoAllCalc){
@@ -128,7 +143,8 @@ if(redoAllCalc){
 } else {
 	parscale.cached <- funReadCachedParscale(file.path(location.output,'parscale.RDS'),
 																					 names(jParVect),
-																					 redoFailedParscales=redoFailedParscales)
+																					 redoFailedParscales=redoFailedParscales,
+																					 currentKey=funCurrentDeterminationKey())
 	parscale <- parscale.cached$parscale
 	parscaleCachedNotDetermined <- parscale.cached$notDetermined
 	if(sum(parscaleCachedNotDetermined)>0){
@@ -208,7 +224,8 @@ while(newMaxFound){
 	if(!redoAllCalc&&!forceParBounds&&
 		 file.exists(file.path(location.output,'sampleParmsParscaleRanged.RDS'))){
 		sampleParms.cached <- funReadCachedRangedSampleParms(
-			file.path(location.output,'sampleParmsParscaleRanged.RDS'))
+			file.path(location.output,'sampleParmsParscaleRanged.RDS'),
+			currentKey=funCurrentDeterminationKey(baseNegLL=baseNegLL))
 	}
 	if(forceParBounds){
 		cat('Forced using frida_info bounds\n')
@@ -355,6 +372,7 @@ while(newMaxFound){
 		names(parscaleStatus.jParVect) <- names(parscale.all)
 		saveRDS(list(parscale=parscale.all,
 								 status=parscaleStatus.jParVect,
+								 key=funCurrentDeterminationKey(baseNegLL=baseNegLL),
 								 savedAt=Sys.time()),
 						file.path(location.output,'parscale.RDS'))
 		sampleParms$parscale <- parscale.parvect
@@ -722,6 +740,13 @@ while(newMaxFound){
 		saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
 	}
 	
+	# The determination is complete, so the cache it leaves behind can be keyed.
+	# Written here and nowhere else on purpose: the intermediate saves above happen
+	# while the determination is still running, and a run interrupted among them
+	# should leave a cache that fails this check rather than one that looks whole.
+	saveRDS(funCurrentDeterminationKey(baseNegLL=baseNegLL),
+					file.path(location.output,'sampleParmsParscaleRanged.key.RDS'))
+
 	# Sample the Parmeter Space ####
 	parVect <- sampleParms$Value
 	names(parVect) <- sampleParms$Variable

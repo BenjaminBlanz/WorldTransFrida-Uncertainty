@@ -452,7 +452,8 @@ funParBoundsForSampleParms <- function(sampleParms,frida_info){
 #
 # Entries are matched by name. The cached vector need not hold the same
 # parameters, nor hold them in the same order.
-funReadCachedParscale <- function(file,jParVectNames,redoFailedParscales=FALSE){
+funReadCachedParscale <- function(file,jParVectNames,redoFailedParscales=FALSE,
+																	currentKey=NULL){
 	parscale <- rep(NA_real_,length(jParVectNames))
 	names(parscale) <- jParVectNames
 	notDetermined <- rep(FALSE,length(jParVectNames))
@@ -461,6 +462,17 @@ funReadCachedParscale <- function(file,jParVectNames,redoFailedParscales=FALSE){
 		return(list(parscale=parscale,notDetermined=notDetermined))
 	}
 	cached <- readRDS(file)
+	if(is.list(cached)&&!is.null(currentKey)){
+		# Anything but the parameter list having moved means these values were
+		# computed from something else. The parameter list alone only means some are
+		# new, and the rest are still matched by name below.
+		mismatch <- funDeterminationKeyMismatch(cached$key,currentKey)
+		if(length(mismatch)>0){
+			cat(sprintf('Cached parscales in %s cannot be used, %s has changed. Redetermining.\n',
+									basename(file),paste(mismatch,collapse='; ')))
+			return(list(parscale=parscale,notDetermined=notDetermined))
+		}
+	}
 	if(is.list(cached)){
 		parscale.old <- cached$parscale
 		status.old <- cached$status
@@ -479,6 +491,98 @@ funReadCachedParscale <- function(file,jParVectNames,redoFailedParscales=FALSE){
 	return(list(parscale=parscale,notDetermined=notDetermined))
 }
 
+# funDeterminationKey ####
+# What a cached determination was computed from. Until this existed, nothing
+# recorded that: a cache was reused whenever the file was there and had the right
+# columns, so a changed model, changed calibration data or changed likelihood
+# settings were all accepted in silence, and the parscales and ranges of one model
+# were handed to another.
+#
+# File identity is size and mtime rather than a hash of the contents. FRIDA.stmx
+# is large and this runs on every start; a hash of it would cost more than the
+# check is worth. That means a change that preserves both is not seen, which is
+# unlikely enough to accept and stated here so it is not a surprise.
+funDeterminationKey <- function(location.frida,location.frida.info,name.frida_info,
+																calDat,resSigma,parNames,settings,
+																baseNegLL=NULL){
+	fileStamp <- function(path){
+		if(!file.exists(path)){
+			return('missing')
+		}
+		info <- file.info(path)
+		return(sprintf('%.0f bytes, %s',info$size,
+									 format(info$mtime,'%Y-%m-%d %H:%M:%OS3')))
+	}
+	digestOf <- function(x){
+		if(is.null(x)){
+			return('absent')
+		}
+		return(digest::digest(x))
+	}
+	list(fridaModel=fileStamp(file.path(location.frida,'FRIDA.stmx')),
+			 fridaInfo=fileStamp(file.path(location.frida.info,name.frida_info)),
+			 calDat=digestOf(calDat),
+			 resSigma=digestOf(resSigma),
+			 parNames=parNames,
+			 settings=settings,
+			 # The likelihood at the starting parameters, which every border in the
+			 # determination was measured against. It costs nothing to record, it is
+			 # computed anyway, and it catches in one number the case the file stamps
+			 # above are only a proxy for: the model no longer answers what it did.
+			 baseNegLL=baseNegLL,
+			 writtenAt=Sys.time())
+}
+
+# funDeterminationKeyMismatch ####
+# Which parts of the key have moved since the cache was written, named so the log
+# says why a determination is being redone rather than just that it is. The
+# parameter list is reported separately from everything else because it is the one
+# mismatch that does not invalidate the parameters both runs have in common.
+funDeterminationKeyMismatch <- function(cached,current){
+	if(is.null(cached)||!is.list(cached)){
+		return('no key was recorded with it')
+	}
+	mismatch <- character(0)
+	described <- c(fridaModel='the FRIDA model file',
+								 fridaInfo='frida_info',
+								 calDat='the calibration data',
+								 resSigma='the residual covariance')
+	for(field in names(described)){
+		if(!identical(cached[[field]],current[[field]])){
+			mismatch <- c(mismatch,described[[field]])
+		}
+	}
+	if(!is.null(cached$baseNegLL)&&!is.null(current$baseNegLL)&&
+		 !isTRUE(all.equal(cached$baseNegLL,current$baseNegLL))){
+		mismatch <- c(mismatch,
+									sprintf('the likelihood at the starting parameters (%.10g, was %.10g)',
+													current$baseNegLL,cached$baseNegLL))
+	}
+	for(setting in names(current$settings)){
+		if(!identical(cached$settings[[setting]],current$settings[[setting]])){
+			mismatch <- c(mismatch,sprintf('%s (%s, was %s)',setting,
+																		 format(current$settings[[setting]]),
+																		 if(is.null(cached$settings[[setting]])){
+																		 	'not recorded'
+																		 } else {
+																		 	format(cached$settings[[setting]])
+																		 }))
+		}
+	}
+	return(mismatch)
+}
+
+# funDeterminationParNameMismatch ####
+# TRUE when the two runs do not sample the same parameters. Kept apart from the
+# mismatch above: everything there invalidates the whole determination, while this
+# only means some parameters are new.
+funDeterminationParNameMismatch <- function(cached,current){
+	if(is.null(cached)||!is.list(cached)){
+		return(TRUE)
+	}
+	return(!identical(cached$parNames,current$parNames))
+}
+
 # funReadCachedRangedSampleParms ####
 # The sampleParms a previous run left behind after determining ranges, or NULL
 # when that file cannot stand in for a determination. Everything downstream of
@@ -486,10 +590,26 @@ funReadCachedParscale <- function(file,jParVectNames,redoFailedParscales=FALSE){
 # they existed, or by a run interrupted partway through the determination, has to
 # be redetermined rather than half used. A column that is there but holds nothing
 # but NA is missing too.
-funReadCachedRangedSampleParms <- function(file){
+funReadCachedRangedSampleParms <- function(file,currentKey=NULL,
+																					 keyFile=paste0(tools::file_path_sans_ext(file),
+																					 							 '.key.RDS')){
 	required <- c('Variable','Value','Min','Max','MinAfterDet','MaxAfterDet',
 								'MinNotDeterminedBorder','MaxNotDeterminedBorder',
 								'parscale','parscaleStatus')
+	# The key lives beside the file rather than in it, because this one is written
+	# as a plain sampleParms and read back as one in several places.
+	if(!is.null(currentKey)){
+		cachedKey <- if(file.exists(keyFile)){readRDS(keyFile)}else{NULL}
+		mismatch <- c(funDeterminationKeyMismatch(cachedKey,currentKey),
+									if(funDeterminationParNameMismatch(cachedKey,currentKey)){
+										'the set of sampled parameters'
+									})
+		if(length(mismatch)>0){
+			cat(sprintf('Cached ranges in %s cannot be used, %s has changed. Redetermining.\n',
+									basename(file),paste(mismatch,collapse='; ')))
+			return(NULL)
+		}
+	}
 	sampleParms <- readRDS(file)
 	absent <- required[!required%in%colnames(sampleParms)]
 	empty <- character(0)
