@@ -350,10 +350,47 @@ funFridaCheckoutDiffNote <- function(cmp,maxNames=5){
 # Writes a human readable record of the model version into the output folder, so
 # that a result folder can still be traced back to a model version later.
 # The folder names are unchanged by this, all of the information lives in the file.
+# funRunMetadataJobKey ####
+# What identifies the job a run metadata file belongs to. The scripts that run
+# after the ensemble source the config again, sometimes from a second R session
+# (the failure cleanup in the .run templates does), so a session local marker
+# cannot tell "later sourcing within this run" from "a new run in this folder".
+# The batch job id can, and both the real sbatch and the localSlurm stand in
+# export it. Outside a job there is no id, and then the process is the run.
+funRunMetadataJobKey <- function(){
+	key <- Sys.getenv('SLURM_JOB_ID',unset='')
+	if(!nzchar(key)){key <- paste0('pid-',Sys.getpid())}
+	key
+}
+
+# funRunMetadataField ####
+# The value of one 'label   value' field of a run metadata file, NA when the
+# file does not carry that field.
+funRunMetadataField <- function(lines,label){
+	hit <- grep(sprintf('^%s +',label),lines)
+	if(length(hit)==0){return(NA_character_)}
+	trimws(sub(sprintf('^%s +',label),'',lines[hit[1]]))
+}
+
+# funStripRunCompletionBlock ####
+# A run metadata file without the run completion summary funAppendRunCompletionSummary
+# splices into it. The summary is appended after the metadata was written, so it
+# has to come out again before the two can be compared, and it has to come out
+# before a new one goes in.
+funStripRunCompletionBlock <- function(lines){
+	start <- which(lines=='run completion')
+	if(length(start)==0){return(lines)}
+	start <- start[1]
+	ends <- which(lines=='model file checksums')
+	end <- if(any(ends>start)){min(ends[ends>start])-1}else{length(lines)}
+	lines[-(start:end)]
+}
+
 funWriteRunMetadataFile <- function(location.output,location.frida.git,location.frida,
 																		name.output=NULL,exclude=c(),
 																		fileName='runMetadata.txt',
 																		configFile='config.R',location.analysis.git='.'){
+	jobKey <- funRunMetadataJobKey()
 	info <- funFridaVersionInfo(location.frida.git)
 	analysisInfo <- funGitInfo(location.analysis.git)
 	configDiff <- funConfigDiffToDefault(configFile=configFile,
@@ -400,6 +437,7 @@ funWriteRunMetadataFile <- function(location.output,location.frida.git,location.
 						 'excluding the files this analysis writes into the Data directory.',
 						 '',
 						 field('run',name.output),
+						 field('job',jobKey),
 						 field('written',format(Sys.time(),'%Y-%m-%d %H:%M:%S')))
 	# the analysis scripts are as much a part of what produced these results as
 	# the model is. The submit script copies them to <expID>_*.R before running
@@ -441,7 +479,39 @@ funWriteRunMetadataFile <- function(location.output,location.frida.git,location.
 						 '--------------------',
 						 paste0(ifelse(is.na(checksums$files),strrep(' ',32),checksums$files),
 						 			 '  ',names(checksums$files)))
-	writeLines(lines,file.path(location.output,fileName))
+	# Write once per job, verify every time after that. The scripts that run after
+	# the ensemble source the config again, and rewriting the file there would drop
+	# the run completion summary funAppendRunCompletionSummary appended to it in
+	# between, which is how the summary kept going missing. So a later sourcing
+	# within the same job only checks: what it would write now has to match what
+	# the first sourcing wrote. If it does not, the config, the model or the
+	# analysis scripts changed on disk while the run was going, and the recorded
+	# metadata no longer describes every stage of it. There is no version of that
+	# worth continuing with, so it is an error rather than a warning.
+	file <- file.path(location.output,fileName)
+	# the timestamp is the one field that legitimately differs between the write
+	# and the checks that follow it
+	substantive <- function(l){l[!startsWith(l,'written')]}
+	previous <- if(file.exists(file)){readLines(file,warn=FALSE)}else{character(0)}
+	if(length(previous)>0&&identical(funRunMetadataField(previous,'job'),jobKey)){
+		recorded <- substantive(funStripRunCompletionBlock(previous))
+		current <- substantive(lines)
+		if(!identical(recorded,current)){
+			only <- function(x,y){setdiff(x,y)}
+			gone <- only(recorded,current)
+			came <- only(current,recorded)
+			detail <- c(if(length(gone)>0){c('  recorded when this run started:',paste0('    ',utils::head(gone,12)))},
+									if(length(came)>0){c('  would be recorded now:',paste0('    ',utils::head(came,12)))})
+			stop(sprintf(paste0('The run metadata in %s was written by an earlier stage of job %s,\n',
+													'and sourcing the config again now would record something different.\n',
+													'Something this metadata describes, the config, the model files or the\n',
+													'analysis scripts, changed on disk while the run was going, so the run\n',
+													'is no longer the one the metadata claims.\n%s\n'),
+									 file,jobKey,paste(detail,collapse='\n')),call.=FALSE)
+		}
+		return(invisible(info))
+	}
+	writeLines(lines,file)
 	invisible(info)
 }
 
@@ -750,15 +820,8 @@ funAppendRunCompletionSummary <- function(location.output,runStatus,numSample=NU
 						call.=FALSE,immediate.=TRUE)
 		return(invisible(NULL))
 	}
-	old <- readLines(file,warn=FALSE)
 	# an earlier summary of the same run would otherwise accumulate
-	start <- which(old=='run completion')
-	if(length(start)>0){
-		start <- start[1]
-		ends <- which(old=='model file checksums')
-		end <- if(any(ends>start)){min(ends[ends>start])-1}else{length(old)}
-		old <- old[-(start:end)]
-	}
+	old <- funStripRunCompletionBlock(readLines(file,warn=FALSE))
 	at <- which(old=='model file checksums')
 	block <- c(lines,'')
 	if(length(at)>0){
