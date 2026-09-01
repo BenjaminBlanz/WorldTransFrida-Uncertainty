@@ -105,6 +105,18 @@ if(skipParMLE){
 source('clusterHelp.R')
 gobble <- clusterEvalQ(cl,source(file.path(baseWD,'config.R')))
 
+# Development instrumentation, see developmentTools/countModelRuns.R. Inert
+# unless FRIDA_COUNT_MODEL_RUNS is set in the environment, and harmless in a
+# checkout that has no developmentTools directory: the marks below become no-ops.
+if(identical(toupper(Sys.getenv('FRIDA_COUNT_MODEL_RUNS')),'TRUE')&&
+	 file.exists('developmentTools/countModelRuns.R')){
+	source('developmentTools/countModelRuns.R')
+	devToolsCountModelRuns(cl)
+} else {
+	devToolsMarkSection <- function(...){invisible(NULL)}
+	devToolsReportModelRuns <- function(...){invisible(NULL)}
+}
+
 # MLE and Sensi Loop ####
 # the run specific config copies in the output directories predate this flag
 if(!exists('redoFailedParscales')){
@@ -248,6 +260,7 @@ while(newMaxFound){
 		parscaleNotDetermined.parVect <- sampleParms$parscaleStatus=='notDetermined'
 	} else {
 		# determine parscale ####
+		devToolsMarkSection('parscale determination',cl)
 		cat('Determining parscales...\n')
 		if(sum(parscaleSkip)>0){
 			cat(sprintf('Skipping parscale determination for %i parameters with external ranges.\n',
@@ -458,6 +471,7 @@ while(newMaxFound){
 		}
 	}
 	# coef range ####
+	devToolsMarkSection('range finding',cl)
 	## par bounds ####
 	parBounds <- funParBoundsForSampleParms(sampleParms,frida_info)
 	notDeterminedBorders <- array(TRUE,dim=c(length(parVect),2))
@@ -657,6 +671,7 @@ while(newMaxFound){
 																			 symmetrifyExternalRanges=symmetrifyExternalRanges,
 																			 symmetrifyFallbackAuthorRanges=symmetrifyFallbackAuthorRanges)
 	## check for errors at the borders ####
+	devToolsMarkSection('border checks',cl)
 	if(checkBorderErrors || kickParmsErrorRangeDet){
 		borderLogLikeError <- array(NA,dim=c(length(parVect),2))
 		colnames(borderLogLikeError) <- c('Min','Max')
@@ -751,6 +766,9 @@ while(newMaxFound){
 	# should leave a cache that fails this check rather than one that looks whole.
 	saveRDS(funCurrentDeterminationKey(baseNegLL=baseNegLL),
 					file.path(location.output,'sampleParmsParscaleRanged.key.RDS'))
+
+	devToolsMarkSection('determination done',cl)
+	devToolsReportModelRuns(cl)
 
 	# Sample the Parmeter Space ####
 	parVect <- sampleParms$Value
