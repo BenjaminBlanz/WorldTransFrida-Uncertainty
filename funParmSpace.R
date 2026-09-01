@@ -70,7 +70,7 @@ likeGoalDiffFun <- function(par,parVect,parIdx,lpdensEps, ...){
 	return(llike-lpdensEps)
 }
 densMaxGivenParFun <- function(otherPars,parVect,parIdx,idcToMod, ...){
-	parVect[idcToMod[-parIdx]] <- otherPars
+	parVect[setdiff(idcToMod,parIdx)] <- otherPars
 	return(negLLike(parVect, ...))
 }
 # if ceterisParibusPars is TRUE, the densValBorder is found for the selecteed par Idx,
@@ -98,7 +98,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 		idcToMod <- idcToMod[[parIdx]]
 	}
 	idcToMod.base <- idcToMod
-	for(idcsToMod.i in 2:length(idcToMod.base)){
+	for(idcsToMod.i in seq_len(length(idcToMod.base)-1)+1){
 		idcToMod <- idcToMod.base[c(1:idcsToMod.i)]
 		if(trace>0&&!ceterisParibusPars){
 			cat('Running with idcToMod ',idcToMod,'\n')
@@ -180,7 +180,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 					cat('iter ',iter,' ',par.val,' : ')
 				}
 				# maximize density at root using other parms
-				otherIdx <- idcToMod[-parIdx]
+				otherIdx <- setdiff(idcToMod,parIdx)
 				otherPars <- parVect[otherIdx]
 				res <- suppressWarnings(optimx(otherPars,densMaxGivenParFun,
 																			 method = 'Nelder-Mead',
@@ -196,15 +196,21 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 					cat(parVect,' ',likeAtMax-lpdensEps,'\n')
 				}
 				if(likeAtMax>likeAtMaxOld){
+					# The step improved the likelihood, so the point we moved to sits above the
+					# contour we are trying to find. Reoptimising every parameter brings it back
+					# down. This used to sit inside if(trace>0), which meant a traced run and an
+					# untraced run computed different borders.
 					if(trace>0){
 						cat('Likelihood Imporovement After Step Reoptimizing\n')
-						res <- suppressWarnings(optimx(parVect,negLLike,
-																					 method = 'Nelder-Mead',
-																					 control=list(dowarn = F,
-																					 						 parscale=parscale,...)))#,trace=99)))
-						parVect <- unlist(res[1:length(parVect)])
-						par.val <- parVect[parIdx]
-						likeAtMax <- -res$value
+					}
+					res <- suppressWarnings(optimx(parVect,negLLike,
+					                               method = 'Nelder-Mead',
+					                               control=list(dowarn = F,
+					                                            parscale=parscale),...))
+					parVect <- unlist(res[1:length(parVect)])
+					par.val <- parVect[parIdx]
+					likeAtMax <- -res$value
+					if(trace>0){
 						cat(parVect,' ',likeAtMax-lpdensEps,'\n')
 					}
 				}
