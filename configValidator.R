@@ -213,6 +213,13 @@ if(cfgVal.has('rangeTol')){
 	cfgVal.checkNumber('rangeTol',min=0)
 }
 cfgVal.checkNumber('minObsForLike',min=1,integer=TRUE)
+# NA is a legal value, it asks for the absolute tolerance the search used before
+if(cfgVal.has('rangeRootTol')&&!all(is.na(cfgVal.get('rangeRootTol')))){
+	cfgVal.checkNumber('rangeRootTol',min=0)
+}
+if(cfgVal.has('rangeRootMaxIter')){
+	cfgVal.checkNumber('rangeRootMaxIter',min=1,integer=TRUE)
+}
 cfgVal.checkNumber('subSample.NumSamplePerVar',min=1,integer=TRUE)
 for(cfgVal.v in c('redoAllCalc','redoFailedParscales',
 									'writePerWorkerFiles','doNotReturnRunDataSavePerWorkerOnly',

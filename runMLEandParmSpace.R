@@ -110,6 +110,14 @@ gobble <- clusterEvalQ(cl,source(file.path(baseWD,'config.R')))
 if(!exists('redoFailedParscales')){
 	redoFailedParscales <- F
 }
+# likewise, and these default to what the border search did before the knobs
+# existed, so an old config keeps its old behaviour
+if(!exists('rangeRootTol')){
+	rangeRootTol <- NA
+}
+if(!exists('rangeRootMaxIter')){
+	rangeRootMaxIter <- 1e3
+}
 # A parscale a previous run could not determine is a result to keep, not work to
 # redo. See funReadCachedParscale.
 if(redoAllCalc){
@@ -543,6 +551,8 @@ while(newMaxFound){
 																	 parscale=parscale.parvect,
 																	 bounds=parBounds,
 																	 niter=1e3,# set niter so that the errors at least in the indep case are small
+																	 rootTolFactor=rangeRootTol,
+																	 rootMaxIter=rangeRootMaxIter,
 																	 workerStagger = T)
 			for(task.i in seq_along(borderTasks)){
 				border.coefs[borderTasks[[task.i]]$parIdx,borderTasks[[task.i]]$direction] <-

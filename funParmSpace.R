@@ -86,6 +86,8 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 															parscale=rep(1,length(parVect)),
 															bounds=NULL,
 															niter=1000,
+															rootTolFactor=NA,
+															rootMaxIter=NULL,
 															workerStagger=FALSE,
 															...){
 	if(workerStagger){
@@ -103,6 +105,22 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 	}
 	if(is.list(idcToMod)){
 		idcToMod <- idcToMod[[parIdx]]
+	}
+	# uniroot below used to be given tol = 1e-16 with maxiter = niter, which is a
+	# thousand. The objective is a stella run whose output is read back from a csv,
+	# so below the resolution of that output the function is a staircase and brent's
+	# method is chasing noise, one model run per iteration, until it gives up at the
+	# iteration limit. A tolerance scaled to the parameter's own step size is one
+	# the model can actually resolve. rootTolFactor of NA keeps the old absolute
+	# value, and with it the old behaviour.
+	rootTol <- if(is.finite(rootTolFactor)&&
+								is.finite(parscale[parIdx])&&parscale[parIdx]!=0){
+		abs(parscale[parIdx])*rootTolFactor
+	} else {
+		1e-16
+	}
+	if(is.null(rootMaxIter)){
+		rootMaxIter <- niter
 	}
 	idcToMod.base <- idcToMod
 	# One pass per widening of the set of parameters that move with parIdx. With a
@@ -198,7 +216,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 																						parVect=parVect,
 																						parIdx=parIdx,
 																						lpdensEps=lpdensEps,
-																						tol = 1e-16, maxiter = niter,...)$root)
+																						tol = rootTol, maxiter = rootMaxIter,...)$root)
 			}
 			if(ceterisParibusPars){
 				return(par.val)

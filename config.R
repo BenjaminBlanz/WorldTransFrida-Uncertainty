@@ -147,6 +147,15 @@ treatVarsAsIndep <- T
 likeCutoffRatio <- 1000
 # tolerance for the search of the likelihood border
 rangeTol <- 1e-15
+# uniroot's tolerance in the border search, as a multiple of the parameter's own
+# parscale. The likelihood comes from a stella run read back out of a csv, so a
+# tolerance far below what the model resolves has brent's method chasing noise at
+# one model run per iteration until it hits the iteration limit below. NA restores
+# the absolute 1e-16 the search used before.
+rangeRootTol <- 1e-4
+# iteration limit for that same search. It used to share niter with the secant
+# branch, which is 1000.
+rangeRootMaxIter <- 60
 # Should we drop parameters for which we can not determine the parameter scale?
 # This is likely because they do not affect the run.
 # However we often run EMB first, where policy related parameters have no effect, 
