@@ -133,9 +133,49 @@ names(ordersOfMagGuesses.parvect) <- sampleParms$Variable
 ordersOfMagGuesses.resSigmaVect <- funOrderOfMagnitude(resSigmaVect)-6
 ordersOfMagGuesses <- c(ordersOfMagGuesses.parvect,ordersOfMagGuesses.resSigmaVect)
 
-# used by the funFindParScale function
-ordersOfMagLimits <- c(min(ordersOfMagGuesses)-2,max(ordersOfMagGuesses)+4)
-ordersOfMag <- seq(ordersOfMagLimits[1],ordersOfMagLimits[2])
+# used by the funFindParScale function ####
+# The fallback sweep, the one a parameter gets when the guess around its own order
+# of magnitude found nothing. It used to be a single global range, the lowest guess
+# anywhere minus two up to the highest guess anywhere plus four, which mixes the
+# sampled parameters against the residual variances and comes out 37 orders wide
+# for both. The parameters that reach this sweep are the ones that fail, so they
+# walk all 37.
+#
+# Per parameter instead. A step size larger than the range the parameter is
+# sampled over is not a meaningful answer, so the sweep does not go above the
+# order of that range, which is where the guess pass already ended. It extends
+# downwards, which is where a finer scale might still be found. The residual
+# variances have no author range to cap against and keep the old headroom.
+ordersOfMagLimits <- array(NA_real_,dim=c(length(jParVect),2),
+													 dimnames=list(names(jParVect),c('min','max')))
+ordersOfMagLimits.parvectIdc <- 1:nrow(sampleParms)
+ordersOfMagLimits.resSigmaIdc <- (nrow(sampleParms)+1):length(jParVect)
+# a parameter whose Max equals its Min has no order of magnitude, and would drag
+# every other parameter's floor to -Inf with it
+ordersOfMagLimits.finite <- function(x){
+	x <- x[is.finite(x)]
+	if(length(x)==0){
+		return(NA_real_)
+	}
+	return(x)
+}
+ordersOfMagLimits[ordersOfMagLimits.parvectIdc,'min'] <-
+	min(ordersOfMagLimits.finite(ordersOfMagGuesses.parvect))-2
+ordersOfMagLimits.maxParvect <- ordersOfMagGuesses.parvect+1
+# A parameter whose author range has zero width has no order of magnitude of its
+# own to cap against, so it keeps the ceiling the global range used to give it
+# rather than being declared undeterminable by the bookkeeping.
+ordersOfMagLimits.maxParvect[!is.finite(ordersOfMagLimits.maxParvect)] <-
+	max(ordersOfMagLimits.finite(ordersOfMagGuesses))+4
+ordersOfMagLimits[ordersOfMagLimits.parvectIdc,'max'] <- ordersOfMagLimits.maxParvect
+ordersOfMagLimits[ordersOfMagLimits.resSigmaIdc,'min'] <-
+	min(ordersOfMagLimits.finite(ordersOfMagGuesses.resSigmaVect))-2
+ordersOfMagLimits[ordersOfMagLimits.resSigmaIdc,'max'] <-
+	max(ordersOfMagLimits.finite(ordersOfMagGuesses.resSigmaVect))+4
+cat(sprintf('Fallback parscale sweep is %.0f orders wide on average, was %.0f when it was one global range.\n',
+						mean(ordersOfMagLimits[,'max']-ordersOfMagLimits[,'min']+1,na.rm=TRUE),
+						max(ordersOfMagLimits.finite(ordersOfMagGuesses))+4-
+							(min(ordersOfMagLimits.finite(ordersOfMagGuesses))-2)+1))
 responseTolerance <- 0.01
 
 #
@@ -195,7 +235,7 @@ while(newMaxFound){
 		# and under a psock cluster every export serialises calDat to every worker.
 		if(parallelParscale){
 			clusterExport(cl,list('baseNegLL',
-														'ordersOfMagLimits','ordersOfMag','responseTolerance',
+														'ordersOfMagLimits','responseTolerance',
 														'orderOfMagNegLLErrorFun','funFindParScale',
 														'jnegLLikelihood.f','ordersOfMagGuesses',
 														'calDat','resSigma',

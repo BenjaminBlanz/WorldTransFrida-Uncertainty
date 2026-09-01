@@ -343,11 +343,21 @@ orderOfMagNegLLErrorFun <- function(delta,par.i){
 }
 funFindParScale <- function(par.i,niter=100,useOrdersOfMagGuesses=F){
 	if(!useOrdersOfMagGuesses|length(ordersOfMagGuesses)<par.i){
-		minOrderOfMag <- min(ordersOfMagLimits)
-		maxOrderOfMag <- max(ordersOfMagLimits)
+		# the fallback sweep, now bounded per parameter rather than globally
+		minOrderOfMag <- ordersOfMagLimits[par.i,'min']
+		maxOrderOfMag <- ordersOfMagLimits[par.i,'max']
 	} else {
 		minOrderOfMag <- ordersOfMagGuesses[par.i] -2
 		maxOrderOfMag <- ordersOfMagGuesses[par.i] +1
+	}
+	# A parameter with no order of magnitude to work from, a zero width range or a
+	# zero variance, has no scale to find. Saying so costs nothing; sweeping for it
+	# costs a stella run per order tried and ends here anyway.
+	if(!is.finite(minOrderOfMag)||!is.finite(maxOrderOfMag)||
+		 maxOrderOfMag<minOrderOfMag){
+		cat(sprintf('\r%4i %-50s ... %+e                     \n',
+								par.i,substr(names(jParVect)[par.i],1,50),NA))
+		return(NA)
 	}
 	ordersOfMag <- minOrderOfMag:maxOrderOfMag
 	cat(sprintf('%4i %-50s ... magscale:     ',
