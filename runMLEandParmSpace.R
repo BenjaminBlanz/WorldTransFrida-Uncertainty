@@ -57,6 +57,15 @@ resSigma.names <- array(paste('s',
 integerParms <- read.csv(file.path(location.frida.info,name.frida_integer_parms))
 excludedParmsForBeingIntegers <- integerParms$Variable
 sampleParms.orig <- sampleParms <- prepareSampleParms(excludeNames=excludedParmsForBeingIntegers)
+# The parameters whose range is handed to us in frida_external_ranges.csv. Read
+# here rather than where the ranges are applied, because the parscale
+# determination and the range determination both skip these and both run first.
+if(ignoreParBounds||forceParBounds){
+	externalRanges <- data.frame(Variable=character(0),Min=numeric(0),Max=numeric(0))
+} else {
+	externalRanges <- read.csv(file.path(location.frida.info,name.frida_external_ranges))
+}
+externalRangeParmNames <- externalRanges$Variable[externalRanges$Variable%in%sampleParms$Variable]
 
 # mle and like ####
 # Optimisation of parameters (min neg log likelihood) is performed including
@@ -79,6 +88,18 @@ if(treatVarsAsIndep){
 	names(resSigmaVect) <- as.vector(resSigma.names[!lower.tri(resSigma)])
 }
 jParVect <- c(parVect,resSigmaVect)
+# An externally ranged parameter never has its border determined, so the only
+# thing left that would use its parscale is the MLE optimisation. Determining one
+# costs a sweep over every order of magnitude, twice over for the ones that
+# cannot be determined at all, so when we are not optimising we do not.
+parscaleSkip <- rep(FALSE,length(jParVect))
+names(parscaleSkip) <- names(jParVect)
+if(skipParMLE){
+	# index over the whole of jParVect. A logical index only as long as parVect
+	# would be recycled over the resSigmaVect tail and skip covariance entries
+	# that have nothing to do with any external range.
+	parscaleSkip[names(jParVect)%in%externalRangeParmNames] <- TRUE
+}
 
 # start cluster ####
 source('clusterHelp.R')
@@ -119,25 +140,48 @@ while(newMaxFound){
 	
 	baseNegLL <- jnegLLikelihood.f(jParVect)
 	
+	# The determination a previous run left behind, if it is one we can use. Read
+	# before the branch rather than inside it: a cache we cannot use has to fall
+	# through to redetermining, and R cannot fall out of a branch it has taken.
+	sampleParms.cached <- NULL
+	if(!redoAllCalc&&!forceParBounds&&
+		 file.exists(file.path(location.output,'sampleParmsParscaleRanged.RDS'))){
+		sampleParms.cached <- funReadCachedRangedSampleParms(
+			file.path(location.output,'sampleParmsParscaleRanged.RDS'))
+	}
 	if(forceParBounds){
 		cat('Forced using frida_info bounds\n')
-	} else if(!redoAllCalc&&file.exists(file.path(location.output,'sampleParmsParscaleRanged.RDS'))){
+	} else if(!is.null(sampleParms.cached)){
 		cat('loading existing sampleParmsParscaleRanged\n')
-		sampleParms <- readRDS(file.path(location.output,'sampleParmsParscaleRanged.RDS'))
-		sampleParms <- prepareSampleParms(excludeNames=excludedParmsForBeingIntegers,sampleParms = sampleParms)
+		sampleParms <- prepareSampleParms(excludeNames=excludedParmsForBeingIntegers,
+																		sampleParms = sampleParms.cached)
+		# What follows works from the determination results, not from the ranges a
+		# previous run derived from them. Putting Min and Max back to what the
+		# determination produced is what lets the external range overrides and the
+		# symmetrification run again against the config as it is now, rather than being
+		# applied a second time on top of themselves.
+		sampleParms$Min <- sampleParms$MinAfterDet
+		sampleParms$Max <- sampleParms$MaxAfterDet
 		parVect <- sampleParms$Value
 		names(parVect) <- sampleParms$Variable 
 		jParVect <- c(parVect,resSigmaVect)
+		parscale.parvect <- sampleParms$parscale
+		parscaleSkip.parvect <- sampleParms$parscaleStatus=='skippedExternalRange'
+		parscaleNotDetermined.parVect <- sampleParms$parscaleStatus=='notDetermined'
 	} else {
 		# determine parscale ####
 		cat('Determining parscales...\n')
+		if(sum(parscaleSkip)>0){
+			cat(sprintf('Skipping parscale determination for %i parameters with external ranges.\n',
+									sum(parscaleSkip)))
+		}
 		iterations <- 0
 		parallelParscale <- T
 		useOrdersOfMagGuesses <- T
-		while(iterations < 2 && sum(is.na(parscale)|is.infinite(parscale))>0){
-			parsToDet <- which(is.na(parscale)|is.infinite(parscale))
+		while(iterations < 2 && sum((is.na(parscale)|is.infinite(parscale))&!parscaleSkip)>0){
+			parsToDet <- which((is.na(parscale)|is.infinite(parscale))&!parscaleSkip)
 			cat(sprintf('Determining the parscale of %i parameters. %i parameters with already known parscale.%s\n',
-									length(parsToDet),length(parscale)-length(parsToDet),
+									length(parsToDet),length(parscale)-length(parsToDet)-sum(parscaleSkip),
 									if(useOrdersOfMagGuesses){' Using guesses.'}else{' Not using guesses.'}))
 			if(parallelParscale){
 				clusterExport(cl,list('baseNegLL',
@@ -166,18 +210,22 @@ while(newMaxFound){
 			useOrdersOfMagGuesses <- F
 			iterations <- iterations+1
 		}
-		parscale.parvect <- parscale[0:nrow(sampleParms)]
+		parscale.parvect <- parscale[1:nrow(sampleParms)]
 		parscale.resSigmaVect <- parscale[(nrow(sampleParms)+1):length(jParVect)]
+		parscaleSkip.parvect <- parscaleSkip[1:nrow(sampleParms)]
 		cat('done\n')
 		
 		## check for bad behaviour in parscale ####
 		# only the entries in parVect can be excluded. The entries in resSigmaVect need to 
 		# be delt with. E.g. by using the guess values. The maximum likelihood vars (diag
 		# elements of the covmat can always be determined as the variance of those obs.
-		problemCasesIdc <- which(is.infinite(parscale)|is.na(parscale))
-		problemCasesIdc.parVect <- which(is.infinite(parscale.parvect)|is.na(parscale.parvect))
-		problemCasesIdc.resSigmaVect <- which(is.infinite(parscale.resSigmaVect)|is.na(parscale.resSigmaVect))
-		cat(sprintf('%i parscales could not be determined.\n',length(problemCasesIdc)))
+		# A parameter whose determination we skipped is not a problem case, we already
+		# know what its range is going to be.
+		problemCases <- (is.infinite(parscale)|is.na(parscale))&!parscaleSkip
+		parscaleNotDetermined.parVect <- problemCases[1:nrow(sampleParms)]
+		problemCasesIdc.parVect <- which(parscaleNotDetermined.parVect)
+		problemCasesIdc.resSigmaVect <- which(problemCases[(nrow(sampleParms)+1):length(jParVect)])
+		cat(sprintf('%i parscales could not be determined.\n',sum(problemCases)))
 		if(length(problemCasesIdc.resSigmaVect)>0){
 			cat(sprintf('  %i in resSigmaVect, guesses will be used\n',
 									length(problemCasesIdc.resSigmaVect)))
@@ -186,24 +234,48 @@ while(newMaxFound){
 		} else {
 			cat('  No problem cases in resSigmaVect\n')
 		}
+		# Why each parameter has the parscale it has, kept on sampleParms because a
+		# later run that reuses this determination has to rebuild the same distinction
+		# and the lines printed here are long gone by then.
+		sampleParms$parscaleStatus <- ifelse(parscaleSkip.parvect,'skippedExternalRange',
+																				 ifelse(parscaleNotDetermined.parVect,'notDetermined',
+																				 			 'determined'))
+		scaleErrorParmNames <- sampleParms$Variable[problemCasesIdc.parVect]
 		if(length(problemCasesIdc.parVect)>0){
-			parscale.parvect <- parscale.parvect[-problemCasesIdc.parVect]
-			scaleErrorParmNames <- sampleParms$Variable[problemCasesIdc.parVect]
 			if(kickParmsParScaleDet){
 				cat(sprintf('  %i in parVect, these parms will be dropped\n',length(problemCasesIdc.parVect)))
 				cat(paste(scaleErrorParmNames,collapse='\n'))
 				cat('\n')
 				exclusionList <- data.frame(excludedName=scaleErrorParmNames)
 				write.csv(exclusionList,file.path(location.output,name.frida_parameter_exclusion_list))
+				# everything indexed against parVect has to lose the same entries
+				keptIdc <- which(!parscaleNotDetermined.parVect)
+				parscale.parvect <- parscale.parvect[keptIdc]
+				parscaleSkip.parvect <- parscaleSkip.parvect[keptIdc]
+				parscaleNotDetermined.parVect <- parscaleNotDetermined.parVect[keptIdc]
+				sampleParms <- prepareSampleParms(excludeNames = c(scaleErrorParmNames,excludedParmsForBeingIntegers))
+				sampleParms$parscaleStatus <- ifelse(parscaleSkip.parvect,'skippedExternalRange','determined')
+				parVect <- sampleParms$Value
+				names(parVect) <- sampleParms$Variable 
+				jParVect <- c(parVect,resSigmaVect)
 			} else {
-				cat(sprintf('  %i in parVect, these parms will be noted to ignore for ranging (using frida ranges).\n',length(problemCasesIdc.parVect)))
+				# They are kept and sampled over the ranges their authors gave them in
+				# frida_info, the same fallback a failed border determination gets. This
+				# used to drop them regardless of the setting, while saying it did not.
+				cat(sprintf('  %i in parVect, these parms keep the ranges their authors gave them in frida_info.\n',length(problemCasesIdc.parVect)))
 				cat(paste(scaleErrorParmNames,collapse='\n'))
 				cat('\n')
 			}
-			sampleParms <- prepareSampleParms(excludeNames = c(scaleErrorParmNames,excludedParmsForBeingIntegers))
-			parVect <- sampleParms$Value
-			names(parVect) <- sampleParms$Variable 
-			jParVect <- c(parVect,resSigmaVect)
+		}
+		# The parameters we determine no range for still need a parscale entry, the
+		# vector is indexed positionally against parVect everywhere it is used and a
+		# short one would silently misalign. The order of magnitude of the author range
+		# is the same stand in the resSigmaVect problem cases above get, and it keeps
+		# the vector numeric for the optimisation.
+		parscale.fillIdc <- which(parscaleNotDetermined.parVect|parscaleSkip.parvect)
+		if(length(parscale.fillIdc)>0){
+			parscale.parvect[parscale.fillIdc] <- 
+				10^funOrderOfMagnitude(sampleParms$Max-sampleParms$Min)[parscale.fillIdc]
 		}
 		parscale.all <- parscale
 		parscale <- c(parscale.parvect,parscale.resSigmaVect)
@@ -295,25 +367,33 @@ while(newMaxFound){
 	}
 	# coef range ####
 	## par bounds ####
-	idcOfSampleParmsInFridaInfo <- c()
-	fi.i <- 0
-	for(p.i in 1:nrow(sampleParms)){
-		if(length(which(frida_info$Variable==sampleParms$Variable[p.i]))>0){
-			fi.i <- fi.i+1
-			idcOfSampleParmsInFridaInfo[fi.i] <- which(frida_info$Variable==sampleParms$Variable[p.i])
-		}
-	}
-	parBounds <- frida_info[idcOfSampleParmsInFridaInfo,c('Min','Max')]
-	rownames(parBounds) <- sampleParms$Variable
-	colnames(parBounds) <- c('Min','Max')
-	lpdensEps <- -negLLike(parVect) - log(likeCutoffRatio)
+	parBounds <- funParBoundsForSampleParms(sampleParms,frida_info)
 	notDeterminedBorders <- array(TRUE,dim=c(length(parVect),2))
 	colnames(notDeterminedBorders) <- c('Min','Max')
-	border.coefs <- notDeterminedBorders
+	# the borders themselves. Numeric from the start: every path below writes
+	# numbers into it, and a matrix left logical would compare TRUE against
+	# parameter values in the fallback test further down.
+	border.coefs <- array(NA_real_,dim=dim(notDeterminedBorders),
+											dimnames=dimnames(notDeterminedBorders))
+	if(!is.null(sampleParms.cached)){
+		# Reusing a determination means reusing what it found, including which borders
+		# it could not determine. Left at the TRUE they are initialised to, every
+		# parameter would look like a border failure here, and the flags written out
+		# below would say so.
+		notDeterminedBorders[,'Min'] <- sampleParms$MinNotDeterminedBorder
+		notDeterminedBorders[,'Max'] <- sampleParms$MaxNotDeterminedBorder
+		border.coefs[,'Min'] <- sampleParms$MinAfterDet
+		border.coefs[,'Max'] <- sampleParms$MaxAfterDet
+		rangeDetSkip <- parscaleNotDetermined.parVect|parscaleSkip.parvect
+	}
+	if(is.null(sampleParms.cached)||checkBorderErrors||kickParmsErrorRangeDet){
+		# costs a frida run, so only for the searches that actually use it
+		lpdensEps <- -negLLike(parVect) - log(likeCutoffRatio)
+	}
 	if(forceParBounds){
 		cat('Forcing coefs sample range to be equal tovalues frida_info\n')
-		border.coefs <- sampleParms[,c('Min','Max')]
-	} else if (!file.exists(file.path(location.output,'sampleParmsParscaleRanged.RDS'))) {
+		border.coefs <- as.matrix(sampleParms[,c('Min','Max')])
+	} else if (is.null(sampleParms.cached)) {
 		# minimize and maximize each parameter with others free, until density is 
 		# equal to pdensEps
 		cat('determining coef sample range...\n')
@@ -348,25 +428,39 @@ while(newMaxFound){
 		# 									niter=1e2)
 		
 		## range find ####
+		# A parameter without a parscale cannot have its border determined, the search
+		# needs a scale to step with, and one with an external range has no reason to.
+		# Both already have their answer, the range their authors gave them, which is
+		# what the fallback below assigns. Marking them infinite here puts them through
+		# that same fallback instead of a second code path.
+		rangeDetSkip <- parscaleNotDetermined.parVect|parscaleSkip.parvect
 		for(direction in c('Min','Max')){
 			cat(sprintf('  determining %s par values...',tolower(direction)))
 			clusterExport(cl,list('calDat','treatVarsAsIndep'))
-			border.coefs[which(notDeterminedBorders[,direction]),direction] <- 
-				unlist(parLapplyLB(cl,which(notDeterminedBorders[,direction]),findDensValBorder,
-													 parVect=parVect,lpdensEps=lpdensEps,
-													 ceterisParibusPars=treatVarsAsIndep,
-													 tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
-													 parscale=parscale.parvect,
-													 bounds=parBounds,
-													 niter=1e3,# set niter so that the errors at least in the indep case are small
-													 workerStagger = T)) 
+			toDetermine <- which(notDeterminedBorders[,direction]&!rangeDetSkip)
+			if(length(toDetermine)>0){
+				border.coefs[toDetermine,direction] <- 
+					unlist(parLapplyLB(cl,toDetermine,findDensValBorder,
+															 parVect=parVect,lpdensEps=lpdensEps,
+															 ceterisParibusPars=treatVarsAsIndep,
+															 tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
+															 parscale=parscale.parvect,
+															 bounds=parBounds,
+															 niter=1e3,# set niter so that the errors at least in the indep case are small
+															 workerStagger = T)) 
+			}
+			border.coefs[rangeDetSkip,direction] <- Inf
 			names(border.coefs[,direction]) <- names(parVect)
 			# fallback values in case borders could not be determined:
 			notDeterminedBorders[,direction] <- 
 				(is.infinite(border.coefs[,direction])+(parVect==border.coefs[,direction]))>=1
 			border.coefs[,direction][notDeterminedBorders[,direction]] <- 
 				sampleParms[[direction]][notDeterminedBorders[,direction]]
-			cat(sprintf('done. %i failures\n',sum(notDeterminedBorders[,direction])))
+			cat(sprintf('done. %i determined, %i failed, %i skipped (no parscale), %i skipped (external range)\n',
+									sum(!notDeterminedBorders[,direction]),
+									sum(notDeterminedBorders[,direction]&!rangeDetSkip),
+									sum(parscaleNotDetermined.parVect),
+									sum(parscaleSkip.parvect)))
 			write.csv(notDeterminedBorders,file.path(location.output,'notDeterminedBorders.csv'))
 			# check that the min val actually has the desired like
 			# this check only works for the independent case, as we do not retain the information
@@ -383,58 +477,18 @@ while(newMaxFound){
 			cat('done\n')
 		}
 	}
-	## make borders symmetric ####
+	## record the determined borders ####
 	sampleParms$MaxAfterDet <- sampleParms$Max
 	sampleParms$MinAfterDet <- sampleParms$Min
-	if(symmetricRanges%in%c('Max','Min')){
-		cat('Symmetrifying parameter ranges\n')
-		if(symmetricRanges=='Max'){
-			sampleParms$distance <- pmax(sampleParms$Value-sampleParms$Min,
-																	 sampleParms$Max-sampleParms$Value)
-			if(symmetricRangesBoundByAuthors){
-				sampleParms$distance <- pmin(sampleParms$distance,
-																		 pmin(sampleParms$Value-parBounds$Min,
-																		 		 parBounds$Max-sampleParms$Value)
-																		 )
-			}
-		} else {
-			sampleParms$distance <- pmin(sampleParms$Value-sampleParms$Min,
-																	 sampleParms$Max-sampleParms$Value)
-		}
-		# those that would have a distance of zero, we do not reassign
-		if(allowAssymetricToAvoidZeroRanges){
-			sampleParms$Max[sampleParms$distance!=0] <- 
-				sampleParms$Value[sampleParms$distance!=0]+sampleParms$distance[sampleParms$distance!=0]
-			sampleParms$Min[sampleParms$distance!=0] <- 
-				sampleParms$Value[sampleParms$distance!=0]-sampleParms$distance[sampleParms$distance!=0]
-		} else {
-			sampleParms$Max <- sampleParms$Value+sampleParms$distance
-			sampleParms$Min <- sampleParms$Value-sampleParms$distance
-		}
-	}
 	## read manual borders ####
+	# Applied before the symmetrification rather than after it, so that
+	# symmetrifyExternalRanges is free to decide whether an external range gets
+	# symmetrified. Applying them afterwards, as this used to, made that decision
+	# for us: an external range could never be symmetrified.
 	if(ignoreParBounds || forceParBounds){
 		cat('Not reading manual ranges, as ignoreParBounds||forceParBounds==TRUE\n')
 	} else {
-		manualBorders <- read.csv(file.path(location.frida.info,name.frida_external_ranges))
-		manualBorders <- manualBorders[manualBorders$Variable %in% sampleParms$Variable,]
-		if(!kickParmsParScaleDet){
-			if(length(scaleErrorParmNames)>0){
-				# the parms whose parscale could not be determined were not ranged, so
-				# they keep the ranges their authors gave them in frida_info.
-				# Both conditions have to select rows of sampleParms.orig. Selecting with
-				# which() of the first and a vector as long as scaleErrorParmNames for the
-				# second, as this did, gives a logical index the length of the error cases,
-				# which R then recycles over all of sampleParms.orig: it picked out nearly
-				# every parameter there is, and the loop below then overwrote every
-				# determined range with the author range. Every sample point was drawn from
-				# the full author ranges after that, and no run of the ensemble completed.
-				errorcasesBorders <- sampleParms.orig[sampleParms.orig$Variable%in%scaleErrorParmNames&
-																								!sampleParms.orig$Variable%in%manualBorders$Variable,
-																							colnames(manualBorders)]
-				manualBorders <- rbind(manualBorders, errorcasesBorders)
-			}
-		}
+		manualBorders <- externalRanges[externalRanges$Variable %in% sampleParms$Variable,]
 		cat(sprintf('applying manual ranges for %i parameters...',nrow(manualBorders)))
 		if(nrow(manualBorders)>0){
 			for(r.i in 1:nrow(manualBorders)){
@@ -458,6 +512,14 @@ while(newMaxFound){
 		saveRDS(sampleParms,file.path(location.output,'sampleParmsParscaleRanged.RDS'))
 		cat('done\n')
 	}
+	## make borders symmetric ####
+	sampleParms <- funSymmetrifyRanges(sampleParms,parBounds,notDeterminedBorders,
+																			 externalRangeParmNames=externalRangeParmNames,
+																			 symmetricRanges=symmetricRanges,
+																			 allowAssymetricToAvoidZeroRanges=allowAssymetricToAvoidZeroRanges,
+																			 symmetricRangesBoundByAuthors=symmetricRangesBoundByAuthors,
+																			 symmetrifyExternalRanges=symmetrifyExternalRanges,
+																			 symmetrifyFallbackAuthorRanges=symmetrifyFallbackAuthorRanges)
 	## check for errors at the borders ####
 	if(checkBorderErrors || kickParmsErrorRangeDet){
 		borderLogLikeError <- array(NA,dim=c(length(parVect),2))
@@ -522,6 +584,8 @@ while(newMaxFound){
 	frida_info.toModify$MinNotDetermined[idcOfSampleParmsInFridaInfo] <- sampleParms$MinNotDeterminedBorder
 	frida_info.toModify$MaxNotDetermined <- NA
 	frida_info.toModify$MaxNotDetermined[idcOfSampleParmsInFridaInfo] <- sampleParms$MaxNotDeterminedBorder
+	frida_info.toModify$parscaleStatus <- NA
+	frida_info.toModify$parscaleStatus[idcOfSampleParmsInFridaInfo] <- sampleParms$parscaleStatus
 	frida_info.toModify$MinKickedParmsErrorRangeDet <- NA
 	frida_info.toModify$MinKickedParmsErrorRangeDet[idcOfSampleParmsInFridaInfo] <- sampleParms$MinKickParmsErrorRangeDet
 	frida_info.toModify$MaxKickedParmsErrorRangeDet <- NA

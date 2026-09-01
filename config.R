@@ -150,6 +150,10 @@ rangeTol <- 1e-15
 # parameters would have been dropped in emb. So only set this to true if you are 
 # certain the samplePoints won't be reused for experiments with other specified 
 # policies.
+# FALSE keeps them and samples them over the ranges their authors gave them in
+# frida_info, the same fallback a failed min or max border determination gets.
+# Their border determination is skipped, it cannot succeed without a parscale.
+# TRUE drops them and writes the names to frida_parameter_exclusion_list.csv.
 kickParmsParScaleDet <-FALSE
 # Should we check for errors in determining the likelihood border
 checkBorderErrors <- FALSE
@@ -165,6 +169,16 @@ forceParBounds <- FALSE
 symmetricRanges <- 'Min'
 allowAssymetricToAvoidZeroRanges <- FALSE
 symmetricRangesBoundByAuthors <- TRUE
+# Should parameters whose range comes from an external override in
+# frida_external_ranges.csv be symmetrified? The override is a deliberate
+# statement of the range to sample, so by default it is used as given.
+symmetrifyExternalRanges <- FALSE
+# Should parameters that fell back to their author range be symmetrified?
+# Applies to a parameter with a not determined border in either direction,
+# whether the border search failed or was skipped for want of a parscale.
+# Symmetrifying these is what collapses ranges to zero width, because the
+# parameter value often sits exactly on the author bound it fell back to.
+symmetrifyFallbackAuthorRanges <- TRUE
 # should we skip the parameter maximum likelihood estimation and use the default
 # frida pars as MLE
 if(!exists('skipParMLE')){

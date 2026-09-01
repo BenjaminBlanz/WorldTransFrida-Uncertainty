@@ -219,8 +219,9 @@ for(cfgVal.v in c('redoAllCalc','writePerWorkerFiles','doNotReturnRunDataSavePer
 									'plotWhileRunning','plotDatWhileRunning','plotDatPerChunWhileRunning',
 									'restretchSamplePoints','imputeMissingVars','removeLinearCombinations',
 									'treatVarsAsIndep','checkBorderErrors','kickParmsErrorRangeDet',
-									'ignoreParBounds','forceParBounds',
+									'ignoreParBounds','forceParBounds','kickParmsParScaleDet',
 									'allowAssymetricToAvoidZeroRanges','symmetricRangesBoundByAuthors',
+									'symmetrifyExternalRanges','symmetrifyFallbackAuthorRanges',
 									'skipParMLE')){
 	if(cfgVal.has(cfgVal.v)){
 		cfgVal.checkFlag(cfgVal.v)

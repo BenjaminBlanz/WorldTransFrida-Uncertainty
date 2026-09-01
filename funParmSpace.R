@@ -320,6 +320,125 @@ funOrderOfMagnitude <- function(x){
 	return(floor(log10(abs(x))))
 }
 
+# funParBoundsForSampleParms ####
+# The Min and Max their authors gave each parameter in frida_info, in the order
+# sampleParms has them. The range determination and the branch that reuses a
+# cached determination both need these, and a parameter that is not in
+# frida_info at all has to come out as NA rather than shifting every row after
+# it, so this matches by name instead of collecting indices in a loop.
+funParBoundsForSampleParms <- function(sampleParms,frida_info){
+	parBounds <- frida_info[match(sampleParms$Variable,frida_info$Variable),c('Min','Max')]
+	rownames(parBounds) <- sampleParms$Variable
+	colnames(parBounds) <- c('Min','Max')
+	return(parBounds)
+}
+
+# funReadCachedRangedSampleParms ####
+# The sampleParms a previous run left behind after determining ranges, or NULL
+# when that file cannot stand in for a determination. Everything downstream of
+# the determination rebuilds itself from these columns, so a file written before
+# they existed, or by a run interrupted partway through the determination, has to
+# be redetermined rather than half used. A column that is there but holds nothing
+# but NA is missing too.
+funReadCachedRangedSampleParms <- function(file){
+	required <- c('Variable','Value','Min','Max','MinAfterDet','MaxAfterDet',
+								'MinNotDeterminedBorder','MaxNotDeterminedBorder',
+								'parscale','parscaleStatus')
+	sampleParms <- readRDS(file)
+	absent <- required[!required%in%colnames(sampleParms)]
+	empty <- character(0)
+	if(length(absent)==0){
+		empty <- required[sapply(sampleParms[,required],function(x){all(is.na(x))})]
+	}
+	if(length(c(absent,empty))>0){
+		cat(sprintf('Cached ranges in %s cannot be used, %s. Redetermining.\n',
+								basename(file),
+								paste(c(if(length(absent)>0){sprintf('no %s column',paste(absent,collapse=', '))},
+												if(length(empty)>0){sprintf('nothing but NA in %s',paste(empty,collapse=', '))}),
+											collapse='; ')))
+		return(NULL)
+	}
+	return(sampleParms)
+}
+
+# funSymmetrifyRanges ####
+# Make the sampled range symmetric around the parameter value, and say what that
+# did. Two kinds of range are left alone unless asked for:
+#
+#   external ranges, from frida_external_ranges.csv, are a deliberate statement
+#   of the range to sample and are used as given, and
+#
+#   ranges that fell back to the author bound because a border could not be
+#   determined, or was skipped for want of a parscale. Symmetrifying these is
+#   what collapses ranges to zero width: the fallback bound is often exactly the
+#   parameter value, so the smaller half width is zero and both sides snap onto
+#   the value.
+#
+# The fallback test is per parameter, not per direction, because a symmetric
+# range comes from a single distance. There is no coherent way to symmetrify one
+# side of a parameter and leave the other, so a parameter with a not determined
+# border in either direction is left alone entirely.
+funSymmetrifyRanges <- function(sampleParms,parBounds,notDeterminedBorders,
+																externalRangeParmNames=character(0),
+																symmetricRanges='Min',
+																allowAssymetricToAvoidZeroRanges=FALSE,
+																symmetricRangesBoundByAuthors=TRUE,
+																symmetrifyExternalRanges=FALSE,
+																symmetrifyFallbackAuthorRanges=FALSE){
+	if(!symmetricRanges%in%c('Min','Max')){
+		cat(sprintf('Not symmetrifying parameter ranges (symmetricRanges is \'%s\')\n',
+								as.character(symmetricRanges)[1]))
+		return(sampleParms)
+	}
+	cat(sprintf('Symmetrifying ranges using procedure %s\n',symmetricRanges))
+	widthBefore <- sampleParms$Max-sampleParms$Min
+	# which parameters keep the range they came in with
+	excludedExternal <- !symmetrifyExternalRanges &
+		sampleParms$Variable%in%externalRangeParmNames
+	excludedFallback <- !symmetrifyFallbackAuthorRanges &
+		(notDeterminedBorders[,'Min']|notDeterminedBorders[,'Max'])
+	excluded <- excludedExternal|excludedFallback
+	if(symmetricRanges=='Max'){
+		sampleParms$distance <- pmax(sampleParms$Value-sampleParms$Min,
+																 sampleParms$Max-sampleParms$Value)
+		if(symmetricRangesBoundByAuthors){
+			sampleParms$distance <- pmin(sampleParms$distance,
+																	 pmin(sampleParms$Value-parBounds[,'Min'],
+																	 		 parBounds[,'Max']-sampleParms$Value))
+		}
+	} else {
+		sampleParms$distance <- pmin(sampleParms$Value-sampleParms$Min,
+																 sampleParms$Max-sampleParms$Value)
+	}
+	toApply <- !excluded
+	# those that would have a distance of zero, we do not reassign
+	if(allowAssymetricToAvoidZeroRanges){
+		toApply <- toApply & sampleParms$distance!=0
+	}
+	toApply[is.na(toApply)] <- FALSE
+	sampleParms$Max[toApply] <- sampleParms$Value[toApply]+sampleParms$distance[toApply]
+	sampleParms$Min[toApply] <- sampleParms$Value[toApply]-sampleParms$distance[toApply]
+	# report. The counts below partition sampleParms, so they add up to its rows
+	widthAfter <- sampleParms$Max-sampleParms$Min
+	tally <- function(x){sum(x&!excluded,na.rm=TRUE)}
+	collapsed <- tally(widthAfter==0&widthBefore>0)
+	narrowed <- tally(widthAfter<widthBefore&widthAfter>0)
+	widened <- tally(widthAfter>widthBefore)
+	unchanged <- tally(widthAfter==widthBefore)
+	if(narrowed>0){cat(sprintf('  %5i parameter ranges narrowed\n',narrowed))}
+	if(widened>0){cat(sprintf('  %5i parameter ranges widened\n',widened))}
+	cat(sprintf('  %5i parameter ranges collapsed\n',collapsed))
+	if(sum(excluded)>0){
+		cat(sprintf('  %5i parameter ranges not symmetrified (%i author range fallback, %i external range, %i both)\n',
+								sum(excluded),
+								sum(excludedFallback&!excludedExternal),
+								sum(excludedExternal&!excludedFallback),
+								sum(excludedFallback&excludedExternal)))
+	}
+	if(unchanged>0){cat(sprintf('  %5i parameter ranges unchanged\n',unchanged))}
+	return(sampleParms)
+}
+
 # sobol sequence ####
 generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 																								restretchSamplePoints=F,
