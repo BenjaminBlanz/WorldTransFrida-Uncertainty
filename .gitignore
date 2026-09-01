@@ -11,6 +11,9 @@ frida_info_errorCases.csv
 *RDS
 scraps.R
 test*
+# test* above is meant for scratch files, but it matches at every level and so
+# swallowed the development tools' own tests without saying so
+!developmentTools/test*
 workOutput
 workerDirs
 .Rproj.user
