@@ -420,15 +420,24 @@ while(newMaxFound){
 		manualBorders <- manualBorders[manualBorders$Variable %in% sampleParms$Variable,]
 		if(!kickParmsParScaleDet){
 			if(length(scaleErrorParmNames)>0){
-				errorcasesBorders <- sampleParms.orig[which(sampleParms.orig$Variable%in%scaleErrorParmNames)&
-																								!scaleErrorParmNames%in%manualBorders$Variable,
+				# the parms whose parscale could not be determined were not ranged, so
+				# they keep the ranges their authors gave them in frida_info.
+				# Both conditions have to select rows of sampleParms.orig. Selecting with
+				# which() of the first and a vector as long as scaleErrorParmNames for the
+				# second, as this did, gives a logical index the length of the error cases,
+				# which R then recycles over all of sampleParms.orig: it picked out nearly
+				# every parameter there is, and the loop below then overwrote every
+				# determined range with the author range. Every sample point was drawn from
+				# the full author ranges after that, and no run of the ensemble completed.
+				errorcasesBorders <- sampleParms.orig[sampleParms.orig$Variable%in%scaleErrorParmNames&
+																								!sampleParms.orig$Variable%in%manualBorders$Variable,
 																							colnames(manualBorders)]
 				manualBorders <- rbind(manualBorders, errorcasesBorders)
 			}
 		}
 		cat(sprintf('applying manual ranges for %i parameters...',nrow(manualBorders)))
 		if(nrow(manualBorders)>0){
-			for(r.i in 0:nrow(manualBorders)){
+			for(r.i in 1:nrow(manualBorders)){
 				sp.i <- which(sampleParms$Variable==manualBorders$Variable[r.i])
 				if(length(sp.i)==1){
 					if(!is.na(manualBorders$Min[r.i])){
