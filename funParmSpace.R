@@ -89,7 +89,14 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 															workerStagger=FALSE,
 															...){
 	if(workerStagger){
-		Sys.sleep(workerID*0.04)
+		# The stagger exists so the workers do not all reach for the filesystem in the
+		# same instant when the pool starts. After a worker's first task they are
+		# spread out by their own run times, and sleeping again on each of the
+		# thousand odd tasks that follow is delay bought for nothing.
+		if(!exists('workerHasStaggered',envir=globalenv())){
+			Sys.sleep(workerID*0.04)
+			assign('workerHasStaggered',TRUE,envir=globalenv())
+		}
 	}
 	if(length(parIdx)>1){
 		stop('only one parIdx at a time\n')

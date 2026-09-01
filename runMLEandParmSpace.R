@@ -191,20 +191,23 @@ while(newMaxFound){
 		iterations <- 0
 		parallelParscale <- T
 		useOrdersOfMagGuesses <- T
+		# Hoisted out of the loop below: none of this changes between the two passes,
+		# and under a psock cluster every export serialises calDat to every worker.
+		if(parallelParscale){
+			clusterExport(cl,list('baseNegLL',
+														'ordersOfMagLimits','ordersOfMag','responseTolerance',
+														'orderOfMagNegLLErrorFun','funFindParScale',
+														'jnegLLikelihood.f','ordersOfMagGuesses',
+														'calDat','resSigma',
+														'jParVect'))
+			gobble <- clusterEvalQ(cl,source(file.path(baseWD,'funParmSpace.R')))
+		}
 		while(iterations < 2 && sum((is.na(parscale)|is.infinite(parscale))&!parscaleSkip&!parscaleCachedNotDetermined)>0){
 			parsToDet <- which((is.na(parscale)|is.infinite(parscale))&!parscaleSkip&!parscaleCachedNotDetermined)
 			cat(sprintf('Determining the parscale of %i parameters. %i parameters with already known parscale.%s\n',
 									length(parsToDet),length(parscale)-length(parsToDet)-sum(parscaleSkip),
 									if(useOrdersOfMagGuesses){' Using guesses.'}else{' Not using guesses.'}))
 			if(parallelParscale){
-				clusterExport(cl,list('baseNegLL',
-															'ordersOfMagLimits','ordersOfMag','responseTolerance',
-															'orderOfMagNegLLErrorFun','funFindParScale',
-															'jnegLLikelihood.f','ordersOfMagGuesses',
-															'ordersOfMagLimits',
-															'calDat','resSigma',
-															'jParVect'))
-				gobble <- clusterEvalQ(cl,source(file.path(baseWD,'funParmSpace.R')))
 				parParscaleOutput <- parLapplyLB(cl,parsToDet,funFindParScale,
 																				 useOrdersOfMagGuesses=useOrdersOfMagGuesses)
 				parscale[parsToDet] <- unlist(parParscaleOutput)
@@ -457,9 +460,12 @@ while(newMaxFound){
 		# what the fallback below assigns. Marking them infinite here puts them through
 		# that same fallback instead of a second code path.
 		rangeDetSkip <- parscaleNotDetermined.parVect|parscaleSkip.parvect
+		# Once, rather than once per direction. resSigma is in the list because the MLE
+		# above rewrites it and the workers evaluate the likelihood against their own
+		# copy, which was otherwise left at whatever clusterHelp.R last sent them.
+		clusterExport(cl,list('calDat','resSigma','treatVarsAsIndep'))
 		for(direction in c('Min','Max')){
 			cat(sprintf('  determining %s par values...',tolower(direction)))
-			clusterExport(cl,list('calDat','treatVarsAsIndep'))
 			toDetermine <- which(notDeterminedBorders[,direction]&!rangeDetSkip)
 			if(length(toDetermine)>0){
 				border.coefs[toDetermine,direction] <- 
