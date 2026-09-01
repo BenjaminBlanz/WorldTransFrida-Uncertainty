@@ -136,8 +136,14 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 			}
 			#if there is no sign change between the endpoints of root.range, use secant's
 			#method otherwise use uniroot
-			if(((likeGoalDiffFun(root.range[1],parVect,parIdx,lpdensEps,...)>0)-
-					(likeGoalDiffFun(root.range[2],parVect,parIdx,lpdensEps,...)>0))==0){
+			# Both of these are stella runs, and both branches below would otherwise
+			# evaluate the same two points a second time. uniroot takes them as
+			# f.lower/f.upper. The secant branch can only reuse f.lo when maximising:
+			# it rebuilds root.range first, and only in that direction does the new
+			# root.range[1] stay equal to the point f.lo was measured at.
+			f.lo <- likeGoalDiffFun(root.range[1],parVect,parIdx,lpdensEps,...)
+			f.hi <- likeGoalDiffFun(root.range[2],parVect,parIdx,lpdensEps,...)
+			if(((f.lo>0)-(f.hi>0))==0){
 				if(max){
 					root.range <- c(par.val,par.val+parscale[parIdx])
 				} else {
@@ -146,6 +152,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 				par.val.old <-par.val
 				par.val <- secant(likeGoalDiffFun,
 													root.range[1],root.range[1]*1.001,
+													f0=if(max){f.lo}else{NULL},
 													parVect=parVect,
 													parIdx=parIdx,
 													lpdensEps=lpdensEps,
@@ -167,6 +174,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 			} else {
 				par.val <- suppressWarnings(uniroot(likeGoalDiffFun,
 																						root.range,
+																						f.lower = f.lo, f.upper = f.hi,
 																						parVect=parVect,
 																						parIdx=parIdx,
 																						lpdensEps=lpdensEps,
@@ -222,15 +230,31 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 }
 
 
+# Every call to fun here is a stella run, so the values are carried rather than
+# recomputed. The loop used to evaluate three points per iteration where one is
+# new: x0 and x1 are the previous iteration's x1 and x2, both already evaluated,
+# and the tolerance test evaluated x2 which then became the next x1. A caller
+# that has already evaluated the starting points can pass them as f0 and f1.
+#
+# The returned root carries the value of fun at that point as the attribute
+# 'fval', so a caller does not have to evaluate it again. It is absent on the
+# returns that never evaluated the point they hand back.
 secant <- function(fun, x0, x1, tol=1e-07, niter=1e4, doWarn=T, trace=0,
-									 bound=NULL,hasToBePositive=FALSE,...){
+									 bound=NULL,hasToBePositive=FALSE,f0=NULL,f1=NULL,...){
 	if(is.null(bound)){
 		bound <- sign(x1-x0)*Inf
 	}
-	for ( i in 1:niter ){
-		# cat(sprintf('x0=%10.2e x1=%10.2e',x0,x1))
+	withFval <- function(x,fval){
+		attr(x,'fval') <- fval
+		return(x)
+	}
+	if(is.null(f0)){
 		f0 <- fun(x0,...)
+	}
+	if(is.null(f1)){
 		f1 <- fun(x1,...)
+	}
+	for ( i in 1:niter ){
 		x2 <- x1-f1*(x1-x0)/(f1-f0)
 		if(trace>0){
 			cat(sprintf('secant x0: %10f f0: %10f x1: %10f f1: %10f  x2: %10f\n',
@@ -242,23 +266,25 @@ secant <- function(fun, x0, x1, tol=1e-07, niter=1e4, doWarn=T, trace=0,
 		if(hasToBePositive && x2 < 0){
 			return(NA)
 		}
-		if(abs(fun(x2,...)) < tol || abs(x2)>abs(bound)){
-			return(x2)
+		f2 <- fun(x2,...)
+		if(abs(f2) < tol || abs(x2)>abs(bound)){
+			return(withFval(x2,f2))
 		}
 		if(x0==x2){
 			if(doWarn){
 				warning("In secant cycle detected\n")
 			}
-			return(x2)
+			return(withFval(x2,f2))
 		}
-		# cat(sprintf(' x2=%10.2e\n',x2))
 		x0 <- x1
+		f0 <- f1
 		x1 <- x2
+		f1 <- f2
 	}
 	if(doWarn){
 		warning("In secant exceeded allowed number of iterations\n")
 	}
-	return(x2)
+	return(withFval(x2,f2))
 }
 
 
@@ -296,14 +322,27 @@ funFindParScale <- function(par.i,niter=100,useOrdersOfMagGuesses=F){
 							par.i,substr(names(jParVect)[par.i],1,50)))
 	ordersOfMagDeltRes <- c()
 	ordersOfMagNegLLResp <- c()
+	# Every sweep below starts secant from the same x0=0, whose value does not
+	# depend on the order of magnitude being tried. Evaluated once here rather than
+	# once per order, it saves a stella run for every order after the first.
+	negLLErrorAtZero <- orderOfMagNegLLErrorFun(0,par.i)
 	for(ord.i in 1:length(ordersOfMag)){
 		cat(sprintf('\b\b\b\b\b\b\b\b\b\b%+10.1e',10^ordersOfMag[ord.i]))
-		ordersOfMagDeltRes[ord.i] <- secant(orderOfMagNegLLErrorFun,x0=0,
+		secantRes <- secant(orderOfMagNegLLErrorFun,x0=0,
 																				x1=10^ordersOfMag[ord.i],
+																				f0=negLLErrorAtZero,
 																				niter=niter,
 																				doWarn=F,tol=1e-2,par.i=par.i,
 																				hasToBePositive=T)
-		ordersOfMagNegLLResp[ord.i] <- orderOfMagNegLLErrorFun(ordersOfMagDeltRes[ord.i],par.i)
+		ordersOfMagDeltRes[ord.i] <- secantRes
+		# secant reports the value at the point it hands back; the returns that never
+		# evaluated that point leave it unset, and those still have to be measured.
+		respFromSecant <- attr(secantRes,'fval')
+		ordersOfMagNegLLResp[ord.i] <- if(is.null(respFromSecant)){
+			orderOfMagNegLLErrorFun(ordersOfMagDeltRes[ord.i],par.i)
+		} else {
+			respFromSecant
+		}
 		if(!is.na(ordersOfMagNegLLResp[ord.i])&&!is.nan(ordersOfMagNegLLResp[ord.i])&&
 			 abs(ordersOfMagNegLLResp[ord.i])<responseTolerance){
 			break
