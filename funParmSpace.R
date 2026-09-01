@@ -21,9 +21,14 @@ jnegLLikelihood.f <- function(jParVect){
 	} else {
 		lLikelihood <- rep(1,ncol(runDat))
 	}
-	# If the logLike is not NA but the run did not complete assign 
-	# lowest value. We use this when narrowing the parms space
-	if(is.na(runDat[[1]][nrow(runDat)])){
+	# A run that did not complete gets the marker instead. We use this when
+	# narrowing the parms space, so a run the model could not finish must never
+	# come back with a likelihood that looks like a good fit. Testing the last
+	# row of runDat for an NA does not see those runs: stella writes a short
+	# output file when a run stops early, and its last row is a perfectly good
+	# year. That let the range finding push borders past the point where the
+	# model breaks.
+	if(!funRunReachedFinalYear(runDat)){
 		lLikelihood <- logLike.failedRun+(sum(!is.na(runDat[[1]]))*logLike.quasiEps)
 	}
 	return(-lLikelihood)
@@ -37,9 +42,14 @@ negLLike <- function(parVect){
 	} else {
 		lLikelihood <- rep(1,ncol(runDat))
 	}
-	# If the logLike is not NA but the run did not complete assign 
-	# lowest value. We use this when narrowing the parms space
-	if(is.na(runDat[[1]][nrow(runDat)])){
+	# A run that did not complete gets the marker instead. We use this when
+	# narrowing the parms space, so a run the model could not finish must never
+	# come back with a likelihood that looks like a good fit. Testing the last
+	# row of runDat for an NA does not see those runs: stella writes a short
+	# output file when a run stops early, and its last row is a perfectly good
+	# year. That let the range finding push borders past the point where the
+	# model breaks.
+	if(!funRunReachedFinalYear(runDat)){
 		lLikelihood <- logLike.failedRun+(sum(!is.na(runDat[[1]]))*logLike.quasiEps)
 	}
 	return(-lLikelihood)

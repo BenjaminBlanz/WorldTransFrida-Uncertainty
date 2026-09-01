@@ -459,6 +459,33 @@ funWriteRunMetadataFile <- function(location.output,location.frida.git,location.
 # likelihood being computable. Both together are what the log likelihood test
 # logLike > logLike.failedRun.max used to say on its own.
 
+# funRunReachedFinalYear ####
+# Whether one FRIDA execution produced usable output for the whole model
+# horizon. The same test funRunStatusOfRun applies per state of the world, over
+# all of the columns at once, for the callers that only need the yes or no.
+# Stella writes a short output file when a run stops early rather than a full
+# length one padded with NAs, so testing the last row of runDat for an NA, as
+# the callers of this used to, finds nothing wrong with a run that stopped in
+# its first year. The horizon therefore has to come from outputDataYears, the
+# horizon of the default run, and never from nrow(runDat), which is itself
+# short for a truncated run.
+funRunReachedFinalYear <- function(runDat,
+																	 years=if(exists('outputDataYears')){outputDataYears}else{rownames(runDat)}){
+	nrow(runDat)>=length(years)&&!any(is.na(as.matrix(runDat)))
+}
+
+# funLikelihoodOK ####
+# Whether a log likelihood is a real value rather than one of the failed run
+# markers. NA in policy mode, where there is no calibration likelihood to
+# compute and the log likelihood is unconditionally a marker.
+funLikelihoodOK <- function(logLike,policyMode=F){
+	if(policyMode){
+		NA_integer_
+	} else {
+		as.integer(length(logLike)==1&&is.finite(logLike)&&logLike>logLike.failedRun.max)
+	}
+}
+
 # funRunStatusOfRun ####
 # The completion status of a single FRIDA execution, one row per state of the
 # world. In policy mode one execution carries numSOW states of the world at
@@ -475,7 +502,7 @@ funWriteRunMetadataFile <- function(location.output,location.frida.git,location.
 # year is the earliest of them. Whether the run completed is that measured
 # against outputDataYears, the horizon of the default run, never against
 # nrow(runDat), which is itself short for a truncated run.
-funRunStatusOfRun <- function(runDat,origColNames,logLike,policyMode=F,
+funRunStatusOfRun <- function(runDat,origColNames,logLike=NULL,policyMode=F,
 															years=if(exists('outputDataYears')){outputDataYears}else{rownames(runDat)}){
 	numYears <- length(years)
 	# the state of the world each column belongs to, 1 for columns without a
@@ -506,11 +533,7 @@ funRunStatusOfRun <- function(runDat,origColNames,logLike,policyMode=F,
 	completed <- as.integer(firstFailIdx>numYears)
 	failYear <- ifelse(completed==1,NA_real_,
 										 suppressWarnings(as.numeric(years[firstFailIdx])))
-	likelihoodOK <- if(policyMode){
-		NA_integer_
-	} else {
-		as.integer(length(logLike)==1&&is.finite(logLike)&&logLike>logLike.failedRun.max)
-	}
+	likelihoodOK <- funLikelihoodOK(logLike,policyMode=policyMode)
 	return(data.frame(sowID=seq_along(sowIDs),
 										completed=completed,
 										failYear=failYear,
@@ -799,6 +822,14 @@ runFridaParmsByIndex <- function(runid,silent=T,policyMode=F,testStellaGood=F){
 			runDat$year <- seq(runDat$year[1],length.out=nrow(runDat))
 			rownames(runDat) <- runDat$year
 			runDat <- runDat[,-1]
+			# whether the run completed decides whether it gets a real log likelihood
+			# or one of the failed run markers, so the status is determined first and
+			# the likelihood follows from it. The completion cannot be read off the
+			# last row of runDat: a run that stopped early leaves a short output file,
+			# whose last row is a perfectly good year.
+			runStatus <- funRunStatusOfRun(runDat,origColNames,policyMode=policyMode)
+			runComplete <- all(runStatus$completed%in%1)
+			yearsOfOutput <- sum(!is.na(runDat[[1]]))
 			if(!policyMode){
 				calDatInRunDat <- which(colnames(calDat)%in%colnames(runDat))
 				if(length(calDatInRunDat)>0){
@@ -807,15 +838,16 @@ runFridaParmsByIndex <- function(runid,silent=T,policyMode=F,testStellaGood=F){
 				} else {
 					logLike <- rep(1,ncol(runDat))
 				}
-				# If the logLike is not NA but the run did not complete assign 
-				# lowest nonzero value. We use this when narrowing the parms space
-				if(is.na(runDat[[1]][nrow(runDat)])||logLike==-Inf){
-					logLike <- logLike.failedRun+sum(!is.na(runDat[[1]]))*logLike.quasiEps
+				# a run that did not complete, or whose likelihood is not a single real
+				# value, carries the marker instead. We use this when narrowing the
+				# parms space
+				if(!runComplete||!(length(logLike)==1&&is.finite(logLike))){
+					logLike <- logLike.failedRun+yearsOfOutput*logLike.quasiEps
 				}
 			} else {
-				logLike <- logLike.failedRun+sum(!is.na(runDat[[1]]))*logLike.quasiEps
+				logLike <- logLike.failedRun+yearsOfOutput*logLike.quasiEps
 			}
-			runStatus <- funRunStatusOfRun(runDat,origColNames,logLike,policyMode=policyMode)
+			runStatus$likelihoodOK <- funLikelihoodOK(logLike,policyMode=policyMode)
 			suppressWarnings(parmsIndex<-as.numeric(row.names(samplePoints)[i]))
 			if(is.na(parmsIndex)){
 				retlist[[i]] <- (list(parmsName=row.names(samplePoints)[i],
