@@ -90,6 +90,19 @@ for(plotWeightType in plotWeightTypes){
 	} else {
 		stop('unknown plotWeightType\n'	)
 	}
+	# With no weight anywhere every weighted quantile below is undefined, and the
+	# search for the sample points closest to them dies inside the mini cluster
+	# on a which.min of nothing, reported as 'replacement has length zero' with
+	# no hint of what went wrong. Say what went wrong here instead.
+	if(!any(samplePoints$plotWeight>0,na.rm=TRUE)){
+		stop(sprintf(paste0('No sample point carries any weight for plotWeightType %s, ',
+												'so there is no ensemble to draw a representative sample from.\n',
+												'%i of %i runs completed. Check the parameter ranges the\n',
+												'sampling drew from and the run completion summary in runMetadata.txt.\n'),
+								 plotWeightType,
+								 if(exists('completed')){sum(completed%in%1)}else{NA},
+								 nrow(samplePoints)))
+	}
 	# median ####
 	medians <- array(NA,dim=c(nrow(defRun),length(varsToRead)))
 	for(var.i in 1:length(varsToRead)){
