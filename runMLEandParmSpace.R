@@ -464,20 +464,53 @@ while(newMaxFound){
 		# above rewrites it and the workers evaluate the likelihood against their own
 		# copy, which was otherwise left at whatever clusterHelp.R last sent them.
 		clusterExport(cl,list('calDat','resSigma','treatVarsAsIndep'))
+		# Min and Max used to run as two pools, one after the other. That put a barrier
+		# in the middle and left workers idle at the tail of each while a straggler
+		# finished a search that ran to the iteration limit. The two directions are
+		# independent, so they go into one pool of every border to be found.
+		borderTasks <- list()
 		for(direction in c('Min','Max')){
-			cat(sprintf('  determining %s par values...',tolower(direction)))
-			toDetermine <- which(notDeterminedBorders[,direction]&!rangeDetSkip)
-			if(length(toDetermine)>0){
-				border.coefs[toDetermine,direction] <- 
-					unlist(parLapplyLB(cl,toDetermine,findDensValBorder,
-															 parVect=parVect,lpdensEps=lpdensEps,
-															 ceterisParibusPars=treatVarsAsIndep,
-															 tol=rangeTol,max=(direction=='Max'),idcToMod=idcToMod,
-															 parscale=parscale.parvect,
-															 bounds=parBounds,
-															 niter=1e3,# set niter so that the errors at least in the indep case are small
-															 workerStagger = T)) 
+			for(td in which(notDeterminedBorders[,direction]&!rangeDetSkip)){
+				borderTasks[[length(borderTasks)+1]] <-
+					list(parIdx=td,max=(direction=='Max'),direction=direction)
 			}
+		}
+		# Longest first. parLapplyLB balances the load, but it hands the tasks out in
+		# the order it was given them, so a border that needs a thousand iterations can
+		# be picked up last and hold the pool open on its own. How many parscale steps
+		# lie between the value and the bound is the cost estimate available here
+		# without paying for one: a border a long way out in units of the step size
+		# takes more steps to reach. It is a heuristic, but the order it replaces is
+		# parameter index, which is unrelated to cost.
+		borderTaskCost <- function(tsk){
+			scale <- parscale.parvect[tsk$parIdx]
+			span <- abs(parBounds[tsk$parIdx,ifelse(tsk$max,2,1)]-parVect[tsk$parIdx])
+			if(!is.finite(scale)||scale==0||!is.finite(span)){
+				# unknown cost goes out early rather than last
+				return(Inf)
+			}
+			return(span/scale)
+		}
+		if(length(borderTasks)>0){
+			cat(sprintf('  determining %i borders over %i workers...',
+									length(borderTasks),length(cl)))
+			borderTasks <- borderTasks[order(sapply(borderTasks,borderTaskCost),
+																			 decreasing=TRUE)]
+			borderResults <- parLapplyLB(cl,borderTasks,funBorderTask,
+																	 parVect=parVect,lpdensEps=lpdensEps,
+																	 ceterisParibusPars=treatVarsAsIndep,
+																	 tol=rangeTol,idcToMod=idcToMod,
+																	 parscale=parscale.parvect,
+																	 bounds=parBounds,
+																	 niter=1e3,# set niter so that the errors at least in the indep case are small
+																	 workerStagger = T)
+			for(task.i in seq_along(borderTasks)){
+				border.coefs[borderTasks[[task.i]]$parIdx,borderTasks[[task.i]]$direction] <-
+					as.numeric(borderResults[[task.i]])
+			}
+			cat('done\n')
+		}
+		for(direction in c('Min','Max')){
 			border.coefs[rangeDetSkip,direction] <- Inf
 			names(border.coefs[,direction]) <- names(parVect)
 			# fallback values in case borders could not be determined:
@@ -485,7 +518,8 @@ while(newMaxFound){
 				(is.infinite(border.coefs[,direction])+(parVect==border.coefs[,direction]))>=1
 			border.coefs[,direction][notDeterminedBorders[,direction]] <- 
 				sampleParms[[direction]][notDeterminedBorders[,direction]]
-			cat(sprintf('done. %i determined, %i failed, %i skipped (no parscale), %i skipped (external range)\n',
+			cat(sprintf('  %s: %i determined, %i failed, %i skipped (no parscale), %i skipped (external range)\n',
+									tolower(direction),
 									sum(!notDeterminedBorders[,direction]),
 									sum(notDeterminedBorders[,direction]&!rangeDetSkip),
 									sum(parscaleNotDetermined.parVect),

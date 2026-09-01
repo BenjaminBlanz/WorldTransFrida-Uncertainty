@@ -237,6 +237,14 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 }
 
 
+# funBorderTask ####
+# One border to determine: a parameter and a direction. The Min and Max searches
+# are independent of each other, so they go into a single worker pool rather than
+# two run one after the other, and this is what one task in that pool looks like.
+funBorderTask <- function(task,...){
+	findDensValBorder(task$parIdx,max=task$max,...)
+}
+
 # Every call to fun here is a stella run, so the values are carried rather than
 # recomputed. The loop used to evaluate three points per iteration where one is
 # new: x0 and x1 are the previous iteration's x1 and x2, both already evaluated,
