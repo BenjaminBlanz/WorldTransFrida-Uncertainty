@@ -106,13 +106,26 @@ source('clusterHelp.R')
 gobble <- clusterEvalQ(cl,source(file.path(baseWD,'config.R')))
 
 # MLE and Sensi Loop ####
-parscale <- rep(NA,length(jParVect))
-if(!redoAllCalc){
+# the run specific config copies in the output directories predate this flag
+if(!exists('redoFailedParscales')){
+	redoFailedParscales <- F
+}
+# A parscale a previous run could not determine is a result to keep, not work to
+# redo. See funReadCachedParscale.
+if(redoAllCalc){
+	parscale <- rep(NA_real_,length(jParVect))
 	names(parscale) <- names(jParVect)
-	if(file.exists(file.path(location.output,'parscale.RDS'))){
-		parscale.old <- readRDS(file.path(location.output,'parscale.RDS'))
-		matches <- which(names(parscale) %in% names(parscale.old))
-		parscale[matches] <- parscale.old[matches]
+	parscaleCachedNotDetermined <- rep(FALSE,length(jParVect))
+	names(parscaleCachedNotDetermined) <- names(jParVect)
+} else {
+	parscale.cached <- funReadCachedParscale(file.path(location.output,'parscale.RDS'),
+																					 names(jParVect),
+																					 redoFailedParscales=redoFailedParscales)
+	parscale <- parscale.cached$parscale
+	parscaleCachedNotDetermined <- parscale.cached$notDetermined
+	if(sum(parscaleCachedNotDetermined)>0){
+		cat(sprintf('%i parameters had no determinable parscale last time, keeping that result. Set redoFailedParscales to retry them.\n',
+								sum(parscaleCachedNotDetermined)))
 	}
 }
 ordersOfMagGuesses.parvect <- funOrderOfMagnitude(sampleParms$Max-sampleParms$Min)
@@ -178,8 +191,8 @@ while(newMaxFound){
 		iterations <- 0
 		parallelParscale <- T
 		useOrdersOfMagGuesses <- T
-		while(iterations < 2 && sum((is.na(parscale)|is.infinite(parscale))&!parscaleSkip)>0){
-			parsToDet <- which((is.na(parscale)|is.infinite(parscale))&!parscaleSkip)
+		while(iterations < 2 && sum((is.na(parscale)|is.infinite(parscale))&!parscaleSkip&!parscaleCachedNotDetermined)>0){
+			parsToDet <- which((is.na(parscale)|is.infinite(parscale))&!parscaleSkip&!parscaleCachedNotDetermined)
 			cat(sprintf('Determining the parscale of %i parameters. %i parameters with already known parscale.%s\n',
 									length(parsToDet),length(parscale)-length(parsToDet)-sum(parscaleSkip),
 									if(useOrdersOfMagGuesses){' Using guesses.'}else{' Not using guesses.'}))
@@ -282,7 +295,17 @@ while(newMaxFound){
 		
 		## save parscale ####
 		cat('saving ParScale...')
-		saveRDS(parscale.all,file.path(location.output,'parscale.RDS'))
+		# The status travels with the values, so a later run can tell a parameter that
+		# was never tried from one that was tried and could not be determined.
+		parscaleStatus.jParVect <- ifelse(parscaleSkip,'skippedExternalRange',
+																			ifelse(problemCases,'notDetermined','determined'))
+		# names off parscale.all, not off jParVect: kickParmsParScaleDet rebuilds
+		# jParVect shorter above, while parscale.all still spans what was determined
+		names(parscaleStatus.jParVect) <- names(parscale.all)
+		saveRDS(list(parscale=parscale.all,
+								 status=parscaleStatus.jParVect,
+								 savedAt=Sys.time()),
+						file.path(location.output,'parscale.RDS'))
 		sampleParms$parscale <- parscale.parvect
 		write.csv(sampleParms,file.path(location.output,'sampleParmsParscale.csv'))
 		# MLE ####

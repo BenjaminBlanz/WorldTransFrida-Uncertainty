@@ -1,5 +1,10 @@
 # redo all calculations instead of using stored values
 redoAllCalc <- F
+# Retry the parscales a previous run could not determine. Those are the most
+# expensive parameters in the determination, since failing means having swept
+# every order of magnitude, and the answer does not change unless the model or
+# the calibration data has. Off, so a rerun keeps the previous verdict.
+redoFailedParscales <- F
 
 # parallel ####
 #if(!exists('numWorkers')){

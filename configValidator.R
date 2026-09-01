@@ -214,7 +214,8 @@ if(cfgVal.has('rangeTol')){
 }
 cfgVal.checkNumber('minObsForLike',min=1,integer=TRUE)
 cfgVal.checkNumber('subSample.NumSamplePerVar',min=1,integer=TRUE)
-for(cfgVal.v in c('redoAllCalc','writePerWorkerFiles','doNotReturnRunDataSavePerWorkerOnly',
+for(cfgVal.v in c('redoAllCalc','redoFailedParscales',
+									'writePerWorkerFiles','doNotReturnRunDataSavePerWorkerOnly',
 									'compressCsv','perVarRdsCompress','perVarFullPrecision',
 									'plotWhileRunning','plotDatWhileRunning','plotDatPerChunWhileRunning',
 									'restretchSamplePoints','imputeMissingVars','removeLinearCombinations',

@@ -378,6 +378,47 @@ funParBoundsForSampleParms <- function(sampleParms,frida_info){
 	return(parBounds)
 }
 
+# funReadCachedParscale ####
+# The parscales a previous run determined, as a list of the values and a logical
+# saying which of them are remembered failures.
+#
+# A parameter whose parscale could not be determined is an answer, not missing
+# work. Redetermining it costs the full sweep over every order of magnitude and
+# arrives at the same nothing, and these are the most expensive parameters in the
+# stage: failing means having tried every order. The file used to hold nothing but
+# the values, so a failure came back as NA and could not be told apart from a
+# parameter that had never been tried. Such a file is still read, and its NAs are
+# still treated as work, because that is all it can support.
+#
+# Entries are matched by name. The cached vector need not hold the same
+# parameters, nor hold them in the same order.
+funReadCachedParscale <- function(file,jParVectNames,redoFailedParscales=FALSE){
+	parscale <- rep(NA_real_,length(jParVectNames))
+	names(parscale) <- jParVectNames
+	notDetermined <- rep(FALSE,length(jParVectNames))
+	names(notDetermined) <- jParVectNames
+	if(!file.exists(file)){
+		return(list(parscale=parscale,notDetermined=notDetermined))
+	}
+	cached <- readRDS(file)
+	if(is.list(cached)){
+		parscale.old <- cached$parscale
+		status.old <- cached$status
+	} else {
+		parscale.old <- cached
+		status.old <- rep(NA_character_,length(parscale.old))
+		names(status.old) <- names(parscale.old)
+		cat(sprintf('%s predates the status record, failed determinations in it will be redone\n',
+								basename(file)))
+	}
+	matches <- names(parscale)[names(parscale)%in%names(parscale.old)]
+	parscale[matches] <- parscale.old[matches]
+	if(!redoFailedParscales){
+		notDetermined[matches] <- status.old[matches]%in%'notDetermined'
+	}
+	return(list(parscale=parscale,notDetermined=notDetermined))
+}
+
 # funReadCachedRangedSampleParms ####
 # The sampleParms a previous run left behind after determining ranges, or NULL
 # when that file cannot stand in for a determination. Everything downstream of
