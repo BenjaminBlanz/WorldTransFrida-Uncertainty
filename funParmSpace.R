@@ -88,6 +88,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 															niter=1000,
 															rootTolFactor=NA,
 															rootMaxIter=NULL,
+															lpdensAtParVect=NULL,
 															workerStagger=FALSE,
 															...){
 	if(workerStagger){
@@ -121,6 +122,20 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 	}
 	if(is.null(rootMaxIter)){
 		rootMaxIter <- niter
+	}
+	# The log density at the parameters as they came in. The caller measured it to
+	# derive lpdensEps, so the probe at the starting point below is already known
+	# and does not need a stella run of its own. That probe is the same for every
+	# parameter and both directions, so it was about 1300 runs spent rediscovering
+	# one number. Only usable while nothing in parVect has moved.
+	parVectUnchanged <- TRUE
+	fAtParVect <- if(is.null(lpdensAtParVect)){NULL}else{lpdensAtParVect-lpdensEps}
+	likeGoalDiffAt <- function(x,parVect,parIdx,lpdensEps,...){
+		if(!is.null(fAtParVect)&&parVectUnchanged&&
+			 isTRUE(as.numeric(x)==as.numeric(parVect[parIdx]))){
+			return(fAtParVect)
+		}
+		return(likeGoalDiffFun(x,parVect,parIdx,lpdensEps,...))
 	}
 	idcToMod.base <- idcToMod
 	# One pass per widening of the set of parameters that move with parIdx. With a
@@ -179,8 +194,8 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 			# f.lower/f.upper. The secant branch can only reuse f.lo when maximising:
 			# it rebuilds root.range first, and only in that direction does the new
 			# root.range[1] stay equal to the point f.lo was measured at.
-			f.lo <- likeGoalDiffFun(root.range[1],parVect,parIdx,lpdensEps,...)
-			f.hi <- likeGoalDiffFun(root.range[2],parVect,parIdx,lpdensEps,...)
+			f.lo <- likeGoalDiffAt(root.range[1],parVect,parIdx,lpdensEps,...)
+			f.hi <- likeGoalDiffAt(root.range[2],parVect,parIdx,lpdensEps,...)
 			if(((f.lo>0)-(f.hi>0))==0){
 				if(max){
 					root.range <- c(par.val,par.val+parscale[parIdx])
@@ -222,6 +237,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 				return(par.val)
 			} else {
 				parVect[parIdx] <- par.val
+				parVectUnchanged <- FALSE
 				if(trace>0){
 					cat('iter ',iter,' ',par.val,' : ')
 				}
@@ -240,6 +256,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 																			 parIdx=parIdx, 
 																			 idcToMod=idcToMod,...))
 				parVect[otherIdx] <- unlist(res[1:length(otherIdx)])
+				parVectUnchanged <- FALSE
 				likeAtMaxOld <- likeAtMax
 				likeAtMax <- -res$value
 				if(trace>0){
@@ -258,6 +275,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 					                               control=list(dowarn = F,
 					                                            parscale=parscale),...))
 					parVect <- unlist(res[1:length(parVect)])
+					parVectUnchanged <- FALSE
 					par.val <- parVect[parIdx]
 					likeAtMax <- -res$value
 					if(trace>0){
@@ -382,10 +400,13 @@ funFindParScale <- function(par.i,niter=100,useOrdersOfMagGuesses=F){
 							par.i,substr(names(jParVect)[par.i],1,50)))
 	ordersOfMagDeltRes <- c()
 	ordersOfMagNegLLResp <- c()
-	# Every sweep below starts secant from the same x0=0, whose value does not
-	# depend on the order of magnitude being tried. Evaluated once here rather than
-	# once per order, it saves a stella run for every order after the first.
-	negLLErrorAtZero <- orderOfMagNegLLErrorFun(0,par.i)
+	# secant starts every sweep below from x0=0, and the value there is not merely
+	# the same for every order tried, it is known without asking the model:
+	# orderOfMagNegLLErrorFun(0,par.i) puts jParVect back exactly as it was, so
+	# jnegLLikelihood.f returns baseNegLL and the whole expression is
+	# abs(baseNegLL-baseNegLL)-1. This was a stella run per parameter, 887 of them
+	# in the reference run, spent confirming a subtraction.
+	negLLErrorAtZero <- -1
 	for(ord.i in 1:length(ordersOfMag)){
 		cat(sprintf('\b\b\b\b\b\b\b\b\b\b%+10.1e',10^ordersOfMag[ord.i]))
 		secantRes <- secant(orderOfMagNegLLErrorFun,x0=0,

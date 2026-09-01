@@ -480,7 +480,11 @@ while(newMaxFound){
 	}
 	if(is.null(sampleParms.cached)||checkBorderErrors||kickParmsErrorRangeDet){
 		# costs a frida run, so only for the searches that actually use it
-		lpdensEps <- -negLLike(parVect) - log(likeCutoffRatio)
+		# kept, not just folded into lpdensEps: the border search needs it to skip the
+		# probe at the starting point, which is the same for every parameter and both
+		# directions
+		lpdensAtParVect <- -negLLike(parVect)
+		lpdensEps <- lpdensAtParVect - log(likeCutoffRatio)
 	}
 	if(forceParBounds){
 		cat('Forcing coefs sample range to be equal tovalues frida_info\n')
@@ -571,6 +575,7 @@ while(newMaxFound){
 																	 niter=1e3,# set niter so that the errors at least in the indep case are small
 																	 rootTolFactor=rangeRootTol,
 																	 rootMaxIter=rangeRootMaxIter,
+																	 lpdensAtParVect=lpdensAtParVect,
 																	 workerStagger = T)
 			for(task.i in seq_along(borderTasks)){
 				border.coefs[borderTasks[[task.i]]$parIdx,borderTasks[[task.i]]$direction] <-
