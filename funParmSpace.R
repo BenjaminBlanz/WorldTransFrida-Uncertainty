@@ -661,10 +661,11 @@ funReadCachedRangedSampleParms <- function(file,currentKey=NULL,
 #   parameter value, so the smaller half width is zero and both sides snap onto
 #   the value.
 #
-# The fallback test is per parameter, not per direction, because a symmetric
-# range comes from a single distance. There is no coherent way to symmetrify one
-# side of a parameter and leave the other, so a parameter with a not determined
-# border in either direction is left alone entirely.
+# The fallback test is per parameter, not per direction. Both borders determined,
+# it symmetrifies as normal; neither, symmetrifyFallbackAuthorRanges decides;
+# one of each, the two would disagree, so nothing is done and each side keeps
+# what it was given. With the flag set it symmetrifies regardless, taking a
+# fallback bound as equally valid as a determined one.
 funSymmetrifyRanges <- function(sampleParms,parBounds,notDeterminedBorders,
 																externalRangeParmNames=character(0),
 																symmetricRanges='Min',
