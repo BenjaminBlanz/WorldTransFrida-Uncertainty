@@ -1,0 +1,6 @@
+Government_Regulations.start_year,2025,,
+Government_Regulations.irrigation_efficiency_multiplier:x,2025,2070,2100
+Government_Regulations.irrigation_efficiency_multiplier:y,1,1.5,1.5
+Government_Regulations.switch_irrigation_fraction_policy,1,,
+Government_Regulations.irrigation_fraction_policy:x,2025,2050,2100
+Government_Regulations.irrigation_fraction_policy:y,0.25,0.5,0.5
