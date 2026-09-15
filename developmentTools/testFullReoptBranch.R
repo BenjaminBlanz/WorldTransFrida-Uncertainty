@@ -3,14 +3,13 @@
 # The branch of findDensValBorder that reoptimises the other parameters at each
 # step (ceterisParibusPars = FALSE) is a supported configuration, but nothing
 # exercises it: the production config sets treatVarsAsIndep, which makes
-# ceterisParibusPars TRUE and returns before any of it runs. Four defects had
-# accumulated in it by the time anyone looked.
+# ceterisParibusPars TRUE and returns before any of it runs, so defects in it go
+# unnoticed.
 #
-# This is the standing guard against that happening again. findDensValBorder takes
-# its objective from negLLike in the global environment, which is what makes the
-# fixture possible: a synthetic gaussian likelihood stands in for the stella run,
-# so the branch is exercised in seconds on a handful of parameters with no model,
-# no cluster and no calibration data.
+# findDensValBorder takes its objective from negLLike in the global environment,
+# so a synthetic gaussian likelihood stands in for the stella run and the branch
+# is exercised in seconds on a handful of parameters, with no model, no cluster
+# and no calibration data.
 #
 # Run from the repository root:  Rscript developmentTools/testFullReoptBranch.R
 
@@ -98,8 +97,9 @@ check('no error on a one element idcToMod',!inherits(res,'try-error'),
 			if(inherits(res,'try-error')){as.character(res)}else{''})
 
 # ---- 15b: tracing must not change the answer ####
-# The corrective reoptimisation after a likelihood improvement used to sit inside
-# if(trace>0), so a traced run and an untraced run computed different borders.
+# The corrective reoptimisation after a likelihood improvement must not be
+# conditional on trace: a traced and an untraced run would compute different
+# borders.
 cat('15b  tracing does not change the border\n')
 runBorder <- function(trace,parIdx=3,max=TRUE,corMat=diag(nPar)){
 	negLLike <<- makeNegLLike(corMat)

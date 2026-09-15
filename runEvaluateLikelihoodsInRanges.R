@@ -41,7 +41,7 @@ logLike.perVar <- readPerVarFile(file.logLike,outputType = perVarOutputTypes[1])
 logLike[logLike.perVar$id] <- logLike.perVar$logLike
 rm(logLike.perVar)
 # Whether a run completed is read from the run status rather than diagnosed from
-# the log likelihood markers. For output that predates the runStatus file
+# the log likelihood markers. For output without a runStatus file
 # funReadRunStatus decodes it back out of those markers, so this works either
 # way. Indexed by id, so a run that is missing from the file entirely stays NA
 # rather than shifting everything after it.
@@ -67,7 +67,7 @@ names(parVect) <- sampleParms$Variable
 baseLogLike <- -negLLike(parVect)
 
 # a log likelihood is usable when the run reached the final year and the
-# likelihood itself could be computed, which is what the marker test used to say
+# likelihood itself could be computed
 logLike.badRM <- logLike
 logLike.badRM[!(completed%in%1&likelihoodOK%in%1)] <- NA
 cat(sprintf('%i bad log likelihoods\n',sum(is.na(logLike.badRM))))

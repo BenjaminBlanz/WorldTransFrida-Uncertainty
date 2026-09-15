@@ -66,8 +66,8 @@ The optimised job completed end to end, determination and sampling, in 4h 41m.
 | skippedExternalRange | 0 | 0 | 37 |
 
 Two parameters that the baseline could scale, the optimised run could not. That is the
-price of bounding the fallback sweep per parameter rather than globally (item 4): the
-sweep no longer runs above the order of the parameter's own range. 2 of 645, 0.3%.
+price of bounding the fallback sweep per parameter rather than globally: the sweep
+does not run above the order of the parameter's own range. 2 of 645, 0.3%.
 
 **Parscale values**, where both determined one: 640 of 643 **identical**, 99.5%. The three
 that differ do so by at most 1.5e-03 relative.
@@ -97,25 +97,29 @@ Five Min and two Max borders differ in *whether* they were determined at all.
 
 ## What this says about the individual claims
 
-- **Item 4** was estimated at 2.28× narrower sweeps from a synthetic spread. Measured on
-  the real parameter set it is **37 orders down to 14 on average, 2.64×** — the run
-  prints this at startup. Its cost is the 2 lost parscales above.
-- **The parscale determination at 3.29×** is the combined effect of items 1, 2, 4, 6 and
-  the zero-delta probe of item 9. It is the largest single win and it is nearly free of
-  result changes: 640 of 643 parscales identical.
-- **Item 5** is the only change that moves borders materially, and it is the one whose
-  original rationale was already found to be wrong (see
+- **The per parameter fallback sweep** was estimated at 2.28× narrower sweeps from a
+  synthetic spread. Measured on the real parameter set it is **37 orders down to 14 on
+  average, 2.64×** — the run prints this at startup. Its cost is the 2 lost parscales
+  above.
+- **The parscale determination at 3.29×** is the combined effect of the secant rewrite,
+  the per parameter fallback sweep, the parscale cache and the zero-delta probe. It is
+  the largest single win and it is nearly free of result changes: 640 of 643 parscales
+  identical.
+- **`rangeRootTol`** is the only change that moves borders materially, and it is the one
+  whose original rationale was already found to be wrong (see
   `developmentTools/testRangeRootTolerance.R`). If exactness matters more than the
-  remaining speed, set `rangeRootTol <- NA` in config.R and the border search reverts to
-  its old tolerance. This measurement cannot say how much of the range finding's 2.24× is
-  item 5 as against items 1, 3, 10 and 11; separating them needs another pair of runs.
+  remaining speed, set `rangeRootTol <- NA` in config.R and the border search falls back
+  to an absolute 1e-16. This measurement cannot say how much of the range finding's
+  2.24× is `rangeRootTol` as against the secant rewrite, the reuse of already evaluated
+  points and the single longest-first worker pool; separating them needs another pair of
+  runs.
 
 ## What is not measured here
 
-- The **cache** work (items 6, 7, 8) barely shows: both runs were cold, so nothing was
-  reused. Its value is on a *re-run*, where `145a005` already measures 5h44m down to
-  1h04m, and where remembering the failed parscales should now remove the second pass
-  entirely.
+- The **cache** work — remembered failed parscales, keyed determinations, reusable
+  ranged sampleParms — barely shows: both runs were cold, so nothing was reused. Its
+  value is on a *re-run*, where `145a005` already measures 5h44m down to 1h04m, and
+  where remembering the failed parscales removes the second pass entirely.
 - **Border checks** and the full re-optimisation branch report zero runs, because
   `checkBorderErrors` is FALSE and `treatVarsAsIndep` is TRUE in this config. The
   re-optimisation branch is covered by `developmentTools/testFullReoptBranch.R` instead.

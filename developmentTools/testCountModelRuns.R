@@ -1,9 +1,7 @@
 # testCountModelRuns.R ####
 #
-# The run counter is the instrument every other measurement in this work depends
-# on, so it needs checking like anything else: that it is silent until switched
-# on, that it counts every call once, and that it attributes calls to the section
-# that was open when they happened.
+# The run counter has to be silent until switched on, count every call once, and
+# attribute calls to the section that was open when they happened.
 #
 # Run from the repository root:
 #   Rscript developmentTools/testCountModelRuns.R

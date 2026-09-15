@@ -1,9 +1,11 @@
 # The following functions work together to 
 # find the borders of the density where density is equal to pdensEps
 # repeat two steps, find root in current parm
-# maximize density for root of cuurrent parm using other parms
+# maximize density for root of current parm using other parms
 # This function relies on the negLLike function being present in the global env.
 # This allows the user to specify the type of likelihood function.
+
+# likelihood ####
 jnegLLikelihood.f <- function(jParVect){
 	parVect <- jParVect[1:nrow(sampleParms)]
 	if(treatVarsAsIndep){
@@ -21,13 +23,12 @@ jnegLLikelihood.f <- function(jParVect){
 	} else {
 		lLikelihood <- rep(1,ncol(runDat))
 	}
-	# A run that did not complete gets the marker instead. We use this when
-	# narrowing the parms space, so a run the model could not finish must never
-	# come back with a likelihood that looks like a good fit. Testing the last
+	# A run that did not complete gets marked. Used when narrowing the parms space.
+	# A run the model could not finish must never come back with a likelihood that 
+	# looks like a good fit. Testing the last
 	# row of runDat for an NA does not see those runs: stella writes a short
 	# output file when a run stops early, and its last row is a perfectly good
-	# year. That let the range finding push borders past the point where the
-	# model breaks.
+	# year. 
 	if(!funRunReachedFinalYear(runDat)){
 		lLikelihood <- logLike.failedRun+(sum(!is.na(runDat[[1]]))*logLike.quasiEps)
 	}
@@ -42,13 +43,12 @@ negLLike <- function(parVect){
 	} else {
 		lLikelihood <- rep(1,ncol(runDat))
 	}
-	# A run that did not complete gets the marker instead. We use this when
-	# narrowing the parms space, so a run the model could not finish must never
-	# come back with a likelihood that looks like a good fit. Testing the last
+	# A run that did not complete gets marked. Used when narrowing the parms space.
+	# A run the model could not finish must never come back with a likelihood that 
+	# looks like a good fit. Testing the last
 	# row of runDat for an NA does not see those runs: stella writes a short
 	# output file when a run stops early, and its last row is a perfectly good
-	# year. That let the range finding push borders past the point where the
-	# model breaks.
+	# year. 
 	if(!funRunReachedFinalYear(runDat)){
 		lLikelihood <- logLike.failedRun+(sum(!is.na(runDat[[1]]))*logLike.quasiEps)
 	}
@@ -69,13 +69,15 @@ likeGoalDiffFun <- function(par,parVect,parIdx,lpdensEps, ...){
 	llike <- -negLLike(parVect, ...)
 	return(llike-lpdensEps)
 }
+
+# density border search ####
 densMaxGivenParFun <- function(otherPars,parVect,parIdx,idcToMod, ...){
 	parVect[setdiff(idcToMod,parIdx)] <- otherPars
 	return(negLLike(parVect, ...))
 }
 # if ceterisParibusPars is TRUE, the densValBorder is found for the selecteed par Idx,
 # keeping all other pars at the values in parVect, i.e. this will not account
-# for rotatet elipsoid parameter distributions, but just for the slice through
+# for rotated elipsoid parameter distributions, but just for the slice through
 # the likelihood at parVect.
 # 
 # idcToMod: Specify the indices that should be varied together with parIdx in the 
@@ -93,9 +95,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 															...){
 	if(workerStagger){
 		# The stagger exists so the workers do not all reach for the filesystem in the
-		# same instant when the pool starts. After a worker's first task they are
-		# spread out by their own run times, and sleeping again on each of the
-		# thousand odd tasks that follow is delay bought for nothing.
+		# same instant when the pool starts.
 		if(!exists('workerHasStaggered',envir=globalenv())){
 			Sys.sleep(workerID*0.04)
 			assign('workerHasStaggered',TRUE,envir=globalenv())
@@ -107,13 +107,9 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 	if(is.list(idcToMod)){
 		idcToMod <- idcToMod[[parIdx]]
 	}
-	# uniroot below used to be given tol = 1e-16 with maxiter = niter, which is a
-	# thousand. The objective is a stella run whose output is read back from a csv,
-	# so below the resolution of that output the function is a staircase and brent's
-	# method is chasing noise, one model run per iteration, until it gives up at the
-	# iteration limit. A tolerance scaled to the parameter's own step size is one
-	# the model can actually resolve. rootTolFactor of NA keeps the old absolute
-	# value, and with it the old behaviour.
+	# The objective is a stella run whose output is read back from a csv with some loss 
+	# of precision. A tolerance scaled to the parameter's own step size is one the
+	# model can actually resolve. rootTolFactor of NA gives an absolute 1e-16.
 	rootTol <- if(is.finite(rootTolFactor)&&
 								is.finite(parscale[parIdx])&&parscale[parIdx]!=0){
 		abs(parscale[parIdx])*rootTolFactor
@@ -124,10 +120,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 		rootMaxIter <- niter
 	}
 	# The log density at the parameters as they came in. The caller measured it to
-	# derive lpdensEps, so the probe at the starting point below is already known
-	# and does not need a stella run of its own. That probe is the same for every
-	# parameter and both directions, so it was about 1300 runs spent rediscovering
-	# one number. Only usable while nothing in parVect has moved.
+	# derive lpdensEps. Only usable while nothing in parVect has moved.
 	parVectUnchanged <- TRUE
 	fAtParVect <- if(is.null(lpdensAtParVect)){NULL}else{lpdensAtParVect-lpdensEps}
 	likeGoalDiffAt <- function(x,parVect,parIdx,lpdensEps,...){
@@ -140,9 +133,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 	idcToMod.base <- idcToMod
 	# One pass per widening of the set of parameters that move with parIdx. With a
 	# single element there is nothing to widen to, but the border for parIdx itself
-	# still has to be found, so the loop runs once rather than not at all.
-	# 2:length(idcToMod.base) used to give c(2,1) in that case, indexing past the
-	# end on a second pass that should not have happened.
+	# still has to be found, so the loop runs once.
 	idcsToModSeq <- if(length(idcToMod.base)<2){
 		seq_along(idcToMod.base)
 	} else {
@@ -187,8 +178,8 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 					bound <- NULL
 				}
 			}
-			#if there is no sign change between the endpoints of root.range, use secant's
-			#method otherwise use uniroot
+			# if there is no sign change between the endpoints of root.range, use secant's
+			# method otherwise use uniroot
 			# Both of these are stella runs, and both branches below would otherwise
 			# evaluate the same two points a second time. uniroot takes them as
 			# f.lower/f.upper. The secant branch can only reuse f.lo when maximising:
@@ -265,8 +256,7 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 				if(likeAtMax>likeAtMaxOld){
 					# The step improved the likelihood, so the point we moved to sits above the
 					# contour we are trying to find. Reoptimising every parameter brings it back
-					# down. This used to sit inside if(trace>0), which meant a traced run and an
-					# untraced run computed different borders.
+					# down.
 					if(trace>0){
 						cat('Likelihood Imporovement After Step Reoptimizing\n')
 					}
@@ -289,20 +279,14 @@ findDensValBorder <- function(parIdx,parVect,lpdensEps,ceterisParibusPars=F,
 	return(par.val)
 }
 
-
-# funBorderTask ####
-# One border to determine: a parameter and a direction. The Min and Max searches
-# are independent of each other, so they go into a single worker pool rather than
-# two run one after the other, and this is what one task in that pool looks like.
 funBorderTask <- function(task,...){
 	findDensValBorder(task$parIdx,max=task$max,...)
 }
 
 # Every call to fun here is a stella run, so the values are carried rather than
-# recomputed. The loop used to evaluate three points per iteration where one is
-# new: x0 and x1 are the previous iteration's x1 and x2, both already evaluated,
-# and the tolerance test evaluated x2 which then became the next x1. A caller
-# that has already evaluated the starting points can pass them as f0 and f1.
+# recomputed: x0 and x1 are the previous iteration's x1 and x2. The tolerance 
+# test's x2 becomes the next x1. A caller that has already evaluated the starting 
+# points can pass them as f0 and f1.
 #
 # The returned root carries the value of fun at that point as the attribute
 # 'fval', so a caller does not have to evaluate it again. It is absent on the
@@ -355,7 +339,7 @@ secant <- function(fun, x0, x1, tol=1e-07, niter=1e4, doWarn=T, trace=0,
 	return(withFval(x2,f2))
 }
 
-
+# parameter scale ####
 rangeCheckFun <- function(rangeCheck.i,parVect,border.coefs,lpdensEps){
 	cat(sprintf('\r%4i %100s',rangeCheck.i,names(parVect[rangeCheck.i])))
 	parVectMinCheck.i <- parVect
@@ -379,7 +363,7 @@ orderOfMagNegLLErrorFun <- function(delta,par.i){
 }
 funFindParScale <- function(par.i,niter=100,useOrdersOfMagGuesses=F){
 	if(!useOrdersOfMagGuesses|length(ordersOfMagGuesses)<par.i){
-		# the fallback sweep, now bounded per parameter rather than globally
+		# the fallback sweep, bounded per parameter
 		minOrderOfMag <- ordersOfMagLimits[par.i,'min']
 		maxOrderOfMag <- ordersOfMagLimits[par.i,'max']
 	} else {
@@ -387,8 +371,7 @@ funFindParScale <- function(par.i,niter=100,useOrdersOfMagGuesses=F){
 		maxOrderOfMag <- ordersOfMagGuesses[par.i] +1
 	}
 	# A parameter with no order of magnitude to work from, a zero width range or a
-	# zero variance, has no scale to find. Saying so costs nothing; sweeping for it
-	# costs a stella run per order tried and ends here anyway.
+	# zero variance, has no scale to find.
 	if(!is.finite(minOrderOfMag)||!is.finite(maxOrderOfMag)||
 		 maxOrderOfMag<minOrderOfMag){
 		cat(sprintf('\r%4i %-50s ... %+e                     \n',
@@ -400,12 +383,10 @@ funFindParScale <- function(par.i,niter=100,useOrdersOfMagGuesses=F){
 							par.i,substr(names(jParVect)[par.i],1,50)))
 	ordersOfMagDeltRes <- c()
 	ordersOfMagNegLLResp <- c()
-	# secant starts every sweep below from x0=0, and the value there is not merely
-	# the same for every order tried, it is known without asking the model:
-	# orderOfMagNegLLErrorFun(0,par.i) puts jParVect back exactly as it was, so
-	# jnegLLikelihood.f returns baseNegLL and the whole expression is
-	# abs(baseNegLL-baseNegLL)-1. This was a stella run per parameter, 887 of them
-	# in the reference run, spent confirming a subtraction.
+	# secant starts every sweep below from x0=0, and the value there is known
+	# without asking the model: orderOfMagNegLLErrorFun(0,par.i) puts jParVect back
+	# exactly as it was, so jnegLLikelihood.f returns baseNegLL and the whole
+	# expression is abs(baseNegLL-baseNegLL)-1.
 	negLLErrorAtZero <- -1
 	for(ord.i in 1:length(ordersOfMag)){
 		cat(sprintf('\b\b\b\b\b\b\b\b\b\b%+10.1e',10^ordersOfMag[ord.i]))
@@ -446,12 +427,10 @@ funOrderOfMagnitude <- function(x){
 	return(floor(log10(abs(x))))
 }
 
-# funParBoundsForSampleParms ####
-# The Min and Max their authors gave each parameter in frida_info, in the order
-# sampleParms has them. The range determination and the branch that reuses a
-# cached determination both need these, and a parameter that is not in
-# frida_info at all has to come out as NA rather than shifting every row after
-# it, so this matches by name instead of collecting indices in a loop.
+# ranges and cached determinations ####
+# The Min and Max their authors gave each parameter, in the order
+# sampleParms has them. Matching by name so a parameter that is not in
+# frida_info comes out as NA rather than shifting following rows.
 funParBoundsForSampleParms <- function(sampleParms,frida_info){
 	parBounds <- frida_info[match(sampleParms$Variable,frida_info$Variable),c('Min','Max')]
 	rownames(parBounds) <- sampleParms$Variable
@@ -459,17 +438,8 @@ funParBoundsForSampleParms <- function(sampleParms,frida_info){
 	return(parBounds)
 }
 
-# funReadCachedParscale ####
 # The parscales a previous run determined, as a list of the values and a logical
 # saying which of them are remembered failures.
-#
-# A parameter whose parscale could not be determined is an answer, not missing
-# work. Redetermining it costs the full sweep over every order of magnitude and
-# arrives at the same nothing, and these are the most expensive parameters in the
-# stage: failing means having tried every order. The file used to hold nothing but
-# the values, so a failure came back as NA and could not be told apart from a
-# parameter that had never been tried. Such a file is still read, and its NAs are
-# still treated as work, because that is all it can support.
 #
 # Entries are matched by name. The cached vector need not hold the same
 # parameters, nor hold them in the same order.
@@ -512,17 +482,11 @@ funReadCachedParscale <- function(file,jParVectNames,redoFailedParscales=FALSE,
 	return(list(parscale=parscale,notDetermined=notDetermined))
 }
 
-# funDeterminationKey ####
-# What a cached determination was computed from. Until this existed, nothing
-# recorded that: a cache was reused whenever the file was there and had the right
-# columns, so a changed model, changed calibration data or changed likelihood
-# settings were all accepted in silence, and the parscales and ranges of one model
-# were handed to another.
+# What a cached determination was computed from. A changed model, changed
+# calibration data or changed likelihood settings must invalidate the cached results.
 #
 # File identity is size and mtime rather than a hash of the contents. FRIDA.stmx
-# is large and this runs on every start; a hash of it would cost more than the
-# check is worth. That means a change that preserves both is not seen, which is
-# unlikely enough to accept and stated here so it is not a surprise.
+# is large and this runs on every start.
 funDeterminationKey <- function(location.frida,location.frida.info,name.frida_info,
 																calDat,resSigma,parNames,settings,
 																baseNegLL=NULL){
@@ -546,19 +510,14 @@ funDeterminationKey <- function(location.frida,location.frida.info,name.frida_in
 			 resSigma=digestOf(resSigma),
 			 parNames=parNames,
 			 settings=settings,
-			 # The likelihood at the starting parameters, which every border in the
-			 # determination was measured against. It costs nothing to record, it is
-			 # computed anyway, and it catches in one number the case the file stamps
-			 # above are only a proxy for: the model no longer answers what it did.
 			 baseNegLL=baseNegLL,
 			 writtenAt=Sys.time())
 }
 
-# funDeterminationKeyMismatch ####
 # Which parts of the key have moved since the cache was written, named so the log
-# says why a determination is being redone rather than just that it is. The
-# parameter list is reported separately from everything else because it is the one
-# mismatch that does not invalidate the parameters both runs have in common.
+# says why a determination is being redone. The parameter list is reported
+# separately from everything else because it is the one mismatch that does not
+# invalidate the parameters both runs have in common.
 funDeterminationKeyMismatch <- function(cached,current){
 	if(is.null(cached)||!is.list(cached)){
 		return('no key was recorded with it')
@@ -593,7 +552,6 @@ funDeterminationKeyMismatch <- function(cached,current){
 	return(mismatch)
 }
 
-# funDeterminationParNameMismatch ####
 # TRUE when the two runs do not sample the same parameters. Kept apart from the
 # mismatch above: everything there invalidates the whole determination, while this
 # only means some parameters are new.
@@ -604,13 +562,11 @@ funDeterminationParNameMismatch <- function(cached,current){
 	return(!identical(cached$parNames,current$parNames))
 }
 
-# funReadCachedRangedSampleParms ####
 # The sampleParms a previous run left behind after determining ranges, or NULL
 # when that file cannot stand in for a determination. Everything downstream of
-# the determination rebuilds itself from these columns, so a file written before
-# they existed, or by a run interrupted partway through the determination, has to
-# be redetermined rather than half used. A column that is there but holds nothing
-# but NA is missing too.
+# the determination rebuilds itself from these columns, so a file lacking any of
+# them is redetermined rather than half used. A column that is there but holds
+# nothing but NA is missing too.
 funReadCachedRangedSampleParms <- function(file,currentKey=NULL,
 																					 keyFile=paste0(tools::file_path_sans_ext(file),
 																					 							 '.key.RDS')){
@@ -648,7 +604,7 @@ funReadCachedRangedSampleParms <- function(file,currentKey=NULL,
 	return(sampleParms)
 }
 
-# funSymmetrifyRanges ####
+# sampling the parameter space ####
 # Make the sampled range symmetric around the parameter value, and say what that
 # did. Two kinds of range are left alone unless asked for:
 #
@@ -727,7 +683,6 @@ funSymmetrifyRanges <- function(sampleParms,parBounds,notDeterminedBorders,
 	return(sampleParms)
 }
 
-# sobol sequence ####
 generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 																								restretchSamplePoints=F,
 																								ignoreExistingResults=F,
@@ -791,7 +746,6 @@ generateSobolSequenceForSampleParms <- function(sampleParms,numSample,
 }
 
 
-# funStretchSamplePoints ####
 funStretchSamplePoints <- function(samplePoints,sampleParms,restretchSamplePoints=F){
 	samplePoints <- t(samplePoints)
 	if(!restretchSamplePoints){

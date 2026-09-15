@@ -1,8 +1,8 @@
 # runAllTests.R ####
 #
 # Every test in developmentTools, in one go. None of them needs stella, a cluster
-# or calibration data, so the whole suite runs in seconds and is worth running
-# after any change to the parscale determination or the border search.
+# or calibration data, so the whole suite runs in seconds. Run it after any change
+# to the parscale determination or the border search.
 #
 # Run from the repository root:  Rscript developmentTools/runAllTests.R
 

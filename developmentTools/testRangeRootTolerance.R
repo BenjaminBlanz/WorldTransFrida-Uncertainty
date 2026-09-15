@@ -1,26 +1,18 @@
 # testRangeRootTolerance.R ####
 #
-# The border search gave uniroot tol = 1e-16 and maxiter = 1000 (plan item 5).
-# This is the one change in the speedup work that can move a border, so it is the
-# one that has to be measured rather than argued.
+# What rangeRootTol does in the border search, against a stand-in objective. It
+# is the one knob that can move a border.
 #
-# What the measurement says, and it is not what the plan assumed:
+#   Where the likelihood is smooth near the border, the tolerance changes
+#   nothing. Brent's method converges in about sixteen evaluations whatever
+#   tolerance it is given, and never comes near the iteration limit: the
+#   bisection fallback terminates once the bracket stops shrinking.
 #
-#   Where the likelihood is smooth near the border, the tolerance changes nothing.
-#   Brent's method converges in about sixteen evaluations whatever tolerance it is
-#   given, and never comes near the iteration limit. The plan's premise, that
-#   1e-16 has brent thrashing to maxiter on a finite precision objective, is
-#   simply false: the bisection fallback terminates once the bracket stops
-#   shrinking.
-#
-#   Where the border falls on a discontinuity it is a different story. A parameter
-#   pushed far enough that the model stops completing gets logLike.failedRun, a
-#   cliff rather than a crossing, and there the tight tolerance keeps subdividing
-#   an interval whose root is not a root. That is the case that costs, and it is
-#   the case the roughly hundred not-determined borders per direction are in.
-#
-# So the change is worth having, but for the pathological borders rather than as a
-# blanket speedup. This file exists to keep that distinction on the record.
+#   Where the border falls on a discontinuity it costs. A parameter pushed far
+#   enough that the model stops completing gets logLike.failedRun, a cliff rather
+#   than a crossing, and there a tight tolerance keeps subdividing an interval
+#   whose root is not a root. That is the case the roughly hundred not-determined
+#   borders per direction are in, and the case rangeRootTol is for.
 #
 # Run from the repository root:
 #   Rscript developmentTools/testRangeRootTolerance.R

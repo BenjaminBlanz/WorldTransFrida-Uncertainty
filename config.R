@@ -31,11 +31,9 @@ clusterType <- 'psock'
 # much faster than handling all output in a single thread.
 writePerWorkerFiles <- TRUE
 # When the workers write their own files, the run data is already on disk by the
-# time they return, so there is no reason to also serialise it back to the main
-# thread and store a second copy of it in workUnit-<i>.RDS. With this set the
-# workers return only the parameter index and the log likelihood, which is all
-# the main thread and the resume logic need. Costs about 207 kB per run of
-# memory in the main thread and as much again on disk when it is off.
+# time they return. With this set the workers return only the parameter index and
+# the log likelihood, which is all the main thread and the resume logic need,
+# instead of a second copy of the run data in workUnit-<i>.RDS.
 # Set it to FALSE if you need whole runs back, as verificationCases.R does via
 # loadClusterRuns. Plotting while running does not need it, that path already
 # turns writePerWorkerFiles off.
@@ -56,9 +54,8 @@ perVarRdsCompress <- TRUE
 # against what the model produced. Off writes the chunks about three times
 # faster and 10% smaller. The marker for a failed run (logLike.failedRun in
 # initialise.R) survives either setting.
-# Eps values indicating incomplete years of a run have now been chosen large enough to survive
-# the lower precision. None of the mode results require such high precision.
-# Safe to be off.
+# The eps values marking incomplete years of a run are large enough to survive the
+# lower precision, and no result needs more, so off is safe.
 perVarFullPrecision <- FALSE
 
 #plotting ####
@@ -148,13 +145,11 @@ likeCutoffRatio <- 1000
 # tolerance for the search of the likelihood border
 rangeTol <- 1e-15
 # uniroot's tolerance in the border search, as a multiple of the parameter's own
-# parscale. The likelihood comes from a stella run read back out of a csv, so a
-# tolerance far below what the model resolves has brent's method chasing noise at
-# one model run per iteration until it hits the iteration limit below. NA restores
-# the absolute 1e-16 the search used before.
+# parscale. The likelihood comes from a stella run read back out of a csv with
+# some loss of precision, so a tolerance far below what the model resolves is one
+# it cannot answer to. NA selects an absolute 1e-16.
 rangeRootTol <- 1e-4
-# iteration limit for that same search. It used to share niter with the secant
-# branch, which is 1000.
+# iteration limit for that same search
 rangeRootMaxIter <- 60
 # Should we drop parameters for which we can not determine the parameter scale?
 # This is likely because they do not affect the run.

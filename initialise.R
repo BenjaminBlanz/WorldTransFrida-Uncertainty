@@ -17,16 +17,10 @@ suppressPackageStartupMessages({
 data.table::setDTthreads(1)
 
 # logLike.failedRun ####
-# The log likelihood that a run which failed or produced no usable output is
-# marked with. Anything greater than this counts as a complete run.
-# The marker has to survive a csv round trip, because the per variable files
-# hold 15 significant digits unless perVarFullPrecision is on.
-# -.Machine$double.xmax does not survive it: written with 15 digits it rounds up
-# past the largest representable double and reads back as -Inf. So the marker is
-# the largest magnitude negative value that is a fixed point of that round trip,
-# -1.79769313486231e+308, 29 representable doubles below -.Machine$double.xmax.
-# It is derived rather than written out so that it stays correct if the printing
-# ever changes.
+# Marker for a run that failed or produced no usable output; anything greater
+# counts as a complete run. It has to survive the 15 significant digit csv round
+# trip of the per variable files, which -.Machine$double.xmax does not, so the
+# loop finds the largest magnitude negative fixed point of that round trip.
 logLike.failedRun <- (function(){
 	x <- .Machine$double.xmax
 	for(i in 1:64){
@@ -40,21 +34,11 @@ logLike.failedRun <- (function(){
 })()
 
 # logLike.quasiEps ####
-# A run that failed part way through is marked with logLike.failedRun plus one
-# of these per year of output it did manage to produce, so that a partial run
-# can be told apart from one that produced nothing at all.
-# The obvious increment, .Machine$double.eps, cannot do that. eps is the spacing
-# of the doubles near 1; near the magnitude of the marker, 1.8e308, two
-# neighbouring doubles are about 2e292 apart, so adding 2.2e-16 to 1.8e308
-# returns 1.8e308 unchanged.
-# So add a quasi eps instead: one step of the 15 significant digit decimal grid
-# at the magnitude of the marker, 1e294. That is far coarser than the spacing of
-# the doubles there, so the increment survives the addition, and it is one full
-# step of the grid a csv written without perVarFullPrecision snaps to, so it
-# survives being written out and read back in again as well.
-# In relative terms it is still nothing: even a thousand of them move the marker
-# by 6e-11 of its own magnitude. The result stays around -1.8e308, three hundred
-# orders of magnitude below any log likelihood a run could produce.
+# One of these is added to logLike.failedRun per year of output a partial run did
+# produce, so it can be told apart from one that produced nothing. Too small an
+# increment is lost: near the marker's 1.8e308 neighbouring doubles are some
+# 2e292 apart. One step of the 15 digit decimal grid there, 1e294, survives both
+# the addition and the csv round trip.
 logLike.quasiEps <- 10^(floor(log10(abs(logLike.failedRun)))-14)
 
 # logLike.failedRun.max ####

@@ -1,11 +1,10 @@
 # testBorderTaskPool.R ####
 #
-# Min and Max now run as one worker pool instead of two (plan item 10), with the
-# tasks dispatched longest-first (item 11). The risk in that change is not the
-# search, it is the bookkeeping: every result has to land on the parameter and
+# Min and Max run as one worker pool, with the tasks dispatched longest-first.
+# The risk is in the bookkeeping: every result has to land on the parameter and
 # direction it was computed for, and reordering the task list must not move it.
 #
-# This drives the pooling and scattering logic against a stand-in for the border
+# Drives the pooling and scattering logic against a stand-in for the border
 # search, so it needs neither stella nor a cluster. Run from the repository root:
 #   Rscript developmentTools/testBorderTaskPool.R
 

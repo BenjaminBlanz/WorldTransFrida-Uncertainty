@@ -1,13 +1,11 @@
 # testDeterminationKey.R ####
 #
-# A cached determination used to be reused whenever the file existed and had the
-# right columns (plan item 7). Nothing checked that it had been computed from the
-# same model, the same calibration data or the same likelihood settings, so the
-# parscales and ranges of one model could be handed to another in silence.
+# A cached determination is rejected unless it was computed from the same model,
+# the same calibration data and the same likelihood settings, so that the
+# parscales and ranges of one model are never handed to another in silence.
 #
-# The value of a cache check is entirely in its negative paths, so those are what
-# this exercises: every field of the key, one at a time, has to reject the cache
-# and say which one moved.
+# Every field of the key, one at a time, has to reject the cache and say which
+# one moved.
 #
 # Run from the repository root:
 #   Rscript developmentTools/testDeterminationKey.R
@@ -48,7 +46,7 @@ check <- function(label,cond,detail=''){
 	else{cat(sprintf('  FAIL %s%s\n',label,ifelse(nchar(detail)>0,paste0('\n       ',detail),'')))
 		fail <<- fail+1}
 }
-# the mismatch must name what moved, not merely report that something did
+# the mismatch must name what moved, not just that something did
 namesIt <- function(mismatch,what){
 	length(mismatch)>0 && any(grepl(what,mismatch,fixed=TRUE))
 }

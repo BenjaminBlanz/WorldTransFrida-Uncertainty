@@ -3,7 +3,7 @@
 #
 
 
-# prepareSampleParms ####
+# sample parms and frida io ####
 prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NULL){
 	cat('Specify sampling parameters...')
 	if(is.null(sampleParms)){
@@ -93,7 +93,6 @@ If using a user supplied frida_info ensure the columns 'Variable','Value','Min',
 	return(sampleParms)
 }
 
-# write firda export vars ####
 writeFRIDAExportSpec <- function(varsForExport.fridaNames,location.frida){
 	varsForExport.cleanNames <- cleanNames(varsForExport.fridaNames)
 	dupe.lst <- split(seq_along(varsForExport.cleanNames), varsForExport.cleanNames)
@@ -108,7 +107,6 @@ writeFRIDAExportSpec <- function(varsForExport.fridaNames,location.frida){
 	sink()
 }
 
-# write frida input ####
 # uses location.frida and name.fridaInputFile from the global env.
 writeFRIDAInput <- function(variables,values,policyMode=F){
 	if(policyMode){
@@ -145,7 +143,7 @@ disk.free <- function(path = getwd()) {
 	}
 }
 
-# funGitInfo ####
+# frida version and checkout ####
 # The state of a git checkout: which commit it is on and whether it has been
 # modified since. Used both for the frida model checkout and for the checkout of
 # these analysis scripts themselves.
@@ -189,7 +187,6 @@ funGitInfo <- function(location.git){
 	return(info)
 }
 
-# funFridaVersionInfo ####
 # Version of the frida model, read from the git checkout the model files were
 # rsynced from. FRIDAforUncertaintyAnalysis itself has no .git, it is an rsync
 # copy made with --exclude=".*".
@@ -197,11 +194,11 @@ funFridaVersionInfo <- function(location.frida.git){
 	return(funGitInfo(location.frida.git))
 }
 
-# funParseConfigAssignments ####
+# config diffing ####
 # The top level name <- value assignments of a config file, as text, keyed by
-# name. Reading the file rather than sourcing it is deliberate: sourcing
-# config.R copies files into the frida directory, creates the output folder and
-# writes the run metadata file, none of which may happen just to inspect it.
+# name. The file is read, not sourced: sourcing config.R copies files into the
+# frida directory, creates the output folder and writes the run metadata file,
+# none of which may happen just to inspect it.
 funParseConfigAssignments <- function(lines){
 	lines <- sub('#.*$','',lines)
 	m <- regmatches(lines,regexec('^([A-Za-z.][A-Za-z0-9._]*)[ \t]*<-[ \t]*(.*[^ \t])[ \t]*$',lines))
@@ -214,7 +211,6 @@ funParseConfigAssignments <- function(lines){
 	return(assignments)
 }
 
-# funConfigDiffToDefault ####
 # Which config settings this run used that the default config does not.
 # The default is the committed config.R, which is the template the submit script
 # copies and seds per experiment, falling back to the config.R on disk when
@@ -250,7 +246,6 @@ funConfigDiffToDefault <- function(configFile='config.R',location.git='.',
 	return(res)
 }
 
-# funFridaFilesChecksum ####
 # Checksums the model files as they are actually run: FRIDA.stmx, the module
 # .itmx files and the input data. The files this analysis writes into the Data
 # directory are excluded, they say nothing about the model version and change
@@ -273,18 +268,15 @@ funFridaFilesChecksum <- function(location.frida,exclude=c()){
 	return(list(checksum=checksum,files=md5s))
 }
 
-# funFridaCheckoutDiff ####
 # Compares the model files that are actually run against the git checkout they
-# came from, to catch a checkout that has moved on since the last
-# uncertainity_update_frida.sh, in which case the recorded commit does not
-# describe the model being run.
+# came from, so a checkout that has moved on since the last
+# uncertainity_update_frida.sh does not go unnoticed.
 # Only files present in both are compared, the checkout has no Data files of ours
 # and we have no .git.
 # uncertainity_update_frida.sh edits FRIDA.stmx before it rsyncs the model out
-# (the sed on sim_specs plus FRIDAforAnalysis.patch). Those edits must not count
-# as a mismatch, so if FRIDA.stmx is the only file that differs and git reports
-# it as unmodified in the checkout, the difference is exactly the update script's
-# doing and the verdict stays clean.
+# (the sed on sim_specs plus FRIDAforAnalysis.patch), so FRIDA.stmx differing on
+# its own, while git reports it unmodified in the checkout, is that script's
+# doing and not a mismatch.
 # verdict is one of
 #   inSync                   nothing differs
 #   updateScriptChangesOnly  only FRIDA.stmx differs, and only by those edits
@@ -326,7 +318,6 @@ funFridaCheckoutDiff <- function(location.frida,location.frida.git,exclude=c()){
 	return(res)
 }
 
-# funFridaCheckoutDiffNote ####
 # One line summary of funFridaCheckoutDiff, for the version file and the validator.
 funFridaCheckoutDiffNote <- function(cmp,maxNames=5){
 	if(cmp$verdict=='inSync'){
@@ -346,11 +337,10 @@ funFridaCheckoutDiffNote <- function(cmp,maxNames=5){
 	}
 }
 
-# funWriteRunMetadataFile ####
+# run metadata file ####
 # Writes a human readable record of the model version into the output folder, so
 # that a result folder can still be traced back to a model version later.
 # The folder names are unchanged by this, all of the information lives in the file.
-# funRunMetadataJobKey ####
 # What identifies the job a run metadata file belongs to. The scripts that run
 # after the ensemble source the config again, sometimes from a second R session
 # (the failure cleanup in the .run templates does), so a session local marker
@@ -363,7 +353,6 @@ funRunMetadataJobKey <- function(){
 	key
 }
 
-# funRunMetadataField ####
 # The value of one 'label   value' field of a run metadata file, NA when the
 # file does not carry that field.
 funRunMetadataField <- function(lines,label){
@@ -372,7 +361,6 @@ funRunMetadataField <- function(lines,label){
 	trimws(sub(sprintf('^%s +',label),'',lines[hit[1]]))
 }
 
-# funStripRunCompletionBlock ####
 # A run metadata file without the run completion summary funAppendRunCompletionSummary
 # splices into it. The summary is appended after the metadata was written, so it
 # has to come out again before the two can be compared, and it has to come out
@@ -482,12 +470,11 @@ funWriteRunMetadataFile <- function(location.output,location.frida.git,location.
 	# Write once per job, verify every time after that. The scripts that run after
 	# the ensemble source the config again, and rewriting the file there would drop
 	# the run completion summary funAppendRunCompletionSummary appended to it in
-	# between, which is how the summary kept going missing. So a later sourcing
-	# within the same job only checks: what it would write now has to match what
-	# the first sourcing wrote. If it does not, the config, the model or the
-	# analysis scripts changed on disk while the run was going, and the recorded
-	# metadata no longer describes every stage of it. There is no version of that
-	# worth continuing with, so it is an error rather than a warning.
+	# between. So a later sourcing within the same job only checks: what it would
+	# write now has to match what the first sourcing wrote. If it does not, the
+	# config, the model or the analysis scripts changed on disk while the run was
+	# going, and the recorded metadata no longer describes every stage of it. 
+	# This is an error state that aborts the run.
 	file <- file.path(location.output,fileName)
 	# the timestamp is the one field that legitimately differs between the write
 	# and the checks that follow it
@@ -526,25 +513,21 @@ funWriteRunMetadataFile <- function(location.output,location.frida.git,location.
 #                 NA in policy mode, where there is no calibration likelihood to
 #                 compute and logLike is unconditionally a marker
 # completed is about the model run reaching the end, likelihoodOK about the
-# likelihood being computable. Both together are what the log likelihood test
-# logLike > logLike.failedRun.max used to say on its own.
+# likelihood being computable.
 
-# funRunReachedFinalYear ####
 # Whether one FRIDA execution produced usable output for the whole model
 # horizon. The same test funRunStatusOfRun applies per state of the world, over
 # all of the columns at once, for the callers that only need the yes or no.
 # Stella writes a short output file when a run stops early rather than a full
-# length one padded with NAs, so testing the last row of runDat for an NA, as
-# the callers of this used to, finds nothing wrong with a run that stopped in
-# its first year. The horizon therefore has to come from outputDataYears, the
-# horizon of the default run, and never from nrow(runDat), which is itself
-# short for a truncated run.
+# length one padded with NAs, so testing the last row of runDat for an NA finds
+# nothing wrong with a run that stopped in its first year. The horizon therefore
+# has to come from outputDataYears, the horizon of the default run, and never
+# from nrow(runDat), which is itself short for a truncated run.
 funRunReachedFinalYear <- function(runDat,
 																	 years=if(exists('outputDataYears')){outputDataYears}else{rownames(runDat)}){
 	nrow(runDat)>=length(years)&&!any(is.na(as.matrix(runDat)))
 }
 
-# funLikelihoodOK ####
 # Whether a log likelihood is a real value rather than one of the failed run
 # markers. NA in policy mode, where there is no calibration likelihood to
 # compute and the log likelihood is unconditionally a marker.
@@ -556,20 +539,15 @@ funLikelihoodOK <- function(logLike,policyMode=F){
 	}
 }
 
-# funRunStatusOfRun ####
 # The completion status of a single FRIDA execution, one row per state of the
-# world. In policy mode one execution carries numSOW states of the world at
-# once, and they can stop at different times, so the status is determined per
-# SOW rather than per execution. Outside policy mode there is one SOW and this
-# returns a single row.
-# The failure year is the first year in which any variable of that SOW is in a
-# failed state, so the run is reported as having failed the moment anything in
-# the model goes bad, not once the bulk of it has.
-# Two things a failed state looks like, and both have to be caught: stella
-# writes fewer rows than the model horizon has years, and it writes rows whose
-# values are NA. So the candidates are the first NA of every column and, when
-# the output is short, the first year that has no row at all, and the failure
-# year is the earliest of them. Whether the run completed is that measured
+# world. In policy mode one execution carries numSOW states of the world that can
+# stop at different times, so the status is per SOW; outside it there is one SOW
+# and one row.
+# The failure year is the earliest year in which any variable of that SOW is in a
+# failed state. A failed state has two shapes, both of which have to be caught:
+# stella writes fewer rows than the horizon has years, and it writes rows whose
+# values are NA. So the candidates are the first NA of every column and, when the
+# output is short, the first year with no row at all. Completion is that measured
 # against outputDataYears, the horizon of the default run, never against
 # nrow(runDat), which is itself short for a truncated run.
 funRunStatusOfRun <- function(runDat,origColNames,logLike=NULL,policyMode=F,
@@ -610,9 +588,8 @@ funRunStatusOfRun <- function(runDat,origColNames,logLike=NULL,policyMode=F,
 										likelihoodOK=rep(likelihoodOK,length(sowIDs))))
 }
 
-# funDecodeLogLikeRunStatus ####
-# Reconstructs the run status from the log likelihood markers, for output that
-# predates the runStatus file and for work unit files resumed from such a run.
+# Reconstructs the run status from the log likelihood markers, for output without
+# a runStatus file and for work unit files resumed from such a run.
 # The decode is the inverse of the marker arithmetic in runFridaParmsByIndex:
 # the number of years of output a failed run produced is how many
 # logLike.quasiEps it sits above logLike.failedRun.
@@ -641,7 +618,6 @@ funDecodeLogLikeRunStatus <- function(logLike,ids=seq_along(logLike),
 }
 
 
-# funRunStatusFolders ####
 # The two folders the run status is written to. location.output is sometimes
 # handed in already pointing at detectedParmSpace (runMLEandParmSpace.R does
 # that), so collapse a doubled detectedParmSpace the same way mergePerVarFiles
@@ -658,7 +634,6 @@ funRunStatusFolders <- function(location.output,baseWD=NULL){
 	return(list(run=folder,detectedParmSpace=file.path(folder,'detectedParmSpace')))
 }
 
-# funWriteRunStatusPlainCsv ####
 # A plain uncompressed copy of the merged run status at the top of the run
 # folder, so that the completion of an ensemble can be read without unpacking
 # anything. na='' is what makes failYear come out empty for completed runs.
@@ -670,7 +645,6 @@ funWriteRunStatusPlainCsv <- function(runStatus,location.output,baseWD=NULL,
 	return(invisible(file))
 }
 
-# funOutputDataYearsFromPerVarFiles ####
 # The years of the model output, read off the column names of any merged per
 # variable file. outputDataYears is only in scope for scripts that ran
 # runInitialiseData.R or clusterHelp.R, and decoding a failure year out of the
@@ -690,7 +664,6 @@ funOutputDataYearsFromPerVarFiles <- function(location.runFiles,outputType='RDS'
 	return(NULL)
 }
 
-# funReadRunStatus ####
 # The run status of an ensemble, from the merged runStatus file when there is
 # one and decoded out of the merged log likelihood markers when there is not,
 # which is what output produced before the runStatus file looks like.
@@ -744,7 +717,6 @@ funReadRunStatus <- function(location.output,outputType=perVarOutputTypes[1],
 	return(runStatus)
 }
 
-# funRunCompletionSummary ####
 # The completion of an ensemble as lines of text, for the run metadata file and
 # for the terminal.
 funRunCompletionSummary <- function(runStatus,numSample=NULL,maxYears=50){
@@ -799,7 +771,6 @@ funRunCompletionSummary <- function(runStatus,numSample=NULL,maxYears=50){
 	return(lines)
 }
 
-# funAppendRunCompletionSummary ####
 # Puts the completion summary into the run metadata file and onto the terminal.
 # The metadata file is written by funWriteRunMetadataFile at config time, long
 # before the ensemble has run, and by the time it has the tmpfs frida directory
@@ -835,7 +806,7 @@ funAppendRunCompletionSummary <- function(location.output,runStatus,numSample=NU
 }
 
 
-# runFridaParmsByIndex ####
+# running frida ####
 # Uses from global env:
 #   sampleParms,samplePoints,location.frida, and name.fridaInputFile
 # If retNegLogLike also uses from global env:
@@ -930,7 +901,6 @@ runFridaParmsByIndex <- function(runid,silent=T,policyMode=F,testStellaGood=F){
 	}
 	return(retlist)
 }
-# runFridaParmsBySamplePoints ####
 # the same as above, but runs all samples in samplePoints for pre allocated
 # samplePoints per worker.
 runFridaParmsBySamplePoints <- function(policyMode=F){
@@ -955,14 +925,12 @@ runFridaParmsBySamplePoints <- function(policyMode=F){
 	return(retlist)
 }
 
-# runFridaDefaultParms ####
 # Uses location.frida, and name.fridaInputFile
 # from the global environment
 runFridaDefaultParms <- function(silent=T,testStellaGood=F){
 	return(runFRIDASpecParms(c(),silent=silent,testStellaGood = testStellaGood))
 }
 
-# runFRIDASpecParms ####
 runFRIDASpecParms <- function(parVect,silent=T,testStellaGood=F){
 	# Wall clock in the parscale and range determinations is the number of stella
 	# runs divided by the number of workers, so that count is the thing to measure
@@ -1000,14 +968,12 @@ runFRIDASpecParms <- function(parVect,silent=T,testStellaGood=F){
 		stop('Something wrong with stella simulator.\n')
 	}
 	# A run that leaves the output file untouched has not produced the result we are
-	# about to read. Without this check read.csv silently returns whatever the last run
-	# wrote, and the run before that may well have exported a different set of
-	# variables. That surfaces much later, as a mismatch between the columns of the
-	# calibration data and of the model result data, far away from what caused it.
+	# about to read; without this check read.csv silently returns whatever the last
+	# run wrote, which may have exported a different set of variables.
 	# Runs that do not complete are a normal outcome when the optimiser tries extreme
-	# parameters. Those still write output, with NAs from the point they stopped on, and
-	# the callers detect them by that. So a non zero exit status is only an error when
-	# the output file is stale as well, and then it is the reason to report.
+	# parameters. Those still write output, with NAs from the point they stopped on,
+	# and the callers detect them by that. So a non zero exit status is only an error
+	# when the output file is stale as well, and then it is the reason to report.
 	outputFile.mtimeAfter <- file.mtime(outputFile)
 	if(is.na(outputFile.mtimeAfter)||
 		 (!is.na(outputFile.mtimeBefore)&&outputFile.mtimeAfter<=outputFile.mtimeBefore)){
@@ -1032,7 +998,7 @@ runFRIDASpecParms <- function(parVect,silent=T,testStellaGood=F){
 	return(runDat)
 }
 
-# cleanNames ####
+# helpers ####
 # takes a vector of e.g. column names and brings them into 
 # a comparable standard format
 # also drops the trailing 1 of the run id which we do not use
@@ -1051,7 +1017,6 @@ cleanNames <- function(colNames){
 				 		 		 		 		 		 		 		 		 tolower(colNames)))))))))))
 }
 
-# idxOfVarName ####
 idxOfVarName <- function(varNames,vecOfVarNames){
 	varNames <- cleanNames(varNames)
 	vecOfVarNames <- cleanNames(vecOfVarNames)
@@ -1081,7 +1046,6 @@ dist.f <- function(oi,yi,ys,offsets,keepOutSize){
 	return(min(sqrt((ydev2in(ys-yi))^2+(xdev2in(offsets-oi))^2))-keepOutSize)
 }
 
-# funValidRange ####
 # returns the first and last index in the variable that has a data point
 funValidRange <- function(x){
 	validRange <- c(1,length(x))
@@ -1094,7 +1058,7 @@ funValidRange <- function(x){
 	return(validRange)
 }
 
-# funLogLikelihood ####
+# likelihood ####
 # dmvnorm function from the mvtnorm package for reference
 # dmvnorm <- function (x, mean = rep(0, p), sigma = diag(p), log = FALSE, 
 # 										 checkSymmetry = TRUE) 
@@ -1155,7 +1119,6 @@ funLogLikelihood <- function(resid,covmat,treatVarsAsIndep=.GlobalEnv$treatVarsA
 	}
 }
 
-# chunk ####
 # cuts a vector into n equal parts
 chunk <- function(x,n){
 	split(x, cut(seq_along(x), n, labels = FALSE)) 
@@ -1237,8 +1200,8 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 		i <- i+1
 		workUnit.i <- i
 		clusterExport(cl,list('workUnit.i'),envir=environment())
-		# unlike logLike.df this is deliberately per iteration, so that a work unit
-		# without a status cannot silently inherit the one of its predecessor
+		# unlike logLike.df this is per iteration, so a work unit without a status
+		# cannot inherit the one of its predecessor
 		if(exists('runStatus.df')){rm(runStatus.df)}
 		if(!redoAllCalc && file.exists(file.path(baseWD,location.output,paste0('workUnit-',i,'.RDS')))){
 			cat(sprintf('\r(r) Using existing unit %i',i))
@@ -1354,9 +1317,8 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 				}
 			}
 		}
-		# how many runs completed now comes from the run status rather than from
-		# the log likelihood markers. A work unit resumed from output that predates
-		# the run status gets it decoded back out of those markers.
+		# how many runs completed comes from the run status. A work unit resumed from
+		# output without one gets it decoded back out of the log likelihood markers.
 		if(!exists('runStatus.df')||is.null(runStatus.df)){
 			unitIds <- workUnitBoundaries[i]:(workUnitBoundaries[i+1]-1)
 			runStatus.df <- funDecodeLogLikeRunStatus(logLike[unitIds],ids=unitIds)
@@ -1470,7 +1432,6 @@ clusterRunFridaForSamplePoints <- function(samplePoints,chunkSizePerWorker,
 	return(logLike)
 }
 
-# loadClusterRuns ####
 # Reads back the whole parOutput of every work unit, run data included. That
 # needs the work units to have been run with doNotReturnRunDataSavePerWorkerOnly
 # set to FALSE, otherwise the workUnit-<i>.RDS files hold only parameter indices
@@ -1563,8 +1524,8 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 			}
 		}
 		logLike[run.i,] <- c(parOutput[[run.i]]$parmsIndex,parOutput[[run.i]]$logLike)
-		# parOutput of a run that predates the runStatus output carries no status,
-		# fall back to decoding it out of the log likelihood marker
+		# a run whose parOutput carries no status: decode it out of the log
+		# likelihood marker instead
 		runStatus.run <- parOutput[[run.i]]$runStatus
 		if(is.null(runStatus.run)){
 			runStatus.run <- funDecodeLogLikeRunStatus(parOutput[[run.i]]$logLike,
@@ -1638,14 +1599,12 @@ saveParOutputToPerVarFiles <- function(parOutput, workUnit.i='0', workerID='0',
 # memory, so its memory use does not grow with numSample. See
 # workerMergePerVarFiles.
 
-# fwritePerVarCsv ####
 # The one place per variable csv is written, so that chunks and merged files
 # agree on their format down to the byte.
 # fwrite writes doubles with 15 significant digits, which is not enough to
-# reproduce a double exactly. fullPrecision spells them out in full instead,
-# which costs about three times the writing time and 10% more bytes. It matters
-# here because the merged files, the RDS included, are built from these csvs
-# rather than from the doubles themselves.
+# reproduce a double exactly; fullPrecision spells them out in full instead. It
+# matters here because the merged files, the RDS included, are built from these
+# csvs rather than from the doubles themselves.
 # The marker for a failed run is chosen to survive either setting, see
 # logLike.failedRun.
 fwritePerVarCsv <- function(varData,file,fullPrecision=TRUE,compress='none'){
@@ -1661,7 +1620,6 @@ fwritePerVarCsv <- function(varData,file,fullPrecision=TRUE,compress='none'){
 										 showProgress=FALSE,compress=compress)
 }
 
-# writePerVarChunkFile ####
 # Writes a single chunk of one variable. Always plain uncompressed csv with an
 # unquoted header, so that all chunks of a variable share a byte identical
 # header line and can be concatenated without being parsed.
@@ -1669,7 +1627,6 @@ writePerVarChunkFile <- function(varData,file,fullPrecision=TRUE){
 	fwritePerVarCsv(varData,file,fullPrecision=fullPrecision,compress='none')
 }
 
-# peekCsvBounds ####
 # Cheap probe of a chunk csv. Returns its header line, the byte offset at which
 # the data starts, and the id (first column) of its first and its last data row,
 # without parsing the file. Returns NULL when the file is empty, has no data
@@ -1707,7 +1664,6 @@ peekCsvBounds <- function(file,tailBytes=65536L){
 							firstId=firstId,lastId=lastId,size=size))
 }
 
-# verifyChunkOrder ####
 # Decides whether the chunks of one variable can simply be concatenated in id
 # order. Returns a list with
 #   ok     TRUE when concatenating is safe
@@ -1717,8 +1673,7 @@ peekCsvBounds <- function(file,tailBytes=65536L){
 # Concatenating is safe when all chunks agree on their header, each chunk is
 # itself ascending in its first column, and the chunks do not overlap. Gaps in
 # the id coverage do not make the result wrong, only incomplete, so they are
-# reported as a warning rather than rejected. That is also all the fallback
-# path could do about them.
+# reported as a warning rather than rejected.
 verifyChunkOrder <- function(bounds,expectedFirstId=1){
 	warn <- character(0)
 	if(length(bounds)==0){
@@ -1767,7 +1722,6 @@ verifyChunkOrder <- function(bounds,expectedFirstId=1){
 	return(list(ok=TRUE,reason=NA_character_,bounds=bounds,warn=warn))
 }
 
-# coercePerVarTypes ####
 # fread infers each column type from the values it happens to see, so an id
 # column, or a variable that holds only whole numbers in this particular run,
 # would come back as integer. The per variable data is a double matrix when the
@@ -1778,9 +1732,8 @@ verifyChunkOrder <- function(bounds,expectedFirstId=1){
 # double. So is.double() is TRUE for it and the plain test below would leave it
 # alone, and unclassing it reinterprets those bits: 2608405563540 reads back as
 # 1.288724e-311 and an NA reads back as 0, which is.na() then does not
-# recognise. Converting has to go through bit64 for that reason.
-# The fread calls all pass integer64='double' so this should not come up, but a
-# call added without it would otherwise corrupt the data silently.
+# recognise. Converting has to go through bit64 for that reason. The fread calls
+# all pass integer64='double', so this only matters for a call added without it.
 coercePerVarTypes <- function(d){
 	for(cn in names(d)){
 		col <- d[[cn]]
@@ -1796,7 +1749,6 @@ coercePerVarTypes <- function(d){
 	invisible(d)
 }
 
-# rbindChunkList ####
 # Row binds the chunks of one variable, used by the paths that cannot simply
 # concatenate. When all chunks agree on their number of columns the names of the
 # first are imposed on all of them, which is what makes headers that differ only
@@ -1812,7 +1764,6 @@ rbindChunkList <- function(chunks){
 	return(data.table::rbindlist(chunks,use.names=TRUE,fill=TRUE))
 }
 
-# concatChunkCsvs ####
 # Streams the data rows (header line skipped) of the given chunk files into an
 # open binary connection. Nothing is parsed and never more than blockSize bytes
 # are held at once, so the memory used is independent of how large the variable
@@ -1831,7 +1782,6 @@ concatChunkCsvs <- function(bounds,outCon,blockSize=32L*1024L*1024L){
 	invisible(NULL)
 }
 
-# openCsvGzSink ####
 # A binary connection that gzips into file. Prefers piping through the gzip
 # binary, so that compressing happens in its own process alongside the reading
 # R process, and falls back to Rs own gzfile.
@@ -1849,7 +1799,6 @@ openCsvGzSink <- function(file){
 	return(gzfile(file,'wb'))
 }
 
-# workerMergePerVarFiles ####
 # Merges all chunk files of one variable into one final file per requested
 # output type.
 # The fast path concatenates the chunk csvs byte wise in id order, which needs
@@ -1950,7 +1899,6 @@ workerMergePerVarFiles <- function(v.i,varNames,chunkFolder,outputFolder,
 	invisible(NULL)
 }
 
-# workerMergePerVarFilesIndepProc ####
 # Same as workerMergePerVarFiles but in a process of its own, so that the memory
 # of the fallback path is handed back to the OS after every variable.
 workerMergePerVarFilesIndepProc <- function(v.i,varNamesFileName,chunkFolder,outputFolder,
@@ -1973,7 +1921,6 @@ workerMergePerVarFilesIndepProc <- function(v.i,varNamesFileName,chunkFolder,out
 	invisible(status)
 }
 
-# workerMergePerVarFilesLegacy ####
 # Merges chunk files that sit per output type in PerVarFiles-<outputType>/<varName>/
 # rather than in the csv tree in PerVarChunks/. Reads them all at once, so it
 # needs the whole variable in memory.
@@ -2005,7 +1952,6 @@ workerMergePerVarFilesLegacy <- function(v.i,varNames,outputTypeFolder,outputTyp
 	invisible(NULL)
 }
 
-# startFileMergeCluster ####
 # A PSOCK cluster set up to run the merge workers. Sourcing is done from baseWD
 # rather than from the inherited working directory, which is not necessarily the
 # project root.
@@ -2023,7 +1969,6 @@ startFileMergeCluster <- function(numWorkersFileMerge,baseWD){
 	return(clFileMerge)
 }
 
-# mergePerVarFiles ####
 # Assembles the per chunk files the workers wrote into one file per variable,
 # for every format in outputTypes.
 # parStrat 1 processes the variables one after another in this process, 2 (the
@@ -2130,7 +2075,6 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T,
 	invisible(NULL)
 }
 
-# mergePerVarFilesLegacy ####
 # The merge for the chunk layout where every output type has its own tree of
 # chunk files, rather than the single csv tree in PerVarChunks/.
 mergePerVarFilesLegacy <- function(outputFolder,baseWD,verbosity=1,parStrat=2,
@@ -2185,7 +2129,6 @@ mergePerVarFilesLegacy <- function(outputFolder,baseWD,verbosity=1,parStrat=2,
 	invisible(NULL)
 }
 
-# readPerVarFile ####
 readPerVarFile <- function(file,outputType=NULL){
 	if(is.null(outputType)){
 		outputType <- tools::file_ext(file)
@@ -2219,7 +2162,6 @@ readPerVarFile <- function(file,outputType=NULL){
 	}
 }
 
-# writePerVarFile ####
 writePerVarFile <- function(varData,file,outputType=NULL,compressCsv=T,rdsCompress=TRUE,
 													fullPrecision=TRUE){
 	if(is.null(outputType)){

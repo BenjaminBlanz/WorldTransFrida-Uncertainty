@@ -7,15 +7,10 @@
 #   source('config.R')
 #   source('configValidator.R')
 #
-# Why this exists:
-# Most of the config is applied either by copying files into the frida
-# directory (file.copy) or by reading them lazily, much later in the run.
-# Both fail silently. A missing policy file for example leaves whatever
-# policyParameters.csv was in the frida directory before in place, and the run
-# then happily produces results for the wrong policy, or for no policy at all,
-# without ever complaining.
-# This script turns all of those silent failures into a single hard error that
-# lists everything that is wrong with the current configuration.
+# Most of the config is applied by copying files into the frida directory
+# (file.copy) or by reading them lazily much later in the run, and both fail
+# silently. This turns those failures into one hard error listing everything
+# wrong with the current configuration.
 #
 
 cat('Validating config...\n')
@@ -213,7 +208,7 @@ if(cfgVal.has('rangeTol')){
 	cfgVal.checkNumber('rangeTol',min=0)
 }
 cfgVal.checkNumber('minObsForLike',min=1,integer=TRUE)
-# NA is a legal value, it asks for the absolute tolerance the search used before
+# NA is a legal value, it asks for the absolute tolerance
 if(cfgVal.has('rangeRootTol')&&!all(is.na(cfgVal.get('rangeRootTol')))){
 	cfgVal.checkNumber('rangeRootTol',min=0)
 }
@@ -261,7 +256,7 @@ if(isTRUE(ignoreParBounds)&&isTRUE(forceParBounds)){
 	cfgVal.error('ignoreParBounds and forceParBounds are both TRUE, these contradict each other')
 }
 if(isTRUE(imputeMissingVars)){
-	# initialise.R does not load imputeTS anymore, na_interpolation would not be found
+	# initialise.R does not load imputeTS, na_interpolation would not be found
 	if(!exists('na_interpolation',mode='function')){
 		cfgVal.error('imputeMissingVars is TRUE but na_interpolation (imputeTS) is not available')
 	}

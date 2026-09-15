@@ -1,11 +1,10 @@
 # testParscaleSweepWidth.R ####
 #
-# The fallback parscale sweep used to be one global range applied to every
-# parameter (plan item 4). This measures what the per parameter bounds replace it
-# with, against a real determination if one is on disk and against a synthetic
-# spread otherwise, and checks the two properties the change has to preserve:
-# the guess pass is untouched, and the fallback still covers every scale below the
-# guess that the global range covered.
+# The fallback parscale sweep is bounded per parameter. This measures the width
+# those bounds give, against a real determination if one is on disk and against a
+# synthetic spread otherwise, and checks the two properties they have to preserve:
+# the guess pass is untouched, and the fallback still covers every scale below
+# the guess.
 #
 # Run from the repository root:
 #   Rscript developmentTools/testParscaleSweepWidth.R [path/to/a/workOutput/run]

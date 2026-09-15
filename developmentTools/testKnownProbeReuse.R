@@ -1,18 +1,14 @@
 # testKnownProbeReuse.R ####
 #
-# Two probes in these searches are not measurements at all, they are values the
-# caller already has (plan item 9, arrived at by looking for what memoisation
-# would have caught rather than by memoising):
+# Two probes in these searches are values the caller already has:
 #
 #   orderOfMagNegLLErrorFun(0,par.i) puts jParVect back exactly as it was, so
 #   jnegLLikelihood.f returns baseNegLL and the expression is
-#   abs(baseNegLL-baseNegLL)-1. Constant -1, and it was a stella run per
-#   parameter.
+#   abs(baseNegLL-baseNegLL)-1. Constant -1.
 #
 #   The border search's probe at the starting point is -negLLike(parVect) minus
 #   lpdensEps, and the caller measured -negLLike(parVect) to derive lpdensEps in
-#   the first place. Same value for every parameter and both directions, and it
-#   was a stella run for each of them.
+#   the first place. Same value for every parameter and both directions.
 #
 # Substituting a value for a measurement is only safe if it is the same value, so
 # that is what this checks, alongside the saving.

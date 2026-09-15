@@ -1,4 +1,4 @@
-# funPlotDat ####
+# plot data ####
 funPlotDat <- function(calDat,calDat.impExtrValue=NULL,defDat=NULL,yaxPad=0.04,
 											 highlightConstrainingVars=F,shadowIncompleteYears=F){
 	noImpExtrValues <- F

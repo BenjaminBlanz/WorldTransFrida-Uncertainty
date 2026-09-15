@@ -202,8 +202,8 @@ while(i<(length(workUnitBoundaries)-1)){
 	logLike <- c()
 	logLike[logLike.df$id] <- logLike.df$logLike
 	# There is no calibration likelihood in policy mode, so every logLike here is
-	# one of the failed run markers and the old test counted nothing as complete.
-	# The run status says it directly, per policy and state of the world.
+	# one of the failed run markers. The run status says it directly, per policy and
+	# state of the world.
 	runStatus.all <- rbind(runStatus.all,runStatus.df)
 	completeRunsSoFar <- sum(runStatus.all$completed%in%1)
 	cat('\r   ')

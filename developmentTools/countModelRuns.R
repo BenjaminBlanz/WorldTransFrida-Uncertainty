@@ -31,7 +31,7 @@
 devTools.sectionCounts <- list()
 devTools.currentSection <- NULL
 
-# devToolsCountModelRuns ####
+# counting ####
 # Switch counting on in this session and on every worker.
 devToolsCountModelRuns <- function(cl=NULL){
 	devTools.countModelRuns <<- TRUE
@@ -46,7 +46,6 @@ devToolsCountModelRuns <- function(cl=NULL){
 	invisible(TRUE)
 }
 
-# devToolsModelRunCount ####
 # Runs since the last reset, this session's plus every worker's. The workers hold
 # their own counts, so this has to go and ask them.
 devToolsModelRunCount <- function(cl=NULL){
@@ -60,7 +59,6 @@ devToolsModelRunCount <- function(cl=NULL){
 	return(own+workers)
 }
 
-# devToolsResetModelRunCount ####
 devToolsResetModelRunCount <- function(cl=NULL){
 	devTools.modelRunCount <<- 0
 	if(!is.null(cl)){
@@ -69,7 +67,7 @@ devToolsResetModelRunCount <- function(cl=NULL){
 	invisible(TRUE)
 }
 
-# devToolsMarkSection ####
+# sections and reporting ####
 # Close the section that was running, if any, and open a new one. Call with NULL
 # to close the last section without opening another.
 devToolsMarkSection <- function(name,cl=NULL){
@@ -85,7 +83,6 @@ devToolsMarkSection <- function(name,cl=NULL){
 	invisible(TRUE)
 }
 
-# devToolsReportModelRuns ####
 # Close the open section and print the tally. Writes it beside the run's other
 # output when location.output is available, so two runs can be compared later.
 devToolsReportModelRuns <- function(cl=NULL,file=NULL){
@@ -113,7 +110,6 @@ devToolsReportModelRuns <- function(cl=NULL,file=NULL){
 	invisible(counts)
 }
 
-# devToolsCompareModelRuns ####
 # Two of those csv files side by side, which is how a change is shown to have
 # helped: same config, before and after.
 devToolsCompareModelRuns <- function(before,after){

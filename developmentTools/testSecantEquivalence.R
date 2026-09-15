@@ -1,16 +1,15 @@
 # testSecantEquivalence.R ####
 #
-# The secant rewrite (plan items 1 and 2) claims to visit exactly the same points
-# as before while evaluating the objective far fewer times. That claim is cheap to
-# check without stella: any deterministic function will do, and the only thing that
-# matters is that the root is unchanged and the call count drops.
+# secant visits the same points as the three-evaluations-per-iteration form while
+# evaluating the objective far fewer times. Any deterministic function shows it:
+# the root must be unchanged and the call count must drop.
 #
 # Run from the repository root:  Rscript developmentTools/testSecantEquivalence.R
 
 source('funParmSpace.R')
 secant.new <- secant
 
-# secant as it was before the rewrite, for comparison only.
+# the three-evaluations-per-iteration form, as the reference.
 secant.old <- function(fun, x0, x1, tol=1e-07, niter=1e4, doWarn=T, trace=0,
 											 bound=NULL,hasToBePositive=FALSE,...){
 	if(is.null(bound)){
@@ -70,7 +69,7 @@ for(cs in cases){
 	ro <- suppressWarnings(secant.old(co$fun,cs$x0,cs$x1,niter=100,doWarn=FALSE))
 	cn <- counted(cs$f)
 	rn <- suppressWarnings(secant.new(cn$fun,cs$x0,cs$x1,niter=100,doWarn=FALSE))
-	# the fval attribute is the point of item 2; compare the roots themselves
+	# the fval attribute is carried separately; compare the roots themselves
 	rn.bare <- as.numeric(rn)
 	same <- isTRUE(all.equal(as.numeric(ro),rn.bare)) ||
 		(is.na(ro)&&is.na(rn.bare))

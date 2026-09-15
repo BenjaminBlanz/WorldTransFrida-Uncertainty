@@ -80,9 +80,8 @@ for(plotWeightType in plotWeightTypes){
 		samplePoints$plotWeight <- rep(1,nrow(samplePoints))
 	} else if(plotWeightType == 'completeEqually'){
 		# equal weighting of completed runs. A run counts when it reached the final
-		# year and its log likelihood is a real value, which is what the marker test
-		# used to say. likelihoodOK is NA where there is no calibration likelihood
-		# at all, and that must not zero every weight.
+		# year and its log likelihood is a real value. likelihoodOK is NA where there
+		# is no calibration likelihood at all, and that must not zero every weight.
 		samplePoints$plotWeight <- 0
 		samplePoints$plotWeight[completed%in%1 & !(likelihoodOK%in%0)] <- 1
 	} else if(plotWeightType == 'linearly'){

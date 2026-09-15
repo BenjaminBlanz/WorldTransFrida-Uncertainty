@@ -1,11 +1,10 @@
 # testParscaleCache.R ####
 #
-# The parscale cache (plan item 6) has to distinguish a parameter that was never
-# tried from one that was tried and could not be determined, has to keep working
-# with the bare numeric parscale.RDS earlier runs wrote, and has to match cached
-# entries by name rather than by position.
+# The parscale cache has to distinguish a parameter that was never tried from one
+# that was tried and could not be determined, has to keep working with a bare
+# numeric parscale.RDS, and has to match cached entries by name, not by position.
 #
-# This exercises the load logic on synthetic files, so it needs neither stella nor
+# Exercises the load logic on synthetic files, so it needs neither stella nor
 # a determination. Run from the repository root:
 #   Rscript developmentTools/testParscaleCache.R
 

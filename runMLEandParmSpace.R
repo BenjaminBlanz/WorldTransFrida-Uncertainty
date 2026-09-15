@@ -89,9 +89,8 @@ if(treatVarsAsIndep){
 }
 jParVect <- c(parVect,resSigmaVect)
 # An externally ranged parameter never has its border determined, so the only
-# thing left that would use its parscale is the MLE optimisation. Determining one
-# costs a sweep over every order of magnitude, twice over for the ones that
-# cannot be determined at all, so when we are not optimising we do not.
+# thing left that would use its parscale is the MLE optimisation. When we are not
+# optimising, we do not determine one.
 parscaleSkip <- rep(FALSE,length(jParVect))
 names(parscaleSkip) <- names(jParVect)
 if(skipParMLE){
@@ -118,12 +117,10 @@ if(identical(toupper(Sys.getenv('FRIDA_COUNT_MODEL_RUNS')),'TRUE')&&
 }
 
 # MLE and Sensi Loop ####
-# the run specific config copies in the output directories predate this flag
+# defaults for configs that do not set these
 if(!exists('redoFailedParscales')){
 	redoFailedParscales <- F
 }
-# likewise, and these default to what the border search did before the knobs
-# existed, so an old config keeps its old behaviour
 if(!exists('rangeRootTol')){
 	rangeRootTol <- NA
 }
@@ -145,8 +142,8 @@ funCurrentDeterminationKey <- function(baseNegLL=NULL){
 													 rangeRootTol=rangeRootTol,
 													 rangeRootMaxIter=rangeRootMaxIter))
 }
-# A parscale a previous run could not determine is a result to keep, not work to
-# redo. See funReadCachedParscale.
+# A parscale a previous run could not determine is a result to keep.
+# See funReadCachedParscale.
 if(redoAllCalc){
 	parscale <- rep(NA_real_,length(jParVect))
 	names(parscale) <- names(jParVect)
@@ -171,17 +168,10 @@ ordersOfMagGuesses <- c(ordersOfMagGuesses.parvect,ordersOfMagGuesses.resSigmaVe
 
 # used by the funFindParScale function ####
 # The fallback sweep, the one a parameter gets when the guess around its own order
-# of magnitude found nothing. It used to be a single global range, the lowest guess
-# anywhere minus two up to the highest guess anywhere plus four, which mixes the
-# sampled parameters against the residual variances and comes out 37 orders wide
-# for both. The parameters that reach this sweep are the ones that fail, so they
-# walk all 37.
-#
-# Per parameter instead. A step size larger than the range the parameter is
-# sampled over is not a meaningful answer, so the sweep does not go above the
-# order of that range, which is where the guess pass already ended. It extends
-# downwards, which is where a finer scale might still be found. The residual
-# variances have no author range to cap against and keep the old headroom.
+# of magnitude found nothing. Bounded per parameter: not above the order of the
+# range it is sampled over, since a larger step size is not a meaningful answer,
+# and downwards from there. The residual variances have no author range to cap
+# against and keep fixed headroom.
 ordersOfMagLimits <- array(NA_real_,dim=c(length(jParVect),2),
 													 dimnames=list(names(jParVect),c('min','max')))
 ordersOfMagLimits.parvectIdc <- 1:nrow(sampleParms)
@@ -199,8 +189,8 @@ ordersOfMagLimits[ordersOfMagLimits.parvectIdc,'min'] <-
 	min(ordersOfMagLimits.finite(ordersOfMagGuesses.parvect))-2
 ordersOfMagLimits.maxParvect <- ordersOfMagGuesses.parvect+1
 # A parameter whose author range has zero width has no order of magnitude of its
-# own to cap against, so it keeps the ceiling the global range used to give it
-# rather than being declared undeterminable by the bookkeeping.
+# own to cap against, so it keeps the global ceiling rather than being declared
+# undeterminable by the bookkeeping.
 ordersOfMagLimits.maxParvect[!is.finite(ordersOfMagLimits.maxParvect)] <-
 	max(ordersOfMagLimits.finite(ordersOfMagGuesses))+4
 ordersOfMagLimits[ordersOfMagLimits.parvectIdc,'max'] <- ordersOfMagLimits.maxParvect
@@ -246,10 +236,9 @@ while(newMaxFound){
 		sampleParms <- prepareSampleParms(excludeNames=excludedParmsForBeingIntegers,
 																		sampleParms = sampleParms.cached)
 		# What follows works from the determination results, not from the ranges a
-		# previous run derived from them. Putting Min and Max back to what the
-		# determination produced is what lets the external range overrides and the
-		# symmetrification run again against the config as it is now, rather than being
-		# applied a second time on top of themselves.
+		# previous run derived from them. Min and Max go back to what the determination
+		# produced, so the external range overrides and the symmetrification run again
+		# against the config as it is now instead of on top of themselves.
 		sampleParms$Min <- sampleParms$MinAfterDet
 		sampleParms$Max <- sampleParms$MaxAfterDet
 		parVect <- sampleParms$Value
@@ -269,8 +258,6 @@ while(newMaxFound){
 		iterations <- 0
 		parallelParscale <- T
 		useOrdersOfMagGuesses <- T
-		# Hoisted out of the loop below: none of this changes between the two passes,
-		# and under a psock cluster every export serialises calDat to every worker.
 		if(parallelParscale){
 			clusterExport(cl,list('baseNegLL',
 														'ordersOfMagLimits','responseTolerance',
@@ -353,9 +340,8 @@ while(newMaxFound){
 				names(parVect) <- sampleParms$Variable 
 				jParVect <- c(parVect,resSigmaVect)
 			} else {
-				# They are kept and sampled over the ranges their authors gave them in
-				# frida_info, the same fallback a failed border determination gets. This
-				# used to drop them regardless of the setting, while saying it did not.
+				# They are kept and sampled over the ranges their authors gave them 
+				# the same fallback a failed border determination gets.
 				cat(sprintf('  %i in parVect, these parms keep the ranges their authors gave them in frida_info.\n',length(problemCasesIdc.parVect)))
 				cat(paste(scaleErrorParmNames,collapse='\n'))
 				cat('\n')
@@ -493,10 +479,9 @@ while(newMaxFound){
 		rangeDetSkip <- parscaleNotDetermined.parVect|parscaleSkip.parvect
 	}
 	if(is.null(sampleParms.cached)||checkBorderErrors||kickParmsErrorRangeDet){
-		# costs a frida run, so only for the searches that actually use it
-		# kept, not just folded into lpdensEps: the border search needs it to skip the
-		# probe at the starting point, which is the same for every parameter and both
-		# directions
+		# only for the searches that use it, and kept separately from lpdensEps: the
+		# border search needs it to skip the probe at the starting point, which is the
+		# same for every parameter and both directions
 		lpdensAtParVect <- -negLLike(parVect)
 		lpdensEps <- lpdensAtParVect - log(likeCutoffRatio)
 	}
@@ -539,7 +524,7 @@ while(newMaxFound){
 		
 		## range find ####
 		# A parameter without a parscale cannot have its border determined, the search
-		# needs a scale to step with, and one with an external range has no reason to.
+		# needs a scale to step with, and one with an external range does not need it.
 		# Both already have their answer, the range their authors gave them, which is
 		# what the fallback below assigns. Marking them infinite here puts them through
 		# that same fallback instead of a second code path.
@@ -548,10 +533,6 @@ while(newMaxFound){
 		# above rewrites it and the workers evaluate the likelihood against their own
 		# copy, which was otherwise left at whatever clusterHelp.R last sent them.
 		clusterExport(cl,list('calDat','resSigma','treatVarsAsIndep'))
-		# Min and Max used to run as two pools, one after the other. That put a barrier
-		# in the middle and left workers idle at the tail of each while a straggler
-		# finished a search that ran to the iteration limit. The two directions are
-		# independent, so they go into one pool of every border to be found.
 		borderTasks <- list()
 		for(direction in c('Min','Max')){
 			for(td in which(notDeterminedBorders[,direction]&!rangeDetSkip)){
@@ -633,8 +614,7 @@ while(newMaxFound){
 	## read manual borders ####
 	# Applied before the symmetrification rather than after it, so that
 	# symmetrifyExternalRanges is free to decide whether an external range gets
-	# symmetrified. Applying them afterwards, as this used to, made that decision
-	# for us: an external range could never be symmetrified.
+	# symmetrified.
 	if(ignoreParBounds || forceParBounds){
 		cat('Not reading manual ranges, as ignoreParBounds||forceParBounds==TRUE\n')
 	} else {
@@ -761,9 +741,9 @@ while(newMaxFound){
 	}
 	
 	# The determination is complete, so the cache it leaves behind can be keyed.
-	# Written here and nowhere else on purpose: the intermediate saves above happen
-	# while the determination is still running, and a run interrupted among them
-	# should leave a cache that fails this check rather than one that looks whole.
+	# Written here and nowhere else. The intermediate saves above happen while the
+	# determination is still running, so a run interrupted among them leaves an
+	# unkeyed cache, which fails this check.
 	saveRDS(funCurrentDeterminationKey(baseNegLL=baseNegLL),
 					file.path(location.output,'sampleParmsParscaleRanged.key.RDS'))
 
