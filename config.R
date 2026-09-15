@@ -41,7 +41,11 @@ doNotReturnRunDataSavePerWorkerOnly <- TRUE
 # Format(s) of the *final* one file per variable results.
 # The per chunk intermediates the workers write are always plain uncompressed
 # csv, mergePerVarFiles derives every requested final format from those.
-perVarOutputTypes <- c('RDS','csv')
+# Outputting csv files only massively reduces the amount of memory needed in the 
+# merging step. If enabling RDS files make sure to reduce the number of workers
+# used in the merge step.
+# Allowed options: c('csv','RDS')
+perVarOutputTypes <- c('csv')
 # gzip the final per variable csv files. The per chunk intermediates stay
 # uncompressed either way, so that the merge can concatenate them byte wise.
 compressCsv <- TRUE
@@ -295,8 +299,8 @@ location.output.base <- location.output
 # and be faster
 # typical options on linux are /dev/shm or /run/user/####/ where #### is the uid
 # if both of these are unavailable use notTMPFS or some other arbitrary location on disk
-tmpfsBaseDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork')
-# tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T),'/rwork')
+# tmpfsBaseDir <- paste0('/run/user/',system('id -u',intern = T),'/rwork')
+tmpfsBaseDir <- paste0('/dev/shm/',system('id -u',intern = T),'/rwork')
 # tmpfsBaseDir <- 'notTMPFS'
 origTmpfsDir <- tmpfsDir <- file.path(tmpfsBaseDir,name.output)
 
