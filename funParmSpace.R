@@ -423,6 +423,12 @@ funFindParScale <- function(par.i,niter=100,useOrdersOfMagGuesses=F){
 	}
 }
 
+# verify cached parscales
+funParScaleHolds <- function(par.i,parscale){
+	response <- orderOfMagNegLLErrorFun(parscale[[par.i]],par.i)
+	return(is.finite(response)&&abs(response)<responseTolerance)
+}
+
 funOrderOfMagnitude <- function(x){
 	return(floor(log10(abs(x))))
 }
@@ -438,8 +444,9 @@ funParBoundsForSampleParms <- function(sampleParms,frida_info){
 	return(parBounds)
 }
 
-# The parscales a previous run determined, as a list of the values and a logical
-# saying which of them are remembered failures.
+# The parscales a previous run determined, as a list of the values, a logical
+# saying which of them are remembered failures, and whether that run sampled the
+# same parameters as this one.
 #
 # Entries are matched by name. The cached vector need not hold the same
 # parameters, nor hold them in the same order.
@@ -450,18 +457,20 @@ funReadCachedParscale <- function(file,jParVectNames,redoFailedParscales=FALSE,
 	notDetermined <- rep(FALSE,length(jParVectNames))
 	names(notDetermined) <- jParVectNames
 	if(!file.exists(file)){
-		return(list(parscale=parscale,notDetermined=notDetermined))
+		return(list(parscale=parscale,notDetermined=notDetermined,
+								parNamesChanged=FALSE))
 	}
 	cached <- readRDS(file)
 	if(is.list(cached)&&!is.null(currentKey)){
 		# Anything but the parameter list having moved means these values were
-		# computed from something else. The parameter list alone only means some are
-		# new, and the rest are still matched by name below.
+		# computed from something else. The parameter list alone leaves the values
+		# both runs share, matched by name below and checked by the caller.
 		mismatch <- funDeterminationKeyMismatch(cached$key,currentKey)
 		if(length(mismatch)>0){
 			cat(sprintf('Cached parscales in %s cannot be used, %s has changed. Redetermining.\n',
 									basename(file),paste(mismatch,collapse='; ')))
-			return(list(parscale=parscale,notDetermined=notDetermined))
+			return(list(parscale=parscale,notDetermined=notDetermined,
+									parNamesChanged=FALSE))
 		}
 	}
 	if(is.list(cached)){
@@ -479,7 +488,8 @@ funReadCachedParscale <- function(file,jParVectNames,redoFailedParscales=FALSE,
 	if(!redoFailedParscales){
 		notDetermined[matches] <- status.old[matches]%in%'notDetermined'
 	}
-	return(list(parscale=parscale,notDetermined=notDetermined))
+	return(list(parscale=parscale,notDetermined=notDetermined,
+							parNamesChanged=!setequal(names(parscale.old),jParVectNames)))
 }
 
 # What a cached determination was computed from. A changed model, changed

@@ -149,6 +149,7 @@ if(redoAllCalc){
 	names(parscale) <- names(jParVect)
 	parscaleCachedNotDetermined <- rep(FALSE,length(jParVect))
 	names(parscaleCachedNotDetermined) <- names(jParVect)
+	parscaleCachedParNamesChanged <- FALSE
 } else {
 	parscale.cached <- funReadCachedParscale(file.path(location.output,'parscale.RDS'),
 																					 names(jParVect),
@@ -156,6 +157,7 @@ if(redoAllCalc){
 																					 currentKey=funCurrentDeterminationKey())
 	parscale <- parscale.cached$parscale
 	parscaleCachedNotDetermined <- parscale.cached$notDetermined
+	parscaleCachedParNamesChanged <- parscale.cached$parNamesChanged
 	if(sum(parscaleCachedNotDetermined)>0){
 		cat(sprintf('%i parameters had no determinable parscale last time, keeping that result. Set redoFailedParscales to retry them.\n',
 								sum(parscaleCachedNotDetermined)))
@@ -266,6 +268,23 @@ while(newMaxFound){
 														'calDat','resSigma',
 														'jParVect'))
 			gobble <- clusterEvalQ(cl,source(file.path(baseWD,'funParmSpace.R')))
+		}
+		# verify cached parscales, for cases where the set of parameters changed
+		if(parscaleCachedParNamesChanged){
+			parsToVerify <- which(is.finite(parscale)&!parscaleSkip)
+			if(length(parsToVerify)>0){
+				cat(sprintf('The sampled parameters changed since the parscales were cached, checking %i of them...',
+										length(parsToVerify)))
+				if(parallelParscale){
+					parscaleHolds <- unlist(parLapplyLB(cl,parsToVerify,funParScaleHolds,
+																							parscale=parscale))
+				} else {
+					parscaleHolds <- sapply(parsToVerify,funParScaleHolds,parscale=parscale)
+				}
+				parscale[parsToVerify[!parscaleHolds]] <- NA
+				cat(sprintf('done. %i still hold, %i are determined again.\n',
+										sum(parscaleHolds),sum(!parscaleHolds)))
+			}
 		}
 		while(iterations < 2 && sum((is.na(parscale)|is.infinite(parscale))&!parscaleSkip&!parscaleCachedNotDetermined)>0){
 			parsToDet <- which((is.na(parscale)|is.infinite(parscale))&!parscaleSkip&!parscaleCachedNotDetermined)
