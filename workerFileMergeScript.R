@@ -22,11 +22,12 @@ source(file.path(baseWD,'funRunFRIDA.R'))
 source(file.path(baseWD,'naturalsort.R'))
 
 varNames <- readRDS(varNamesFileName)
-workerMergePerVarFiles(v.i,varNames=varNames,
-											 chunkFolder=chunkFolder,
-											 outputFolder=outputFolder,
-											 outputTypes=outputTypes,
-											 verbosity=verbosity,
-											 compressCsv=compressCsv,
-											 rdsCompress=rdsCompress,
-											 fullPrecision=fullPrecision)
+reportMergeWarnings(
+	workerMergePerVarFiles(v.i,varNames=varNames,
+												 chunkFolder=chunkFolder,
+												 outputFolder=outputFolder,
+												 outputTypes=outputTypes,
+												 verbosity=verbosity,
+												 compressCsv=compressCsv,
+												 rdsCompress=rdsCompress,
+												 fullPrecision=fullPrecision))

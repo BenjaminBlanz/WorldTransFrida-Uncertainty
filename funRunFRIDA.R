@@ -1799,8 +1799,51 @@ openCsvGzSink <- function(file){
 	return(gzfile(file,'wb'))
 }
 
+# Where discardChunkFolder moves chunk folders to. A sibling of PerVarChunks, so
+# neither merge takes it for a variable or an output type.
+chunkTrashFolder <- function(outputFolder){
+	file.path(outputFolder,'PerVarChunks-deleting')
+}
+
+# Deletes path in a process of its own. Removing the thousand chunk files of a
+# variable keeps Lustre busy for a while and nothing downstream waits on the
+# space.
+detachedDelete <- function(path){
+	if(nzchar(Sys.which('rm'))){
+		system2('rm',c('-rf',shQuote(path)),wait=FALSE,stdout=FALSE,stderr=FALSE)
+	} else {
+		unlink(path,recursive = T,force = T)
+	}
+	invisible(NULL)
+}
+
+# Deletes the chunk files of a merged variable. The folder is renamed to
+# trashPath first, a single atomic operation, so a folder in PerVarChunks holds
+# all of its chunks whatever a kill interrupts, and a merge that runs afterwards
+# reads either all of them or none.
+discardChunkFolder <- function(folder,trashPath){
+	dir.create(dirname(trashPath),showWarnings = F,recursive = T)
+	if(file.rename(folder,trashPath)){
+		detachedDelete(trashPath)
+	} else {
+		unlink(folder,recursive = T,force = T)
+	}
+	invisible(NULL)
+}
+
+# The merge workers of a PSOCK cluster write to a connection that goes nowhere,
+# so what they noticed about the chunk files is reported here, in the process
+# that has the log.
+reportMergeWarnings <- function(workerWarnings){
+	for(w in unlist(workerWarnings)){
+		warning(w,call.=FALSE,immediate.=TRUE)
+	}
+	invisible(NULL)
+}
+
 # Merges all chunk files of one variable into one final file per requested
-# output type.
+# output type. Returns the warnings about its chunk files, for
+# reportMergeWarnings.
 # The fast path concatenates the chunk csvs byte wise in id order, which needs
 # neither parsing nor sorting nor holding the variable in memory. It is taken
 # whenever verifyChunkOrder says the chunks line up, which is what the work unit
@@ -1816,7 +1859,7 @@ workerMergePerVarFiles <- function(v.i,varNames,chunkFolder,outputFolder,
 	fileList <- file.path(perVarSubfolder,naturalsort(list.files(perVarSubfolder)))
 	if(length(fileList)==0){
 		if(verbosity>0){cat(sprintf('No chunk files for %s, skipping\n',varName))}
-		return(invisible(NULL))
+		return(invisible(character(0)))
 	}
 	if(verbosity>0){cat(sprintf('Processing %i files of %s...',length(fileList),varName))}
 	if(length(outputTypes)==0 || !all(outputTypes %in% c('RDS','csv'))){
@@ -1832,9 +1875,7 @@ workerMergePerVarFiles <- function(v.i,varNames,chunkFolder,outputFolder,
 	wantCsv <- 'csv' %in% outputTypes
 	wantRDS <- 'RDS' %in% outputTypes
 	check <- verifyChunkOrder(lapply(fileList,peekCsvBounds))
-	for(w in check$warn){
-		warning(sprintf('%s: %s',varName,w),call.=FALSE,immediate.=TRUE)
-	}
+	workerWarnings <- sprintf('%s: %s',varName,check$warn)
 	if(check$ok){
 		if(verbosity>0){cat('streaming...')}
 		# an uncompressed csv is needed as an intermediate whenever an RDS is
@@ -1877,8 +1918,9 @@ workerMergePerVarFiles <- function(v.i,varNames,chunkFolder,outputFolder,
 			unlink(plainCsv,force=TRUE)
 		}
 	} else {
-		warning(sprintf('%s: cannot concatenate the chunk files (%s), reading them all instead',
-										varName,check$reason),call.=FALSE,immediate.=TRUE)
+		workerWarnings <- c(workerWarnings,
+												sprintf('%s: cannot concatenate the chunk files (%s), reading them all instead',
+																varName,check$reason))
 		if(verbosity>0){cat(sprintf('fallback (%s)...',check$reason))}
 		varData <- rbindChunkList(
 			lapply(fileList,data.table::fread,nThread=1,showProgress=FALSE,
@@ -1894,9 +1936,9 @@ workerMergePerVarFiles <- function(v.i,varNames,chunkFolder,outputFolder,
 		rm(varData)
 	}
 	if(verbosity>0){cat('removing split files...')}
-	unlink(perVarSubfolder,recursive = T,force = T)
+	discardChunkFolder(perVarSubfolder,file.path(chunkTrashFolder(outputFolder),varName))
 	if(verbosity>0){cat('done\n')}
-	invisible(NULL)
+	invisible(workerWarnings)
 }
 
 # Same as workerMergePerVarFiles but in a process of its own, so that the memory
@@ -1947,7 +1989,8 @@ workerMergePerVarFilesLegacy <- function(v.i,varNames,outputTypeFolder,outputTyp
 	writePerVarFile(varData,file.path(outputTypeFolder,varName),outputType=outputType,
 									compressCsv=compressCsv,rdsCompress=rdsCompress,
 									fullPrecision=fullPrecision)
-	unlink(perVarSubfolder,recursive = T,force = T)
+	discardChunkFolder(perVarSubfolder,
+										 file.path(chunkTrashFolder(dirname(outputTypeFolder)),varName))
 	if(verbosity>0){cat('done\n')}
 	invisible(NULL)
 }
@@ -2019,28 +2062,36 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T,
 	if(length(varNames)==0){
 		return(invisible(NULL))
 	}
+	# a folder in here was merged before the rename, the remains of an unfinished delete
+	for(staleFolder in list.dirs(chunkTrashFolder(outputFolder),recursive = F)){
+		detachedDelete(staleFolder)
+	}
 	if(parStrat==1){
+		workerWarnings <- list()
 		for(v.i in 1:length(varNames)){
 			if(verbosity>0){cat(sprintf('(%i of %i) ',v.i,length(varNames)))}
-			workerMergePerVarFiles(v.i,varNames=varNames,chunkFolder=chunkFolder,
-														 outputFolder=outputFolder,outputTypes=outputTypes,
-														 verbosity=verbosity,compressCsv=compressCsv,
-														 rdsCompress=rdsCompress,
-														 fullPrecision=fullPrecision)
+			workerWarnings[[v.i]] <-
+				workerMergePerVarFiles(v.i,varNames=varNames,chunkFolder=chunkFolder,
+															 outputFolder=outputFolder,outputTypes=outputTypes,
+															 verbosity=verbosity,compressCsv=compressCsv,
+															 rdsCompress=rdsCompress,
+															 fullPrecision=fullPrecision)
 		}
+		reportMergeWarnings(workerWarnings)
 	} else if(parStrat==2){
 		if(verbosity>0){cat(sprintf('Parallel proccessing all vars with %i workers\n',numWorkersFileMerge))}
 		clFileMerge <- startFileMergeCluster(numWorkersFileMerge,baseWD)
-		gobble <- parLapplyLB(clFileMerge,1:length(varNames),workerMergePerVarFiles,
-													varNames=varNames,
-													chunkFolder=chunkFolder,
-													outputFolder=outputFolder,
-													outputTypes=outputTypes,
-													compressCsv=compressCsv,
-													rdsCompress=rdsCompress,
-													fullPrecision=fullPrecision,
-													chunk.size = 1)
+		workerWarnings <- parLapplyLB(clFileMerge,1:length(varNames),workerMergePerVarFiles,
+																	varNames=varNames,
+																	chunkFolder=chunkFolder,
+																	outputFolder=outputFolder,
+																	outputTypes=outputTypes,
+																	compressCsv=compressCsv,
+																	rdsCompress=rdsCompress,
+																	fullPrecision=fullPrecision,
+																	chunk.size = 1)
 		stopCluster(clFileMerge)
+		reportMergeWarnings(workerWarnings)
 	} else if(parStrat==3){
 		if(verbosity>0){cat(sprintf('Parallel proccessing all vars with %i workers in independent processes\n',numWorkersFileMerge))}
 		varNamesFileName <- file.path(baseWD,paste0('tempVarNamesListForFileMerge',
@@ -2071,6 +2122,8 @@ mergePerVarFiles <- function(verbosity=1,parStrat=2,compressCsv=T,
 		warning(sprintf('%s is not empty after merging, leaving it in place',chunkFolder),
 						call.=FALSE,immediate.=TRUE)
 	}
+	# the per variable deletes may still be running in here, both deletes are -f
+	detachedDelete(chunkTrashFolder(outputFolder))
 	if(verbosity>0){cat('done\n')}
 	invisible(NULL)
 }
@@ -2085,6 +2138,10 @@ mergePerVarFilesLegacy <- function(outputFolder,baseWD,verbosity=1,parStrat=2,
 		outputTypeFolders <- outputTypeFoldersOverride
 	} else {
 		outputTypeFolders <- basename(list.dirs(outputFolder,recursive = F))
+	}
+	# a folder in here was merged before the rename, the remains of an unfinished delete
+	for(staleFolder in list.dirs(chunkTrashFolder(outputFolder),recursive = F)){
+		detachedDelete(staleFolder)
 	}
 	for(outputTypeFolder in outputTypeFolders){
 		outputType <- strsplit(outputTypeFolder,'-')[[1]][2]
@@ -2126,6 +2183,7 @@ mergePerVarFilesLegacy <- function(outputFolder,baseWD,verbosity=1,parStrat=2,
 		}
 		if(verbosity>0){cat('done\n')}
 	}
+	detachedDelete(chunkTrashFolder(outputFolder))
 	invisible(NULL)
 }
 

@@ -43,6 +43,12 @@ dimnames(runsData) <- list(rownames(defRun),1:nrow(samplePoints),varsToRead)
 for(f.i in 1:length(varsToRead)){
 	cat(sprintf('reading file %i of %i: %s...',f.i,length(varsToRead),varsToRead[f.i]))
 	perVarData <- readPerVarFile(file.path(location.runFiles,varsToRead[f.i]),outputType = perVarOutputTypes[1])
+	if(nrow(perVarData)!=nrow(samplePoints)||(ncol(perVarData)-1)!=nrow(defRun)){
+		stop(sprintf(paste0('%s holds %i runs over %i years, expected %i over %i.\n',
+												'Rerun the ensemble for this variable.\n'),
+								 varsToRead[f.i],nrow(perVarData),ncol(perVarData)-1,
+								 nrow(samplePoints),nrow(defRun)))
+	}
 	runsData[,,f.i] <- t(perVarData[,-1])
 	cat('done\n')
 }
