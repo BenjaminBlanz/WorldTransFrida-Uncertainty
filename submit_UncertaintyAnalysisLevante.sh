@@ -48,7 +48,9 @@ configFile=config.R
 # where to store outputs
 baseOutputDir=workOutput
 
-outputType='RDS' # can be 'both', 'csv' or 'RDS'
+outputType='csv' # can be 'both', 'csv' or 'RDS' . 'RDS' and 'both' use much more 
+# memory. Pure csv can be concatenated on disk without having to load the whole file.
+# csv will be gzipped based on the config setting in the main config file.
 plotting='true' # avoiding the plotting can save quit some compute time
 detRepSample='true' # needed for the plots that show the representative subsample
 #and for generating the rep sample
