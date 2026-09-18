@@ -495,18 +495,17 @@ funReadCachedParscale <- function(file,jParVectNames,redoFailedParscales=FALSE,
 # What a cached determination was computed from. A changed model, changed
 # calibration data or changed likelihood settings must invalidate the cached results.
 #
-# File identity is size and mtime rather than a hash of the contents. FRIDA.stmx
-# is large and this runs on every start.
+# The model is the checksum of the frida directory without the files in exclude,
+# the ones the analysis writes into it: the scenario and the export spec. A
+# scenario that changes the likelihood shows in baseNegLL.
 funDeterminationKey <- function(location.frida,location.frida.info,name.frida_info,
 																calDat,resSigma,parNames,settings,
-																baseNegLL=NULL){
-	fileStamp <- function(path){
+																baseNegLL=NULL,exclude=c()){
+	md5Of <- function(path){
 		if(!file.exists(path)){
 			return('missing')
 		}
-		info <- file.info(path)
-		return(sprintf('%.0f bytes, %s',info$size,
-									 format(info$mtime,'%Y-%m-%d %H:%M:%OS3')))
+		return(unname(tools::md5sum(path)))
 	}
 	digestOf <- function(x){
 		if(is.null(x)){
@@ -514,8 +513,8 @@ funDeterminationKey <- function(location.frida,location.frida.info,name.frida_in
 		}
 		return(digest::digest(x))
 	}
-	list(fridaModel=fileStamp(file.path(location.frida,'FRIDA.stmx')),
-			 fridaInfo=fileStamp(file.path(location.frida.info,name.frida_info)),
+	list(fridaModel=funFridaFilesChecksum(location.frida,exclude=exclude)$checksum,
+			 fridaInfo=md5Of(file.path(location.frida.info,name.frida_info)),
 			 calDat=digestOf(calDat),
 			 resSigma=digestOf(resSigma),
 			 parNames=parNames,
@@ -533,7 +532,7 @@ funDeterminationKeyMismatch <- function(cached,current){
 		return('no key was recorded with it')
 	}
 	mismatch <- character(0)
-	described <- c(fridaModel='the FRIDA model file',
+	described <- c(fridaModel='the FRIDA model files',
 								 fridaInfo='frida_info',
 								 calDat='the calibration data',
 								 resSigma='the residual covariance')

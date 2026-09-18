@@ -134,6 +134,7 @@ funCurrentDeterminationKey <- function(baseNegLL=NULL){
 	funDeterminationKey(location.frida,location.frida.info,name.frida_info,
 											calDat,resSigma,names(jParVect),
 											baseNegLL=baseNegLL,
+											exclude=name.fridaAnalysisDataFiles,
 											settings=list(treatVarsAsIndep=treatVarsAsIndep,
 													 likeCutoffRatio=likeCutoffRatio,
 													 rangeTol=rangeTol,

@@ -274,6 +274,11 @@ name.frida_extra_variables_to_export_list <- 'frida_extra_variables_to_export_li
 name.fridaExportVarsFile <- 'varsForExport.txt'
 name.fridaInputFile <- 'uncertainty_analysis_paramter_values.csv'
 name.fridaOutputFile <- 'uncertainty_analysis_exported_variables.csv'
+# everything this analysis writes into the FRIDA Data directory: the scenario of
+# the run and the export spec. The rest of the frida directory is the model.
+name.fridaAnalysisDataFiles <- c('climateFeedbackSwitches.csv','policyParameters.csv',
+																 'ClimateSTAOverride.csv','ClimateSTAOverrideTS.csv',
+																 name.fridaExportVarsFile,name.fridaInputFile,name.fridaOutputFile)
 
 
 # execute config ####
@@ -361,11 +366,7 @@ if(file.exists('setupTMPFS.R')&&exists('funWriteRunMetadataFile',mode='function'
 	fridaVersion <- funWriteRunMetadataFile(
 		location.output,location.frida.git,location.frida,name.output,
 		configFile=name.configFile,
-		# the files this analysis writes into the frida Data directory say nothing
-		# about the version of the model
-		exclude=c('climateFeedbackSwitches.csv','policyParameters.csv',
-							'ClimateSTAOverride.csv','ClimateSTAOverrideTS.csv',
-							name.fridaExportVarsFile,name.fridaInputFile,name.fridaOutputFile),
+		exclude=name.fridaAnalysisDataFiles,
 		specFiles=c(policyFileName=policyFileName,
 								climateFeedbackSpecFile=climateFeedbackSpecFile,
 								climateOverrideSpecFile=climateOverrideSpecFile,
