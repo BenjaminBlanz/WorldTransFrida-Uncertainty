@@ -34,8 +34,9 @@ if(basename(name.workDir)%in%list.files(dirname(name.workDir))){
 if(file.exists(tmpfsDir)){
 	system(paste('rm -rf',tmpfsDir))
 }
-# only remove the tmpfsBaseDir if it is empty (other parallel runs may still have content)
-if(file.exists(tmpfsBaseDir)&&length(list.files(tmpfsBaseDir))==0){
-	system(paste('rm -rf',tmpfsBaseDir))
+# other runs on this node share the tmpfsBaseDir. rmdir only removes it while it
+# is empty, in one step, so it cannot take a directory another run just created.
+if(file.exists(tmpfsBaseDir)){
+	system2('rmdir',shQuote(tmpfsBaseDir),stdout=FALSE,stderr=FALSE)
 }
 cat('done\n')
