@@ -392,6 +392,15 @@ if [ "$copyParmRangesAndScales" = "true" ]; then
 			exit 1
 		fi
 	done
+	# without the key the copied ranges are determined again. Runs from before
+	# the key have none, and a key left from an earlier run here would not
+	# belong to the copied ranges.
+	keyFile=${baseOutputDir}/${copyID}/sampleParmsParscaleRanged.key.RDS
+	if [ -e $keyFile ]; then
+		cp ${keyFile} ${expDir}/
+	else
+		rm -f ${expDir}/sampleParmsParscaleRanged.key.RDS
+	fi
 fi
 
 
