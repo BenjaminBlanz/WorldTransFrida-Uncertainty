@@ -17,13 +17,19 @@ module load r/4.4.2-gcc-11.2.0
 set -eE  # same as: `set -o errexit -o errtrace`
 trap 'cleanup' ERR
 
+# best effort: a failing step here must not stop the ones after it, the status
+# is written first so it is right whatever else fails. With errexit off the
+# script would carry on after the handler, so the handler ends it.
 function cleanup(){
+  set +e
+  trap - ERR
+  echo failed > workOutput/expID/status
   echo "FAILED! Cleaning up..."
   Rscript --max-connections=1024 -e "source('initialise.R'); source('config.R'); source('cleanup.R')"
   mkdir -p workOutput/expID/runScriptsAndConfiguration
   mv expID_*.R workOutput/expID/runScriptsAndConfiguration/
   mv expID.run workOutput/expID/runScriptsAndConfiguration/
-  echo failed > workOutput/expID/status
+  exit 1
 }
 
 echo started > workOutput/expID/status
