@@ -174,8 +174,11 @@ funGitInfo <- function(location.git){
 	info['author'] <- gitOut('log -1 --format=%an')
 	info['subject'] <- gitOut('log -1 --format=%s')
 	info['origin'] <- gitOut('config --get remote.origin.url')
-	# uncommitted changes mean the commit above does not fully describe what ran
-	status <- gitOut('status --porcelain',all=TRUE)
+	# uncommitted changes mean the commit above does not fully describe what ran.
+	# Untracked files are left out: every submitted run puts its own copies of
+	# the scripts in the working directory, so they come and go with the jobs
+	# running side by side, and a run's inputs are copied into its output folder.
+	status <- gitOut('status --porcelain --untracked-files=no',all=TRUE)
 	info['dirty'] <- as.character(length(status))
 	if(length(status)>0){
 		names <- sub('^...','',status)
@@ -568,7 +571,7 @@ funWriteRunMetadataFile <- function(location.output,location.frida.git,location.
 		} else if(gitInfo['dirty']=='0'){
 			'clean, the commit above describes what ran'
 		} else {
-			sprintf('%s file(s) UNCOMMITTED, the commit above does not fully describe what ran (%s)',
+			sprintf('%s tracked file(s) UNCOMMITTED, the commit above does not fully describe what ran (%s)',
 							gitInfo['dirty'],orUnknown(gitInfo['dirtyFiles']))
 		}
 	}
