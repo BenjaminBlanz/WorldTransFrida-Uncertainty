@@ -115,6 +115,7 @@ for(plotWeightType in plotWeightTypes){
 		stop('unknown plotWeightType\n'	)
 	}
 	samplePoints$plotWeight[is.na(samplePoints$plotWeight)] <- 0
+	varsMissing <- 0
 	for(varName.i in 1:length(allVarNames)){
 		varName <- allVarNames[varName.i]
 		varUnit <- unlist(vars_info$Unit[which(vars_info$cleanNames==varName)])
@@ -155,8 +156,10 @@ for(plotWeightType in plotWeightTypes){
 			next
 		}
 		cat('read...')
-		if(!file.exists(file.path(outputFolder,outputTypeFolder,paste0(varName,'.',outputType)))){
+		if(!any(file.exists(paste0(file.path(outputFolder,outputTypeFolder,varName),
+															 c('.RDS','.csv','.csv.gz'))))){
 			cat('missing\n')
+			varsMissing <- varsMissing+1
 			next
 		}
 		varData <- readPerVarFile(file.path(outputFolder,outputTypeFolder,varName),outputType)
@@ -382,5 +385,9 @@ for(plotWeightType in plotWeightTypes){
 			}
 			cat('done\n')
 		}
+	}
+	if(varsMissing>0){
+		cat(sprintf('%i of %i variables have no file in %s, not plotted\n',
+								varsMissing,length(allVarNames),file.path(outputFolder,outputTypeFolder)))
 	}
 }
