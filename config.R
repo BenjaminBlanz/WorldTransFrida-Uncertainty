@@ -251,13 +251,19 @@ if(exists('name.frida_info')){
 	frida_info_type <- 'user'
 } else {
 	if(file.exists(file.path(baselocation.frida,'Parameter Info.csv'))){
-		if(file.exists(file.path(location.frida.info,"link_to_frida_info_from_model_repo.csv"))){
-			system(sprintf('rm "%s/link_to_frida_info_from_model_repo.csv"',
-										 location.frida.info))
-		}
-		system(sprintf('ln -s "../%s/Parameter Info.csv" "%s/link_to_frida_info_from_model_repo.csv"',
-									 baselocation.frida, location.frida.info))
 		name.frida_info <- 'link_to_frida_info_from_model_repo.csv'
+		# every run started from this directory reads the link, so it is never
+		# removed, only replaced by renaming a new link over it
+		local({
+			link <- file.path(location.frida.info,name.frida_info)
+			target <- sprintf('../%s/Parameter Info.csv',baselocation.frida)
+			if(!identical(unname(Sys.readlink(link)),target)){
+				tmpLink <- paste0(link,'.',Sys.info()[['nodename']],'.',Sys.getpid())
+				unlink(tmpLink)
+				file.symlink(target,tmpLink)
+				file.rename(tmpLink,link)
+			}
+		})
 		frida_info_type <- 'StellaExport'
 	} else {
 		name.frida_info <- 'frida_info_preV3.csv'
