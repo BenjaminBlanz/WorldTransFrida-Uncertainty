@@ -10,7 +10,8 @@ suppressPackageStartupMessages({
 	library(matrixcalc,quietly=T,warn.conflicts = F) # to test positive definitnes of cov matrix
 	#library(imputeTS,quietly=T,warn.conflicts = F) # used for interpolating missing values # Only needed for interpolation after MLE, fails for R v4.4 on Levante
 	library(data.table,quietly=T,warn.conflicts = F) # fast csv reading/writing of the per var files
-	library(parallel)
+	library(parallel) # for running things in parallel
+	library(R.utils) # needed for transparently reading gz files
 })
 # we parallelise over processes (workers/variables), so data.table must not
 # additionally spawn OpenMP threads, that would oversubscribe the node
