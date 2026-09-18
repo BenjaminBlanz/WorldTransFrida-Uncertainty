@@ -337,6 +337,153 @@ funFridaCheckoutDiffNote <- function(cmp,maxNames=5){
 	}
 }
 
+# EMB deviations ####
+# The settings of a spec file in FRIDA-configs as name -> values. Row oriented
+# files carry one setting per line, name first. Column oriented files carry the
+# names in the header row; in a time varying one the first column is the year,
+# which is prefixed to each value as year:value.
+funSpecFileSettings <- function(file,orientation='rows',timevarying=FALSE){
+	settings <- list()
+	if(!file_test('-f',file)||file.size(file)==0){
+		return(settings)
+	}
+	lines <- readLines(file,warn=FALSE)
+	lines[1] <- sub('^\xef\xbb\xbf','',lines[1],useBytes=TRUE)
+	lines <- lines[nzchar(trimws(lines))]
+	fields <- lapply(lines,function(l){
+		f <- trimws(scan(text=l,what='',sep=',',quote='"',na.strings=character(0),quiet=TRUE))
+		f[seq_len(max(c(0,which(nzchar(f)))))]
+	})
+	if(orientation=='rows'){
+		for(f in fields){
+			if(length(f)>0&&nzchar(f[1])){
+				settings[[f[1]]] <- f[-1]
+			}
+		}
+	} else if(length(fields)>1){
+		header <- fields[[1]]
+		cell <- function(j){sapply(fields[-1],function(f){if(j<=length(f)){f[j]}else{''}})}
+		for(j in if(timevarying){seq_along(header)[-1]}else{seq_along(header)}){
+			if(nzchar(header[j])){
+				settings[[header[j]]] <- if(timevarying){paste0(cell(1),':',cell(j))}else{cell(j)}
+			}
+		}
+	}
+	return(settings)
+}
+
+# Setting names compare equal regardless of case, spaces versus underscores and
+# a trailing [1].
+funSettingKey <- function(names){
+	sub('\\[1\\]$','',trimws(gsub('[ _]+',' ',tolower(names))))
+}
+
+# The default value of each scalar model parameter, keyed by funSettingKey.
+# Empty for a model without a Parameter Info.csv.
+funModelDefaults <- function(location.frida){
+	file <- file.path(location.frida,'Parameter Info.csv')
+	if(!file.exists(file)){
+		return(character(0))
+	}
+	info <- read.csv(file,check.names=FALSE,colClasses='character')
+	defaults <- info$Value
+	names(defaults) <- funSettingKey(info$Variable)
+	return(defaults[!duplicated(names(defaults))])
+}
+
+# The settings in which used and emb differ, as name, emb and used, values
+# joined by commas. A setting absent from a file takes its model default, NA
+# when that is unknown. Numbers are compared by value.
+funSettingDeviations <- function(used,emb,defaults=character(0)){
+	res <- data.frame(name=character(0),emb=character(0),used=character(0))
+	usedKeys <- funSettingKey(names(used))
+	embKeys <- funSettingKey(names(emb))
+	valueOf <- function(settings,keys,key){
+		if(key%in%keys){
+			paste(settings[[which(keys==key)[1]]],collapse=',')
+		} else if(key%in%names(defaults)){
+			defaults[[key]]
+		} else {
+			NA_character_
+		}
+	}
+	same <- function(a,b){
+		if(is.na(a)||is.na(b)){
+			return(is.na(a)&&is.na(b))
+		}
+		na <- suppressWarnings(as.numeric(strsplit(a,',')[[1]]))
+		nb <- suppressWarnings(as.numeric(strsplit(b,',')[[1]]))
+		if(length(na)==length(nb)&&!anyNA(c(na,nb))){
+			all(na==nb)
+		} else {
+			identical(a,b)
+		}
+	}
+	for(key in unique(c(usedKeys,embKeys))){
+		e <- valueOf(emb,embKeys,key)
+		u <- valueOf(used,usedKeys,key)
+		if(!same(e,u)){
+			name <- if(key%in%usedKeys){names(used)[which(usedKeys==key)[1]]}else{names(emb)[which(embKeys==key)[1]]}
+			res[nrow(res)+1,] <- list(name,e,u)
+		}
+	}
+	return(res)
+}
+
+# What makes a run deviate from EMB, as lines of text for the run metadata file.
+# specFiles and embSpecFiles name the spec file of each config variable, in the
+# run and in EMB. The baseline parms are compared against the model defaults.
+funEmbDeviationLines <- function(specFiles,location.frida.configs,location.frida,
+																 baselineParmFile=NA,
+																 embSpecFiles=c(policyFileName='policy_EMB.csv',
+																 							 climateFeedbackSpecFile='ClimateFeedback_On.csv',
+																 							 climateOverrideSpecFile='ClimateSTAOverride_Off.csv',
+																 							 climateOverrideSpecFileTS='ClimateSTAOverrideTS_none.csv'),
+																 timevaryingSpecFiles='climateOverrideSpecFileTS'){
+	defaults <- funModelDefaults(location.frida)
+	isSet <- function(x){length(x)==1&&!is.na(x)&&nzchar(x)}
+	blocks <- list()
+	for(var in names(specFiles)){
+		tv <- var%in%timevaryingSpecFiles
+		read <- function(f){
+			if(!isSet(f)){return(list())}
+			funSpecFileSettings(file.path(location.frida.configs,f),
+													orientation=if(tv){'columns'}else{'rows'},timevarying=tv)
+		}
+		embFile <- if(var%in%names(embSpecFiles)){embSpecFiles[[var]]}else{NA}
+		blocks[[var]] <- list(
+			note=sprintf('%s, %s',specFiles[[var]],
+									 if(identical(specFiles[[var]],embFile)){'as EMB'}else{sprintf('EMB runs with %s',embFile)}),
+			dev=funSettingDeviations(read(specFiles[[var]]),read(embFile),defaults))
+	}
+	if(isSet(baselineParmFile)){
+		blocks[['name.baselineParmFile']] <- list(
+			note=sprintf('%s, EMB runs without',baselineParmFile),
+			dev=funSettingDeviations(
+				funSpecFileSettings(file.path(location.frida.configs,baselineParmFile),orientation='columns'),
+				list(),defaults))
+	} else {
+		blocks[['name.baselineParmFile']] <- list(note='none, as EMB',dev=funSettingDeviations(list(),list()))
+	}
+	width <- max(nchar(names(blocks)))
+	devNames <- unlist(lapply(blocks,function(b){b$dev$name}))
+	devWidth <- max(c(0,nchar(devNames)))
+	orDefault <- function(x){ifelse(is.na(x),'(model default)',x)}
+	lines <- c()
+	for(var in names(blocks)){
+		b <- blocks[[var]]
+		lines <- c(lines,sprintf('%-*s  %s',width,var,b$note))
+		if(nrow(b$dev)>0){
+			lines <- c(lines,sprintf('  %-*s  %s -> %s',devWidth,b$dev$name,
+															 orDefault(b$dev$emb),orDefault(b$dev$used)))
+		}
+	}
+	if(length(devNames)==0){
+		lines <- c(lines,'','none, this run shows EMB behaviour')
+	}
+	return(lines)
+}
+
 # run metadata file ####
 # Writes a human readable record of the model version into the output folder, so
 # that a result folder can still be traced back to a model version later.
@@ -374,15 +521,38 @@ funStripRunCompletionBlock <- function(lines){
 	lines[-(start:end)]
 }
 
+# Copies the input files of a run into location.inputs, each under the name of
+# the directory it came from, e.g. input/FRIDA-configs/policy_EMB.csv. Anything
+# that is not an existing file is skipped. Symlinks are copied as their content.
+funCopyRunInputs <- function(inputFiles,location.inputs){
+	unlink(location.inputs,recursive=TRUE)
+	inputFiles <- inputFiles[file_test('-f',inputFiles)]
+	dest <- file.path(location.inputs,basename(dirname(inputFiles)),basename(inputFiles))
+	for(d in unique(dirname(dest))){
+		dir.create(d,recursive=TRUE,showWarnings=FALSE)
+	}
+	ok <- file.copy(inputFiles,dest,overwrite=TRUE)
+	if(!all(ok)){
+		stop(sprintf('could not copy the run inputs %s to %s\n',
+								 paste(inputFiles[!ok],collapse=', '),location.inputs),call.=FALSE)
+	}
+	invisible(dest)
+}
+
 funWriteRunMetadataFile <- function(location.output,location.frida.git,location.frida,
 																		name.output=NULL,exclude=c(),
 																		fileName='runMetadata.txt',
-																		configFile='config.R',location.analysis.git='.'){
+																		configFile='config.R',location.analysis.git='.',
+																		specFiles=c(),baselineParmFile=NA,
+																		location.frida.configs='./FRIDA-configs',
+																		inputFiles=c(),location.inputs=NULL){
 	jobKey <- funRunMetadataJobKey()
 	info <- funFridaVersionInfo(location.frida.git)
 	analysisInfo <- funGitInfo(location.analysis.git)
 	configDiff <- funConfigDiffToDefault(configFile=configFile,
 																			 location.git=location.analysis.git)
+	embDeviations <- funEmbDeviationLines(specFiles,location.frida.configs,location.frida,
+																				baselineParmFile=baselineParmFile)
 	checksums <- funFridaFilesChecksum(location.frida,exclude=exclude)
 	orUnknown <- function(x){
 		if(is.null(x)||length(x)!=1||is.na(x)||!nzchar(as.character(x))){'unknown'}else{as.character(x)}
@@ -449,6 +619,7 @@ funWriteRunMetadataFile <- function(location.output,location.frida.git,location.
 						 '',
 						 field('config used',configFile),
 						 field('default',sprintf('%s as committed',orUnknown('config.R'))),
+						 if(!is.null(location.inputs)){field('inputs',location.inputs)},
 						 '')
 	if(nrow(configDiff)==0){
 		lines <- c(lines,'none, this run used the default config unchanged')
@@ -460,6 +631,11 @@ funWriteRunMetadataFile <- function(location.output,location.frida.git,location.
 							 				ifelse(is.na(configDiff$default),'(not set)',configDiff$default),
 							 				ifelse(is.na(configDiff$used),'(not set)',configDiff$used)))
 	}
+	lines <- c(lines,'',
+						 'Deviations from EMB',
+						 '===================',
+						 '',
+						 embDeviations)
 	# the run completion summary is appended here by funAppendRunCompletionSummary
 	# once the ensemble has run
 	lines <- c(lines,'',
@@ -497,6 +673,9 @@ funWriteRunMetadataFile <- function(location.output,location.frida.git,location.
 									 file,jobKey,paste(detail,collapse='\n')),call.=FALSE)
 		}
 		return(invisible(info))
+	}
+	if(!is.null(location.inputs)){
+		funCopyRunInputs(inputFiles,location.inputs)
 	}
 	writeLines(lines,file)
 	invisible(info)

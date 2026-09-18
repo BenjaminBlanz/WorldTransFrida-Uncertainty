@@ -13,5 +13,12 @@ rm FRIDAforUncertaintyAnalysis Stella_Simulator_Linux workerDirs
 mv FRIDAforUncertaintyAnalysis-store FRIDAforUncertaintyAnalysis
 mv Stella_Simulator_Linux-store Stella_Simulator_Linux
 
-cp workOutput/${expID}/*.R .
+runScripts=workOutput/${expID}/runScriptsAndConfiguration
+if [ ! -d ${runScripts} ]; then
+	# output folders without runScriptsAndConfiguration keep the scripts at the top level
+	runScripts=workOutput/${expID}
+fi
+cp ${runScripts}/*.R .
+# a job that did not reach its cleanup leaves the .run in place
+[ -f ${expID}.run ] || cp ${runScripts}/${expID}.run .
 sbatch ${expID}.run

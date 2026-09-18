@@ -295,6 +295,8 @@ if(name.output=='dummyNameForSubmitSlurmScriptToOverwrite'){
 }
 location.output <- file.path('workOutput',name.output)
 location.output.base <- location.output
+# copies of the run scripts, the config and the input files of the run
+location.output.runScripts <- file.path(location.output,'runScriptsAndConfiguration')
 # tmpfs location for the worker directories to not churn the hard drive
 # and be faster
 # typical options on linux are /dev/shm or /run/user/####/ where #### is the uid
@@ -316,7 +318,8 @@ if(file.exists(location.output)){
 	cat('  created\n')
 }
 # save the config to the output folder
-file.copy('config.R',location.output,overwrite = T)
+dir.create(location.output.runScripts,recursive = T,showWarnings = F)
+file.copy('config.R',location.output.runScripts,overwrite = T)
 # which config file this run is using. The submit script rewrites every mention
 # of config.R in its copy of this file, so this ends up naming the copy, which is
 # what the run metadata needs to diff against the default config.
@@ -362,7 +365,21 @@ if(file.exists('setupTMPFS.R')&&exists('funWriteRunMetadataFile',mode='function'
 		# about the version of the model
 		exclude=c('climateFeedbackSwitches.csv','policyParameters.csv',
 							'ClimateSTAOverride.csv','ClimateSTAOverrideTS.csv',
-							name.fridaExportVarsFile,name.fridaInputFile,name.fridaOutputFile))
+							name.fridaExportVarsFile,name.fridaInputFile,name.fridaOutputFile),
+		specFiles=c(policyFileName=policyFileName,
+								climateFeedbackSpecFile=climateFeedbackSpecFile,
+								climateOverrideSpecFile=climateOverrideSpecFile,
+								climateOverrideSpecFileTS=climateOverrideSpecFileTS),
+		baselineParmFile=name.baselineParmFile,
+		location.frida.configs=location.frida.configs,
+		inputFiles=c(file.path(location.frida.configs,
+													 c(policyFileName,climateFeedbackSpecFile,climateOverrideSpecFile,
+													 	climateOverrideSpecFileTS,name.baselineParmFile)),
+								 file.path(location.frida.info,
+								 					c(name.frida_info,name.frida_integer_parms,name.frida_external_ranges,
+								 						name.frida_parameter_exclusion_list,name.frida_variable_exclusion_list,
+								 						name.frida_extra_variables_to_export_list))),
+		location.inputs=file.path(location.output.runScripts,'input'))
 	if(fridaVersion['commit']=='noGit'){
 		cat('FRIDA version: could not be determined, see runMetadata.txt\n')
 	} else {

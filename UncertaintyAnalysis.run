@@ -20,7 +20,9 @@ trap 'cleanup' ERR
 function cleanup(){
   echo "FAILED! Cleaning up..."
   Rscript --max-connections=1024 -e "source('initialise.R'); source('config.R'); source('cleanup.R')"
-  mv expID_*.R workOutput/expID/
+  mkdir -p workOutput/expID/runScriptsAndConfiguration
+  mv expID_*.R workOutput/expID/runScriptsAndConfiguration/
+  mv expID.run workOutput/expID/runScriptsAndConfiguration/
   echo failed > workOutput/expID/status
 }
 
@@ -28,5 +30,7 @@ echo started > workOutput/expID/status
 Rscript --max-connections=1024 -e "source('runMLEandParmSpace.R'); source('runDetermineRepresentativeSamples.R'); source('runPlotAllRuns.R'); source('cleanup.R')"
 echo completed > workOutput/expID/status
 
-mv expID_*.R workOutput/expID/
+mkdir -p workOutput/expID/runScriptsAndConfiguration
+mv expID_*.R workOutput/expID/runScriptsAndConfiguration/
+mv expID.run workOutput/expID/runScriptsAndConfiguration/
 

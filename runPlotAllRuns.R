@@ -62,7 +62,7 @@ for (y.i in 1:length(yearsToPlot.names)){
 dir.create(file.path(location.output,location.plots),recursive = T,showWarnings = F)
 sink(file.path(location.output,location.plots,'pathToTheOutputUnderlyingTheseFigures.txt'))
 cat(file.path(getwd(),location.output))
-file.copy(file.path(location.output,'config.R'),file.path(location.output,location.plots,'configOfTheUnderlyingRuns.R'))
+file.copy(file.path(location.output.runScripts,'config.R'),file.path(location.output,location.plots,'configOfTheUnderlyingRuns.R'))
 sink()
 
 for(plotWeightType in plotWeightTypes){
