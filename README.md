@@ -64,7 +64,7 @@ Two things differ from the cluster:
 - add the option ```--no-site-file``` when starting R to avoid the package load messages like ```Loading required package: graphics```. These are related to packages 
 
 
-- It is possible that the packages listed in ```initialise.R``` need to be installed first (only once). Also the packages ```imputeTs```, ```matrixcalc``` and ```caret``` need to be installed. To do that, in an R sessions type ```install.packages('packagename')```. 
+- ```initialise.R``` installs any missing packages it lists from CRAN, which needs internet access. On Levante the submit scripts do this on the login node before submitting the job.
     - The ```imputeTs``` package is currently (04. March 2025) not loadable on Levante with R v4.4. Can comment this package out in runInitialiseData.R, because it is only needed for likelihood analysis, which we currently don't do.
 
 - prepare the ```config.R``` file

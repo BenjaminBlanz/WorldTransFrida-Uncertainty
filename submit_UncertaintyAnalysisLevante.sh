@@ -238,6 +238,16 @@ for f in "${integerParmsFile}" "${externalRangesFile}" "${excludeParmFile}" "${e
   fi
 done
 
+# R packages
+Rmodule=$(grep -m1 '^module load' UncertaintyAnalysis.run)
+if [ -n "${Rmodule}" ] && command -v module >/dev/null 2>&1; then
+  ${Rmodule}
+fi
+if ! Rscript -e "source('initialise.R')"; then
+  echo "Error: required R packages are missing, see above"
+  exit 1
+fi
+
 #############################################################################
 ########     Preparing the R-scripts and the runscript             ##########
 #############################################################################

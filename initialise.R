@@ -1,18 +1,61 @@
-suppressPackageStartupMessages({
-	library(Rmpfr,quietly=T,warn.conflicts = F) # arbitrary precision math used to calculate the likelihood from loglikelihood
-	library(optimx,quietly=T,warn.conflicts = F) # interface to various optimizers
-	library(tictoc,quietly=T,warn.conflicts = F) # simple timing measurements
-	library(SobolSequence,quietly=T,warn.conflicts = F) # generates multidimensional sobol sequences
-	library(lubridate,quietly=T,warn.conflicts = F) # deals with times
-	library(cNORM,quietly=T,warn.conflicts = F) # wighted quantiles
-	library(spatstat.explore,quietly=T,warn.conflicts = F) # used for the quantile.density function
-	library(caret,quietly=T,warn.conflicts = F) # to find linear combinations and remove them in the calib dat
-	library(matrixcalc,quietly=T,warn.conflicts = F) # to test positive definitnes of cov matrix
-	#library(imputeTS,quietly=T,warn.conflicts = F) # used for interpolating missing values # Only needed for interpolation after MLE, fails for R v4.4 on Levante
-	library(data.table,quietly=T,warn.conflicts = F) # fast csv reading/writing of the per var files
-	library(parallel) # for running things in parallel
-	library(R.utils) # needed for transparently reading gz files
-})
+# packages ####
+packages.attach <- c(
+	'Rmpfr', # arbitrary precision math used to calculate the likelihood from loglikelihood
+	'optimx', # interface to various optimizers
+	'tictoc', # simple timing measurements
+	'SobolSequence', # generates multidimensional sobol sequences
+	'lubridate', # deals with times
+	'cNORM', # wighted quantiles
+	'spatstat.explore', # used for the quantile.density function
+	'caret', # to find linear combinations and remove them in the calib dat
+	'matrixcalc', # to test positive definitnes of cov matrix
+	#'imputeTS', # used for interpolating missing values # Only needed for interpolation after MLE, fails for R v4.4 on Levante
+	'data.table', # fast csv reading/writing of the per var files
+	'parallel') # for running things in parallel
+# only used through :: or by other packages. Attaching R.utils would mask base
+# functions such as cat, load and save.
+packages.namespace <- c(
+	'R.utils', # data.table::fread needs it to read gz files
+	'mvtnorm', # multivariate normal likelihood
+	'digest', # hashes the inputs a cached parscale determination was computed from
+	'spatstat.univar') # weighted quantiles in the plots
+
+# ensurePackages ####
+# Installs the missing ones of pkgs from CRAN into the first writable library
+# and stops if any remain missing.
+ensurePackages <- function(pkgs){
+	isInstalled <- function(p){suppressPackageStartupMessages(requireNamespace(p,quietly=T))}
+	missing <- pkgs[!vapply(pkgs,isInstalled,logical(1))]
+	if(length(missing)==0){
+		return(invisible(TRUE))
+	}
+	cat(sprintf('Installing missing R package%s: %s\n',
+							ifelse(length(missing)==1,'','s'),paste(missing,collapse=', ')))
+	repos <- getOption('repos')
+	repos[repos=='@CRAN@'] <- 'https://cloud.r-project.org'
+	if(length(repos)==0){
+		repos <- 'https://cloud.r-project.org'
+	}
+	lib <- .libPaths()[file.access(.libPaths(),2)==0][1]
+	if(is.na(lib)){
+		lib <- path.expand(strsplit(Sys.getenv('R_LIBS_USER'),.Platform$path.sep)[[1]][1])
+		dir.create(lib,recursive=T,showWarnings=F)
+		.libPaths(c(lib,.libPaths()))
+	}
+	try(install.packages(missing,lib=lib,repos=repos))
+	missing <- missing[!vapply(missing,isInstalled,logical(1))]
+	if(length(missing)>0){
+		# cat before stop, so this ends up in the log file
+		cat(sprintf('\nMissing R package%s: %s\nInstall with the R used for the runs, on a node with internet access (e.g. a login node):\n  install.packages(c(%s))\n\n',
+								ifelse(length(missing)==1,'','s'),paste(missing,collapse=', '),
+								paste0("'",missing,"'",collapse=',')))
+		stop(sprintf('missing R packages: %s\n',paste(missing,collapse=', ')))
+	}
+	invisible(TRUE)
+}
+ensurePackages(c(packages.attach,packages.namespace))
+suppressPackageStartupMessages(
+	invisible(lapply(packages.attach,library,character.only=T,quietly=T,warn.conflicts=F)))
 # we parallelise over processes (workers/variables), so data.table must not
 # additionally spawn OpenMP threads, that would oversubscribe the node
 data.table::setDTthreads(1)
