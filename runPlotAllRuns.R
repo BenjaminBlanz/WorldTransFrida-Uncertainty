@@ -49,6 +49,14 @@ cat('done\n')
 writeFRIDAExportSpec(varsForExport.fridaNames = allVarNames.orig,
 										 location.frida)
 defRun <- runFridaDefaultParms()
+# the default run has the columns the per var files are named after
+plotVars <- funExpandArrayVarNames(allVarNames,allVarNames.orig,colnames(defRun),
+																	 attr(defRun,'origColNames'))
+elementCounts <- table(plotVars$entry[plotVars$name!=plotVars$entry])
+for(entry in names(elementCounts)){
+	cat(sprintf('%s: %i elements\n',allVarNames.orig[match(entry,allVarNames)],
+							elementCounts[[entry]]))
+}
 yearsToPlot.lst <- list()
 for (y.i in 1:length(yearsToPlot.names)){
 	if(yearsToPlot.names[y.i] == 'allYears'){
@@ -116,18 +124,17 @@ for(plotWeightType in plotWeightTypes){
 	}
 	samplePoints$plotWeight[is.na(samplePoints$plotWeight)] <- 0
 	varsMissing <- 0
-	for(varName.i in 1:length(allVarNames)){
-		varName <- allVarNames[varName.i]
-		varUnit <- unlist(vars_info$Unit[which(vars_info$cleanNames==varName)])
+	for(varName.i in seq_len(nrow(plotVars))){
+		varName <- plotVars$name[varName.i]
+		varUnit <- unlist(vars_info$Unit[which(vars_info$cleanNames==plotVars$entry[varName.i])])
 		if(is.null(varUnit)||length(varUnit)==0){
 			varUnit <- 'unit not specified'
 		} else if (length(varUnit)>1){
 			varUnit <- varUnit[1]
 		}
-		varName.orig <- allVarNames.orig[which(allVarNames==varName)]
-		if(length(varName.orig)>1){varName.orig<-varName.orig[1]}
+		varName.orig <- plotVars$orig[varName.i]
 		cat(sprintf('(%i of %i) Plotting %s...\n  ',
-								varName.i,length(allVarNames),varName.orig))
+								varName.i,nrow(plotVars),varName.orig))
 		# assemble the list of all figures that will be created to check if they arleady
 		# exit and we can skip
 		figuresToBeCreated <- c()
@@ -388,6 +395,6 @@ for(plotWeightType in plotWeightTypes){
 	}
 	if(varsMissing>0){
 		cat(sprintf('%i of %i variables have no file in %s, not plotted\n',
-								varsMissing,length(allVarNames),file.path(outputFolder,outputTypeFolder)))
+								varsMissing,nrow(plotVars),file.path(outputFolder,outputTypeFolder)))
 	}
 }

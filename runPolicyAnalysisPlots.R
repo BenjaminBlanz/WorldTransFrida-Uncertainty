@@ -19,7 +19,7 @@ vars[['sta']] <- readPerVarFile(file = file.path(location.output,'detectedParmSp
 vars[['pop']] <- readPerVarFile(file = file.path(location.output,'detectedParmSpace','PerVarFiles-RDS','demographics_population.RDS'))
 vars[['gdp']] <- readPerVarFile(file = file.path(location.output,'detectedParmSpace','PerVarFiles-RDS','gdp_real_gdp_in_2021c.RDS'))
 vars[['inf']] <- readPerVarFile(file = file.path(location.output,'detectedParmSpace','PerVarFiles-RDS','inflation_inflation_rate.RDS'))
-vars[['rdu']] <- readPerVarFile(file = file.path(location.output,'detectedParmSpace','PerVarFiles-RDS','gdp_future_year_in_recession.RDS'))
+vars[['rdu']] <- readPerVarFile(file = file.path(location.output,'detectedParmSpace','PerVarFiles-RDS','gdp_future_time_in_recession.RDS'))
 
 vars$sta1d <- vars$sta
 vars$sta1d[,3:(ncol(vars$sta1d)-1)] <- vars$sta1d[,4:(ncol(vars$sta1d))] - vars$sta1d[,3:(ncol(vars$sta1d)-1)]

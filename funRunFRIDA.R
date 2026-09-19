@@ -1030,7 +1030,7 @@ runFridaParmsByIndex <- function(runid,silent=T,policyMode=F,testStellaGood=F){
 										 			 sprintf('unchanged since %s',
 										 			 				format(outputFile.mtimeAfter,'%Y-%m-%d %H:%M:%OS3')))))
 			}
-			runDat <- read.csv(outputFile)
+			runDat <- read.csv(outputFile,check.names=FALSE)
 			origColNames <- unname(unlist(read.table(outputFile,
 															 sep=',')[1,]))[-1]
 			colnames(runDat) <- cleanNames(colnames(runDat))
@@ -1169,7 +1169,8 @@ runFRIDASpecParms <- function(parVect,silent=T,testStellaGood=F){
 								 			 sprintf('unchanged since %s',
 								 			 				format(outputFile.mtimeAfter,'%Y-%m-%d %H:%M:%OS3')))))
 	}
-	runDat <- read.csv(outputFile)
+	runDat <- read.csv(outputFile,check.names=FALSE)
+	origColNames <- colnames(runDat)[-1]
 	colnames(runDat) <- cleanNames(colnames(runDat))
 	if('year' %in% colnames(runDat) &&
 		 sum(is.na(runDat$year))<nrow(runDat)){
@@ -1177,26 +1178,55 @@ runFRIDASpecParms <- function(parVect,silent=T,testStellaGood=F){
 	}
 	rownames(runDat) <- runDat$year
 	runDat <- runDat[,-1]
+	# the Stella column names, which a clean name cannot be turned back into
+	attr(runDat,'origColNames') <- origColNames
 	return(runDat)
 }
 
 # helpers ####
-# takes a vector of e.g. column names and brings them into 
-# a comparable standard format
-# also drops the trailing 1 of the run id which we do not use
-# as we only have single run setups of frida
+# takes a vector of e.g. column names and brings them into
+# a comparable standard format: lower case, with _ for anything but letters,
+# digits and the * of a wildcard array dimension. Drops the index of the first
+# array dimension, the run, and names Stella's Time column year.
 cleanNames <- function(colNames){
-	gsub('time','year',
-			 gsub('_+$','',
-			 		 gsub('_+','_',
-			 		 		 gsub(',','_',
-			 		 		 		 gsub('\\$','',
-			 		 		 		 		 gsub('_1','',
-			 		 		 		 		 		 gsub('\\]','_',
-			 		 		 		 		 		 		 gsub('\\[\\*','_',
-				 		 		 		 		 		 		 gsub('\\[\\d+','_',
-				 		 		 		 		 		 		 		 gsub('[. ]','_',
-				 		 		 		 		 		 		 		 		 tolower(colNames)))))))))))
+	sub('^time$','year',
+			gsub('_+$','',
+					 gsub('_+','_',
+					 		 gsub('[^a-z0-9_*]','_',
+					 		 		 gsub(',','_',
+					 		 		 		 gsub('\\$','',
+					 		 		 		 		 gsub('\\]','_',
+					 		 		 		 		 		 gsub('\\[\\*','_',
+					 		 		 		 		 		 		 gsub('\\[\\d+','_',
+					 		 		 		 		 		 		 		 gsub('[. ]','_',
+					 		 		 		 		 		 		 		 		 tolower(colNames)))))))))))
+}
+
+# Function to expand per var names that contain more than one array dimension
+# specified as a wildcard [*] (the first array dimension is the runID which is
+# already taken care of). Further array dimensions are expanded, an additional
+# variable per value. E.g. Coastal Assets[*,*] becomes Coastal Assets[*, insufficient]
+# and Coastal Assets[*, well_protected].
+funExpandArrayVarNames <- function(varNames,varNames.orig,available,available.orig=available){
+	rows <- list()
+	for(i in seq_along(varNames)){
+		elements <- integer(0)
+		if(grepl('*',varNames[i],fixed=TRUE)){
+			# clean names hold nothing but letters, digits, _ and *
+			pattern <- paste0('^',gsub('*','.+',varNames[i],fixed=TRUE),'$')
+			elements <- which(grepl(pattern,available) & !available%in%varNames)
+		}
+		if(length(elements)==0){
+			rows[[i]] <- data.frame(name=varNames[i],orig=varNames.orig[i],entry=varNames[i])
+		} else {
+			rows[[i]] <- data.frame(name=available[elements],
+															orig=sub('\\[\\d+','[*',available.orig[elements]),
+															entry=varNames[i])
+		}
+	}
+	res <- do.call(rbind,rows)
+	rownames(res) <- NULL
+	return(res)
 }
 
 idxOfVarName <- function(varNames,vecOfVarNames){

@@ -61,7 +61,8 @@ for(r in 1:nrow(calDat.orig)){
 }
 sink()
 # read in the cleaned and transformed file, this time read numbers as numbers etc.
-calDat.orig <- read.csv(file.path(location.output,'Calibratio_Data_Cleaned_and_Transposed.csv'))
+calDat.orig <- read.csv(file.path(location.output,'Calibratio_Data_Cleaned_and_Transposed.csv'),
+												check.names=FALSE)
 colnames(calDat.orig) <- cleanNames(colnames(calDat.orig))
 rownames(calDat.orig) <- calDat.orig$year
 calDat <- calDat.orig <- calDat.orig[,-1]
