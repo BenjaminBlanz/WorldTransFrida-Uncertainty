@@ -1,7 +1,9 @@
 # migrateVarNames.R ####
 #
 # Renames the per var files and plot files of existing runs, and the variable
-# names inside their result files, to the names the current cleanNames gives.
+# names inside their result files (calDat.RDS, the $variable of the plot data,
+# the header of plot data csv files of the older layout), to the names the
+# current cleanNames gives.
 # Before its rewrite cleanNames dropped every _1 (Aged 1 to 20 Years became
 # aged_to_20_years) and turned every time into year (future time in recession
 # became future_year_in_recession).
@@ -199,8 +201,21 @@ toRewrite <- runFiles[vapply(runFiles,function(f){
 	obj <- tryCatch(readRDS(f),error=function(e){NULL})
 	!is.null(obj)&&!identical(renameInside(obj),obj)
 },logical(1))]
-cat(sprintf('\n%i run files hold old names and are rewritten, %i renamed plot data files get their $variable set\n',
-						length(toRewrite),sum(kindOf(toRename)=='plot data'&grepl('\\.RDS$',toRename)&!taken)))
+# plot data csv files of an older layout have a "defaultRun.<variable>" column
+# for every variable
+oldTokens <- paste0('"defaultRun.',names(newOf),'"')
+newTokens <- paste0('"defaultRun.',newOf,'"')
+csvFiles <- files[kindOf(files)=='plot data'&grepl('\\.csv$',files)]
+csvHeaders <- vapply(csvFiles,function(f){
+	tryCatch(readLines(f,n=1,warn=FALSE)[1],error=function(e){''})
+},character(1))
+csvToRewrite <- csvFiles[vapply(csvHeaders,function(h){
+	!is.na(h)&&any(vapply(oldTokens,grepl,logical(1),x=h,fixed=TRUE))
+},logical(1))]
+cat(sprintf(paste0('\n%i run files hold old names and are rewritten, %i renamed plot data files get their $variable set,\n',
+									 '%i plot data csv files of the older layout get their header rewritten\n'),
+						length(toRewrite),sum(kindOf(toRename)=='plot data'&grepl('\\.RDS$',toRename)&!taken),
+						length(csvToRewrite)))
 
 if(!applyChanges){
 	cat('\nnothing changed, run with --apply to make these changes\n')
@@ -216,7 +231,18 @@ logChange <- function(action,from,to){
 	}
 	cat(sprintf('%s\t%s\t%s\n',action,from,to),file=logFile,append=TRUE)
 }
-cat('\nrenaming...')
+# the headers first, in place, while the files still have the paths they were
+# found under
+cat('\nrewriting csv headers...')
+for(f in csvToRewrite){
+	lines <- readLines(f,warn=FALSE)
+	for(t.i in seq_along(oldTokens)){
+		lines[1] <- gsub(oldTokens[t.i],newTokens[t.i],lines[1],fixed=TRUE)
+	}
+	writeLines(lines,f)
+	logChange('rename inside',f,f)
+}
+cat('done\nrenaming...')
 for(i in which(!taken)){
 	if(!file.rename(toRename[i],targets[i])){
 		stop(sprintf('could not rename %s\n',toRename[i]))
