@@ -87,7 +87,7 @@ Two things differ from the cluster:
 - (execute ```source('runPlotAllRuns.R')```)
 
 ### Digest for publication
-For a Zenodo upload or the code behind paper figures, ```runMakeDigest.R``` copies what a run needs without the per var files and figures: the metadata, parameter space, ```samplePoints.csv.gz```, the representative sample and the plot data. The digest of a run goes into ```<run>-digest``` next to it, and its ```digest.txt``` lists what was left out and the md5 of each file.
+For a Zenodo upload or the code behind paper figures, ```runMakeDigest.R``` copies what a run needs without the per var files and figures: the metadata, parameter space, ```samplePoints.csv.gz```, the representative sample, the run scripts and config (```runScriptsAndConfiguration/```) and the plot data. The digest of a run goes into ```<run>-digest``` next to it, and its ```digest.txt``` lists what was left out and the md5 of each file.
 
 ```sh
 Rscript runMakeDigest.R [--figures] [--overwrite] [--out <dir>] <run or folder of runs> [...]

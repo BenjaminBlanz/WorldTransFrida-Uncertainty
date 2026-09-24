@@ -2,13 +2,15 @@
 #
 # Writes a digest of result folders, for Zenodo uploads and for the code behind
 # paper figures: the metadata, parameter space, sample points, representative
-# sample and plot data of a run, without the per var files and the figures.
+# sample, run scripts and plot data of a run, without the per var files and the
+# figures.
 # A 10k sample run of 4.6 GB gives a digest of 85 MB, 54 MB of it sample points.
 #
 # The digest holds
 #   every top level file of the run up to 50 MB, samplePoints only as
 #   samplePoints.csv.gz
 #   repSample/
+#   runScriptsAndConfiguration/, the scripts and config the run was made with
 #   figures/ without the png and pdf files, i.e. the plot data and the config of
 #   the plotted runs; --figures copies all of figures/
 #   digest.txt, naming the source, what was left out, and the md5 of each file
@@ -37,6 +39,7 @@ if(!is.na(outDir)){
 	outDir <- normalizePath(outDir)
 }
 maxFileSize <- 50*1024^2
+keptDirs <- c('repSample','runScriptsAndConfiguration')
 
 # runs ####
 # a run folder has run metadata, figures or detectedParmSpace in it. Runs may be
@@ -108,10 +111,10 @@ makeDigest <- function(run){
 		write.csv(readRDS(file.path(run,'samplePoints.RDS')),gzfile(file.path(partial,'samplePoints.csv.gz')))
 	}
 
-	# repSample and figures
-	if(dir.exists(file.path(run,'repSample'))){
-		for(f in list.files(file.path(run,'repSample'),recursive=TRUE,all.files=TRUE)){
-			copyRel(file.path('repSample',f))
+	# folders copied whole, and figures
+	for(d in keptDirs[dir.exists(file.path(run,keptDirs))]){
+		for(f in list.files(file.path(run,d),recursive=TRUE,all.files=TRUE)){
+			copyRel(file.path(d,f))
 		}
 	}
 	if(dir.exists(file.path(run,'figures'))){
@@ -130,7 +133,7 @@ makeDigest <- function(run){
 	}
 
 	# other folders
-	for(d in entries[isDir&!entries%in%c('repSample','figures')]){
+	for(d in entries[isDir&!entries%in%c(keptDirs,'figures')]){
 		leftOut <- rbind(leftOut,data.frame(path=paste0(d,'/'),size=dirSize(file.path(run,d))))
 	}
 
