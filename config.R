@@ -329,8 +329,15 @@ if(file.exists(location.output)){
 	cat('  created\n')
 }
 # save the config to the output folder
-dir.create(location.output.runScripts,recursive = T,showWarnings = F)
-file.copy('config.R',location.output.runScripts,overwrite = T)
+# A run that only post processes an existing ensemble sets recordRunProvenance to
+# FALSE and leaves the record of the ensemble that produced the data alone.
+if(!exists('recordRunProvenance')){
+	recordRunProvenance <- TRUE
+}
+if(recordRunProvenance){
+	dir.create(location.output.runScripts,recursive = T,showWarnings = F)
+	file.copy('config.R',location.output.runScripts,overwrite = T)
+}
 # which config file this run is using. The submit script rewrites every mention
 # of config.R in its copy of this file, so this ends up naming the copy, which is
 # what the run metadata needs to diff against the default config.
@@ -368,7 +375,7 @@ file.copy(file.path(location.frida.configs,climateOverrideSpecFileTS),
 # Only the process that runs the analysis does this. Workers re-source this config
 # from their own work dirs, where writing the file would neither be correct nor
 # useful. They are the ones without setupTMPFS.R, same test as above.
-if(file.exists('setupTMPFS.R')&&exists('funWriteRunMetadataFile',mode='function')){
+if(recordRunProvenance&&file.exists('setupTMPFS.R')&&exists('funWriteRunMetadataFile',mode='function')){
 	fridaVersion <- funWriteRunMetadataFile(
 		location.output,location.frida.git,location.frida,name.output,
 		configFile=name.configFile,

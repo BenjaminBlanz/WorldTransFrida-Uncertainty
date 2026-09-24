@@ -11,6 +11,9 @@ cat('\nRunning runDetermineRepresentativeSample.R\n\n')
 
 library('parallel')
 source('initialise.R')
+# this draws a sample out of an ensemble that has already run, so the record of
+# that ensemble stays as it is
+recordRunProvenance <- FALSE
 source('config.R')
 
 if(exists('preexsistingBaselineFolder')&&!is.na(preexsistingBaselineFolder)){
@@ -57,44 +60,11 @@ for(f.i in 1:length(varsToRead)){
 # determine the values of the desired quantiles in all of the variables
 for(plotWeightType in plotWeightTypes){
 	cat('determining weights...\n')
-	if(plotWeightType %in% c('likelihood','logCutoff','linearly','completeEqually')){
-		# log like ####
-		cat(' reading log likelihoods...\n')
-		logLike.perVar <- readPerVarFile(file.path(location.runFiles,'logLike'),outputType = perVarOutputTypes[1])
-		logLike <- rep(NA,nrow(samplePoints))
-		logLike[logLike.perVar$id] <- logLike.perVar$logLike
-		rm(logLike.perVar)
-		# whether a run completed comes from the run status rather than from the log
-		# likelihood markers, indexed by id so that a run missing from the file does
-		# not shift everything after it
-		runStatus <- funReadRunStatus(location.output,outputType = perVarOutputTypes[1],
-																	numSample = nrow(samplePoints))
-		completed <- rep(NA,nrow(samplePoints))
-		completed[runStatus$id] <- runStatus$completed
-		likelihoodOK <- rep(NA,nrow(samplePoints))
-		likelihoodOK[runStatus$id] <- runStatus$likelihoodOK
-		samplePoints$logLike <- logLike
-		logLike.ecdf <- ecdf(logLike)
-	}
-	if(plotWeightType=='likelihood'){
-		samplePoints$plotWeight <- exp(logLike)
-	} else if(plotWeightType == 'logCutoff'){
-		# somewhat wrong likelihood weighting
-		samplePoints$plotWeight <- logLike.ecdf(logLike)
-	} else if(plotWeightType == 'equaly'){
-		# equal weighting
-		samplePoints$plotWeight <- rep(1,nrow(samplePoints))
-	} else if(plotWeightType == 'completeEqually'){
-		# equal weighting of completed runs. A run counts when it reached the final
-		# year and its log likelihood is a real value. likelihoodOK is NA where there
-		# is no calibration likelihood at all, and that must not zero every weight.
-		samplePoints$plotWeight <- 0
-		samplePoints$plotWeight[completed%in%1 & !(likelihoodOK%in%0)] <- 1
-	} else if(plotWeightType == 'linearly'){
-		samplePoints$plotWeight <- order(logLike)/nrow(samplePoints)
-	} else {
-		stop('unknown plotWeightType\n'	)
-	}
+	plotWeight <- funPlotWeights(plotWeightType,location.output,perVarOutputTypes[1],
+															 nrow(samplePoints))
+	completed <- attr(plotWeight,'completed')
+	samplePoints$logLike <- attr(plotWeight,'logLike')
+	samplePoints$plotWeight <- as.vector(plotWeight)
 	# With no weight anywhere every weighted quantile below is undefined, and the
 	# search for the sample points closest to them dies inside the mini cluster
 	# on a which.min of nothing, reported as 'replacement has length zero' with
@@ -105,17 +75,17 @@ for(plotWeightType in plotWeightTypes){
 												'%i of %i runs completed. Check the parameter ranges the\n',
 												'sampling drew from and the run completion summary in runMetadata.txt.\n'),
 								 plotWeightType,
-								 if(exists('completed')){sum(completed%in%1)}else{NA},
+								 sum(completed%in%1),
 								 nrow(samplePoints)))
 	}
 	# median ####
 	medians <- array(NA,dim=c(nrow(defRun),length(varsToRead)))
 	for(var.i in 1:length(varsToRead)){
 		for(year.i in 1:nrow(defRun)){
-			medians[year.i,var.i] <- weighted.quantile(runsData[year.i,,var.i],
-																								 w = samplePoints$plotWeight,
-																								 probs = 0.5,
-																								 na.rm = T)
+			medians[year.i,var.i] <- spatstat.univar::weighted.quantile(runsData[year.i,,var.i],
+																																	w = samplePoints$plotWeight,
+																																	probs = 0.5,
+																																	na.rm = T)
 		}
 	}
 	cat('...weights determined\n')
@@ -128,10 +98,13 @@ for(plotWeightType in plotWeightTypes){
 	names(stdDevs) <- varsToRead
 	for(var.i in 1:length(varsToRead)){
 		errors <- array(NA,dim=c(nrow(defRun),nrow(samplePoints)))
-		for(year.i in 1:length(varsToRead)){
+		for(year.i in 1:nrow(defRun)){
 			errors[year.i,] <- runsData[year.i,,var.i] - medians[year.i,var.i]
 		}
-		stdDevs[var.i] <- sd(as.vector(errors),na.rm=T)
+		# a run the weighting drops can hold the Inf of a diverged model run, which
+		# would take the standard deviation with it
+		errors <- errors[,which(samplePoints$plotWeight>0)]
+		stdDevs[var.i] <- sd(errors[is.finite(errors)])
 	}
 	rm(errors)
 
@@ -144,15 +117,16 @@ for(plotWeightType in plotWeightTypes){
 			errors <- array(NA,dim=c(nrow(defRun),nrow(samplePoints)))
 			SSEs <- rep(NA,nrow(samplePoints))
 			for(year.i in 1:nrow(defRun)){
-				ciBounds[year.i] <- weighted.quantile(runsData[year.i,,var.i],
-																							w = samplePoints$plotWeight,
-																							probs = subSample.Ps[p.i],
-																							na.rm = T)
+				ciBounds[year.i] <- spatstat.univar::weighted.quantile(runsData[year.i,,var.i],
+																															 w = samplePoints$plotWeight,
+																															 probs = subSample.Ps[p.i],
+																															 na.rm = T)
 				errors[year.i,] <- runsData[year.i,,var.i] - ciBounds[year.i]
 			}
-			for(sample.i in 1:nrow(samplePoints)){
-				SSEs[sample.i] <- sum(samplePoints$plotWeight[sample.i] *
-																(errors[,sample.i])^2)
+			# distance of the run from the quantile path. The weights shape the path;
+			# runs outside the plotted distribution, those without weight, stay NA.
+			for(sample.i in which(samplePoints$plotWeight>0)){
+				SSEs[sample.i] <- sum((errors[,sample.i])^2)
 			}
 			minSSEidc[var.i] <- which.min(SSEs)
 		}
@@ -178,7 +152,8 @@ for(plotWeightType in plotWeightTypes){
 	repSample <- repSample[,!colnames(repSample)%in%c('plotWeight','logLike')]
 	cat('done\n')
 	cat('writing out to subSampleParameterValues.csv ...')
-	location.output.repSample <- file.path(location.output,'repSample',plotWeightType)
+	location.output.repSample <- file.path(location.output,'repSample',
+																				 paste0(plotWeightType,'-',subSample.NumSamplePerVar))
 	dir.create(location.output.repSample,F,T)
 	write.table(repSample,file.path(location.output.repSample,'subSampleParameterValues.csv'),
 							append = F,sep = ',',row.names = F)

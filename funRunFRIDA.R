@@ -899,6 +899,53 @@ funReadRunStatus <- function(location.output,outputType=perVarOutputTypes[1],
 	return(runStatus)
 }
 
+# The weight each run of an ensemble carries in the plotted distribution, and so
+# in the representative sample drawn from it. E.g. 'completeEqually' on the 100000
+# runs of an ensemble of which 85312 completed gives 85312 ones and 14688 zeros.
+# The log likelihoods and the completion of each run come along as the
+# attributes logLike and completed, indexed by run id like the weights.
+funPlotWeights <- function(plotWeightType,location.output,outputType,numSample){
+	location.runFiles <- file.path(funRunStatusFolders(location.output)$detectedParmSpace,
+																 paste0('PerVarFiles-',outputType))
+	logLike.perVar <- readPerVarFile(file.path(location.runFiles,'logLike'),outputType=outputType)
+	logLike <- rep(NA,numSample)
+	logLike[logLike.perVar$id] <- logLike.perVar$logLike
+	# whether a run completed comes from the run status rather than from the log
+	# likelihood markers, indexed by id so that a run missing from the file does
+	# not shift everything after it
+	runStatus <- funReadRunStatus(location.output,outputType=outputType,numSample=numSample)
+	completed <- rep(NA,numSample)
+	completed[runStatus$id] <- runStatus$completed
+	likelihoodOK <- rep(NA,numSample)
+	likelihoodOK[runStatus$id] <- runStatus$likelihoodOK
+	if(plotWeightType=='likelihood'){
+		plotWeight <- exp(logLike)
+	} else if(plotWeightType=='logCutoff'){
+		# somewhat wrong likelihood weighting
+		plotWeight <- ecdf(logLike)(logLike)
+	} else if(plotWeightType=='logLikelihood'){
+		# somewhat wrong likelihood weighting
+		rangeLogLike <- range(logLike,na.rm=T)
+		plotWeight <- (logLike-rangeLogLike[1])/(rangeLogLike[2]-rangeLogLike[1])
+	} else if(plotWeightType=='equaly'){
+		plotWeight <- rep(1,numSample)
+	} else if(plotWeightType=='completeEqually'){
+		# equal weighting of completed runs. A run counts when it reached the final
+		# year and its log likelihood is a real value. likelihoodOK is NA where there
+		# is no calibration likelihood at all, and that must not zero every weight.
+		plotWeight <- rep(0,numSample)
+		plotWeight[completed%in%1 & !(likelihoodOK%in%0)] <- 1
+	} else if(plotWeightType=='linearly'){
+		plotWeight <- order(logLike)/numSample
+	} else {
+		stop('unknown plotWeightType\n')
+	}
+	plotWeight[is.na(plotWeight)] <- 0
+	attr(plotWeight,'logLike') <- logLike
+	attr(plotWeight,'completed') <- completed
+	return(plotWeight)
+}
+
 # The completion of an ensemble as lines of text, for the run metadata file and
 # for the terminal.
 funRunCompletionSummary <- function(runStatus,numSample=NULL,maxYears=50){
