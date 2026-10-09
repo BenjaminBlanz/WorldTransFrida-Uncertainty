@@ -86,8 +86,53 @@ extraExportFile='frida_extra_variables_to_export_list.csv'
 ##############################################################################
 ########            Overrides from command line                    ###########
 ##############################################################################
+function usage(){
+  cat <<EOF
+Usage: $0 [option value]...
+Prepares and submits an uncertainty analysis job. Values in brackets are the
+ones currently set.
+
+  -s, --expIDPreString VAL                   experiment id prefix [${expIDPreString}]
+  -w, --numWorkers N                         parallel workers [${numWorkers}]
+  -n, --numSample N                          samples [${numSample}]
+  -k, --chunkSizePerWorker N                 samples per worker chunk [${chunkSizePerWorker}]
+      --lcr, --likeCutoffRatio N             likelihood cutoff ratio [${likeCutoffRatio}]
+  -h, --hours N                              SLURM time limit, hours [${hours}]
+  -m, --minutes N                            SLURM time limit, minutes [${minutes}]
+  -M, --memorySize VAL                       node memory, 256G, 512G or 1024G [${memorySize}]
+  -a, --account VAL                          SLURM account [${account}]
+  -p, --partition VAL                        SLURM partition [${partition}]
+  -e, --email VAL                            mail address for job notifications [${email}]
+  -c, --cid, --copyID VAL                    output folder to copy ranges and samples from [${copyID}]
+      --cpps, --copyParmRangesAndScales VAL  copy parameter ranges and scales, true/false [${copyParmRangesAndScales}]
+      --cpsp, --copySamplePoints VAL         copy sample points, true/false [${copySamplePoints}]
+      --frida, --FRIDA DIR                   FRIDA model folder [${FRIDA}]
+      --pol, --policyFile FILE               policy, in FRIDA-configs/ [${policyFile}]
+      --cfb, --climateFeedbackFile FILE      climate feedback switches, in FRIDA-configs/ [${climateFeedbackFile}]
+      --sta, --climateSTAOverrideFile FILE   STA override, in FRIDA-configs/ [${climateSTAOverrideFile}]
+      --stats, --climateSTAOverrideFileTS FILE  STA override time series, in FRIDA-configs/ [${climateSTAOverrideFileTS}]
+      --blp, --baselineParmFile FILE         baseline parameters, in FRIDA-configs/ [${baselineParmFile}]
+      --infoFile FILE                        parameter info, in FRIDA-info/, empty for automatic [${infoFile}]
+      --integerParmsFile FILE                integer parameter list, in FRIDA-info/ [${integerParmsFile}]
+      --excludeParmFile FILE                 parameter exclusion list, in FRIDA-info/ [${excludeParmFile}]
+      --extraExportFile FILE                 extra variables to export, in FRIDA-info/ [${extraExportFile}]
+      --conf, --configFile FILE              config template [${configFile}]
+      --baseOutputDir DIR                    output folder [${baseOutputDir}]
+      --outputType VAL                       csv, RDS or both [${outputType}]
+      --plt, --plotting VAL                  plot all runs, true/false [${plotting}]
+      --drs, --detRepSample VAL              determine representative samples, true/false [${detRepSample}]
+      --frb, --forceParBounds VAL            force parameter bounds, T/F [${forceParBounds}]
+      --sym, --symmetricRanges VAL           symmetric ranges [${symmetricRanges}]
+      --help                                 show this help
+EOF
+}
+
 while [ $# -gt 0 ]; do
   case "$1" in
+    --help)
+      usage
+      exit 0
+      ;;
     -s|--expIDPreString)
       expIDPreString="$2"
       ;;
@@ -116,7 +161,7 @@ while [ $# -gt 0 ]; do
       partition="$2"
       ;;
     -e|--email)
-      partition="$2"
+      email="$2"
       ;;
     -c|--cid|--copyID)
       copyID="$2"
@@ -163,9 +208,6 @@ while [ $# -gt 0 ]; do
   	--lcr|--likeCutoffRatio)
   		likeCutoffRatio="$2"
   		;;
-    --configFile)
-      configFile="$2"
-      ;;
     --baseOutputDir)
       baseOutputDir="$2"
       ;;
@@ -185,7 +227,7 @@ while [ $# -gt 0 ]; do
     	configFile="$2"
     	;;
     *)
-      printf "Error: Invalid argument: $1 \n"
+      printf "Error: Invalid argument: $1, see --help\n"
       exit 1
   esac
   shift
@@ -245,6 +287,17 @@ if [ -n "${Rmodule}" ] && command -v module >/dev/null 2>&1; then
 fi
 if ! Rscript -e "source('initialise.R')"; then
   echo "Error: required R packages are missing, see above"
+  exit 1
+fi
+
+# stella simulator, e.g. an expired license only shows when a model is run
+if [ ! -f "${FRIDA}/FRIDA.stmx" ]; then
+  echo "Error: '${FRIDA}/FRIDA.stmx' not found"
+  exit 1
+fi
+if ! stellaOut=$(Stella_Simulator_Linux/stella_simulator -i -x -q "${FRIDA}/FRIDA.stmx" 2>&1); then
+  echo "${stellaOut}"
+  echo "Error: stella simulator failed to run ${FRIDA}/FRIDA.stmx, see above"
   exit 1
 fi
 
