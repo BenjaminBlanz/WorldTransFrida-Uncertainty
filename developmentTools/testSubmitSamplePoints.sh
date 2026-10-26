@@ -21,12 +21,17 @@ git ls-files -z --cached --others --exclude-standard | tar --null -T - -cf - | t
 mkdir -p "$repo/fixtureModel"
 echo 'a model' > "$repo/fixtureModel/FRIDA.stmx"
 printf 'Variable,Value,Min,Max\n"p.a[1]",2,0,10\n"p.b[1]",5,0,10\n' > "$repo/fixtureModel/Parameter Info.csv"
+# a model from before Parameter Info.csv, config.R then reads FRIDA-info/frida_info_preV3.csv
+mkdir -p "$repo/fixtureModelPreV3"
+echo 'an older model' > "$repo/fixtureModelPreV3/FRIDA.stmx"
+printf 'Variable,No Sensi,Value,Min,Max\n"p.a[1]",0,1.5,0,10\n"p.b[1]",0,3.5,0,10\n' > "$repo/FRIDA-info/frida_info_preV3.csv"
 mkdir -p "$repo/Stella_Simulator_Linux"
 printf '#!/bin/sh\nexit 0\n' > "$repo/Stella_Simulator_Linux/stella_simulator"
 chmod +x "$repo/Stella_Simulator_Linux/stella_simulator"
 # the package check of the submit script needs every package of a run, which
 # runPrepareSamplePoints.R does not
 echo 'invisible(TRUE)' > "$repo/initialise.R"
+printf 'FRIDA.FQN\nGDP.Real GDP in 2021c[1]\n' > "$repo/FRIDA-info/frida_extra_variables_to_export_list.csv"
 printf '#!/bin/sh\necho Submitted batch job 1\n' > "$tmp/bin/sbatch"
 chmod +x "$tmp/bin/sbatch"
 export PATH="$tmp/bin:$PATH"
@@ -96,6 +101,20 @@ grep -v '^name.samplePointsFile <-' "$repo/config.R" > "$repo/olderConfig.R"
 submit --samplePointsFile ptsNoCase.csv -s spOlderConfig --conf olderConfig.R
 check 'a config template without name.samplePointsFile stops' \
 	"[ $? -ne 0 ] && grep -q 'name.samplePointsFile' '$tmp/log'"
+
+echo 'a model without Parameter Info.csv'
+submit --samplePointsFile ptsNoCase.csv -s spPreV3 --frida fixtureModelPreV3
+check 'the submit succeeds' "[ $? -eq 0 ]"
+check 'with the model values of frida_info_preV3.csv' \
+	"grep -q '\"p.a\\[1\\]\",1.5,' '$repo/FRIDA-info/spPreV3-S2-policy_EMB-ClimateFeedback_On-ClimateSTAOverride_Off-samplePointsParms.csv'"
+
+echo 'copySamplePoints set in the input section'
+sed -i 's/^copySamplePoints=.*/copySamplePoints="true"/' "$repo/submit_UncertaintyAnalysisLevante.sh"
+submit --samplePointsFile ptsNoCase.csv -s spInputCopy
+check 'the supplied points take its place' "[ $? -eq 0 ] && grep -q 'not copying' '$tmp/log'"
+check 'and nothing is copied' "[ -f '$repo/workOutput/spInputCopy-S2-policy_EMB-ClimateFeedback_On-ClimateSTAOverride_Off/suppliedSamplePoints.RDS' ]"
+submit --samplePointsFile ptsNoCase.csv -s spInputCopy --cpsp true
+check 'given on the command line it still stops' "[ $? -ne 0 ] && grep -q 'samplePointsFile' '$tmp/log'"
 
 echo
 echo "$ok ok, $fail failed"

@@ -183,6 +183,7 @@ while [ $# -gt 0 ]; do
       ;;
     --cpsp|--copySamplePoints)
       copySamplePoints="$2"
+      copySamplePointsGiven="$2"
       ;;
     --frida|--FRIDA)
       FRIDA="$2"
@@ -264,9 +265,13 @@ if [ -n "${samplePointsFile}" ]; then
     echo "Error: --samplePointsFile can not be combined with${replacedBySamplePoints}: it makes the info file and ranges from the csv and varies no integer parms"
     exit 1
   fi
-  if [ "${copySamplePoints}" = "true" ]; then
+  if [ "${copySamplePointsGiven}" = "true" ]; then
     echo "Error: --samplePointsFile and --cpsp true both supply the sample points, use one"
     exit 1
+  fi
+  if [ "${copySamplePoints}" = "true" ]; then
+    echo "Note: not copying the sample points of ${copyID} as copySamplePoints in the input section says, they come from ${samplePointsFile}"
+    copySamplePoints="false"
   fi
   if [ ! -f "${samplePointsFile}" ]; then
     echo "Error: samplePointsFile '${samplePointsFile}' not found"
@@ -337,7 +342,12 @@ fi
 if [ -n "${samplePointsFile}" ]; then
   staging="${baseOutputDir}/.samplePoints-$$"
   trap 'rm -rf "${staging}"' EXIT
-  if ! prepOut=$(Rscript runPrepareSamplePoints.R "${samplePointsFile}" "${FRIDA}" "${staging}"); then
+  # the model values come from where config.R takes the parameter info from
+  parameterInfo="${FRIDA}/Parameter Info.csv"
+  if [ ! -f "${parameterInfo}" ]; then
+    parameterInfo='FRIDA-info/frida_info_preV3.csv'
+  fi
+  if ! prepOut=$(Rscript runPrepareSamplePoints.R "${samplePointsFile}" "${parameterInfo}" "${staging}"); then
     echo "${prepOut}"
     echo "Error: the sample points in ${samplePointsFile} can not be used, see above"
     exit 1
