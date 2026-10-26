@@ -110,6 +110,10 @@ shareOfYearsThatYlimShouldAdjustTo <- 0.9
 # If this is left empty, no baseline parms are applied (the ones within the model
 # files will be used).
 name.baselineParmFile <- NA
+# csv of sample points to run instead of a sobol sequence, set by the submit
+# script's --samplePointsFile, which puts them into the output folder. Runs are
+# numbered by csv row, runCases.csv.gz there maps them to the csv's Case column.
+name.samplePointsFile <- NA
 # number of samples for the sobol sequence across all dimensions
 numSample <- 1e4
 # by default sobol sequence covers the entire range between min and max with 

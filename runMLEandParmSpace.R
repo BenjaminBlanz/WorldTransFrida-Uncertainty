@@ -54,7 +54,13 @@ resSigma.names <- array(paste('s',
 # reads frida_info.csv and outputs the SampleParms
 # also removes parms we will not sample
 # and complains about invalid lines in frida_info.csv
+samplePointsSupplied <- exists('name.samplePointsFile')&&!is.na(name.samplePointsFile)&&
+	nzchar(name.samplePointsFile)
 integerParms <- read.csv(file.path(location.frida.info,name.frida_integer_parms))
+# supplied sample points carry every parameter they vary
+if(samplePointsSupplied){
+	integerParms <- integerParms[0,]
+}
 excludedParmsForBeingIntegers <- integerParms$Variable
 sampleParms.orig <- sampleParms <- prepareSampleParms(excludeNames=excludedParmsForBeingIntegers)
 # The parameters whose range is handed to us in frida_external_ranges.csv. Read
@@ -781,11 +787,17 @@ while(newMaxFound){
 	## sample points ####
 	# add the integer parms back
 	sampleParms <- prepareSampleParms(sampleParms = sampleParms,integerParms = integerParms)
-	samplePoints <- generateSobolSequenceForSampleParms(sampleParms,numSample,
-																											restretchSamplePoints,
-																											ignoreExistingResults = redoAllCalc,
-																											integerParms = integerParms)
-	if(ncol(samplePoints) != nrow(sampleParms) || nrow(samplePoints)!=numSample){
+	if(samplePointsSupplied){
+		cat(sprintf('Reading the sample points supplied in %s...',name.samplePointsFile))
+		samplePoints <- funLoadSuppliedSamplePoints(location.output,sampleParms,numSample)
+		cat('done\n')
+	} else {
+		samplePoints <- generateSobolSequenceForSampleParms(sampleParms,numSample,
+																												restretchSamplePoints,
+																												ignoreExistingResults = redoAllCalc,
+																												integerParms = integerParms)
+	}
+	if(!samplePointsSupplied && (ncol(samplePoints) != nrow(sampleParms) || nrow(samplePoints)!=numSample)){
 		cat('Invalid sample points regenerating\n')
 		samplePoints <- generateSobolSequenceForSampleParms(sampleParms,numSample,
 																												restretchSamplePoints,

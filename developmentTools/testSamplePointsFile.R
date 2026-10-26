@@ -87,6 +87,24 @@ constant[,'p.b[1]'] <- 2
 checkError('a parameter with a single value stops, naming it',
 					 funSamplePointsParms(constant,info),'p\\.b\\[1\\]')
 
+cat('the run loads the supplied points\n')
+out <- file.path(tmp,'output')
+dir.create(out)
+sampleParms <- data.frame(Variable=c('p.b[1]','p.a[1]'),Value=c(2,2),Min=c(0,0),Max=c(5,5))
+checkError('without suppliedSamplePoints.RDS the run stops, saying how to make it',
+					 funLoadSuppliedSamplePoints(out,sampleParms,3),'runPrepareSamplePoints')
+saveRDS(r$samplePoints,file.path(out,'suppliedSamplePoints.RDS'))
+sp <- funLoadSuppliedSamplePoints(out,sampleParms,3)
+check('the columns follow the sampled parameters',identical(colnames(sp),c('p.b[1]','p.a[1]')))
+check('with their values',sp[1,'p.b[1]']==2&&sp[3,'p.a[1]']==3)
+check('and the runs keep their numbers',identical(rownames(sp),c('1','2','3')))
+checkError('a different number of runs than numSample stops',
+					 funLoadSuppliedSamplePoints(out,sampleParms,4),'3.*4|4.*3')
+otherParms <- sampleParms
+otherParms$Variable[2] <- 'p.c[1]'
+checkError('other parameters than the sampled ones stop, naming both sides',
+					 funLoadSuppliedSamplePoints(out,otherParms,3),'p\\.c\\[1\\].*p\\.a\\[1\\]|p\\.a\\[1\\].*p\\.c\\[1\\]')
+
 cat(sprintf('\n%d ok, %d failed\n',ok,fail))
 if(fail>0){
 	stop('the sample points file is not read as it should be\n')

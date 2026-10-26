@@ -862,3 +862,25 @@ funSamplePointsParms <- function(samplePoints,parameterInfo){
 	parms$Max <- pmax(parms$Max,parms$Value)
 	return(parms)
 }
+
+# The supplied sample points runPrepareSamplePoints.R put into the output folder,
+# with the columns in the order of sampleParms. The file stays as supplied, a
+# resubmission is checked against it; the run writes its own samplePoints.RDS.
+# e.g. points with columns b,a and sampleParms$Variable a,b come back as a,b
+funLoadSuppliedSamplePoints <- function(location.output,sampleParms,numSample){
+	file <- file.path(location.output,'suppliedSamplePoints.RDS')
+	if(!file.exists(file)){
+		stop(sprintf('%s not found, runPrepareSamplePoints.R writes it from the sample points file\n',file))
+	}
+	samplePoints <- readRDS(file)
+	if(nrow(samplePoints)!=numSample){
+		stop(sprintf('%s holds %i sample points, numSample is %i\n',file,nrow(samplePoints),numSample))
+	}
+	missing <- setdiff(sampleParms$Variable,colnames(samplePoints))
+	extra <- setdiff(colnames(samplePoints),sampleParms$Variable)
+	if(length(missing)>0||length(extra)>0){
+		stop(sprintf('the sample points do not match the sampled parameters\n  sampled, not in the sample points: %s\n  in the sample points, not sampled: %s\n',
+								 paste(missing,collapse=', '),paste(extra,collapse=', ')))
+	}
+	return(samplePoints[,sampleParms$Variable,drop=FALSE])
+}

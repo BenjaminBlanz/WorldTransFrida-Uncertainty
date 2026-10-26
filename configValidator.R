@@ -387,6 +387,13 @@ if(cfgVal.has('name.baselineParmFile')&&cfgVal.isSet('name.baselineParmFile')){
 	}
 }
 
+# supplied sample points are put into the output folder by the submit script
+if(cfgVal.has('name.samplePointsFile')&&cfgVal.isSet('name.samplePointsFile')&&
+	 !file.exists(file.path(location.output,'suppliedSamplePoints.RDS'))){
+	cfgVal.error('name.samplePointsFile: %s not found, runPrepareSamplePoints.R writes it from %s',
+							 file.path(location.output,'suppliedSamplePoints.RDS'),name.samplePointsFile)
+}
+
 # frida info files ####
 # name.frida_info is special, its expected columns depend on where it came from
 cfgVal.fridaInfoFile <- file.path(location.frida.info,name.frida_info)
