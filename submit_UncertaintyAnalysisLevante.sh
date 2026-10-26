@@ -70,7 +70,8 @@ baselineParmFile=''
 
 # csv of sample points to run instead of a sobol sequence, path from this folder.
 # Its row count sets numSample, and a frida_info file of its parameters is made
-# in FRIDA-info/ and used as infoFile and externalRangesFile.
+# in FRIDA-info/ and used as infoFile and externalRangesFile. Only its parameters
+# are varied, integerParmsFile is not used.
 samplePointsFile=''
 
 # These need to be located in the FRIDA-info/ folder!
@@ -117,8 +118,9 @@ ones currently set.
       --sta, --climateSTAOverrideFile FILE   STA override, in FRIDA-configs/ [${climateSTAOverrideFile}]
       --stats, --climateSTAOverrideFileTS FILE  STA override time series, in FRIDA-configs/ [${climateSTAOverrideFileTS}]
       --blp, --baselineParmFile FILE         baseline parameters, in FRIDA-configs/ [${baselineParmFile}]
-      --samplePointsFile FILE                csv of sample points to run, sets -n, --infoFile and
-                                             --externalRangesFile [${samplePointsFile}]
+      --samplePointsFile FILE                csv of sample points to run, nothing else is varied;
+                                             sets -n, --infoFile and --externalRangesFile, uses no
+                                             integer parms [${samplePointsFile}]
       --infoFile FILE                        parameter info, in FRIDA-info/, empty for automatic [${infoFile}]
       --integerParmsFile FILE                integer parameter list, in FRIDA-info/ [${integerParmsFile}]
       --externalRangesFile FILE              fixed parameter ranges, in FRIDA-info/ [${externalRangesFile}]
@@ -259,7 +261,7 @@ done
 
 if [ -n "${samplePointsFile}" ]; then
   if [ -n "${replacedBySamplePoints}" ]; then
-    echo "Error: --samplePointsFile sets${replacedBySamplePoints} itself, drop them"
+    echo "Error: --samplePointsFile can not be combined with${replacedBySamplePoints}: it makes the info file and ranges from the csv and varies no integer parms"
     exit 1
   fi
   if [ "${copySamplePoints}" = "true" ]; then

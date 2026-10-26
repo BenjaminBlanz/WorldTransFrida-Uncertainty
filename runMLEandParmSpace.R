@@ -56,7 +56,7 @@ resSigma.names <- array(paste('s',
 # and complains about invalid lines in frida_info.csv
 samplePointsSupplied <- exists('name.samplePointsFile')&&!is.na(name.samplePointsFile)&&
 	nzchar(name.samplePointsFile)
-integerParms <- read.csv(file.path(location.frida.info,name.frida_integer_parms))
+integerParms <- funReadParameterFile(file.path(location.frida.info,name.frida_integer_parms))
 # supplied sample points carry every parameter they vary
 if(samplePointsSupplied){
 	integerParms <- integerParms[0,]
@@ -69,7 +69,7 @@ sampleParms.orig <- sampleParms <- prepareSampleParms(excludeNames=excludedParms
 if(ignoreParBounds||forceParBounds){
 	externalRanges <- data.frame(Variable=character(0),Min=numeric(0),Max=numeric(0))
 } else {
-	externalRanges <- read.csv(file.path(location.frida.info,name.frida_external_ranges))
+	externalRanges <- funReadParameterFile(file.path(location.frida.info,name.frida_external_ranges))
 }
 externalRangeParmNames <- externalRanges$Variable[externalRanges$Variable%in%sampleParms$Variable]
 
@@ -214,7 +214,7 @@ cat(sprintf('Fallback parscale sweep is %.0f orders wide on average, was %.0f wh
 responseTolerance <- 0.01
 
 #
-frida_info <- read.csv(file.path(location.frida.info,name.frida_info))
+frida_info <- funReadParameterFile(file.path(location.frida.info,name.frida_info))
 
 newMaxFound <- T
 iterationNewMax <-0
@@ -715,7 +715,7 @@ while(newMaxFound){
 	
 	
 	# write to frida_info like file for comparison to input
-	frida_info.toModify <- read.csv(file.path(location.frida.info,name.frida_info))
+	frida_info.toModify <- funReadParameterFile(file.path(location.frida.info,name.frida_info))
 	frida_info.toModify$includedInSampleParms <- frida_info.toModify$Variable %in% sampleParms$Variable
 	idcOfSampleParmsInFridaInfo <- c()
 	for(p.i in 1:nrow(sampleParms)){

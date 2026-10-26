@@ -4,12 +4,23 @@
 
 
 # sample parms and frida io ####
+# Reads a parameter file (frida_info, external ranges, integer parms), whose
+# parameter names are in a Variable or a Parameter column, with read.csv.
+# e.g. the header Parameter,Value,Min,Max gives the columns Variable,Value,Min,Max
+funReadParameterFile <- function(path,...){
+	parms <- read.csv(path,...)
+	if(!'Variable'%in%colnames(parms)&&'Parameter'%in%colnames(parms)){
+		colnames(parms)[colnames(parms)=='Parameter'] <- 'Variable'
+	}
+	return(parms)
+}
+
 prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NULL){
 	cat('Specify sampling parameters...')
 	if(is.null(sampleParms)){
 		cat('reading frida_info...')
 		# read in the parameters in frida that have ranges defined
-		frida_info <- read.csv(file.path(location.frida.info,name.frida_info))
+		frida_info <- funReadParameterFile(file.path(location.frida.info,name.frida_info))
 		if(frida_info_type == 'StellaExport'){ 
 			# this file is from the new export in stella 4.11
 			columnsThatAreFlags <- c('Assumption', 'Calibrated.Output', 'Climate.Impact.Parameter', 

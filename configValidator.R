@@ -106,11 +106,11 @@ cfgVal.checkFile <- function(path,what,allowEmpty=FALSE){
 }
 
 # check that a csv has the columns the code reading it relies on
-cfgVal.checkCsvColumns <- function(path,what,requiredCols){
+cfgVal.checkCsvColumns <- function(path,what,requiredCols,reader=read.csv){
 	if(!file.exists(path)||file.size(path)==0){
 		return(invisible(FALSE))
 	}
-	header <- try(read.csv(path,nrows=1),silent=TRUE)
+	header <- try(reader(path,nrows=1),silent=TRUE)
 	if(inherits(header,'try-error')){
 		return(cfgVal.error('%s: can not be read as csv: %s',what,path))
 	}
@@ -401,8 +401,9 @@ if(!frida_info_type%in%c('user','StellaExport','OldStyleFromBilly')){
 	cfgVal.error("frida_info_type '%s' is unknown, prepareSampleParms would stop",frida_info_type)
 }
 if(isTRUE(cfgVal.checkFile(cfgVal.fridaInfoFile,'name.frida_info'))){
-	cfgVal.checkCsvColumns(cfgVal.fridaInfoFile,'name.frida_info',c('Variable','Value','Min','Max'))
-	cfgVal.fridaInfo <- try(read.csv(cfgVal.fridaInfoFile),silent=TRUE)
+	cfgVal.checkCsvColumns(cfgVal.fridaInfoFile,'name.frida_info',c('Variable','Value','Min','Max'),
+												 reader=funReadParameterFile)
+	cfgVal.fridaInfo <- try(funReadParameterFile(cfgVal.fridaInfoFile),silent=TRUE)
 	if(inherits(cfgVal.fridaInfo,'try-error')){
 		cfgVal.error('name.frida_info: can not be read as csv: %s',cfgVal.fridaInfoFile)
 	} else {
@@ -434,15 +435,17 @@ if(isTRUE(cfgVal.checkFile(cfgVal.fridaInfoFile,'name.frida_info'))){
 # file.size()>0, generated for the ones that are written by the run itself
 cfgVal.infoFiles <- list(
 	list(var='name.frida_integer_parms',
-			 cols=c('Variable','Value','Min','Max'),allowEmpty=FALSE,generated=FALSE),
+			 cols=c('Variable','Value','Min','Max'),allowEmpty=FALSE,generated=FALSE,
+			 reader=funReadParameterFile),
 	list(var='name.frida_external_ranges',
-			 cols=c('Variable','Min','Max'),allowEmpty=FALSE,generated=FALSE),
+			 cols=c('Variable','Min','Max'),allowEmpty=FALSE,generated=FALSE,
+			 reader=funReadParameterFile),
 	list(var='name.frida_extra_variables_to_export_list',
-			 cols=c('FRIDA.FQN'),allowEmpty=FALSE,generated=FALSE),
+			 cols=c('FRIDA.FQN'),allowEmpty=FALSE,generated=FALSE,reader=read.csv),
 	list(var='name.frida_variable_exclusion_list',
-			 cols=c('Variable'),allowEmpty=TRUE,generated=FALSE),
+			 cols=c('Variable'),allowEmpty=TRUE,generated=FALSE,reader=read.csv),
 	list(var='name.frida_parameter_exclusion_list',
-			 cols=c('excludedName'),allowEmpty=TRUE,generated=TRUE))
+			 cols=c('excludedName'),allowEmpty=TRUE,generated=TRUE,reader=read.csv))
 for(cfgVal.inf in cfgVal.infoFiles){
 	if(!cfgVal.isSet(cfgVal.inf$var)){
 		cfgVal.error('%s is not set',cfgVal.inf$var)
@@ -455,7 +458,7 @@ for(cfgVal.inf in cfgVal.infoFiles){
 		next
 	}
 	if(isTRUE(cfgVal.checkFile(cfgVal.path,cfgVal.inf$var,allowEmpty=cfgVal.inf$allowEmpty))){
-		cfgVal.checkCsvColumns(cfgVal.path,cfgVal.inf$var,cfgVal.inf$cols)
+		cfgVal.checkCsvColumns(cfgVal.path,cfgVal.inf$var,cfgVal.inf$cols,reader=cfgVal.inf$reader)
 	}
 }
 

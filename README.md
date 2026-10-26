@@ -28,6 +28,8 @@ To run the stella simulator is needed which needs to be obtained seperately, and
 
 - If there are model parameters, for which the a fixed range should be used (i.e. the uncertainty analysis should not search for a smaller range on its own), these parameters and the allowed min and max values should be listed in ```FRIDA-info/frida_external_ranges.csv```
 
+- In these parameter files (frida_info, external ranges, integer parms) the column with the parameter names may be called ```Variable``` or ```Parameter```.
+
 - For specific policy settings, create additional files inside the ```FRIDA-configs``` folder. The policy files should be named ```policyXYZ``` for consistency.
 
 ### Running via a Slurm job on Levante

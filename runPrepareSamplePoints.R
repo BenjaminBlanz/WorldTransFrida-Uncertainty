@@ -17,12 +17,13 @@ if(length(args)!=3){
 	stop('usage: Rscript runPrepareSamplePoints.R <csv> <FRIDA dir> <out dir>\n')
 }
 suppressMessages(library(data.table))
+source('funRunFRIDA.R')
 source('funParmSpace.R')
 
 cat(sprintf('Reading sample points from %s...',args[1]))
 sp <- funReadSamplePointsFile(args[1])
 cat(sprintf('%i runs of %i parameters\n',nrow(sp$samplePoints),ncol(sp$samplePoints)))
-parameterInfo <- read.csv(file.path(args[2],'Parameter Info.csv'),check.names=FALSE)
+parameterInfo <- funReadParameterFile(file.path(args[2],'Parameter Info.csv'),check.names=FALSE)
 parms <- funSamplePointsParms(sp$samplePoints,parameterInfo)
 
 dir.create(args[3],showWarnings=FALSE,recursive=TRUE)
