@@ -42,6 +42,18 @@ The shell script that creates the scripts is currently called **```submit_Uncert
 - If you want to use the scales and ranges from a different experiment, a respective switch can be set to true and the reference experiment ID has to be given.
 - If you designed specific new input files for the analysis (e.g. a policy file), you can define them here too.
 
+#### Running given sample points
+A csv of sample points, e.g. a Saltelli design, runs in place of the sobol sequence with ```--samplePointsFile```:
+
+```sh
+./submit_UncertaintyAnalysisLevante.sh -s mySaltelliRun --samplePointsFile externalSamplePoints/saltelli_samples.csv
+```
+
+- The header holds the FRIDA parameter names as in ```Parameter Info.csv``` of the model, e.g. ```Finance.loan maturation time[1]```, one row per run. An optional first column ```Case``` labels the runs.
+- ```runPrepareSamplePoints.R``` reads the csv on the login node. Its row count becomes ```numSample```, its parameters are the sampled ones and nothing else is varied. ```FRIDA-info/<expID>-samplePointsParms.csv``` holds their model values and sampled ranges, and serves as ```infoFile``` and ```externalRangesFile```.
+- The runs are numbered by csv row in all output. ```runCases.csv.gz``` in the output folder gives the ```Case``` of each run id.
+- Submitting the same command again resumes the run. A different csv under the same ```-s``` stops the submit.
+
 ### Running the same job without SLURM
 On a machine that has no SLURM installation the submit scripts above work unchanged if the stand-ins in ```localSlurm/``` are put in front of the PATH:
 

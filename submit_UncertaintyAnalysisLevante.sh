@@ -68,6 +68,11 @@ climateSTAOverrideFile='ClimateSTAOverride_Off.csv'
 climateSTAOverrideFileTS='ClimateSTAOverrideTS_none.csv'
 baselineParmFile=''
 
+# csv of sample points to run instead of a sobol sequence, path from this folder.
+# Its row count sets numSample, and a frida_info file of its parameters is made
+# in FRIDA-info/ and used as infoFile and externalRangesFile.
+samplePointsFile=''
+
 # These need to be located in the FRIDA-info/ folder!
 # infoFile only needs to be set to override the automatic choice in config.R,
 # which uses the Parameter Info.csv distributed with FRIDA if it is present and
@@ -112,6 +117,8 @@ ones currently set.
       --sta, --climateSTAOverrideFile FILE   STA override, in FRIDA-configs/ [${climateSTAOverrideFile}]
       --stats, --climateSTAOverrideFileTS FILE  STA override time series, in FRIDA-configs/ [${climateSTAOverrideFileTS}]
       --blp, --baselineParmFile FILE         baseline parameters, in FRIDA-configs/ [${baselineParmFile}]
+      --samplePointsFile FILE                csv of sample points to run, sets -n, --infoFile and
+                                             --externalRangesFile [${samplePointsFile}]
       --infoFile FILE                        parameter info, in FRIDA-info/, empty for automatic [${infoFile}]
       --integerParmsFile FILE                integer parameter list, in FRIDA-info/ [${integerParmsFile}]
       --externalRangesFile FILE              fixed parameter ranges, in FRIDA-info/ [${externalRangesFile}]
@@ -128,6 +135,8 @@ ones currently set.
 EOF
 }
 
+# options a samplePointsFile sets itself, when given on the command line
+replacedBySamplePoints=''
 while [ $# -gt 0 ]; do
   case "$1" in
     --help)
@@ -178,12 +187,18 @@ while [ $# -gt 0 ]; do
       ;;
     --infoFile)
       infoFile="$2"
+      replacedBySamplePoints="${replacedBySamplePoints} $1"
       ;;
     --integerParmsFile)
       integerParmsFile="$2"
+      replacedBySamplePoints="${replacedBySamplePoints} $1"
       ;;
     --externalRangesFile)
       externalRangesFile="$2"
+      replacedBySamplePoints="${replacedBySamplePoints} $1"
+      ;;
+    --samplePointsFile)
+      samplePointsFile="$2"
       ;;
     --excludeParmFile)
     	excludeParmFile="$2"
@@ -238,13 +253,24 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-expID=${expIDPreString}-S${numSample}-${policyFile%.*}-${climateFeedbackFile%.*}-${climateSTAOverrideFile%.*}
-if [ -n "${baselineParmFile%.*}" ]; then
-	expID=${expID}-${baselineParmFile%.*}
-fi
 #############################################################################
 ########              Validate input files                         ##########
 #############################################################################
+
+if [ -n "${samplePointsFile}" ]; then
+  if [ -n "${replacedBySamplePoints}" ]; then
+    echo "Error: --samplePointsFile sets${replacedBySamplePoints} itself, drop them"
+    exit 1
+  fi
+  if [ "${copySamplePoints}" = "true" ]; then
+    echo "Error: --samplePointsFile and --cpsp true both supply the sample points, use one"
+    exit 1
+  fi
+  if [ ! -f "${samplePointsFile}" ]; then
+    echo "Error: samplePointsFile '${samplePointsFile}' not found"
+    exit 1
+  fi
+fi
 
 # Config template (working directory)
 if [ ! -f "${configFile}" ]; then
@@ -305,6 +331,51 @@ if ! stellaOut=$(Stella_Simulator_Linux/stella_simulator -i -x -q "${FRIDA}/FRID
   exit 1
 fi
 
+# supplied sample points, staged until the expID they give is known
+if [ -n "${samplePointsFile}" ]; then
+  staging="${baseOutputDir}/.samplePoints-$$"
+  trap 'rm -rf "${staging}"' EXIT
+  if ! prepOut=$(Rscript runPrepareSamplePoints.R "${samplePointsFile}" "${FRIDA}" "${staging}"); then
+    echo "${prepOut}"
+    echo "Error: the sample points in ${samplePointsFile} can not be used, see above"
+    exit 1
+  fi
+  echo "${prepOut}"
+  fileNumSample=$(echo "${prepOut}" | tail -1 | sed -n 's/^numSample=//p')
+  if [ "${fileNumSample}" != "${numSample}" ]; then
+    echo "numSample ${fileNumSample} from ${samplePointsFile}, in place of ${numSample}"
+  fi
+  numSample=${fileNumSample}
+fi
+
+expID=${expIDPreString}-S${numSample}-${policyFile%.*}-${climateFeedbackFile%.*}-${climateSTAOverrideFile%.*}
+if [ -n "${baselineParmFile%.*}" ]; then
+	expID=${expID}-${baselineParmFile%.*}
+fi
+
+# An earlier submit under this expID has to have had the same sample points, a
+# resubmission then resumes its run.
+if [ -n "${samplePointsFile}" ]; then
+  infoFile="${expID}-samplePointsParms.csv"
+  externalRangesFile="${infoFile}"
+  # true unless the existing file differs from the staged one
+  sameAsBefore(){
+    [ -e "$2" ] || return 0
+    [ -e "$1" ] || return 1
+    case "$1" in
+      *.gz) cmp -s <(zcat "$1") <(zcat "$2");;
+      *) cmp -s "$1" "$2";;
+    esac
+  }
+  if ! sameAsBefore "${staging}/suppliedSamplePoints.RDS" "${baseOutputDir}/${expID}/suppliedSamplePoints.RDS" ||
+     ! sameAsBefore "${staging}/runCases.csv.gz" "${baseOutputDir}/${expID}/runCases.csv.gz" ||
+     ! sameAsBefore "${staging}/samplePointsParms.csv" "FRIDA-info/${infoFile}"; then
+    echo "Error: the sample points an earlier submit of ${expID} left in ${baseOutputDir}/${expID} and FRIDA-info/${infoFile} differ from ${samplePointsFile}, use another -s or remove them"
+    exit 1
+  fi
+  mv "${staging}/samplePointsParms.csv" "FRIDA-info/${infoFile}"
+fi
+
 #############################################################################
 ########     Preparing the R-scripts and the runscript             ##########
 #############################################################################
@@ -334,6 +405,14 @@ sed -i "s/^climateFeedbackSpecFile <-.*$/climateFeedbackSpecFile <- '${climateFe
 sed -i "s/^climateOverrideSpecFile <-.*$/climateOverrideSpecFile <- '${climateSTAOverrideFile}'/" $config
 sed -i "s/^climateOverrideSpecFileTS <- .*$/climateOverrideSpecFileTS <- '${climateSTAOverrideFileTS}'/" $config
 sed -i "s/^name.baselineParmFile <-.*$/name.baselineParmFile <- '${baselineParmFile}'/" $config
+if [ -n "${samplePointsFile}" ]; then
+	sed -i "s@^name.samplePointsFile <-.*\$@name.samplePointsFile <- '${samplePointsFile}'@" $config
+	# without it the run would sample a sobol sequence instead
+	if ! grep -q "^name.samplePointsFile <- '" $config; then
+		echo "Error: ${configFile} has no name.samplePointsFile line for the sample points"
+		exit 1
+	fi
+fi
 sed -i "s/^name.frida_external_ranges <-.*$/name.frida_external_ranges <- '${externalRangesFile}'/" $config
 sed -i "s/^name.frida_parameter_exclusion_list <-.*$/name.frida_parameter_exclusion_list <- '${excludeParmFile}'/" $config
 sed -i "s/^name.frida_variable_exclusion_list <-.*$/name.frida_variable_exclusion_list <- '${excludeVarFile}'/" $config
@@ -436,6 +515,10 @@ if [ -d "$expDir" ]; then
 	echo $expDir already exists       
 else
 	mkdir $expDir
+fi
+
+if [ -n "${samplePointsFile}" ]; then
+	mv "${staging}"/* "${expDir}/"
 fi
 
 
