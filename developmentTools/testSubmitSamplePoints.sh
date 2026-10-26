@@ -67,9 +67,18 @@ check 'nothing staged is left behind' "[ -z \"\$(ls -A '$repo/workOutput' | grep
 echo 'resubmitting'
 submit --samplePointsFile pts.csv -s spTest
 check 'the same csv again is accepted' "[ $? -eq 0 ]"
+LC_ALL=C submit --samplePointsFile pts.csv -s spTest
+check 'also from a session with another locale' "[ $? -eq 0 ]"
 sed -i 's/^B:1,3,4$/B:1,3,5/' "$repo/pts.csv"
 submit --samplePointsFile pts.csv -s spTest
 check 'a changed csv under the same name stops' "[ $? -ne 0 ] && grep -q 'differ' '$tmp/log'"
+check 'naming the file that differs and the output folder to remove' \
+	"grep -q 'suppliedSamplePoints.RDS' '$tmp/log' && grep -q 'remove workOutput/$expID ' '$tmp/log'"
+outOld="$repo/workOutput/spOld-S2-policy_EMB-ClimateFeedback_On-ClimateSTAOverride_Off"
+mkdir -p "$outOld/detectedParmSpace"
+touch "$outOld/detectedParmSpace/workUnit-1.RDS"
+submit --samplePointsFile ptsNoCase.csv -s spOld
+check 'an output folder with runs of other points stops' "[ $? -ne 0 ] && grep -q 'other sample points' '$tmp/log'"
 
 echo 'a csv without Case'
 submit --samplePointsFile ptsNoCase.csv -s spNoCase

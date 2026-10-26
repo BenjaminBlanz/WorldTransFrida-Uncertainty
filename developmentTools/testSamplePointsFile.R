@@ -67,6 +67,14 @@ checkError('a value that is not a number stops, naming the column',
 checkError('a missing value stops, naming the column',
 					 funReadSamplePointsFile(csvFile('na.csv',c('Case,p.a[1],p.b[1]','A:1,1,','B:1,2,3'))),
 					 'p\\.b\\[1\\]')
+big <- funReadSamplePointsFile(csvFile('big.csv',c('p.a[1],p.b[1]','3000000000,1','3000000001,2')))
+check('whole numbers beyond the integer range keep their value',
+			big$samplePoints[1,'p.a[1]']==3e9,big$samplePoints[1,'p.a[1]'])
+numCase <- funReadSamplePointsFile(csvFile('numCase.csv',c('Case,p.a[1]','1.10,1','1.1,2')))
+check('a Case that looks like a number is kept as written',identical(numCase$cases,c('1.10','1.1')))
+checkError('an infinite value stops, naming the column',
+					 funReadSamplePointsFile(csvFile('inf.csv',c('Case,p.a[1],p.b[1]','A:1,1,Inf','B:1,2,3'))),
+					 'p\\.b\\[1\\]')
 checkError('a parameter given twice stops, naming it',
 					 funReadSamplePointsFile(csvFile('twice.csv',c('Case,p.a[1],p.a[1]','A:1,1,2','B:1,2,3'))),
 					 'p\\.a\\[1\\]')

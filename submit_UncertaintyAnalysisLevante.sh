@@ -358,19 +358,28 @@ fi
 if [ -n "${samplePointsFile}" ]; then
   infoFile="${expID}-samplePointsParms.csv"
   externalRangesFile="${infoFile}"
-  # true unless the existing file differs from the staged one
+  # true unless the existing file differs from the staged one. RDS files record
+  # the locale and R version that wrote them, so their content is compared.
   sameAsBefore(){
     [ -e "$2" ] || return 0
     [ -e "$1" ] || return 1
     case "$1" in
       *.gz) cmp -s <(zcat "$1") <(zcat "$2");;
+      *.RDS) Rscript -e 'f <- commandArgs(TRUE); quit(status=!identical(readRDS(f[1]),readRDS(f[2])))' "$1" "$2";;
       *) cmp -s "$1" "$2";;
     esac
   }
-  if ! sameAsBefore "${staging}/suppliedSamplePoints.RDS" "${baseOutputDir}/${expID}/suppliedSamplePoints.RDS" ||
-     ! sameAsBefore "${staging}/runCases.csv.gz" "${baseOutputDir}/${expID}/runCases.csv.gz" ||
-     ! sameAsBefore "${staging}/samplePointsParms.csv" "FRIDA-info/${infoFile}"; then
-    echo "Error: the sample points an earlier submit of ${expID} left in ${baseOutputDir}/${expID} and FRIDA-info/${infoFile} differ from ${samplePointsFile}, use another -s or remove them"
+  existingDir="${baseOutputDir}/${expID}"
+  for f in "suppliedSamplePoints.RDS:${existingDir}/suppliedSamplePoints.RDS" \
+           "runCases.csv.gz:${existingDir}/runCases.csv.gz" \
+           "samplePointsParms.csv:FRIDA-info/${infoFile}"; do
+    if ! sameAsBefore "${staging}/${f%%:*}" "${f#*:}"; then
+      echo "Error: ${f#*:} of an earlier submit of ${expID} differs from what ${samplePointsFile} gives, use another -s or remove ${existingDir} and FRIDA-info/${infoFile}"
+      exit 1
+    fi
+  done
+  if [ -d "${existingDir}/detectedParmSpace" ] && [ ! -e "${existingDir}/suppliedSamplePoints.RDS" ]; then
+    echo "Error: ${existingDir} holds runs of other sample points, use another -s or remove ${existingDir}"
     exit 1
   fi
   mv "${staging}/samplePointsParms.csv" "FRIDA-info/${infoFile}"

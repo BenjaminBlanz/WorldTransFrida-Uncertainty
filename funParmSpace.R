@@ -806,7 +806,12 @@ funReadSamplePointsFile <- function(path){
 	if(length(twice)>0){
 		stop(sprintf('%s: parameters given more than once: %s\n',path,paste(twice,collapse=', ')))
 	}
-	dat <- data.table::fread(path,check.names=FALSE,data.table=FALSE)
+	colClasses <- NULL
+	if(header[1]=='Case'){
+		colClasses <- list(character='Case')
+	}
+	dat <- data.table::fread(path,check.names=FALSE,data.table=FALSE,integer64='double',
+													 colClasses=colClasses)
 	cases <- NULL
 	if(colnames(dat)[1]=='Case'){
 		cases <- as.character(dat$Case)
@@ -824,9 +829,9 @@ funReadSamplePointsFile <- function(path){
 	if(length(notNumeric)>0){
 		stop(sprintf('%s: values that are not numbers in %s\n',path,paste(notNumeric,collapse=', ')))
 	}
-	withNA <- colnames(dat)[sapply(dat,anyNA)]
-	if(length(withNA)>0){
-		stop(sprintf('%s: missing values in %s\n',path,paste(withNA,collapse=', ')))
+	notFinite <- colnames(dat)[!sapply(dat,function(x){all(is.finite(x))})]
+	if(length(notFinite)>0){
+		stop(sprintf('%s: missing or infinite values in %s\n',path,paste(notFinite,collapse=', ')))
 	}
 	samplePoints <- as.matrix(dat)
 	storage.mode(samplePoints) <- 'double'
