@@ -789,3 +789,76 @@ funStretchSamplePoints <- function(samplePoints,sampleParms,restretchSamplePoint
 	colnames(samplePoints) <- sampleParms[,1]
 	return(samplePoints)
 }
+
+# supplied sample points ####
+# Reads a csv of sample points to run in place of a sobol sequence, one run per
+# row, numbered in file order. An optional first column Case labels the runs.
+# e.g. a file with the header Case,Finance.loan maturation time[1] and the row
+# A:1,10 gives samplePoints[1,'Finance.loan maturation time[1]']==10 and
+# cases[1]=='A:1'
+funReadSamplePointsFile <- function(path){
+	# fread and data.frame both rename repeated column names, so these are checked
+	# on the header line itself
+	con <- gzfile(path)
+	header <- scan(text=readLines(con,n=1),what='',sep=',',quote='"',quiet=TRUE)
+	close(con)
+	twice <- unique(header[duplicated(header)])
+	if(length(twice)>0){
+		stop(sprintf('%s: parameters given more than once: %s\n',path,paste(twice,collapse=', ')))
+	}
+	dat <- data.table::fread(path,check.names=FALSE,data.table=FALSE)
+	cases <- NULL
+	if(colnames(dat)[1]=='Case'){
+		cases <- as.character(dat$Case)
+		dat <- dat[,-1,drop=FALSE]
+		empty <- which(is.na(cases)|cases=='')
+		if(length(empty)>0){
+			stop(sprintf('%s: empty Case in row %i\n',path,empty[1]))
+		}
+		dup <- anyDuplicated(cases)
+		if(dup>0){
+			stop(sprintf('%s: Case %s in row %i is used before\n',path,cases[dup],dup))
+		}
+	}
+	notNumeric <- colnames(dat)[!sapply(dat,is.numeric)]
+	if(length(notNumeric)>0){
+		stop(sprintf('%s: values that are not numbers in %s\n',path,paste(notNumeric,collapse=', ')))
+	}
+	withNA <- colnames(dat)[sapply(dat,anyNA)]
+	if(length(withNA)>0){
+		stop(sprintf('%s: missing values in %s\n',path,paste(withNA,collapse=', ')))
+	}
+	samplePoints <- as.matrix(dat)
+	storage.mode(samplePoints) <- 'double'
+	rownames(samplePoints) <- 1:nrow(samplePoints)
+	return(list(samplePoints=samplePoints,cases=cases))
+}
+
+# The frida_info of a set of supplied sample points: the model value of each
+# parameter and the range of its sampled values, widened to include the model
+# value where that lies outside.
+# e.g. a column sampled from 1 to 3 whose model value is 5 gives Min 1, Max 5
+funSamplePointsParms <- function(samplePoints,parameterInfo){
+	vars <- colnames(samplePoints)
+	unknown <- vars[!vars%in%parameterInfo$Variable]
+	if(length(unknown)>0){
+		stop(sprintf('parameters not in the model\'s parameter info: %s\n',paste(unknown,collapse=', ')))
+	}
+	sampledMin <- apply(samplePoints,2,min)
+	sampledMax <- apply(samplePoints,2,max)
+	constant <- vars[sampledMin==sampledMax]
+	if(length(constant)>0){
+		stop(sprintf('parameters with a single sampled value: %s\n',paste(constant,collapse=', ')))
+	}
+	parms <- data.frame(Variable=vars,
+											Value=parameterInfo$Value[match(vars,parameterInfo$Variable)],
+											Min=unname(sampledMin),Max=unname(sampledMax))
+	widened <- which(parms$Value<parms$Min|parms$Value>parms$Max)
+	for(p.i in widened){
+		cat(sprintf('%s: model value %g outside the sampled range [%g, %g], range widened to include it\n',
+								parms$Variable[p.i],parms$Value[p.i],parms$Min[p.i],parms$Max[p.i]))
+	}
+	parms$Min <- pmin(parms$Min,parms$Value)
+	parms$Max <- pmax(parms$Max,parms$Value)
+	return(parms)
+}
