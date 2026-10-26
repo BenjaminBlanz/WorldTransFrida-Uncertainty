@@ -114,6 +114,7 @@ ones currently set.
       --blp, --baselineParmFile FILE         baseline parameters, in FRIDA-configs/ [${baselineParmFile}]
       --infoFile FILE                        parameter info, in FRIDA-info/, empty for automatic [${infoFile}]
       --integerParmsFile FILE                integer parameter list, in FRIDA-info/ [${integerParmsFile}]
+      --externalRangesFile FILE              fixed parameter ranges, in FRIDA-info/ [${externalRangesFile}]
       --excludeParmFile FILE                 parameter exclusion list, in FRIDA-info/ [${excludeParmFile}]
       --extraExportFile FILE                 extra variables to export, in FRIDA-info/ [${extraExportFile}]
       --conf, --configFile FILE              config template [${configFile}]
@@ -180,6 +181,9 @@ while [ $# -gt 0 ]; do
       ;;
     --integerParmsFile)
       integerParmsFile="$2"
+      ;;
+    --externalRangesFile)
+      externalRangesFile="$2"
       ;;
     --excludeParmFile)
     	excludeParmFile="$2"
