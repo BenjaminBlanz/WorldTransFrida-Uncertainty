@@ -102,6 +102,15 @@ submit --samplePointsFile ptsNoCase.csv -s spOlderConfig --conf olderConfig.R
 check 'a config template without name.samplePointsFile stops' \
 	"[ $? -ne 0 ] && grep -q 'name.samplePointsFile' '$tmp/log'"
 
+echo 'a config template that sets name.frida_info itself'
+sed "s|^# name.frida_info <-.*|&\nname.frida_info <- 'someOther.csv'|" "$repo/config.R" > "$repo/infoSetConfig.R"
+submit --samplePointsFile ptsNoCase.csv -s spInfoSet --conf infoSetConfig.R
+infoSetConfig="$repo/spInfoSet-S2-policy_EMB-ClimateFeedback_On-ClimateSTAOverride_Off_config.R"
+check 'the submit succeeds' "[ $? -eq 0 ]"
+check 'the template'\''s own name.frida_info is gone' "! grep -q \"^name.frida_info <- 'someOther.csv'\" '$infoSetConfig'"
+check 'the frida_info of the points is the only one set' \
+	"[ \$(grep -c '^name.frida_info <-' '$infoSetConfig') -eq 1 ] && grep -q '^name.frida_info <- .spInfoSet-S2.*-samplePointsParms.csv' '$infoSetConfig'"
+
 echo 'a model without Parameter Info.csv'
 submit --samplePointsFile ptsNoCase.csv -s spPreV3 --frida fixtureModelPreV3
 check 'the submit succeeds' "[ $? -eq 0 ]"

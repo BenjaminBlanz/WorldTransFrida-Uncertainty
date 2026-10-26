@@ -415,10 +415,16 @@ sed -i "s/config.R/${config}/g" $config
 sed -i "s/FRIDAforUncertaintyAnalysis/${FRIDA}/" $config
 # config.R assigns name.frida_info only inside its auto detection branches, so
 # there is no top level line to replace. Instead activate the commented out
-# override line, which config.R checks for with exists('name.frida_info').
+# override line, which config.R checks for with exists('name.frida_info'), and
+# drop any override the template sets itself.
 # Without an infoFile the auto detection in config.R is left alone.
 if [ -n "${infoFile}" ]; then
+	sed -i "/^name.frida_info <-/d" $config
 	sed -i "s|^# name.frida_info <-.*$|name.frida_info <- '${infoFile}'|" $config
+	if [ "$(grep -c "^name.frida_info <-" $config)" != "1" ]; then
+		echo "Error: ${configFile} has no commented out '# name.frida_info <-' line to set the info file with"
+		exit 1
+	fi
 fi
 sed -i "s/^name.frida_integer_parms <-.*$/name.frida_integer_parms <- '${integerParmsFile}'/" $config
 sed -i "s/^policyFileName <-.*$/policyFileName <- '${policyFile}'/" $config
