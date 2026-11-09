@@ -217,6 +217,8 @@ policyFileName <- 'policy_EMB.csv'#'policy_100DollarCarbonTax.csv' #'policy_EMB.
 
 
 # locations and names ####
+# source of frida to use
+name.frida_source <- 'https://github.com/FRIDA-earth/FRIDA.git'
 # branch of frida to use
 name.frida_branch <- 'main'
 # location of frida/stella for running
