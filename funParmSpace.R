@@ -846,7 +846,8 @@ funReadSamplePointsFile <- function(path){
 
 # The frida_info of a set of supplied sample points: the model value of each
 # parameter and the range of its sampled values, widened to include the model
-# value where that lies outside.
+# value where that lies outside. A column with one value fixes its parameter for
+# every run, its range has zero width if that is the model value.
 # e.g. a column sampled from 1 to 3 whose model value is 5 gives Min 1, Max 5
 funSamplePointsParms <- function(samplePoints,parameterInfo){
 	vars <- colnames(samplePoints)
@@ -856,14 +857,14 @@ funSamplePointsParms <- function(samplePoints,parameterInfo){
 	}
 	sampledMin <- apply(samplePoints,2,min)
 	sampledMax <- apply(samplePoints,2,max)
-	constant <- vars[sampledMin==sampledMax]
-	if(length(constant)>0){
-		stop(sprintf('parameters with a single sampled value: %s\n',paste(constant,collapse=', ')))
-	}
 	parms <- data.frame(Variable=vars,
 											Value=parameterInfo$Value[match(vars,parameterInfo$Variable)],
 											Min=unname(sampledMin),Max=unname(sampledMax))
-	widened <- which(parms$Value<parms$Min|parms$Value>parms$Max)
+	constant <- which(sampledMin==sampledMax)
+	for(p.i in constant){
+		cat(sprintf('%s: %g in every run, model value %g\n',parms$Variable[p.i],parms$Min[p.i],parms$Value[p.i]))
+	}
+	widened <- setdiff(which(parms$Value<parms$Min|parms$Value>parms$Max),constant)
 	for(p.i in widened){
 		cat(sprintf('%s: model value %g outside the sampled range [%g, %g], range widened to include it\n',
 								parms$Variable[p.i],parms$Value[p.i],parms$Min[p.i],parms$Max[p.i]))

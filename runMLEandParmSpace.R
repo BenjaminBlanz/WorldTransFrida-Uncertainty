@@ -62,7 +62,8 @@ if(samplePointsSupplied){
 	integerParms <- integerParms[0,]
 }
 excludedParmsForBeingIntegers <- integerParms$Variable
-sampleParms.orig <- sampleParms <- prepareSampleParms(excludeNames=excludedParmsForBeingIntegers)
+sampleParms.orig <- sampleParms <- prepareSampleParms(excludeNames=excludedParmsForBeingIntegers,
+																											allowZeroWidth=samplePointsSupplied)
 # The parameters whose range is handed to us in frida_external_ranges.csv. Read
 # here rather than where the ranges are applied, because the parscale
 # determination and the range determination both skip these and both run first.
@@ -360,7 +361,8 @@ while(newMaxFound){
 				parscale.parvect <- parscale.parvect[keptIdc]
 				parscaleSkip.parvect <- parscaleSkip.parvect[keptIdc]
 				parscaleNotDetermined.parVect <- parscaleNotDetermined.parVect[keptIdc]
-				sampleParms <- prepareSampleParms(excludeNames = c(scaleErrorParmNames,excludedParmsForBeingIntegers))
+				sampleParms <- prepareSampleParms(excludeNames = c(scaleErrorParmNames,excludedParmsForBeingIntegers),
+																					allowZeroWidth=samplePointsSupplied)
 				sampleParms$parscaleStatus <- ifelse(parscaleSkip.parvect,'skippedExternalRange','determined')
 				parVect <- sampleParms$Value
 				names(parVect) <- sampleParms$Variable 
@@ -791,6 +793,11 @@ while(newMaxFound){
 		cat(sprintf('Reading the sample points supplied in %s...',name.samplePointsFile))
 		samplePoints <- funLoadSuppliedSamplePoints(location.output,sampleParms,numSample)
 		cat('done\n')
+		fixedParms <- colnames(samplePoints)[apply(samplePoints,2,function(x){all(x==x[1])})]
+		if(length(fixedParms)>0){
+			cat(sprintf('  %i parameters have one value in every run: %s\n',
+									length(fixedParms),paste(fixedParms,collapse=', ')))
+		}
 	} else {
 		samplePoints <- generateSobolSequenceForSampleParms(sampleParms,numSample,
 																												restretchSamplePoints,

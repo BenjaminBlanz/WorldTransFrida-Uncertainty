@@ -15,7 +15,9 @@ funReadParameterFile <- function(path,...){
 	return(parms)
 }
 
-prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NULL){
+# allowZeroWidth keeps parameters whose Min equals Max, e.g. those a supplied
+# sample points file fixes at one value
+prepareSampleParms <- function(excludeNames=c(),sampleParms=NULL,integerParms=NULL,allowZeroWidth=FALSE){
 	cat('Specify sampling parameters...')
 	if(is.null(sampleParms)){
 		cat('reading frida_info...')
@@ -53,7 +55,8 @@ If using a user supplied frida_info ensure the columns 'Variable','Value','Min',
 		} else {
 			sampleParms <- frida_info[,c('Variable','Value','Min','Max')]
 		}
-		invalidLines <- which(!((sampleParms$Max-sampleParms$Min)>0 &
+		invalidLines <- which(!(((sampleParms$Max-sampleParms$Min)>0 |
+															 (allowZeroWidth & sampleParms$Max==sampleParms$Min)) &
 															sampleParms$Min <= sampleParms$Value &
 															sampleParms$Value <= sampleParms$Max))
 		suppressWarnings(file.remove(file.path(location.output,'frida_info_errorCases.csv')))
