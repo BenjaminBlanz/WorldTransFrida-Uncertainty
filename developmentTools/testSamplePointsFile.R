@@ -55,6 +55,26 @@ rNoCase <- funReadSamplePointsFile(csvFile('noCase.csv',c('p.a[1],p.b[1]','1,2',
 check('without a Case column there are no labels',is.null(rNoCase$cases))
 check('and every column is a parameter',identical(colnames(rNoCase$samplePoints),c('p.a[1]','p.b[1]')))
 
+rRun <- NULL
+printed <- character(0)
+warned <- character(0)
+msg <- errorOf(printed <- capture.output(rRun <- withCallingHandlers(
+	funReadSamplePointsFile(csvFile('withRun.csv',c('Run,p.a[1],p.b[1]','A:1,1,2','B:1,3,4','A_B[p.a[1]]:1,3,2'))),
+	warning=function(w){warned <<- c(warned,conditionMessage(w)); invokeRestart('muffleWarning')})))
+check('a first column Run is read as Case',identical(rRun,r),msg)
+check('without saying so',length(printed)==0&&length(warned)==0,paste(c(printed,warned),collapse='\n'))
+numRun <- funReadSamplePointsFile(csvFile('numRun.csv',c('Run,p.a[1]','1.10,1','1.1,2','007,3')))
+check('a Run that looks like a number is kept as written',identical(numRun$cases,c('1.10','1.1','007')))
+checkError('a Run used twice stops as a Case does',
+					 funReadSamplePointsFile(csvFile('dupRun.csv',c('Run,p.a[1]','A:1,1','A:1,2'))),
+					 'Case.*row 2')
+checkError('an empty Run stops as a Case does',
+					 funReadSamplePointsFile(csvFile('emptyRun.csv',c('Run,p.a[1]','A:1,1',',2'))),
+					 'Case.*row 2')
+runLater <- funReadSamplePointsFile(csvFile('runLater.csv',c('p.a[1],Run','1,2','3,4')))
+check('a Run that is not the first column is a parameter',
+			is.null(runLater$cases)&&identical(colnames(runLater$samplePoints),c('p.a[1]','Run')))
+
 checkError('a Case used twice stops, naming the row',
 					 funReadSamplePointsFile(csvFile('dupCase.csv',c('Case,p.a[1]','A:1,1','A:1,2'))),
 					 'Case.*row 2')

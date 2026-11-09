@@ -92,6 +92,14 @@ outNoCase="$repo/workOutput/spNoCase-S2-policy_EMB-ClimateFeedback_On-ClimateSTA
 check 'the points are there' "[ -f '$outNoCase/suppliedSamplePoints.RDS' ]"
 check 'without labels' "[ ! -e '$outNoCase/runCases.csv.gz' ]"
 
+echo 'a csv with Run, as written by python'
+printf 'Run,p.a[1],p.b[1]\n0,1,2\n1,3,4\n' > "$repo/ptsRun.csv"
+submit --samplePointsFile ptsRun.csv -s spRun
+check 'the submit succeeds' "[ $? -eq 0 ]"
+outRun="$repo/workOutput/spRun-S2-policy_EMB-ClimateFeedback_On-ClimateSTAOverride_Off"
+check 'the Run labels are the Case of each run' \
+	"[ \"\$(zcat '$outRun/runCases.csv.gz' 2>/dev/null | tr '\n' ' ')\" = 'id,Case 1,0 2,1 ' ]"
+
 echo 'options the csv replaces'
 submit --samplePointsFile ptsNoCase.csv -s spConflict --infoFile x.csv
 check '--infoFile stops' "[ $? -ne 0 ] && grep -q 'samplePointsFile' '$tmp/log'"
