@@ -78,6 +78,17 @@ checkError('an infinite value stops, naming the column',
 checkError('a parameter given twice stops, naming it',
 					 funReadSamplePointsFile(csvFile('twice.csv',c('Case,p.a[1],p.a[1]','A:1,1,2','B:1,2,3'))),
 					 'p\\.a\\[1\\]')
+subscripts <- funReadSamplePointsFile(csvFile('subscripts.csv',
+																							c('"p.t[1,AMOC]","p.u[1, AMOC]","p.v[1,AMOC,2]"','1,2,3','4,5,6')))
+check('a comma in a subscript is followed by a space, as stella writes it',
+			identical(colnames(subscripts$samplePoints),c('p.t[1, AMOC]','p.u[1, AMOC]','p.v[1, AMOC, 2]')),
+			paste(colnames(subscripts$samplePoints),collapse=', '))
+checkError('a parameter given with and without the space stops, naming it',
+					 funReadSamplePointsFile(csvFile('twiceSpace.csv',c('"p.t[1,AMOC]","p.t[1, AMOC]"','1,2','3,4'))),
+					 'p\\.t\\[1, AMOC\\]')
+subscriptsInfo <- data.frame(Variable=c('p.t[1, AMOC]','p.u[1, AMOC]','p.v[1, AMOC, 2]'),Value=c(1,2,3))
+msg <- errorOf(capture.output(funSamplePointsParms(subscripts$samplePoints,subscriptsInfo)))
+check('and matches the model\'s parameter info',is.na(msg),msg)
 
 cat('the frida_info of the sample points\n')
 info <- data.frame(Variable=c('p.a[1]','p.b[1]','p.c[1]'),Value=c(2,5,1))

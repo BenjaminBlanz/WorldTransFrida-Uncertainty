@@ -793,6 +793,7 @@ funStretchSamplePoints <- function(samplePoints,sampleParms,restretchSamplePoint
 # supplied sample points ####
 # Reads a csv of sample points to run in place of a sobol sequence, one run per
 # row, numbered in file order. An optional first column Case labels the runs.
+# Commas in subscripts get a space after them, as in stella's names.
 # e.g. a file with the header Case,Finance.loan maturation time[1] and the row
 # A:1,10 gives samplePoints[1,'Finance.loan maturation time[1]']==10 and
 # cases[1]=='A:1'
@@ -802,6 +803,9 @@ funReadSamplePointsFile <- function(path){
 	con <- gzfile(path)
 	header <- scan(text=readLines(con,n=1),what='',sep=',',quote='"',quiet=TRUE)
 	close(con)
+	subscripts <- gregexpr('\\[[^]]*\\]',header)
+	regmatches(header,subscripts) <- lapply(regmatches(header,subscripts),gsub,
+																					pattern=', ?',replacement=', ')
 	twice <- unique(header[duplicated(header)])
 	if(length(twice)>0){
 		stop(sprintf('%s: parameters given more than once: %s\n',path,paste(twice,collapse=', ')))
@@ -812,6 +816,7 @@ funReadSamplePointsFile <- function(path){
 	}
 	dat <- data.table::fread(path,check.names=FALSE,data.table=FALSE,integer64='double',
 													 colClasses=colClasses)
+	colnames(dat) <- header
 	cases <- NULL
 	if(colnames(dat)[1]=='Case'){
 		cases <- as.character(dat$Case)
