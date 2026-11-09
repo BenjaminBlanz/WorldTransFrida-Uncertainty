@@ -3,7 +3,7 @@
 RED='\033[0;31m'
 NOCOLOR='\033[0m'
 
-frida_source=$(greo name.frida_source config.R | sed 's/name.frida_source <- //' | sed "s/['\"]//g")
+frida_source=$(grep name.frida_source config.R | sed 's/name.frida_source <- //' | sed "s/['\"]//g")
 frida_branch=$(grep name.frida_branch config.R | sed 's/name.frida_branch <- //' | sed "s/['\"]//g")
 
 function cleanup_uncertainty_repo() {
